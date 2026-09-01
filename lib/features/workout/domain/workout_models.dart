@@ -6,6 +6,19 @@ enum WorkoutLevel { beginner, intermediate, advanced }
 /// synthetic "show everything" chip, not a real muscle group.
 enum MuscleGroup { all, chest, back, legs, arms, cardio, strength }
 
+/// Maps the backend `Exercise.muscleGroup` enum (`chest`, `back`, `legs`,
+/// `shoulders`, `arms`, `core`, `full_body`, `cardio`) onto the UI's
+/// narrower [MuscleGroup] filter set — groups without a direct UI chip
+/// (shoulders/core/full_body) fall back to `strength`.
+MuscleGroup muscleGroupFromApi(String? value) => switch (value) {
+  'chest' => MuscleGroup.chest,
+  'back' => MuscleGroup.back,
+  'legs' => MuscleGroup.legs,
+  'arms' => MuscleGroup.arms,
+  'cardio' => MuscleGroup.cardio,
+  _ => MuscleGroup.strength,
+};
+
 /// Training goal selectable when building a custom routine.
 enum RoutineGoal { muscleGain, fatLoss, strength, endurance }
 
@@ -14,6 +27,7 @@ enum Weekday { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 
 class WorkoutListItem {
   const WorkoutListItem({
+    this.id = '',
     required this.image,
     required this.name,
     this.time,
@@ -22,6 +36,9 @@ class WorkoutListItem {
     this.isFavorite = false,
   });
 
+  /// Backend `Workout._id` — empty for the few remaining pieces of curated
+  /// (non-backend) content, e.g. home screen highlights.
+  final String id;
   final String image;
   final String name;
   final String? time;
@@ -30,6 +47,7 @@ class WorkoutListItem {
   final bool isFavorite;
 
   WorkoutListItem copyWith({bool? isFavorite}) => WorkoutListItem(
+    id: id,
     image: image,
     name: name,
     time: time,
@@ -37,6 +55,25 @@ class WorkoutListItem {
     exercises: exercises,
     isFavorite: isFavorite ?? this.isFavorite,
   );
+
+  /// Builds a display item from a `/api/workouts` JSON document — falls
+  /// back to a generic local illustration since seeded/admin workouts
+  /// rarely have a `coverImageUrl` set yet.
+  factory WorkoutListItem.fromJson(
+    Map<String, dynamic> json, {
+    required bool isFavorite,
+  }) {
+    final exerciseCount = (json['exercises'] as List?)?.length ?? 0;
+    return WorkoutListItem(
+      id: json['_id'] as String? ?? '',
+      image: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
+      name: (json['title'] as String?) ?? '',
+      time: '${json['durationMinutes'] ?? '—'} Minutes',
+      calories: '${json['estimatedCalories'] ?? '—'} Kcal',
+      exercises: exerciseCount == 0 ? null : '$exerciseCount exercises',
+      isFavorite: isFavorite,
+    );
+  }
 }
 
 /// A catalog entry in the "Choose Exercises" library. [id] must be unique —
@@ -72,6 +109,21 @@ class RoutineExercise {
     defaultReps: defaultReps,
     isFavorite: isFavorite ?? this.isFavorite,
   );
+
+  /// Builds a library entry from a `/api/exercises` JSON document.
+  /// `isFavorite` has no backend equivalent (there's no per-exercise
+  /// favorites endpoint) — it stays a local-only UI toggle.
+  factory RoutineExercise.fromJson(Map<String, dynamic> json) {
+    return RoutineExercise(
+      id: json['_id'] as String? ?? '',
+      image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
+      name: (json['name'] as String?) ?? '',
+      muscleGroup: muscleGroupFromApi(json['muscleGroup'] as String?),
+      time: '${json['defaultSets'] ?? 3} sets',
+      defaultSets: json['defaultSets'] as int? ?? 3,
+      defaultReps: json['defaultReps'] as int? ?? 12,
+    );
+  }
 }
 
 /// An exercise the user has added to "My Routine", with its own editable
@@ -102,6 +154,7 @@ class RoutineItem {
     required this.rep,
     this.muscleGroup = MuscleGroup.strength,
     this.isFavorite = false,
+    this.videoUrl,
   });
 
   final String image;
@@ -111,6 +164,9 @@ class RoutineItem {
   final MuscleGroup muscleGroup;
   final bool isFavorite;
 
+  /// From the backend's `Exercise.videoUrl` — null for exercises without one.
+  final String? videoUrl;
+
   RoutineItem copyWith({bool? isFavorite}) => RoutineItem(
     image: image,
     title: title,
@@ -118,6 +174,7 @@ class RoutineItem {
     rep: rep,
     muscleGroup: muscleGroup,
     isFavorite: isFavorite ?? this.isFavorite,
+    videoUrl: videoUrl,
   );
 }
 
@@ -144,6 +201,7 @@ class PopularExerciseItem {
     required this.time,
     required this.calories,
     this.difficulty = 'Easy',
+    this.videoUrl,
   });
 
   final String image;
@@ -151,6 +209,9 @@ class PopularExerciseItem {
   final String time;
   final String calories;
   final String difficulty;
+
+  /// From the backend's `Exercise.videoUrl` — null for exercises without one.
+  final String? videoUrl;
 }
 
 class WeeklyRound {

@@ -1,4 +1,4 @@
-# 🏋️ FitBody — Premium Workout & Health Platform
+# Nabvera - Premium Workout & Health Platform
 
 A modern fitness application built with Flutter that helps users manage workouts, create custom routines, track progress, and stay motivated on their fitness journey — wrapped in a premium, glassmorphic dark/light design system inspired by apps like Apple Fitness+ and Nike Training Club.
 

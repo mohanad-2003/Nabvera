@@ -3,10 +3,11 @@ import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
 import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
+import 'package:fitness_app/features/profile/presentation/widgets/delete_account_sheet.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_menu_tile.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_header.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/profile_stat_card.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_stat_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,7 +36,8 @@ class ProfilePage extends ConsumerWidget {
               email: profile.email,
               fitnessLevel: profile.fitnessLevel,
               motivation: l10n.profileMotivation,
-              onBack: context.canPop() ? () => context.pop() : null,
+              avatarUrl: profile.avatarUrl,
+              onBack: null,
               onEdit: () => context.push(AppRoutes.editProfile),
             ),
           ),
@@ -80,7 +82,7 @@ class ProfilePage extends ConsumerWidget {
                         for (final stat in stats)
                           SizedBox(
                             width: itemWidth,
-                            child: ProfileStatCard(
+                            child: _ProfileStat(
                               icon: stat.$1,
                               value: stat.$2,
                               label: stat.$3,
@@ -98,8 +100,8 @@ class ProfilePage extends ConsumerWidget {
               delay: const Duration(milliseconds: 140),
               child: Padding(
                 padding: const EdgeInsets.only(top: 14),
-                child: PremiumGlassCard(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: ProfileStatRow(profile: profile),
                 ),
               ),
@@ -117,7 +119,7 @@ class ProfilePage extends ConsumerWidget {
           ),
           SliverList.separated(
             itemCount: 3,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
             itemBuilder: (context, index) {
               switch (index) {
                 case 0:
@@ -125,6 +127,7 @@ class ProfilePage extends ConsumerWidget {
                     icon: Icons.person_outline_rounded,
                     title: l10n.profileMenuProfile,
                     subtitle: l10n.profileMenuProfileSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.editProfile),
                   );
                 case 1:
@@ -132,6 +135,7 @@ class ProfilePage extends ConsumerWidget {
                     icon: Icons.star_border_rounded,
                     title: l10n.profileMenuFavorite,
                     subtitle: l10n.profileMenuFavoriteSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.favorite),
                   );
                 default:
@@ -139,6 +143,7 @@ class ProfilePage extends ConsumerWidget {
                     icon: Icons.lock_outline_rounded,
                     title: l10n.profileMenuPrivacyPolicy,
                     subtitle: l10n.profileMenuPrivacyPolicySubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.privacy),
                   );
               }
@@ -156,7 +161,7 @@ class ProfilePage extends ConsumerWidget {
           ),
           SliverList.separated(
             itemCount: 3,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
             itemBuilder: (context, index) {
               switch (index) {
                 case 0:
@@ -164,6 +169,7 @@ class ProfilePage extends ConsumerWidget {
                     icon: Icons.settings_outlined,
                     title: l10n.profileMenuSetting,
                     subtitle: l10n.profileMenuSettingSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.settings),
                   );
                 case 1:
@@ -171,6 +177,7 @@ class ProfilePage extends ConsumerWidget {
                     icon: Icons.support_agent_rounded,
                     title: l10n.profileMenuHelp,
                     subtitle: l10n.profileMenuHelpSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.help),
                   );
                 default:
@@ -179,23 +186,34 @@ class ProfilePage extends ConsumerWidget {
                     title: l10n.profileMenuLogout,
                     subtitle: l10n.profileMenuLogoutSubtitle,
                     iconColor: ext.danger,
-                    onTap: () => _showLogoutConfirmation(context),
+                    flat: true,
+                    onTap: () => _showLogoutConfirmation(context, ref),
                   );
               }
             },
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          SliverToBoxAdapter(
+            child: FadeSlideIn(
+              delay: const Duration(milliseconds: 220),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 28, bottom: 12),
+                child: _DeleteAccountButton(
+                  label: l10n.privacyDeleteAccount,
+                  onTap: () => showDeleteAccountSheet(context),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _showLogoutConfirmation(BuildContext context) {
+  void _showLogoutConfirmation(BuildContext context, WidgetRef ref) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
-    showModalBottomSheet<void>(
-      isDismissible: false,
-      backgroundColor: Colors.transparent,
+    showDialog<void>(
+      barrierDismissible: false,
       // Without this, the sheet is pushed onto the shell branch's nested
       // Navigator, whose Overlay sits *below* the outer Scaffold's
       // bottomNavigationBar slot — the floating nav bar then paints over
@@ -203,29 +221,21 @@ class ProfilePage extends ConsumerWidget {
       // the whole app shell, so the sheet renders fully on top of it.
       useRootNavigator: true,
       context: context,
-      builder: (context) {
-        return SafeArea(
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: ext.cardColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(28),
-              ),
+              borderRadius: BorderRadius.circular(28),
               border: Border.all(color: ext.glassBorder),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ext.glassBorder,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Text(
                   l10n.profileLogoutConfirm,
                   textAlign: TextAlign.center,
@@ -239,19 +249,27 @@ class ProfilePage extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _LogoutButton(
-                      text: l10n.actionCancel,
-                      isPrimary: false,
-                      onTap: () => context.pop(),
+                    Expanded(
+                      child: _LogoutButton(
+                        text: l10n.actionCancel,
+                        isPrimary: false,
+                        onTap: () => dialogContext.pop(),
+                      ),
                     ),
                     const SizedBox(width: 10),
-                    _LogoutButton(
-                      text: l10n.profileLogoutYes,
-                      isPrimary: true,
-                      onTap: () {
-                        context.pop();
-                        context.go(AppRoutes.login);
-                      },
+                    Expanded(
+                      child: _LogoutButton(
+                        text: l10n.profileLogoutYes,
+                        isPrimary: true,
+                        onTap: () async {
+                          dialogContext.pop();
+                          await ref
+                              .read(firebaseAuthServiceProvider)
+                              .signOut();
+                          ref.invalidate(currentUserProfileProvider);
+                          if (context.mounted) context.go(AppRoutes.login);
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -260,6 +278,98 @@ class ProfilePage extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ProfileStat extends StatelessWidget {
+  const _ProfileStat({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final accent = ext.accentGlow;
+
+    return Column(
+      children: [
+        Icon(icon, color: accent, size: 22),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: ext.textMuted, fontSize: 10.5),
+        ),
+      ],
+    );
+  }
+}
+
+class _DeleteAccountButton extends StatelessWidget {
+  const _DeleteAccountButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: ext.danger.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: ext.danger.withValues(alpha: 0.42)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.delete_outline_rounded, color: ext.danger),
+                  const SizedBox(width: 9),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: ext.danger,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -280,7 +390,6 @@ class _LogoutButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 150,
         height: 44,
         decoration: BoxDecoration(
           gradient: isPrimary ? ext.accentGradient : null,

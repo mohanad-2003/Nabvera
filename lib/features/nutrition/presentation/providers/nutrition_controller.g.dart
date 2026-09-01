@@ -62,12 +62,18 @@ abstract class _$NutritionTabController extends $Notifier<NutritionTab> {
   }
 }
 
-@ProviderFor(nutritionRecommended)
+/// Loads `/api/recipes` once and splits it: the two highest-rated recipes
+/// become "Recommended", the rest fill "Recipes for you".
+
+@ProviderFor(NutritionRecommended)
 final nutritionRecommendedProvider = NutritionRecommendedProvider._();
 
+/// Loads `/api/recipes` once and splits it: the two highest-rated recipes
+/// become "Recommended", the rest fill "Recipes for you".
 final class NutritionRecommendedProvider
-    extends $FunctionalProvider<List<MealItem>, List<MealItem>, List<MealItem>>
-    with $Provider<List<MealItem>> {
+    extends $NotifierProvider<NutritionRecommended, List<MealItem>> {
+  /// Loads `/api/recipes` once and splits it: the two highest-rated recipes
+  /// become "Recommended", the rest fill "Recipes for you".
   NutritionRecommendedProvider._()
     : super(
         from: null,
@@ -84,13 +90,7 @@ final class NutritionRecommendedProvider
 
   @$internal
   @override
-  $ProviderElement<List<MealItem>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<MealItem> create(Ref ref) {
-    return nutritionRecommended(ref);
-  }
+  NutritionRecommended create() => NutritionRecommended();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<MealItem> value) {
@@ -102,14 +102,34 @@ final class NutritionRecommendedProvider
 }
 
 String _$nutritionRecommendedHash() =>
-    r'a14e28754382c7a574cec9ad9d42dab300a0ff5b';
+    r'0ef5d5acb0b301ff82e241278cac0685f8ebfe90';
 
-@ProviderFor(nutritionRecipes)
+/// Loads `/api/recipes` once and splits it: the two highest-rated recipes
+/// become "Recommended", the rest fill "Recipes for you".
+
+abstract class _$NutritionRecommended extends $Notifier<List<MealItem>> {
+  List<MealItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<MealItem>, List<MealItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<MealItem>, List<MealItem>>,
+              List<MealItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(NutritionRecipes)
 final nutritionRecipesProvider = NutritionRecipesProvider._();
 
 final class NutritionRecipesProvider
-    extends $FunctionalProvider<List<MealItem>, List<MealItem>, List<MealItem>>
-    with $Provider<List<MealItem>> {
+    extends $NotifierProvider<NutritionRecipes, List<MealItem>> {
   NutritionRecipesProvider._()
     : super(
         from: null,
@@ -126,13 +146,7 @@ final class NutritionRecipesProvider
 
   @$internal
   @override
-  $ProviderElement<List<MealItem>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<MealItem> create(Ref ref) {
-    return nutritionRecipes(ref);
-  }
+  NutritionRecipes create() => NutritionRecipes();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<MealItem> value) {
@@ -143,43 +157,101 @@ final class NutritionRecipesProvider
   }
 }
 
-String _$nutritionRecipesHash() => r'fe337fd90d51d1429a8b3ee442ad0621c59d253d';
+String _$nutritionRecipesHash() => r'9076fac56bd27eba48da5c7a235b1923a03e08c3';
 
-@ProviderFor(dailyNutritionSummary)
-final dailyNutritionSummaryProvider = DailyNutritionSummaryProvider._();
+abstract class _$NutritionRecipes extends $Notifier<List<MealItem>> {
+  List<MealItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<MealItem>, List<MealItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<MealItem>, List<MealItem>>,
+              List<MealItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
 
-final class DailyNutritionSummaryProvider
+@ProviderFor(_recipes)
+final _recipesProvider = _RecipesProvider._();
+
+final class _RecipesProvider
     extends
         $FunctionalProvider<
-          DailyNutritionSummary,
-          DailyNutritionSummary,
-          DailyNutritionSummary
+          AsyncValue<List<Map<String, dynamic>>>,
+          List<Map<String, dynamic>>,
+          FutureOr<List<Map<String, dynamic>>>
         >
-    with $Provider<DailyNutritionSummary> {
-  DailyNutritionSummaryProvider._()
+    with
+        $FutureModifier<List<Map<String, dynamic>>>,
+        $FutureProvider<List<Map<String, dynamic>>> {
+  _RecipesProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'dailyNutritionSummaryProvider',
+        name: r'_recipesProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$dailyNutritionSummaryHash();
+  String debugGetCreateSourceHash() => _$_recipesHash();
 
   @$internal
   @override
-  $ProviderElement<DailyNutritionSummary> $createElement(
+  $FutureProviderElement<List<Map<String, dynamic>>> $createElement(
     $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
-  DailyNutritionSummary create(Ref ref) {
-    return dailyNutritionSummary(ref);
+  FutureOr<List<Map<String, dynamic>>> create(Ref ref) {
+    return _recipes(ref);
   }
+}
+
+String _$_recipesHash() => r'c216a42870b373a933380971cc9a06cb773074ff';
+
+/// Loads the real `/api/nutrition/today` document and converts it into
+/// display fractions/strings.
+
+@ProviderFor(DailyNutritionSummaryController)
+final dailyNutritionSummaryControllerProvider =
+    DailyNutritionSummaryControllerProvider._();
+
+/// Loads the real `/api/nutrition/today` document and converts it into
+/// display fractions/strings.
+final class DailyNutritionSummaryControllerProvider
+    extends
+        $NotifierProvider<
+          DailyNutritionSummaryController,
+          DailyNutritionSummary
+        > {
+  /// Loads the real `/api/nutrition/today` document and converts it into
+  /// display fractions/strings.
+  DailyNutritionSummaryControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dailyNutritionSummaryControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dailyNutritionSummaryControllerHash();
+
+  @$internal
+  @override
+  DailyNutritionSummaryController create() => DailyNutritionSummaryController();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(DailyNutritionSummary value) {
@@ -190,5 +262,27 @@ final class DailyNutritionSummaryProvider
   }
 }
 
-String _$dailyNutritionSummaryHash() =>
-    r'b8a3e7d121c963e3d4a01165768a442a96812417';
+String _$dailyNutritionSummaryControllerHash() =>
+    r'fc51d468e2ad332f9c5ac14a7b1d699c802f7c43';
+
+/// Loads the real `/api/nutrition/today` document and converts it into
+/// display fractions/strings.
+
+abstract class _$DailyNutritionSummaryController
+    extends $Notifier<DailyNutritionSummary> {
+  DailyNutritionSummary build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<DailyNutritionSummary, DailyNutritionSummary>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DailyNutritionSummary, DailyNutritionSummary>,
+              DailyNutritionSummary,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

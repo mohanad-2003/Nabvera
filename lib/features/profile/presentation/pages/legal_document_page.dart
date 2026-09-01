@@ -1,4 +1,3 @@
-import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
@@ -66,17 +65,12 @@ class LegalDocumentPage extends StatelessWidget {
             child: ListView.separated(
               padding: EdgeInsets.zero,
               itemCount: paragraphs.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
               itemBuilder: (context, index) {
                 return FadeSlideIn(
                   delay: Duration(milliseconds: 60 * index),
                   child: Container(
                     padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: ext.glassFill,
-                      borderRadius: BorderRadius.circular(AppRadius.card),
-                      border: Border.all(color: ext.glassBorder),
-                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

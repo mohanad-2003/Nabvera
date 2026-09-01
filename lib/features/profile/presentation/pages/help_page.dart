@@ -1,5 +1,4 @@
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
@@ -167,6 +166,19 @@ class _HelpPageState extends State<HelpPage> {
                 const SizedBox(height: 18),
                 TextField(
                   decoration: InputDecoration(
+                    filled: false,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: ext.glassBorder),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 1.2,
+                      ),
+                    ),
                     prefixIcon: Icon(
                       Icons.search,
                       color: theme.colorScheme.secondary,
@@ -271,14 +283,9 @@ class _ContactRow extends StatelessWidget {
     return PressableScale(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(AppRadius.card),
-            border: Border.all(color: ext.glassBorder),
-          ),
           child: Row(
             children: [
               Container(
@@ -344,11 +351,6 @@ class _FaqItem extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: ext.glassBorder),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

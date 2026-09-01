@@ -5,7 +5,6 @@ import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/theme/theme_controller.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/delete_account_sheet.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_menu_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,6 +71,7 @@ class SettingsPage extends ConsumerWidget {
                 icon: Icons.notifications_outlined,
                 title: l10n.settingsNotification,
                 subtitle: l10n.settingsNotificationSubtitle,
+                flat: true,
                 onTap: () => context.push(AppRoutes.notificationSettings),
               ),
               const SizedBox(height: 10),
@@ -79,15 +79,8 @@ class SettingsPage extends ConsumerWidget {
                 icon: Icons.key_outlined,
                 title: l10n.settingsPassword,
                 subtitle: l10n.settingsPasswordSubtitle,
+                flat: true,
                 onTap: () => context.push(AppRoutes.passwordSettings),
-              ),
-              const SizedBox(height: 10),
-              ProfileMenuTile(
-                icon: Icons.person_off_outlined,
-                title: l10n.settingsDeleteAccount,
-                subtitle: l10n.settingsDeleteAccountSubtitle,
-                iconColor: ext.danger,
-                onTap: () => showDeleteAccountSheet(context),
               ),
             ],
           ),
@@ -105,7 +98,7 @@ class _AppearanceCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final controller = ref.read(themeControllerProvider.notifier);
-    return PremiumGlassCard(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: Column(
         children: [
@@ -209,7 +202,7 @@ class _LanguageCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(localeControllerProvider.notifier);
-    return PremiumGlassCard(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: Column(
         children: [

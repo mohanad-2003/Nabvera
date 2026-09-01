@@ -208,6 +208,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSkipForNow => 'Skip for now';
 
   @override
+  String get authErrorInvalidEmail => 'That email address looks invalid';
+
+  @override
+  String get authErrorUserNotFound => 'No account found with that email';
+
+  @override
+  String get authErrorWrongPassword => 'Incorrect email or password';
+
+  @override
+  String get authErrorEmailInUse => 'An account already exists with this email';
+
+  @override
+  String get authErrorWeakPassword => 'Password is too weak';
+
+  @override
+  String get authErrorNetwork => 'Network error, please check your connection';
+
+  @override
+  String get authErrorGoogleCancelled => 'Google sign-in was cancelled';
+
+  @override
+  String get authErrorGeneric => 'Something went wrong, please try again';
+
+  @override
+  String get authResetEmailSent =>
+      'Password reset link sent — check your inbox';
+
+  @override
+  String get authContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get authRememberMe => 'Remember me';
+
+  @override
+  String get authAgreeTermsPrefix => 'I agree to the ';
+
+  @override
+  String get authAgreeTermsAnd => ' and ';
+
+  @override
+  String get authTermsRequired =>
+      'Please accept the Terms and Privacy Policy to continue';
+
+  @override
+  String get authCheckYourEmail => 'Check your email';
+
+  @override
+  String authResetLinkSentTo(String email) {
+    return 'We sent a password reset link to $email';
+  }
+
+  @override
+  String get authResendLink => 'Resend link';
+
+  @override
+  String authResendLinkIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get authChangeEmail => 'Change email';
+
+  @override
+  String get authBackToLogin => 'Back to login';
+
+  @override
+  String get authBiometricEnableSuccess => 'Biometric unlock enabled';
+
+  @override
+  String get authBiometricEnableFailed =>
+      'Couldn\'t verify your biometrics — try again';
+
+  @override
+  String get authBiometricUnlockTitle => 'Unlock Nabvera';
+
+  @override
+  String get authBiometricUnlockBody => 'Confirm it\'s you to continue.';
+
+  @override
+  String get authBiometricUnlockCta => 'Unlock';
+
+  @override
+  String get authBiometricLogout => 'Log out instead';
+
+  @override
+  String get authBiometricRetry => 'Try again';
+
+  @override
+  String get onboardingSetupTimeNote =>
+      'Personal setup takes less than a minute';
+
+  @override
   String get validationEmailRequired => 'Email is required';
 
   @override
@@ -254,7 +346,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBadgeProgress => 'Progress';
 
   @override
-  String get onboardingBrand => 'FITBODY';
+  String get welcomeCtaStart => 'Start Now';
+
+  @override
+  String get welcomeHaveAccount => 'I have an account, log in';
+
+  @override
+  String get onboardingBrand => 'NABVERA';
 
   @override
   String get onboardingSkip => 'Skip';
@@ -277,26 +375,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Personalized training flows help you start today and stay consistent tomorrow.';
 
   @override
-  String get onboardingSlide2Kicker => 'TRACK EVERY REP';
+  String get onboardingSlide2Kicker => 'TRAIN SMARTER';
 
   @override
   String get onboardingSlide2Title =>
-      'See your workouts, streaks, and progress in one place.';
+      'Find strength, cardio, and functional sessions fast.';
 
   @override
   String get onboardingSlide2Description =>
-      'Turn effort into insight with daily metrics and clear performance feedback.';
+      'Choose the right intensity for your day and move with confidence.';
 
   @override
-  String get onboardingSlide3Kicker => 'TRAIN SMARTER';
+  String get onboardingSlide3Kicker => 'TRACK EVERY REP';
 
   @override
   String get onboardingSlide3Title =>
-      'Find strength, cardio, yoga, and HIIT sessions fast.';
+      'See your workouts, streaks, and progress in one place.';
 
   @override
   String get onboardingSlide3Description =>
-      'Choose the right intensity for your day and move with confidence.';
+      'Turn effort into insight with daily metrics and clear performance feedback.';
 
   @override
   String get onboardingSlide4Kicker => 'REACH GOALS';
@@ -414,7 +512,36 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String homeGreetingMorning(String name) {
+    return 'Good Morning, $name';
+  }
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'Good Afternoon, $name';
+  }
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'Good Evening, $name';
+  }
+
+  @override
+  String get homeGreetingMorningPlain => 'Good Morning';
+
+  @override
+  String get homeGreetingAfternoonPlain => 'Good Afternoon';
+
+  @override
+  String get homeGreetingEveningPlain => 'Good Evening';
+
+  @override
   String get homeTagline => 'Train hard. Recover smart. Repeat.';
+
+  @override
+  String homeStreakDays(int days) {
+    return '$days-day streak';
+  }
 
   @override
   String get homeTodayPlanLabel => 'TODAY PLAN';
@@ -487,6 +614,111 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeUnitMin => 'min';
 
   @override
+  String get homeCtaStart => 'Start Workout';
+
+  @override
+  String get homeCtaContinue => 'Continue Workout';
+
+  @override
+  String get homeCtaCompleted => 'Workout Completed';
+
+  @override
+  String homeHeroCompletionPercent(int percent) {
+    return '$percent% done';
+  }
+
+  @override
+  String homeHeroExercises(int count) {
+    return '$count exercises';
+  }
+
+  @override
+  String homeCaloriesConsumedOf(int consumed, int goal) {
+    return '$consumed of $goal kcal';
+  }
+
+  @override
+  String homeCaloriesRemaining(int remaining) {
+    return '$remaining kcal left';
+  }
+
+  @override
+  String get homeCaloriesGoalReached => 'Goal reached';
+
+  @override
+  String homeActivityProgress(int done, int goal) {
+    return '$done of $goal min';
+  }
+
+  @override
+  String get homeStreakStartMessage => 'Start your streak today';
+
+  @override
+  String get homeStreakKeepGoing => 'Keep it going!';
+
+  @override
+  String get homeStreakOnFire => 'You\'re on fire!';
+
+  @override
+  String get homeNextStepTitle => 'Your Next Step';
+
+  @override
+  String get homeNextStepDrinkWater => 'Drink a glass of water';
+
+  @override
+  String get homeNextStepStartWorkout => 'Start today\'s workout';
+
+  @override
+  String get homeNextStepLogMeal => 'Log your next meal';
+
+  @override
+  String get homeNextStepAllDone => 'You crushed today — keep it up!';
+
+  @override
+  String get homeNextStepGo => 'Go';
+
+  @override
+  String homeWeeklyGoalSummary(int done, int goal) {
+    return '$done of $goal workouts this week';
+  }
+
+  @override
+  String get homeWeeklyRestDay => 'Rest day';
+
+  @override
+  String get homeDayMon => 'Mon';
+
+  @override
+  String get homeDayTue => 'Tue';
+
+  @override
+  String get homeDayWed => 'Wed';
+
+  @override
+  String get homeDayThu => 'Thu';
+
+  @override
+  String get homeDayFri => 'Fri';
+
+  @override
+  String get homeDaySat => 'Sat';
+
+  @override
+  String get homeDaySun => 'Sun';
+
+  @override
+  String get homeRecommendedError => 'Couldn\'t load recommendations';
+
+  @override
+  String get homeArticlesError => 'Couldn\'t load articles';
+
+  @override
+  String get homeRecommendedEmpty => 'No recommendations yet';
+
+  @override
+  String get homeArticlesEmpty => 'No articles yet';
+
+  @override
   String get workoutTitle => 'Train';
 
   @override
@@ -503,6 +735,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutStartWorkout => 'Start Workout';
+
+  @override
+  String get workoutNoVideoAvailable =>
+      'No video available for this exercise yet';
 
   @override
   String get workoutDifficultyLabel => 'Difficulty';
@@ -736,6 +972,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressSteps => 'Steps';
+
+  @override
+  String get progressWeeklyOverview => 'This Week';
+
+  @override
+  String get progressStatSessions => 'Sessions';
+
+  @override
+  String get progressStatMinutes => 'Minutes';
+
+  @override
+  String get progressStatAvgSession => 'Avg / Session';
+
+  @override
+  String get progressRecentSessions => 'Recent Sessions';
+
+  @override
+  String get progressNoSessionsYet => 'No sessions this week';
 
   @override
   String get notificationsTitle => 'Notifications';
@@ -1073,7 +1327,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legalTermsBody =>
-      'By using FitBody you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Privacy → Delete My Account.';
+      'By using Nabvera you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Delete My Account.';
 
   @override
   String get manageDataTitle => 'Manage Your Data';
@@ -1193,7 +1447,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationSettingsSubtitle =>
-      'Choose how FitBody keeps you in the loop';
+      'Choose how Nabvera keeps you in the loop';
 
   @override
   String get notificationToggleGeneral => 'General Notification';
@@ -1410,6 +1664,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nutritionServingsShort => 'Servings';
+
+  @override
+  String nutritionMinutesValue(int minutes) {
+    return '$minutes Minutes';
+  }
+
+  @override
+  String nutritionCaloriesValue(int calories) {
+    return '$calories Cal';
+  }
+
+  @override
+  String get nutritionDifficultyEasy => 'Easy';
+
+  @override
+  String get nutritionDifficultyMedium => 'Medium';
+
+  @override
+  String get nutritionDifficultyHard => 'Hard';
 
   @override
   String get mealIdeaTitle => 'Meal Idea';

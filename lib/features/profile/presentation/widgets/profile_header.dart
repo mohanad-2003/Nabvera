@@ -15,6 +15,7 @@ class ProfileHeader extends StatelessWidget {
     required this.email,
     required this.fitnessLevel,
     required this.motivation,
+    this.avatarUrl,
     this.onBack,
     this.onEdit,
   });
@@ -24,6 +25,7 @@ class ProfileHeader extends StatelessWidget {
   final String email;
   final String fitnessLevel;
   final String motivation;
+  final String? avatarUrl;
   final VoidCallback? onBack;
   final VoidCallback? onEdit;
 
@@ -73,7 +75,7 @@ class ProfileHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const UserAvatar(radius: 52),
+                  child: UserAvatar(radius: 52, imageUrl: avatarUrl),
                 ),
                 Positioned(
                   bottom: 0,

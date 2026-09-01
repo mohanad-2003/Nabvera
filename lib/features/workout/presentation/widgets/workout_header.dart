@@ -11,6 +11,7 @@ class WorkoutHeader extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.showProfileAction = false,
+    this.showBack = true,
   });
 
   final String title;
@@ -23,18 +24,24 @@ class WorkoutHeader extends StatelessWidget {
   /// opt-in per screen so existing headers stay unchanged elsewhere.
   final bool showProfileAction;
 
+  /// Set to `false` on bottom-nav tab roots (Workout, Nutrition) — they're
+  /// reached via the nav bar, never pushed, so `context.canPop()` is
+  /// meaningless there and a back arrow with nowhere to go is just noise.
+  final bool showBack;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final canPop = showBack && context.canPop();
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (context.canPop())
+        if (canPop)
           PremiumIconButton(
             icon: Icons.arrow_back_ios_new_rounded,
             onTap: () => context.canPop() ? context.pop() : null,
           ),
-        if (context.canPop()) const SizedBox(width: 12),
+        if (canPop) const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

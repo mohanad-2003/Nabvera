@@ -4,7 +4,6 @@ import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/features/profile/presentation/pages/help_page.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/delete_account_sheet.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_menu_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +49,7 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.policy_outlined,
                     title: l10n.privacyPolicy,
                     subtitle: l10n.privacyPolicySubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.privacyPolicy),
                   ),
                   const SizedBox(height: 10),
@@ -57,6 +57,7 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.description_outlined,
                     title: l10n.privacyTerms,
                     subtitle: l10n.privacyTermsSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.termsAndConditions),
                   ),
                   const SizedBox(height: 22),
@@ -66,6 +67,7 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.manage_accounts_outlined,
                     title: l10n.privacyManagePersonalData,
                     subtitle: l10n.privacyManagePersonalDataSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.manageData),
                   ),
                   const SizedBox(height: 10),
@@ -73,6 +75,7 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.admin_panel_settings_outlined,
                     title: l10n.privacyAppPermissions,
                     subtitle: l10n.privacyAppPermissionsSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.manageData),
                   ),
                   const SizedBox(height: 10),
@@ -80,6 +83,7 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.data_usage_outlined,
                     title: l10n.privacyDataCollection,
                     subtitle: l10n.privacyDataCollectionSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.manageData),
                   ),
                   const SizedBox(height: 10),
@@ -87,23 +91,14 @@ class PrivacyPage extends StatelessWidget {
                     icon: Icons.download_outlined,
                     title: l10n.privacyDownloadMyData,
                     subtitle: l10n.privacyDownloadMyDataSubtitle,
+                    flat: true,
                     onTap: () => context.push(AppRoutes.manageData),
                   ),
-                  const SizedBox(height: 22),
-                  PremiumSectionHeader(title: l10n.privacySectionAccount),
-                  const SizedBox(height: 12),
-                  ProfileMenuTile(
-                    icon: Icons.delete_outline_rounded,
-                    title: l10n.privacyDeleteAccount,
-                    subtitle: l10n.privacyDeleteAccountSubtitle,
-                    iconColor: ext.danger,
-                    onTap: () => showDeleteAccountSheet(context),
-                  ),
-                  const SizedBox(height: 10),
                   ProfileMenuTile(
                     icon: Icons.support_agent_rounded,
                     title: l10n.privacyContactSupport,
                     subtitle: l10n.privacyContactSupportSubtitle,
+                    flat: true,
                     onTap:
                         () => context.push(
                           AppRoutes.help,

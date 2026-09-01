@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/notification_repository.dart';
 import '../../domain/notification_models.dart';
 
 part 'notification_controller.g.dart';
@@ -35,107 +36,43 @@ class NotificationFilterController extends _$NotificationFilterController {
   void select(NotificationFilter filter) => state = filter;
 }
 
-DateTime _hoursAgo(int hours) =>
-    DateTime.now().subtract(Duration(hours: hours));
-DateTime _daysAgo(int days) => DateTime.now().subtract(Duration(days: days));
-
+/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
+/// applied to local state immediately, then sent to the backend; failures
+/// are silently left as-is rather than reverted, since a missed
+/// read/delete sync here is low-stakes and self-corrects on next refresh.
 @riverpod
 class NotificationListController extends _$NotificationListController {
   @override
-  List<NotificationItem> build() => [
-    NotificationItem(
-      id: 'n1',
-      category: NotificationCategory.workout,
-      title: 'Workout Reminder',
-      body: "You have today's Full Body workout waiting.",
-      timestamp: _hoursAgo(1),
-      actionLabel: 'Start',
-    ),
-    NotificationItem(
-      id: 'n2',
-      category: NotificationCategory.reminder,
-      title: 'Hydration Reminder',
-      body: 'Drink a glass of water to stay hydrated.',
-      timestamp: _hoursAgo(3),
-    ),
-    NotificationItem(
-      id: 'n3',
-      category: NotificationCategory.achievement,
-      title: 'Daily Goal',
-      body: "Congratulations! You reached today's calorie goal.",
-      timestamp: _hoursAgo(5),
-      isRead: true,
-    ),
-    NotificationItem(
-      id: 'n4',
-      category: NotificationCategory.nutrition,
-      title: 'Nutrition',
-      body: 'Your meal plan for dinner is ready.',
-      timestamp: _hoursAgo(8),
-      actionLabel: 'View',
-    ),
-    NotificationItem(
-      id: 'n5',
-      category: NotificationCategory.achievement,
-      title: 'Achievement Unlocked',
-      body: 'You earned the Consistency Badge.',
-      timestamp: _daysAgo(1),
-    ),
-    NotificationItem(
-      id: 'n6',
-      category: NotificationCategory.challenge,
-      title: 'Weekly Challenge',
-      body: "Complete one more workout to finish this week's challenge.",
-      timestamp: _daysAgo(1),
-      isRead: true,
-      actionLabel: 'View',
-    ),
-    NotificationItem(
-      id: 'n7',
-      category: NotificationCategory.reminder,
-      title: 'Recovery',
-      body: 'Today is your recovery day.',
-      timestamp: _daysAgo(1),
-      isRead: true,
-    ),
-    NotificationItem(
-      id: 'n8',
-      category: NotificationCategory.achievement,
-      title: 'Progress',
-      body: 'Your weekly performance increased by 12%.',
-      timestamp: _daysAgo(4),
-    ),
-    NotificationItem(
-      id: 'n9',
-      category: NotificationCategory.community,
-      title: 'Community',
-      body: 'Sarah liked your workout.',
-      timestamp: _daysAgo(4),
-      isRead: true,
-    ),
-    NotificationItem(
-      id: 'n10',
-      category: NotificationCategory.workout,
-      title: 'Workout Reminder',
-      body: 'Your Leg Day session starts in 30 minutes.',
-      timestamp: _daysAgo(12),
-      isRead: true,
-    ),
-  ];
+  List<NotificationItem> build() {
+    Future.microtask(_load);
+    return const [];
+  }
+
+  Future<void> _load() async {
+    try {
+      final docs = await ref.read(notificationRepositoryProvider).fetchAll();
+      state = [for (final doc in docs) NotificationItem.fromJson(doc)];
+    } catch (_) {
+      // Left empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
 
   void markAsRead(String id) {
     state = [
       for (final item in state)
         if (item.id == id) item.copyWith(isRead: true) else item,
     ];
+    ref.read(notificationRepositoryProvider).markAsRead(id);
   }
 
   void markAllAsRead() {
     state = [for (final item in state) item.copyWith(isRead: true)];
+    ref.read(notificationRepositoryProvider).markAllAsRead();
   }
 
   void delete(String id) {
     state = state.where((item) => item.id != id).toList();
+    ref.read(notificationRepositoryProvider).delete(id);
   }
 }
 

@@ -1,3 +1,5 @@
+import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
@@ -86,8 +88,8 @@ class WeeklyChallengePage extends ConsumerWidget {
                           const SizedBox(height: 5),
                           Row(
                             children: [
-                              Image.asset(
-                                'assets/time.png',
+                              SmartImage(
+AppIcons.time,
                                 color: Colors.white,
                               ),
                               const SizedBox(width: 5),
@@ -99,8 +101,8 @@ class WeeklyChallengePage extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              Image.asset(
-                                'assets/calories.png',
+                              SmartImage(
+AppIcons.calories,
                                 color: Colors.white,
                               ),
                               const SizedBox(width: 5),
@@ -112,8 +114,8 @@ class WeeklyChallengePage extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              Image.asset(
-                                'assets/run.png',
+                              SmartImage(
+AppIcons.run,
                                 color: Colors.white,
                               ),
                               const SizedBox(width: 5),

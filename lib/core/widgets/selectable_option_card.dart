@@ -1,6 +1,6 @@
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme_extension.dart';
 
 /// A full-width selectable pill/card used across onboarding wizard steps
 /// (goal, activity level, and similar single-choice pickers) — replaces the

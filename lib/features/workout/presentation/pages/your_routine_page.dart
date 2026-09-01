@@ -82,6 +82,7 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
                             title: item.title,
                             duration: item.time,
                             reps: item.rep,
+                            videoUrl: item.videoUrl,
                           ),
                         );
                       }
@@ -136,6 +137,7 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
                         title: item.title,
                         duration: item.time,
                         reps: item.rep,
+                        videoUrl: item.videoUrl,
                       ),
                     ),
                 onTap:
@@ -147,6 +149,7 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
                         title: item.title,
                         duration: item.time,
                         reps: item.rep,
+                        videoUrl: item.videoUrl,
                       ),
                     ),
               );

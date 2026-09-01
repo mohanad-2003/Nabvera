@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/nutrition_repository.dart';
+
 part 'meal_plan_wizard_controller.g.dart';
 
 class MealPlanPreferences {
@@ -84,4 +86,37 @@ class MealPlanWizardController extends _$MealPlanWizardController {
   void selectCookingTime(String value) =>
       state = state.copyWith(cookingTime: value);
   void selectServings(String value) => state = state.copyWith(servings: value);
+
+  /// Submits the wizard's answers to `POST /api/meal-plans`. Best effort —
+  /// the generating screen still proceeds to the breakfast step even if
+  /// this fails, since there's no error UI in that flow to surface it.
+  Future<void> submit() async {
+    final payload = <String, dynamic>{
+      'dietaryPreference': _dietaryPreferenceToApi(state.dietaryPreference),
+      'dailyCalorieTarget': _caloricGoalToTarget(state.caloricGoal),
+    };
+    try {
+      await ref.read(nutritionRepositoryProvider).createMealPlan(payload);
+    } catch (_) {
+      // See doc comment.
+    }
+  }
+
+  static String _dietaryPreferenceToApi(String value) => switch (value) {
+    'Vegetarian' => 'vegetarian',
+    'Vegan' => 'vegan',
+    'Gluten-Free' => 'gluten_free',
+    'Keto' => 'keto',
+    'Paleo' => 'paleo',
+    _ => 'none',
+  };
+
+  /// The wizard collects a calorie *range* label, not a single number — the
+  /// backend wants one target, so this picks the range's midpoint.
+  static int _caloricGoalToTarget(String value) => switch (value) {
+    'Less than 1500 calories' => 1400,
+    '1500-2000 calories' => 1750,
+    'More than 2000 calories' => 2300,
+    _ => 2000,
+  };
 }

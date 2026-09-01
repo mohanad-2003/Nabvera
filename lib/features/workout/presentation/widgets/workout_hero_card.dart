@@ -1,8 +1,9 @@
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
 import 'workout_info_chip.dart';
 
 /// Premium immersive hero card for a featured/recommended workout: full-
@@ -67,7 +68,7 @@ class _WorkoutHeroCardState extends State<WorkoutHeroCard> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(widget.image, fit: BoxFit.cover),
+              SmartImage(widget.image),
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -132,7 +133,9 @@ class _WorkoutHeroCardState extends State<WorkoutHeroCard> {
                       ),
                     ),
                     child: Icon(
-                      _isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                      _isFavorite
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
                       color: _isFavorite ? ext.accentGlow : Colors.white,
                       size: 22,
                     ),

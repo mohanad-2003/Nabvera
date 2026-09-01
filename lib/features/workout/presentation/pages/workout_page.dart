@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_spacing.dart';
@@ -5,6 +6,8 @@ import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/featured_card.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/features/workout/data/workout_category_data.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
+import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
 import 'package:fitness_app/features/workout/domain/workout_models.dart';
 import 'package:fitness_app/features/workout/presentation/providers/workout_controller.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
@@ -52,7 +55,7 @@ class WorkoutPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                WorkoutHeader(title: l10n.workoutTitle),
+                WorkoutHeader(title: l10n.workoutTitle, showBack: false),
                 const SizedBox(height: 6),
                 Text(
                   l10n.workoutSubtitle,
@@ -107,27 +110,33 @@ class WorkoutPage extends ConsumerWidget {
                 ),
                 SizedBox(height: spacing),
                 FeaturedCard(
-                  image: WorkoutCategoryData.heroImage(level),
+                  image:
+                      items.isEmpty
+                          ? WorkoutCategoryData.heroImage(level)
+                          : items.first.image,
                   badge: badge.toUpperCase(),
                   title: headline,
                   metas: [
-                    FeaturedCardMeta(icon: 'assets/time.png', label: time),
+                    FeaturedCardMeta(icon: AppIcons.time, label: time),
                     FeaturedCardMeta(
-                      icon: 'assets/calories.png',
+                      icon: AppIcons.calories,
                       label: calories,
                     ),
                     FeaturedCardMeta(
-                      icon: 'assets/run.png',
+                      icon: AppIcons.run,
                       label: _label(l10n, level),
                     ),
                   ],
                   ctaLabel: l10n.workoutStartWorkout,
                   height: heroHeight,
                   onTap:
-                      () => context.push(
-                        AppRoutes.workoutCategoryDetail,
-                        extra: WorkoutCategoryData.forLevel(level),
-                      ),
+                      () =>
+                          items.isEmpty
+                              ? context.push(
+                                AppRoutes.workoutCategoryDetail,
+                                extra: WorkoutCategoryData.forLevel(level),
+                              )
+                              : _openWorkout(context, ref, items.first.id),
                 ),
                 SizedBox(height: spacing),
                 PremiumSectionHeader(title: subHeadline),
@@ -137,11 +146,16 @@ class WorkoutPage extends ConsumerWidget {
           ),
           SliverList.separated(
             itemCount: items.length,
-            separatorBuilder: (_, _) => SizedBox(height: spacing),
+            separatorBuilder:
+                (_, _) => Padding(
+                  padding: EdgeInsets.symmetric(vertical: spacing / 2),
+                  child: Divider(height: 1, color: ext.glassBorder),
+                ),
             itemBuilder:
                 (context, index) => WorkoutListCard(
                   item: items[index],
                   height: listCardHeight,
+                  onTap: () => _openWorkout(context, ref, items[index].id),
                   onToggleFavorite:
                       () => ref
                           .read(workoutListByLevelProvider(level).notifier)
@@ -159,6 +173,32 @@ class WorkoutPage extends ConsumerWidget {
     WorkoutLevel.intermediate => l10n.workoutLevelIntermediate,
     WorkoutLevel.advanced => l10n.workoutLevelAdvanced,
   };
+
+  /// Fetches the full workout (with populated exercises) and opens it as a
+  /// real [CategoryDetailData] — each round item then carries a real
+  /// [ExerciseDetailData], video included, instead of the static curated
+  /// content this screen used to always push regardless of which workout
+  /// was tapped.
+  Future<void> _openWorkout(
+    BuildContext context,
+    WidgetRef ref,
+    String workoutId,
+  ) async {
+    if (workoutId.isEmpty) return;
+    try {
+      final json = await ref
+          .read(workoutRepositoryProvider)
+          .fetchWorkoutById(workoutId);
+      if (!context.mounted) return;
+      context.push(
+        AppRoutes.workoutCategoryDetail,
+        extra: CategoryDetailData.fromWorkoutJson(json),
+      );
+    } catch (_) {
+      // Backend unreachable / workout deleted — silently do nothing rather
+      // than fall back to unrelated curated content for this specific tap.
+    }
+  }
 }
 
 class _WorkoutActionButton extends StatelessWidget {

@@ -45,16 +45,11 @@ class DocumentPage extends ConsumerWidget {
           Expanded(
             child: ListView.separated(
               itemCount: documents.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 15),
+              separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
               itemBuilder: (context, index) {
                 final doc = documents[index];
                 return Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: ext.glassFill,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: ext.glassBorder),
-                  ),
                   child: Row(
                     children: [
                       Container(

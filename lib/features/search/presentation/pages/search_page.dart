@@ -1,3 +1,5 @@
+import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_colors.dart';
@@ -60,6 +62,10 @@ class SearchPage extends ConsumerWidget {
               border: Border.all(color: ext.glassBorder),
             ),
             child: TextField(
+              onChanged:
+                  (value) => ref
+                      .read(searchQueryControllerProvider.notifier)
+                      .update(value),
               style: TextStyle(color: ext.textPrimary),
               cursorColor: AppColors.seedLime,
               decoration: InputDecoration(
@@ -360,11 +366,10 @@ class _FeaturedCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
+                  child: SmartImage(
                     item.image,
                     width: double.infinity,
                     height: double.infinity,
-                    fit: BoxFit.cover,
                   ),
                 ),
                 const Positioned(
@@ -411,7 +416,7 @@ class _FeaturedCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Image.asset('assets/time.png', width: 9, height: 9),
+                    SmartImage(AppIcons.time, width: 9, height: 9),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
@@ -422,7 +427,7 @@ class _FeaturedCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Image.asset('assets/calories.png', width: 9, height: 9),
+                    SmartImage(AppIcons.calories, width: 9, height: 9),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
@@ -547,11 +552,10 @@ class _ResultCard extends StatelessWidget {
               borderRadius: const BorderRadius.horizontal(
                 right: Radius.circular(20),
               ),
-              child: Image.asset(
+              child: SmartImage(
                 item.image,
                 width: double.infinity,
                 height: double.infinity,
-                fit: BoxFit.cover,
               ),
             ),
           ),

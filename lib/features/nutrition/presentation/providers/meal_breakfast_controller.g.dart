@@ -8,12 +8,24 @@ part of 'meal_breakfast_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Loads `/api/recipes?category=breakfast`. `isFavorite` has no backend
+/// equivalent for this simplified option list (see [MealIdeaFavorites] for
+/// the real favorites toggle used by the recipe detail flow) — it stays a
+/// local-only UI toggle here.
 
 @ProviderFor(MealBreakfastController)
 final mealBreakfastControllerProvider = MealBreakfastControllerProvider._();
 
+/// Loads `/api/recipes?category=breakfast`. `isFavorite` has no backend
+/// equivalent for this simplified option list (see [MealIdeaFavorites] for
+/// the real favorites toggle used by the recipe detail flow) — it stays a
+/// local-only UI toggle here.
 final class MealBreakfastControllerProvider
     extends $NotifierProvider<MealBreakfastController, List<BreakfastOption>> {
+  /// Loads `/api/recipes?category=breakfast`. `isFavorite` has no backend
+  /// equivalent for this simplified option list (see [MealIdeaFavorites] for
+  /// the real favorites toggle used by the recipe detail flow) — it stays a
+  /// local-only UI toggle here.
   MealBreakfastControllerProvider._()
     : super(
         from: null,
@@ -42,7 +54,12 @@ final class MealBreakfastControllerProvider
 }
 
 String _$mealBreakfastControllerHash() =>
-    r'50778c297f15458c0cd6ee6c116e8e9f4440e9ba';
+    r'5be11ada57d7b36a66c2f8d6b3022dadf740940d';
+
+/// Loads `/api/recipes?category=breakfast`. `isFavorite` has no backend
+/// equivalent for this simplified option list (see [MealIdeaFavorites] for
+/// the real favorites toggle used by the recipe detail flow) — it stays a
+/// local-only UI toggle here.
 
 abstract class _$MealBreakfastController
     extends $Notifier<List<BreakfastOption>> {

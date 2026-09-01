@@ -1,8 +1,12 @@
+import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/core/widgets/user_avatar.dart';
+import 'package:fitness_app/features/profile/domain/profile_models.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:fitness_app/features/workout/presentation/providers/workout_progress_controller.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/progress_tab_bar.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
@@ -32,9 +36,11 @@ class WorkoutLogsPage extends ConsumerWidget {
               child: WorkoutHeader(title: l10n.progressTitle),
             ),
             const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: _ProfileSummary(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _ProfileSummary(
+                profile: ref.watch(currentUserProfileProvider),
+              ),
             ),
             const SizedBox(height: 20),
             ProgressTabBar(
@@ -48,8 +54,6 @@ class WorkoutLogsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-                  const _DateHeader(),
-                  const SizedBox(height: 20),
                   Text(
                     l10n.progressActivities,
                     style: TextStyle(
@@ -58,7 +62,7 @@ class WorkoutLogsPage extends ConsumerWidget {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   if (activities.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
@@ -84,115 +88,88 @@ class WorkoutLogsPage extends ConsumerWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: activities.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
+                      separatorBuilder:
+                          (_, _) => Divider(height: 1, color: ext.glassBorder),
                       itemBuilder: (context, index) {
                         final item = activities[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: ext.glassFill,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: ext.glassBorder),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 10,
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 45,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    gradient: ext.accentGradient,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      item.image,
-                                      width: 25,
-                                      height: 27,
-                                      fit: BoxFit.cover,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 45,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                  gradient: ext.accentGradient,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.fitness_center_rounded,
+                                  color: ext.onAccent,
+                                  size: 22,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: ext.textPrimary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/calories.png',
-                                            color: accent,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            item.calories,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: ext.textPrimary,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        item.name,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: ext.textPrimary,
-                                          fontWeight: FontWeight.w600,
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        SmartImage(
+                                          AppIcons.calories,
+                                          color: accent,
+                                          width: 13,
+                                          height: 13,
                                         ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        item.date,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: ext.textMuted,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        l10n.progressDuration,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: ext.textMuted,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/time.png',
-                                            color: accent,
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          item.calories,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: ext.textMuted,
                                           ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            item.duration,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: ext.textPrimary,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Icon(
+                                          Icons.schedule_rounded,
+                                          size: 13,
+                                          color: accent,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          item.date,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: ext.textMuted,
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Text(
+                                item.duration,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: ext.textPrimary,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -209,11 +186,14 @@ class WorkoutLogsPage extends ConsumerWidget {
 }
 
 class _ProfileSummary extends StatelessWidget {
-  const _ProfileSummary();
+  const _ProfileSummary({required this.profile});
+
+  final UserProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -232,22 +212,22 @@ class _ProfileSummary extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Madison',
+                      profile.name.isEmpty ? '—' : profile.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 22,
                         color: ext.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Image.asset('assets/fe.png'),
                   ],
                 ),
                 const SizedBox(height: 5),
                 Row(
                   children: [
                     Text(
-                      'Age :',
+                      '${l10n.workoutProfileAge} :',
                       style: TextStyle(
                         fontSize: 14,
                         color: ext.textMuted,
@@ -256,24 +236,33 @@ class _ProfileSummary extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '26',
+                      profile.ageYears,
                       style: TextStyle(fontSize: 14, color: ext.textMuted),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Row(
+                Row(
                   children: [
-                    _InfoItem(value: '75 Kg', label: 'Weight'),
-                    SizedBox(width: 30),
-                    _InfoItem(value: '1.65 CM', label: 'Height'),
+                    _InfoItem(
+                      value: profile.weightKg,
+                      label: l10n.workoutProfileWeight,
+                    ),
+                    const SizedBox(width: 30),
+                    _InfoItem(
+                      value: profile.heightM,
+                      label: l10n.workoutProfileHeight,
+                    ),
                   ],
                 ),
               ],
             ),
           ),
           const SizedBox(width: 10),
-          const Expanded(flex: 1, child: UserAvatar(radius: 42)),
+          Expanded(
+            flex: 1,
+            child: UserAvatar(radius: 42, imageUrl: profile.avatarUrl),
+          ),
         ],
       ),
     );
@@ -321,130 +310,3 @@ class _InfoItem extends StatelessWidget {
   }
 }
 
-class _DateHeader extends StatelessWidget {
-  const _DateHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ext = theme.extension<AppThemeExtension>()!;
-    final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Divider(color: ext.glassBorder, thickness: 1),
-        const SizedBox(height: 5),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50),
-          child: Row(
-            children: [
-              Text(
-                l10n.progressChooseDate,
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                l10n.progressMonth,
-                style: TextStyle(fontSize: 14, color: ext.textMuted),
-              ),
-              const SizedBox(width: 5),
-              Icon(Icons.arrow_drop_down_sharp, color: ext.textMuted),
-            ],
-          ),
-        ),
-        const SizedBox(height: 5),
-        Divider(color: ext.glassBorder, thickness: 1),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            for (final day in const [
-              'MON',
-              'TUE',
-              'WED',
-              'THU',
-              'FRI',
-              'SAT',
-              'SUN',
-            ])
-              _WeekDay(day),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: ext.glassBorder),
-          ),
-          child: Wrap(
-            spacing: 20,
-            runSpacing: 8,
-            children: List.generate(31, (index) {
-              final day = (index + 1).toString();
-              final isSelectedDay = index == 8;
-              return Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color:
-                      isSelectedDay
-                          ? theme.colorScheme.primary
-                          : Colors.transparent,
-                ),
-                child: Center(
-                  child: Text(
-                    day,
-                    style: TextStyle(
-                      color:
-                          isSelectedDay
-                              ? theme.colorScheme.onPrimary
-                              : ext.textMuted,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _WeekDay extends StatelessWidget {
-  const _WeekDay(this.day);
-  final String day;
-
-  @override
-  Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Container(
-      width: 40,
-      height: 22,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: ext.glassFill,
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Center(
-        child: Text(
-          day,
-          style: TextStyle(
-            color: ext.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 11,
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -5,6 +5,7 @@ import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
+import '../../../../core/widgets/smart_image.dart';
 import '../../domain/nutrition_models.dart';
 import 'premium_recipe_card.dart';
 
@@ -21,6 +22,7 @@ class MealDetailHeader extends StatelessWidget {
     this.isFavorite = false,
     this.onFavoriteTap,
     this.similar = const [],
+    this.onTapSimilar,
   });
 
   final MealDetail meal;
@@ -28,10 +30,11 @@ class MealDetailHeader extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onFavoriteTap;
 
-  /// Other recipes to surface as inspiration underneath. Read-only (no
-  /// per-item navigation) since the source data ([MealItem]) doesn't carry
-  /// the ingredients/preparation a detail screen would need.
+  /// Other recipes in the same category as [meal] (see
+  /// `MealDetail.similarRecipes`) — tapping one fetches its full detail
+  /// and opens it via [onTapSimilar].
   final List<MealItem> similar;
+  final ValueChanged<MealItem>? onTapSimilar;
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +75,21 @@ class MealDetailHeader extends StatelessWidget {
                 spacing: 18,
                 runSpacing: 10,
                 children: [
-                  _Stat(icon: Icons.timer_outlined, label: meal.time),
+                  _Stat(
+                    icon: Icons.timer_outlined,
+                    label: recipeMinutesLabel(
+                      l10n,
+                      meal.prepTimeMinutes,
+                      meal.time,
+                    ),
+                  ),
                   _Stat(
                     icon: Icons.local_fire_department_rounded,
-                    label: meal.calories,
+                    label: recipeCaloriesLabel(
+                      l10n,
+                      meal.caloriesValue,
+                      meal.calories,
+                    ),
                     iconColor: theme.colorScheme.secondary,
                   ),
                   if (meal.servings != null)
@@ -87,7 +101,7 @@ class MealDetailHeader extends StatelessWidget {
                   if (meal.difficulty != null)
                     _Stat(
                       icon: Icons.speed_rounded,
-                      label: meal.difficulty!,
+                      label: recipeDifficultyLabel(l10n, meal.difficulty),
                     ),
                   if (meal.rating != null)
                     _Stat(
@@ -214,14 +228,25 @@ class MealDetailHeader extends StatelessWidget {
                   child: PremiumRecipeCard(
                     image: item.image,
                     name: item.name,
-                    time: item.time,
-                    calories: item.calories,
+                    time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
+                    calories: recipeCaloriesLabel(
+                      l10n,
+                      item.caloriesValue,
+                      item.calories,
+                    ),
                     protein: item.protein,
                     carbs: item.carbs,
                     fat: item.fat,
                     rating: item.rating,
-                    difficulty: item.difficulty,
+                    difficulty:
+                        item.difficulty == null
+                            ? null
+                            : recipeDifficultyLabel(l10n, item.difficulty),
                     imageHeight: 140,
+                    onTap:
+                        onTapSimilar == null
+                            ? null
+                            : () => onTapSimilar!(item),
                   ),
                 );
               },
@@ -259,7 +284,7 @@ class _Hero extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(meal.image, fit: BoxFit.cover),
+          SmartImage(meal.image),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -382,36 +407,31 @@ class _SectionCard extends StatelessWidget {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 18, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+    // No boxed container — a section header plus a thin underline, then the
+    // content directly on the page background.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
             ],
-          ),
-          const SizedBox(height: 12),
-          child,
-        ],
-      ),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Divider(height: 1, color: ext.glassBorder),
+        const SizedBox(height: 14),
+        child,
+      ],
     );
   }
 }

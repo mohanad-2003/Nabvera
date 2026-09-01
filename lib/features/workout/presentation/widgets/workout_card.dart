@@ -1,8 +1,10 @@
+import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/icon_stat.dart';
 import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
 /// Premium workout tile: large image, dark gradient scrim, favorite button,
@@ -68,7 +70,7 @@ class WorkoutCard extends StatelessWidget {
                   children: [
                     Hero(
                       tag: image,
-                      child: Image.asset(image, fit: BoxFit.cover),
+                      child: SmartImage(image),
                     ),
                     DecoratedBox(
                       decoration: BoxDecoration(
@@ -123,14 +125,14 @@ class WorkoutCard extends StatelessWidget {
                     Row(
                       children: [
                         IconStat(
-                          icon: 'assets/calories.png',
+                          icon: AppIcons.calories,
                           label: reps,
                           color: ext.textMuted,
                           fontSize: 11,
                         ),
                         const SizedBox(width: 8),
                         IconStat(
-                          icon: 'assets/time.png',
+                          icon: AppIcons.time,
                           label: time,
                           color: ext.textMuted,
                           fontSize: 11,

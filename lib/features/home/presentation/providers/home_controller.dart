@@ -1,41 +1,86 @@
+import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/features/home/data/home_repository.dart';
 import 'package:fitness_app/features/home/domain/home_models.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_controller.g.dart';
 
-/// Mock data provider — a straight Provider (not a Notifier) since nothing
-/// on the home dashboard is mutated, matching the legacy `Homecontroller`
-/// which never called `.obs`. Swap the body for a repository call once a
-/// backend exists; the page never needs to change.
+/// The four fixed nav tiles — see [HomeCategory]'s doc comment for why
+/// these stay a plain list instead of a backend-fetched one.
 @riverpod
-List<HomeCategory> homeCategories(Ref ref) => const [
-  HomeCategory(image: 'assets/workout.png', name: 'Workout'),
-  HomeCategory(image: 'assets/progress.png', name: 'Progress\nTracking'),
-  HomeCategory(image: 'assets/nutrition.png', name: 'Nutrition'),
-  HomeCategory(image: 'assets/community2.png', name: 'Community'),
+List<HomeCategory> homeCategories(Ref ref) => [
+  HomeCategory(image: AppIcons.workout, name: 'Workout'),
+  HomeCategory(image: AppIcons.progress, name: 'Progress\nTracking'),
+  HomeCategory(image: AppIcons.nutrition, name: 'Nutrition'),
+  HomeCategory(image: AppIcons.community, name: 'Community'),
 ];
 
-@riverpod
-List<RecommendedWorkout> homeRecommendations(Ref ref) => const [
-  RecommendedWorkout(
-    image: 'assets/squat.png',
-    title: 'squat Exercise',
-    duration: '12 Minutes',
-    calories: '120 Kcal',
-  ),
-  RecommendedWorkout(
-    image: 'assets/fullbody.png',
-    title: 'Full Body stretching',
-    duration: '10 Minutes',
-    calories: '100 Kcal',
-  ),
-];
+enum HomeLoadStatus { loading, loaded, error }
 
+/// Wraps a home-screen list section with its fetch status so the UI can
+/// render a skeleton while [HomeLoadStatus.loading], a friendly message
+/// with a retry action on [HomeLoadStatus.error], and the real list once
+/// [HomeLoadStatus.loaded] — plain empty lists alone can't tell those three
+/// states apart.
+class HomeSectionState<T> {
+  const HomeSectionState({required this.status, required this.items});
+
+  const HomeSectionState.loading() : this(status: HomeLoadStatus.loading, items: const []);
+
+  final HomeLoadStatus status;
+  final List<T> items;
+}
+
+/// Loads a few popular workouts from `/api/workouts?popular=true` for the
+/// "Recommended" row.
 @riverpod
-List<ArticleTip> homeArticles(Ref ref) => const [
-  ArticleTip(image: 'assets/article1.png', description: 'Supplement Guide...'),
-  ArticleTip(
-    image: 'assets/article2.png',
-    description: '15 Quick & Effective\n Daily Routines...',
-  ),
-];
+class HomeRecommendations extends _$HomeRecommendations {
+  @override
+  HomeSectionState<RecommendedWorkout> build() {
+    Future.microtask(_load);
+    return const HomeSectionState.loading();
+  }
+
+  Future<void> reload() => _load();
+
+  Future<void> _load() async {
+    state = const HomeSectionState.loading();
+    try {
+      final repo = ref.read(workoutRepositoryProvider);
+      var docs = await repo.fetchWorkouts(popular: true);
+      if (docs.isEmpty) docs = await repo.fetchWorkouts();
+      state = HomeSectionState(
+        status: HomeLoadStatus.loaded,
+        items: docs.take(6).map(RecommendedWorkout.fromJson).toList(),
+      );
+    } catch (_) {
+      state = const HomeSectionState(status: HomeLoadStatus.error, items: []);
+    }
+  }
+}
+
+/// Loads `/api/articles` for the "Articles & Tips" row.
+@riverpod
+class HomeArticles extends _$HomeArticles {
+  @override
+  HomeSectionState<ArticleTip> build() {
+    Future.microtask(_load);
+    return const HomeSectionState.loading();
+  }
+
+  Future<void> reload() => _load();
+
+  Future<void> _load() async {
+    state = const HomeSectionState.loading();
+    try {
+      final docs = await ref.read(homeRepositoryProvider).fetchArticles();
+      state = HomeSectionState(
+        status: HomeLoadStatus.loaded,
+        items: docs.map(ArticleTip.fromJson).toList(),
+      );
+    } catch (_) {
+      state = const HomeSectionState(status: HomeLoadStatus.error, items: []);
+    }
+  }
+}

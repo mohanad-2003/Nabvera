@@ -8,13 +8,27 @@ part of 'profile_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Loads the signed-in user's profile from the backend on first read.
+/// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing
+/// consumer keeps working unchanged: it starts as [UserProfile.empty] and
+/// swaps in the real data — or stays empty on failure — once the fetch
+/// resolves, notifying listeners like any other state change.
 
-@ProviderFor(currentUserProfile)
+@ProviderFor(CurrentUserProfile)
 final currentUserProfileProvider = CurrentUserProfileProvider._();
 
+/// Loads the signed-in user's profile from the backend on first read.
+/// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing
+/// consumer keeps working unchanged: it starts as [UserProfile.empty] and
+/// swaps in the real data — or stays empty on failure — once the fetch
+/// resolves, notifying listeners like any other state change.
 final class CurrentUserProfileProvider
-    extends $FunctionalProvider<UserProfile, UserProfile, UserProfile>
-    with $Provider<UserProfile> {
+    extends $NotifierProvider<CurrentUserProfile, UserProfile> {
+  /// Loads the signed-in user's profile from the backend on first read.
+  /// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing
+  /// consumer keeps working unchanged: it starts as [UserProfile.empty] and
+  /// swaps in the real data — or stays empty on failure — once the fetch
+  /// resolves, notifying listeners like any other state change.
   CurrentUserProfileProvider._()
     : super(
         from: null,
@@ -31,13 +45,7 @@ final class CurrentUserProfileProvider
 
   @$internal
   @override
-  $ProviderElement<UserProfile> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  UserProfile create(Ref ref) {
-    return currentUserProfile(ref);
-  }
+  CurrentUserProfile create() => CurrentUserProfile();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(UserProfile value) {
@@ -49,7 +57,31 @@ final class CurrentUserProfileProvider
 }
 
 String _$currentUserProfileHash() =>
-    r'8a5776e3e3ce01f306d131f04a2b89622ff3af48';
+    r'54533bc819b40d307ff632b079b879ff130b25d2';
+
+/// Loads the signed-in user's profile from the backend on first read.
+/// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing
+/// consumer keeps working unchanged: it starts as [UserProfile.empty] and
+/// swaps in the real data — or stays empty on failure — once the fetch
+/// resolves, notifying listeners like any other state change.
+
+abstract class _$CurrentUserProfile extends $Notifier<UserProfile> {
+  UserProfile build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<UserProfile, UserProfile>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<UserProfile, UserProfile>,
+              UserProfile,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
 
 @ProviderFor(userDocuments)
 final userDocumentsProvider = UserDocumentsProvider._();

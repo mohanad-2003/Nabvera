@@ -51,7 +51,7 @@ final class MealPlanWizardControllerProvider
 }
 
 String _$mealPlanWizardControllerHash() =>
-    r'5bbef019bb9a03addec3a9ecab84abf4894b3c7d';
+    r'ae04c10a8d6ca9e4c76ab96bf85e460f533e4281';
 
 /// Single wizard state replacing MealPlaneController + MealPlan2Conroller,
 /// which only ever held one selected value each across two consecutive

@@ -1,51 +1,56 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/localization/generated/app_localizations.dart';
+import '../../../../core/network/app_icons.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/pressable_scale.dart';
+import '../../../../core/widgets/smart_image.dart';
 
-/// Reused by login and signup — previously duplicated as private
-/// `_SocialIcon` widgets in each file.
+/// The secondary sign-in action — Google only. Facebook/Apple were never
+/// wired to a real provider, and the third icon was actually a mislabeled
+/// fingerprint asset, not an Apple mark — both removed rather than shipping
+/// decorative, non-functional buttons.
 class SocialLoginRow extends StatelessWidget {
-  const SocialLoginRow({super.key});
+  const SocialLoginRow({super.key, this.onGooglePressed});
 
-  static const _icons = [
-    'assets/gmail.png',
-    'assets/face.png',
-    'assets/mark.png',
-  ];
+  final VoidCallback? onGooglePressed;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (final icon in _icons) ...[
-          PressableScale(
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: ext.glassFill,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: ext.glassBorder),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.shadow.withValues(alpha: 0.20),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Center(child: Image.asset(icon, width: 22, height: 22)),
+    return PressableScale(
+      enabled: onGooglePressed != null,
+      child: SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: OutlinedButton(
+          onPressed: onGooglePressed,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            side: BorderSide(color: ext.textMuted.withValues(alpha: 0.32)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(999),
             ),
           ),
-          if (icon != _icons.last) const SizedBox(width: 14),
-        ],
-      ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SmartImage(AppIcons.gmail, width: 22, height: 22),
+              const SizedBox(width: 10),
+              Text(
+                l10n.authContinueWithGoogle,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

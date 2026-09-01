@@ -1,14 +1,12 @@
 /// Typed, centralized route paths. Never hardcode a path string at a call site.
 abstract final class AppRoutes {
   static const splash = '/splash';
-  static const welcome = '/welcome';
   static const onboarding = '/onboarding';
   static const login = '/login';
   static const signup = '/signup';
   static const forgotPassword = '/forgot-password';
-  static const setPassword = '/set-password';
   static const fingerprint = '/fingerprint';
-
+  static const biometricUnlock = '/biometric-unlock';
   static const setup = '/setup';
   static const setupGender = '/setup/gender';
   static const setupAge = '/setup/age';
@@ -16,16 +14,13 @@ abstract final class AppRoutes {
   static const setupHeight = '/setup/height';
   static const setupGoal = '/setup/goal';
   static const setupPhysical = '/setup/physical';
-
   static const search = '/search';
   static const notifications = '/notifications';
-
   static const home = '/home';
   static const workout = '/workout';
   static const nutrition = '/nutrition';
   static const community = '/community';
   static const profile = '/profile';
-
   static const workoutCategoryDetail = '/workout/category';
   static const exerciseDetail = '/workout/exercise';
   static const createRoutine = '/workout/create-routine';
@@ -34,7 +29,6 @@ abstract final class AppRoutes {
   static const workoutCharts = '/workout/charts';
   static const workoutRecommended = '/workout/recommended';
   static const weeklyChallenge = '/workout/weekly-challenge';
-
   static const mealPlanIntro = '/nutrition/meal-plan';
   static const mealPlanPreferences = '/nutrition/meal-plan/preferences';
   static const mealPlanGoals = '/nutrition/meal-plan/goals';
@@ -43,9 +37,7 @@ abstract final class AppRoutes {
   static const mealDetail = '/nutrition/meal';
   static const mealIdea = '/nutrition/meal-idea';
   static const mealIdeaDiscover = '/nutrition/meal-idea/discover';
-
   static const communityChallenge = '/community/challenge';
-
   static const editProfile = '/profile/edit';
   static const privacy = '/profile/privacy';
   static const privacyPolicy = '/profile/privacy/policy';
@@ -57,4 +49,5 @@ abstract final class AppRoutes {
   static const help = '/profile/help';
   static const document = '/profile/document';
   static const favorite = '/favorite';
+  static const articleDetail = '/home/article';
 }

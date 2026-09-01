@@ -63,44 +63,48 @@ abstract class _$MealIdeaCategoryController extends $Notifier<MealCategory> {
   }
 }
 
-@ProviderFor(mealIdeaSection)
-final mealIdeaSectionProvider = MealIdeaSectionFamily._();
+/// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+/// becomes the section's hero ("top"), the next two are "recommended", and
+/// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+/// a category has no recipes yet.
 
-final class MealIdeaSectionProvider
-    extends
-        $FunctionalProvider<MealIdeaSection, MealIdeaSection, MealIdeaSection>
-    with $Provider<MealIdeaSection> {
-  MealIdeaSectionProvider._({
-    required MealIdeaSectionFamily super.from,
+@ProviderFor(MealIdeaSectionController)
+final mealIdeaSectionControllerProvider = MealIdeaSectionControllerFamily._();
+
+/// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+/// becomes the section's hero ("top"), the next two are "recommended", and
+/// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+/// a category has no recipes yet.
+final class MealIdeaSectionControllerProvider
+    extends $NotifierProvider<MealIdeaSectionController, MealIdeaSection> {
+  /// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+  /// becomes the section's hero ("top"), the next two are "recommended", and
+  /// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+  /// a category has no recipes yet.
+  MealIdeaSectionControllerProvider._({
+    required MealIdeaSectionControllerFamily super.from,
     required MealCategory super.argument,
   }) : super(
          retry: null,
-         name: r'mealIdeaSectionProvider',
+         name: r'mealIdeaSectionControllerProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$mealIdeaSectionHash();
+  String debugGetCreateSourceHash() => _$mealIdeaSectionControllerHash();
 
   @override
   String toString() {
-    return r'mealIdeaSectionProvider'
+    return r'mealIdeaSectionControllerProvider'
         ''
         '($argument)';
   }
 
   @$internal
   @override
-  $ProviderElement<MealIdeaSection> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  MealIdeaSection create(Ref ref) {
-    final argument = this.argument as MealCategory;
-    return mealIdeaSection(ref, argument);
-  }
+  MealIdeaSectionController create() => MealIdeaSectionController();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(MealIdeaSection value) {
@@ -112,7 +116,8 @@ final class MealIdeaSectionProvider
 
   @override
   bool operator ==(Object other) {
-    return other is MealIdeaSectionProvider && other.argument == argument;
+    return other is MealIdeaSectionControllerProvider &&
+        other.argument == argument;
   }
 
   @override
@@ -121,31 +126,85 @@ final class MealIdeaSectionProvider
   }
 }
 
-String _$mealIdeaSectionHash() => r'31b96189d7afb70ee12f9534745bd8523164467c';
+String _$mealIdeaSectionControllerHash() =>
+    r'29de11d043302458a7df7d5a513172e2d47552f6';
 
-final class MealIdeaSectionFamily extends $Family
-    with $FunctionalFamilyOverride<MealIdeaSection, MealCategory> {
-  MealIdeaSectionFamily._()
+/// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+/// becomes the section's hero ("top"), the next two are "recommended", and
+/// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+/// a category has no recipes yet.
+
+final class MealIdeaSectionControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MealIdeaSectionController,
+          MealIdeaSection,
+          MealIdeaSection,
+          MealIdeaSection,
+          MealCategory
+        > {
+  MealIdeaSectionControllerFamily._()
     : super(
         retry: null,
-        name: r'mealIdeaSectionProvider',
+        name: r'mealIdeaSectionControllerProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  MealIdeaSectionProvider call(MealCategory category) =>
-      MealIdeaSectionProvider._(argument: category, from: this);
+  /// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+  /// becomes the section's hero ("top"), the next two are "recommended", and
+  /// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+  /// a category has no recipes yet.
+
+  MealIdeaSectionControllerProvider call(MealCategory category) =>
+      MealIdeaSectionControllerProvider._(argument: category, from: this);
 
   @override
-  String toString() => r'mealIdeaSectionProvider';
+  String toString() => r'mealIdeaSectionControllerProvider';
 }
+
+/// Loads `/api/recipes?category=<category>`: the highest-rated recipe
+/// becomes the section's hero ("top"), the next two are "recommended", and
+/// the rest fill "recipes". Falls back to [MealDetail.empty] for `top` when
+/// a category has no recipes yet.
+
+abstract class _$MealIdeaSectionController extends $Notifier<MealIdeaSection> {
+  late final _$args = ref.$arg as MealCategory;
+  MealCategory get category => _$args;
+
+  MealIdeaSection build(MealCategory category);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<MealIdeaSection, MealIdeaSection>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<MealIdeaSection, MealIdeaSection>,
+              MealIdeaSection,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}
+
+/// Favorited recipe ids, seeded from the user's real profile
+/// (`favoriteRecipeIds`) and kept in sync with
+/// `POST /users/me/favorites/recipes/:id` on every toggle.
 
 @ProviderFor(MealIdeaFavorites)
 final mealIdeaFavoritesProvider = MealIdeaFavoritesProvider._();
 
+/// Favorited recipe ids, seeded from the user's real profile
+/// (`favoriteRecipeIds`) and kept in sync with
+/// `POST /users/me/favorites/recipes/:id` on every toggle.
 final class MealIdeaFavoritesProvider
     extends $NotifierProvider<MealIdeaFavorites, Set<String>> {
+  /// Favorited recipe ids, seeded from the user's real profile
+  /// (`favoriteRecipeIds`) and kept in sync with
+  /// `POST /users/me/favorites/recipes/:id` on every toggle.
   MealIdeaFavoritesProvider._()
     : super(
         from: null,
@@ -173,7 +232,11 @@ final class MealIdeaFavoritesProvider
   }
 }
 
-String _$mealIdeaFavoritesHash() => r'f823cc808e1871c902bd5c08536a5b5e77cbfdf7';
+String _$mealIdeaFavoritesHash() => r'6e08f8d1a7237471399e3957fc092c39bdb5e9c1';
+
+/// Favorited recipe ids, seeded from the user's real profile
+/// (`favoriteRecipeIds`) and kept in sync with
+/// `POST /users/me/favorites/recipes/:id` on every toggle.
 
 abstract class _$MealIdeaFavorites extends $Notifier<Set<String>> {
   Set<String> build();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../domain/auth_credentials.dart';
+import '../../data/firebase_auth_service.dart';
 
 part 'signup_controller.g.dart';
 
@@ -22,15 +22,23 @@ class SignupController extends _$SignupController {
     });
   }
 
-  Future<SignupCredentials> submit() async {
+  Future<void> submit() async {
     state = const AsyncLoading();
-    final credentials = SignupCredentials(
-      fullName: fullNameController.text.trim(),
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    state = const AsyncData(null);
-    return credentials;
+    state = await AsyncValue.guard(() async {
+      await ref
+          .read(firebaseAuthServiceProvider)
+          .signUpWithEmail(
+            fullName: fullNameController.text.trim(),
+            email: emailController.text.trim(),
+            password: passwordController.text,
+          );
+    });
+  }
+
+  Future<void> submitWithGoogle() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(firebaseAuthServiceProvider).signInWithGoogle();
+    });
   }
 }

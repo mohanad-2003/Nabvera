@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../profile/data/user_repository.dart';
+
 part 'onboarding_profile_controller.g.dart';
 
 enum Gender { male, female }
@@ -62,4 +64,35 @@ class OnboardingProfileController extends _$OnboardingProfileController {
   void selectGoal(FitnessGoal goal) => state = state.copyWith(goal: goal);
   void selectActivityLevel(ActivityLevel level) =>
       state = state.copyWith(activityLevel: level);
+
+  /// Persists the wizard's answers to the user's backend profile. Best
+  /// effort: onboarding still finishes and lands on Home even if this
+  /// fails — the user can always fix details later from Edit Profile.
+  Future<void> submit() async {
+    final s = state;
+    final patch = <String, dynamic>{
+      'heightCm': s.heightCm,
+      'weightKg': s.weightKg,
+      'dateOfBirth': DateTime(DateTime.now().year - s.age, 1, 1).toIso8601String(),
+      if (s.gender != null)
+        'gender': switch (s.gender!) {
+          Gender.male => 'male',
+          Gender.female => 'female',
+        },
+      if (s.goal != null) 'goal': _goalToApi(s.goal!),
+    };
+    try {
+      await ref.read(userRepositoryProvider).updateProfile(patch);
+    } catch (_) {
+      // See doc comment — swallow and let the user continue.
+    }
+  }
+
+  static String _goalToApi(FitnessGoal goal) => switch (goal) {
+    FitnessGoal.loseWeight => 'lose_weight',
+    FitnessGoal.gainWeight => 'gain_muscle',
+    FitnessGoal.muscleMassGain => 'gain_muscle',
+    FitnessGoal.shapeBody => 'keep_fit',
+    FitnessGoal.others => 'keep_fit',
+  };
 }

@@ -1,7 +1,6 @@
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/selectable_option_card.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/selectable_option_card.dart';
 
 /// Redesigned radio-style option list, previously duplicated six times
 /// across the meal-plan wizard with fragile `MediaQuery.width` math for

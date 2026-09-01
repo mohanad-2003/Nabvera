@@ -24,12 +24,19 @@ dependencies:
   intl: ^0.20.2
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
+  firebase_core: ^4.14.0
+  firebase_auth: ^6.6.1
+  google_sign_in: 6.2.2
+  http: ^1.6.0
+  video_player: ^2.14.0
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
 
   build_runner: ^2.4.13
   riverpod_generator: ^4.0.4
@@ -41,7 +48,30 @@ flutter:
   generate: true
 
   assets:
-    - assets/
+      - assets/
+      - assets/onboarding/
+      - assets/bottom/home.png
+      - assets/bottom/workout.png
+      - assets/bottom/nutrition.png
+      - assets/bottom/community.png
+      - assets/bottom/profile.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  # Flat/legacy Android icon + iOS icon: opaque, logo padded to ~68% of the
+  # canvas so it isn't clipped by iOS's own corner-rounding.
+  image_path: assets/logo/icon_flat.png
+  # Adaptive Android icon (API 26+): transparent foreground padded to ~60%
+  # so the mark survives the launcher's circular/squircle/rounded-square
+  # mask crop instead of losing its edges — the previous config reused the
+  # raw un-padded logo (content ~99% of the canvas) for both, which is why
+  # the installed icon looked cropped/unpolished.
+  # White, not the app's dark-navy brand color — Android auto-shows this
+  # icon centered over a plain white backdrop as the cold-start splash on
+  # API 31+, and a dark card there read as a jarring, mismatched box.
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: assets/logo/icon_foreground.png
 
   # fonts:
   #   - family: Schyler

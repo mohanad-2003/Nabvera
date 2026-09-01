@@ -1,12 +1,10 @@
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme_extension.dart';
-
-/// Premium generated avatar — a gradient circle with a person glyph — used
-/// everywhere the app needs to represent "a user" (profile, home greeting,
-/// workout logs, community posts) without a real photo. Replaces the old
-/// `assets/profile.png` stock photo, which was also semantically wrong
-/// wherever it was reused across different unrelated people/posts.
+/// Represents "a user" — the gradient/glyph placeholder everywhere no real
+/// photo is available (profile, home greeting, workout logs, community
+/// posts), or the user's real photo (`User.avatarUrl`) when [imageUrl] is
+/// set. Falls back to the placeholder on load failure too.
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
     super.key,
@@ -14,16 +12,19 @@ class UserAvatar extends StatelessWidget {
     this.icon = Icons.person_rounded,
     this.borderColor,
     this.borderWidth = 0,
+    this.imageUrl,
   });
 
   final double radius;
   final IconData icon;
   final Color? borderColor;
   final double borderWidth;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final hasPhoto = imageUrl != null && imageUrl!.isNotEmpty;
 
     return Container(
       width: radius * 2,
@@ -39,7 +40,24 @@ class UserAvatar extends StatelessWidget {
                 )
                 : null,
       ),
-      child: Icon(icon, color: ext.onAccent, size: radius),
+      child:
+          hasPhoto
+              ? ClipOval(
+                child: Image.network(
+                  imageUrl!,
+                  width: radius * 2,
+                  height: radius * 2,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) =>
+                          Icon(icon, color: ext.onAccent, size: radius),
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Icon(icon, color: ext.onAccent, size: radius);
+                  },
+                ),
+              )
+              : Icon(icon, color: ext.onAccent, size: radius),
     );
   }
 }

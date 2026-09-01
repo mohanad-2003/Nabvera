@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for Firebase Auth and calls to the backend API. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Required for the biometric-unlock option (local_auth). -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <application
-        android:label="fitness_app"
+        android:label="Nabvera"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

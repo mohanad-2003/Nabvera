@@ -10,13 +10,13 @@ import '../theme/app_spacing.dart';
 
 class AppBottomNavItem {
   const AppBottomNavItem({
-    required this.icon,
-    required this.activeIcon,
+    required this.image,
+    required this.fallbackIcon,
     required this.label,
   });
 
-  final IconData icon;
-  final IconData activeIcon;
+  final String image;
+  final IconData fallbackIcon;
   final String label;
 }
 
@@ -40,28 +40,28 @@ class AppBottomNav extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return [
       AppBottomNavItem(
-        icon: Icons.home_outlined,
-        activeIcon: Icons.home_rounded,
+        image: 'assets/bottom/home.png',
+        fallbackIcon: Icons.home_rounded,
         label: l10n.navHome,
       ),
       AppBottomNavItem(
-        icon: Icons.fitness_center_outlined,
-        activeIcon: Icons.fitness_center_rounded,
+        image: 'assets/bottom/workout.png',
+        fallbackIcon: Icons.fitness_center_rounded,
         label: l10n.navWorkout,
       ),
       AppBottomNavItem(
-        icon: Icons.restaurant_outlined,
-        activeIcon: Icons.restaurant_rounded,
+        image: 'assets/bottom/nutrition.png',
+        fallbackIcon: Icons.restaurant_rounded,
         label: l10n.navNutrition,
       ),
       AppBottomNavItem(
-        icon: Icons.groups_outlined,
-        activeIcon: Icons.groups_rounded,
+        image: 'assets/bottom/community.png',
+        fallbackIcon: Icons.groups_rounded,
         label: l10n.navCommunity,
       ),
       AppBottomNavItem(
-        icon: Icons.person_outline_rounded,
-        activeIcon: Icons.person_rounded,
+        image: 'assets/bottom/profile.png',
+        fallbackIcon: Icons.person_rounded,
         label: l10n.navProfile,
       ),
     ];
@@ -177,11 +177,24 @@ class _NavItemButton extends StatelessWidget {
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
-              child: Icon(
-                selected ? item.activeIcon : item.icon,
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: Tween<double>(begin: 0.84, end: 1).animate(animation),
+                child: FadeTransition(opacity: animation, child: child),
+              ),
+              child: Opacity(
                 key: ValueKey(selected),
-                color: color,
-                size: 23,
+                opacity: selected ? 1 : 0.58,
+                child: Image.asset(
+                  item.image,
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => Icon(
+                    item.fallbackIcon,
+                    color: color,
+                    size: 23,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 3),

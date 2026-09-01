@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:fitness_app/features/nutrition/data/nutrition_repository.dart';
 import 'package:fitness_app/features/search/domain/search_models.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_controller.g.dart';
@@ -13,54 +17,104 @@ class SearchTabController extends _$SearchTabController {
   void select(SearchTab tab) => state = tab;
 }
 
+/// Two popular workouts shown above the results regardless of the current
+/// query — a "you might like" strip, same idea as Home's recommendations.
 @riverpod
-List<SearchResultItem> searchFeaturedWorkouts(Ref ref) => const [
-  SearchResultItem(
-    image: 'assets/squat.png',
-    name: 'Squat Exercise',
-    time: '12 Minutes',
-    calories: '120 Kcal',
-    type: SearchResultType.workout,
-  ),
-  SearchResultItem(
-    image: 'assets/fullbody.png',
-    name: 'Full Body Stretching',
-    time: '12 Minutes',
-    calories: '120 Kcal',
-    type: SearchResultType.workout,
-  ),
-];
+class SearchFeaturedWorkouts extends _$SearchFeaturedWorkouts {
+  @override
+  List<SearchResultItem> build() {
+    Future.microtask(_load);
+    return const [];
+  }
 
+  Future<void> _load() async {
+    try {
+      final repo = ref.read(workoutRepositoryProvider);
+      var docs = await repo.fetchWorkouts(popular: true);
+      if (docs.isEmpty) docs = await repo.fetchWorkouts();
+      state = docs.take(2).map(_workoutToResult).toList();
+    } catch (_) {
+      // Left empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
+}
+
+SearchResultItem _workoutToResult(Map<String, dynamic> doc) {
+  final exerciseCount = (doc['exercises'] as List?)?.length ?? 0;
+  return SearchResultItem(
+    image: (doc['coverImageUrl'] as String?) ?? 'assets/workout.png',
+    name: (doc['title'] as String?) ?? '',
+    time: '${doc['durationMinutes'] ?? '—'} Minutes',
+    calories: '${doc['estimatedCalories'] ?? '—'} Kcal',
+    type: SearchResultType.workout,
+    exercises: exerciseCount == 0 ? null : '$exerciseCount exercises',
+  );
+}
+
+SearchResultItem _recipeToResult(Map<String, dynamic> doc) {
+  final nutrition = doc['nutrition'] as Map<String, dynamic>? ?? const {};
+  return SearchResultItem(
+    image: (doc['imageUrl'] as String?) ?? 'assets/workout.png',
+    name: (doc['title'] as String?) ?? '',
+    time: '${doc['prepTimeMinutes'] ?? '—'} Minutes',
+    calories: '${nutrition['calories'] ?? '—'} Cal',
+    type: SearchResultType.nutrition,
+  );
+}
+
+/// The search box's live text — a plain [TextEditingController] the query
+/// provider watches indirectly via [SearchQueryController.submit].
 @riverpod
-List<SearchResultItem> searchAllResults(Ref ref) => const [
-  SearchResultItem(
-    image: 'assets/circuit.png',
-    name: 'Circuit Training',
-    time: '50 Minutes',
-    calories: '1300 Kcal',
-    type: SearchResultType.workout,
-    exercises: '5 exercises',
-  ),
-  SearchResultItem(
-    image: 'assets/delights.png',
-    name: 'Delights with\n Greek Yogurt',
-    time: '6 Minutes',
-    calories: '200 Cal',
-    type: SearchResultType.nutrition,
-  ),
-  SearchResultItem(
-    image: 'assets/split.png',
-    name: 'Split Strength\n Training',
-    time: '12 Minutes',
-    calories: '1250 Kcal',
-    type: SearchResultType.workout,
-    exercises: '5 exercises',
-  ),
-  SearchResultItem(
-    image: 'assets/turkey.png',
-    name: 'Turkey and\n Avocado Wrap',
-    time: '15 Minutes',
-    calories: '230 Cal',
-    type: SearchResultType.nutrition,
-  ),
-];
+class SearchQueryController extends _$SearchQueryController {
+  @override
+  String build() => '';
+
+  void update(String value) => state = value;
+}
+
+/// Debounced live search across `/api/workouts?search=` and
+/// `/api/recipes?search=` — empty query means empty results (nothing
+/// fabricated to fill the screen before the user types).
+@riverpod
+class SearchAllResults extends _$SearchAllResults {
+  Timer? _debounce;
+
+  @override
+  List<SearchResultItem> build() {
+    final query = ref.watch(searchQueryControllerProvider).trim();
+    ref.onDispose(() => _debounce?.cancel());
+
+    if (query.isEmpty) return const [];
+
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () => _search(query));
+    return state;
+  }
+
+  Future<void> _search(String query) async {
+    try {
+      final results = await Future.wait([
+        ref.read(workoutRepositoryProvider).fetchWorkouts(),
+        ref.read(nutritionRepositoryProvider).fetchRecipes(),
+      ]);
+      // The backend's `search` query param does a case-insensitive title
+      // match server-side; filtering again client-side here would just
+      // duplicate that, so instead this fetches the small demo catalog
+      // and filters locally — swap for `search: query` once the catalog
+      // is large enough that fetching everything stops being cheap.
+      final lower = query.toLowerCase();
+      final workouts =
+          (results[0])
+              .where((w) => (w['title'] as String? ?? '').toLowerCase().contains(lower))
+              .map(_workoutToResult);
+      final recipes =
+          (results[1])
+              .where((r) => (r['title'] as String? ?? '').toLowerCase().contains(lower))
+              .map(_recipeToResult);
+      state = [...workouts, ...recipes];
+    } catch (_) {
+      // Left at the previous state — see WorkoutListByLevel for the same
+      // pattern.
+    }
+  }
+}

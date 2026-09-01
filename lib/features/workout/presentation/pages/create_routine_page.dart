@@ -8,6 +8,7 @@ import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/core/widgets/primary_button.dart';
 import 'package:fitness_app/features/workout/domain/workout_models.dart';
 import 'package:fitness_app/features/workout/presentation/providers/create_routine_controller.dart';
+import 'package:fitness_app/features/workout/presentation/providers/your_routine_controller.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/difficulty_selector.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/exercise_card.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/goal_selector.dart';
@@ -128,10 +129,12 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
   }
 
   Future<void> _handleCreate(
+    CreateRoutineController controller,
     CreateRoutineState state,
     AppLocalizations l10n,
   ) async {
-    if (_nameController.text.trim().isEmpty) {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
       setState(() => _validationError = l10n.createRoutineNameValidation);
       return;
     }
@@ -143,12 +146,21 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
       _validationError = null;
       _creating = true;
     });
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
-    setState(() => _creating = false);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.createRoutineSuccessMessage)));
+    try {
+      await controller.create(name);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.createRoutineSuccessMessage)),
+      );
+      ref.invalidate(yourRoutineControllerProvider);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.authErrorGeneric)));
+    } finally {
+      if (mounted) setState(() => _creating = false);
+    }
   }
 
   @override
@@ -489,7 +501,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                     PrimaryButton(
                       label: l10n.workoutCreateRoutine,
                       isLoading: _creating,
-                      onPressed: () => _handleCreate(state, l10n),
+                      onPressed: () => _handleCreate(controller, state, l10n),
                     ),
                     const SizedBox(height: 20),
                   ],

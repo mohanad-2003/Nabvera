@@ -19,6 +19,8 @@ class PremiumTextField extends StatefulWidget {
     this.onChanged,
     this.prefixIcon,
     this.suffixIcon,
+    this.errorText,
+    this.transparent = false,
   });
 
   final TextEditingController? controller;
@@ -31,6 +33,16 @@ class PremiumTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
+
+  /// A server/auth error to show under the field right now (e.g. "No
+  /// account found with that email"), independent of form validation —
+  /// cleared by the caller once the user edits the field again.
+  final String? errorText;
+
+  /// No fill color, no shadow — just a light border that thickens and
+  /// tints on focus. Used where the login/signup forms sit directly on the
+  /// page background instead of inside a card.
+  final bool transparent;
 
   @override
   State<PremiumTextField> createState() => _PremiumTextFieldState();
@@ -61,8 +73,12 @@ class _PremiumTextFieldState extends State<PremiumTextField> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
-    final radius = BorderRadius.circular(20);
+    final radius = BorderRadius.circular(widget.transparent ? 16 : 20);
     final isDark = theme.brightness == Brightness.dark;
+    final baseBorderColor =
+        widget.transparent
+            ? ext.textMuted.withValues(alpha: 0.32)
+            : ext.glassBorder;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
@@ -70,7 +86,7 @@ class _PremiumTextFieldState extends State<PremiumTextField> {
       decoration: BoxDecoration(
         borderRadius: radius,
         boxShadow:
-            _focused
+            _focused && !widget.transparent
                 ? [
                   BoxShadow(
                     color: theme.colorScheme.primary.withValues(alpha: 0.20),
@@ -92,8 +108,12 @@ class _PremiumTextFieldState extends State<PremiumTextField> {
         decoration: InputDecoration(
           labelText: widget.label,
           hintText: widget.hint,
-          filled: true,
-          fillColor: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+          errorText: widget.errorText,
+          filled: !widget.transparent,
+          fillColor:
+              widget.transparent
+                  ? null
+                  : (isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white),
           prefixIcon:
               widget.prefixIcon != null
                   ? Icon(
@@ -102,21 +122,28 @@ class _PremiumTextFieldState extends State<PremiumTextField> {
                   )
                   : null,
           suffixIcon: widget.suffixIcon,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: widget.transparent ? 16 : 18,
             vertical: 18,
           ),
           border: OutlineInputBorder(
             borderRadius: radius,
-            borderSide: BorderSide(color: ext.glassBorder),
+            borderSide: BorderSide(
+              color: widget.transparent ? baseBorderColor : ext.glassBorder,
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: radius,
-            borderSide: BorderSide(color: ext.glassBorder),
+            borderSide: BorderSide(
+              color: widget.transparent ? baseBorderColor : ext.glassBorder,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: radius,
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.8),
+            borderSide: BorderSide(
+              color: theme.colorScheme.primary,
+              width: widget.transparent ? 1.6 : 1.8,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: radius,
@@ -143,6 +170,8 @@ class PremiumPasswordField extends StatefulWidget {
     required this.validator,
     this.onChanged,
     this.textInputAction,
+    this.errorText,
+    this.transparent = false,
   });
 
   final TextEditingController controller;
@@ -151,6 +180,8 @@ class PremiumPasswordField extends StatefulWidget {
   final String? Function(String?) validator;
   final ValueChanged<String>? onChanged;
   final TextInputAction? textInputAction;
+  final String? errorText;
+  final bool transparent;
 
   @override
   State<PremiumPasswordField> createState() => _PremiumPasswordFieldState();
@@ -170,6 +201,8 @@ class _PremiumPasswordFieldState extends State<PremiumPasswordField> {
       validator: widget.validator,
       onChanged: widget.onChanged,
       textInputAction: widget.textInputAction,
+      errorText: widget.errorText,
+      transparent: widget.transparent,
       suffixIcon: IconButton(
         onPressed: () => setState(() => _obscureText = !_obscureText),
         icon: Icon(

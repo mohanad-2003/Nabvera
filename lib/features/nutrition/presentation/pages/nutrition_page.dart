@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,9 @@ import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/featured_card.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
 import '../../../workout/presentation/widgets/workout_header.dart';
+import '../../data/nutrition_repository.dart';
+import '../../domain/nutrition_models.dart';
+import '../providers/meal_idea_controller.dart';
 import '../providers/nutrition_controller.dart';
 import '../widgets/nutrition_summary_card.dart';
 import '../widgets/premium_recipe_card.dart';
@@ -21,7 +25,8 @@ class NutritionPage extends ConsumerWidget {
     final tab = ref.watch(nutritionTabControllerProvider);
     final recommended = ref.watch(nutritionRecommendedProvider);
     final recipes = ref.watch(nutritionRecipesProvider);
-    final summary = ref.watch(dailyNutritionSummaryProvider);
+    final summary = ref.watch(dailyNutritionSummaryControllerProvider);
+    final favorites = ref.watch(mealIdeaFavoritesProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < 720;
@@ -39,7 +44,7 @@ class NutritionPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                WorkoutHeader(title: l10n.navNutrition),
+                WorkoutHeader(title: l10n.navNutrition, showBack: false),
                 const SizedBox(height: 6),
                 Text(
                   l10n.nutritionSubtitle,
@@ -92,15 +97,23 @@ class NutritionPage extends ConsumerWidget {
                   title: l10n.nutritionFeaturedRecipeName,
                   metas: [
                     FeaturedCardMeta(
-                      icon: 'assets/time.png',
+                      icon: AppIcons.time,
                       label: l10n.nutritionFeaturedRecipeDuration,
                     ),
                     FeaturedCardMeta(
-                      icon: 'assets/calories.png',
+                      icon: AppIcons.calories,
                       label: l10n.nutritionFeaturedRecipeCalories,
                     ),
                   ],
                   height: heroHeight,
+                  onTap:
+                      recommended.isEmpty
+                          ? null
+                          : () => _openRecipe(
+                            context,
+                            ref,
+                            recommended.first.id,
+                          ),
                 ),
                 SizedBox(height: compact ? 14 : 22),
                 PremiumSectionHeader(title: l10n.nutritionRecommended),
@@ -113,7 +126,10 @@ class NutritionPage extends ConsumerWidget {
               maxCrossAxisExtent: 220,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              mainAxisExtent: 284,
+              // Sized to the card's actual content (104 image + ~10 more
+              // lines of text/chips below it) — the previous 284 left a
+              // large empty gap under every card regardless of content.
+              mainAxisExtent: 220,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -121,15 +137,28 @@ class NutritionPage extends ConsumerWidget {
                 return PremiumRecipeCard(
                   image: item.image,
                   name: item.name,
-                  time: item.time,
-                  calories: item.calories,
+                  time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
+                  calories: recipeCaloriesLabel(
+                    l10n,
+                    item.caloriesValue,
+                    item.calories,
+                  ),
                   subtitle: item.subtitle,
                   protein: item.protein,
                   carbs: item.carbs,
                   fat: item.fat,
                   rating: item.rating,
-                  difficulty: item.difficulty,
+                  difficulty:
+                      item.difficulty == null
+                          ? null
+                          : recipeDifficultyLabel(l10n, item.difficulty),
                   imageHeight: 104,
+                  isFavorite: favorites.contains(item.id),
+                  onFavoriteTap:
+                      () => ref
+                          .read(mealIdeaFavoritesProvider.notifier)
+                          .toggle(item.id),
+                  onTap: () => _openRecipe(context, ref, item.id),
                 );
               },
               childCount: recommended.length,
@@ -147,15 +176,29 @@ class NutritionPage extends ConsumerWidget {
           ),
           SliverList.separated(
             itemCount: recipes.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder:
+                (_, _) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Divider(height: 1, color: ext.glassBorder),
+                ),
             itemBuilder: (context, index) {
               final item = recipes[index];
               return PremiumRecipeListTile(
                 image: item.image,
                 name: item.name,
-                time: item.time,
-                calories: item.calories,
+                time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
+                calories: recipeCaloriesLabel(
+                  l10n,
+                  item.caloriesValue,
+                  item.calories,
+                ),
                 rating: item.rating,
+                isFavorite: favorites.contains(item.id),
+                onFavoriteTap:
+                    () => ref
+                        .read(mealIdeaFavoritesProvider.notifier)
+                        .toggle(item.id),
+                onTap: () => _openRecipe(context, ref, item.id),
               );
             },
           ),
@@ -163,5 +206,25 @@ class NutritionPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// Fetches the full recipe and opens it as a real [MealDetail] — the
+  /// card only carries the trimmed list fields, so this gets the real
+  /// ingredients/steps/tips/benefits before navigating.
+  Future<void> _openRecipe(
+    BuildContext context,
+    WidgetRef ref,
+    String recipeId,
+  ) async {
+    if (recipeId.isEmpty) return;
+    try {
+      final json = await ref
+          .read(nutritionRepositoryProvider)
+          .fetchRecipeById(recipeId);
+      if (!context.mounted) return;
+      context.push(AppRoutes.mealDetail, extra: MealDetail.fromJson(json));
+    } catch (_) {
+      // Backend unreachable / recipe deleted — silently do nothing.
+    }
   }
 }

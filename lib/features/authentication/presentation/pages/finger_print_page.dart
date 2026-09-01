@@ -1,4 +1,7 @@
+import 'package:fitness_app/features/authentication/data/biometric_service.dart';
+import 'package:fitness_app/core/storage/preferences_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/generated/app_localizations.dart';
@@ -11,8 +14,40 @@ import '../widgets/auth_background.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/auth_section_hero.dart';
 
-class FingerPrintPage extends StatelessWidget {
+enum _State { idle, checking, success, failed }
+
+/// One-time, opt-in offer to turn on the biometric app-lock — pushed only
+/// right after a successful signup, and only by a caller that has already
+/// confirmed [BiometricService.isAvailable]. This page never decides on its
+/// own whether to show the "enable" action; it trusts the caller's check so
+/// a device without enrolled biometrics never sees a button promising a
+/// feature it can't back.
+class FingerPrintPage extends ConsumerStatefulWidget {
   const FingerPrintPage({super.key});
+
+  @override
+  ConsumerState<FingerPrintPage> createState() => _FingerPrintPageState();
+}
+
+class _FingerPrintPageState extends ConsumerState<FingerPrintPage> {
+  _State _state = _State.idle;
+
+  Future<void> _enable() async {
+    setState(() => _state = _State.checking);
+    final l10n = AppLocalizations.of(context);
+    final ok = await ref
+        .read(biometricServiceProvider)
+        .authenticate(l10n.authBiometricUnlockBody);
+    if (!mounted) return;
+    if (ok) {
+      await ref.read(preferencesServiceProvider).setBiometricEnabled(true);
+    }
+    setState(() => _state = ok ? _State.success : _State.failed);
+    if (ok) {
+      await Future.delayed(const Duration(milliseconds: 700));
+      if (mounted) context.go(AppRoutes.setup);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +57,35 @@ class FingerPrintPage extends StatelessWidget {
 
     return Scaffold(
       body: AuthBackground(
+        showPreferenceControls: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
           child: Column(
             children: [
-              AuthHeader(title: l10n.authBiometricTitle),
+              AuthHeader(title: l10n.authBiometricTitle, showBack: false),
               const SizedBox(height: 12),
               FadeSlideIn(
                 child: AuthSectionHero(
-                  icon: Icons.fingerprint_rounded,
-                  colors: const [AppColors.aquaBlue, AppColors.seedViolet],
+                  icon:
+                      _state == _State.success
+                          ? Icons.check_circle_rounded
+                          : _state == _State.failed
+                          ? Icons.error_outline_rounded
+                          : Icons.fingerprint_rounded,
+                  colors:
+                      _state == _State.success
+                          ? [ext.success, AppColors.aquaBlue]
+                          : _state == _State.failed
+                          ? [ext.danger, AppColors.electricOrange]
+                          : const [AppColors.aquaBlue, AppColors.seedViolet],
                   heroHeight: 220,
                   title: l10n.authBiometricHeadline,
-                  subtitle: l10n.authBiometricBody,
+                  subtitle:
+                      _state == _State.success
+                          ? l10n.authBiometricEnableSuccess
+                          : _state == _State.failed
+                          ? l10n.authBiometricEnableFailed
+                          : l10n.authBiometricBody,
                 ),
               ),
               const SizedBox(height: 40),
@@ -43,9 +94,14 @@ class FingerPrintPage extends StatelessWidget {
                 child: Column(
                   children: [
                     PrimaryButton(
-                      label: l10n.authEnableFingerprint,
+                      label:
+                          _state == _State.failed
+                              ? l10n.authBiometricRetry
+                              : l10n.authEnableFingerprint,
                       icon: Icons.fingerprint_rounded,
-                      onPressed: () => context.go(AppRoutes.setup),
+                      isLoading: _state == _State.checking,
+                      onPressed:
+                          _state == _State.success ? null : () => _enable(),
                     ),
                     const SizedBox(height: 14),
                     TextButton(

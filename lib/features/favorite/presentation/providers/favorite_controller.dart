@@ -1,3 +1,7 @@
+import 'package:fitness_app/features/nutrition/data/nutrition_repository.dart';
+import 'package:fitness_app/features/profile/data/user_repository.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/favorite_models.dart';
@@ -14,92 +18,78 @@ class FavoriteFilterController extends _$FavoriteFilterController {
   void select(FavoriteFilter filter) => state = filter;
 }
 
-const _allItems = [
-  FavoriteItem(
-    image: 'assets/upper.png',
-    title: 'Upper Body',
-    type: FavoriteType.video,
-    duration: '60 Minutes',
-    calories: '1320 Kcal',
-    exercises: '5 Exercises',
-  ),
-  FavoriteItem(
-    image: 'assets/loop.png',
-    title: 'Loop Band Exercises',
-    type: FavoriteType.video,
-    duration: '45 Minutes',
-    calories: '785 Kcal',
-    exercises: '5 Exercises',
-  ),
-  FavoriteItem(
-    image: 'assets/dumbbell.png',
-    title: 'Dumbbell Step Up',
-    type: FavoriteType.video,
-    duration: '12 Minutes',
-    calories: '1385 Kcal',
-    exercises: '3 Exercises',
-  ),
-  FavoriteItem(
-    image: 'assets/split.png',
-    title: 'Split Strength Training',
-    type: FavoriteType.video,
-    duration: '12 Minutes',
-    calories: '1250 Kcal',
-    exercises: '5 Exercises',
-  ),
-  FavoriteItem(
-    image: 'assets/boost.png',
-    title: 'Boost Energy & Vitality',
-    type: FavoriteType.article,
-    text:
-        'Incorporating physical exercise into your daily routine can boost...',
-  ),
-  FavoriteItem(
-    image: 'assets/pull.png',
-    title: 'Pull Out',
-    type: FavoriteType.video,
-    duration: '30 Minutes',
-    calories: '1210 Kcal',
-    exercises: '10 Exercises',
-  ),
-  FavoriteItem(
-    image: 'assets/avocado.png',
-    title: 'Avocado & Egg Toast',
-    type: FavoriteType.article,
-    duration: '15 Minutes',
-    calories: '150 Cal',
-  ),
-  FavoriteItem(
-    image: 'assets/lower.png',
-    title: 'Lower Body Blast',
-    type: FavoriteType.article,
-    text:
-        'A lower body blast is a high-intensity workout focused on targeting...',
-  ),
-  FavoriteItem(
-    image: 'assets/fruit.png',
-    title: 'Fruit Smoothie',
-    type: FavoriteType.article,
-    duration: '12 Minutes',
-    calories: '120 Cal',
-  ),
-  FavoriteItem(
-    image: 'assets/hydrate.png',
-    title: 'Hydrate Properly',
-    type: FavoriteType.article,
-    text:
-        'Stay hydrated before, during, and after your workouts to optimize...',
-  ),
-];
-
+/// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
+/// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`
+/// from `/api/recipes/:id` ("article" cards). There's no batch-by-ids
+/// endpoint, so this fetches each favorite individually; fine at the
+/// small scale a favorites list actually reaches.
 @riverpod
-List<FavoriteItem> filteredFavorites(Ref ref) {
-  final filter = ref.watch(favoriteFilterControllerProvider);
-  return switch (filter) {
-    FavoriteFilter.all => _allItems,
-    FavoriteFilter.video =>
-      _allItems.where((i) => i.type == FavoriteType.video).toList(),
-    FavoriteFilter.article =>
-      _allItems.where((i) => i.type == FavoriteType.article).toList(),
-  };
+class FilteredFavorites extends _$FilteredFavorites {
+  @override
+  List<FavoriteItem> build() {
+    final filter = ref.watch(favoriteFilterControllerProvider);
+    ref.watch(currentUserProfileProvider);
+    Future.microtask(_load);
+    return _applyFilter(_cache, filter);
+  }
+
+  List<FavoriteItem> _cache = const [];
+
+  Future<void> _load() async {
+    final profile = ref.read(currentUserProfileProvider);
+    final workoutRepo = ref.read(workoutRepositoryProvider);
+    final recipeRepo = ref.read(nutritionRepositoryProvider);
+
+    final items = <FavoriteItem>[];
+    for (final id in profile.favoriteWorkoutIds) {
+      try {
+        items.add(FavoriteItem.fromWorkoutJson(await workoutRepo.fetchWorkoutById(id)));
+      } catch (_) {
+        // Skip a favorite that no longer resolves (deleted workout, etc.).
+      }
+    }
+    for (final id in profile.favoriteRecipeIds) {
+      try {
+        items.add(FavoriteItem.fromRecipeJson(await recipeRepo.fetchRecipeById(id)));
+      } catch (_) {
+        // Skip a favorite that no longer resolves.
+      }
+    }
+    _cache = items;
+    state = _applyFilter(items, ref.read(favoriteFilterControllerProvider));
+  }
+
+  List<FavoriteItem> _applyFilter(
+    List<FavoriteItem> items,
+    FavoriteFilter filter,
+  ) {
+    return switch (filter) {
+      FavoriteFilter.all => items,
+      FavoriteFilter.video =>
+        items.where((i) => i.type == FavoriteType.video).toList(),
+      FavoriteFilter.article =>
+        items.where((i) => i.type == FavoriteType.article).toList(),
+    };
+  }
+
+  /// Unfavorites an item and removes it from the list immediately.
+  Future<void> remove(FavoriteItem item) async {
+    _cache = _cache.where((i) => i.id != item.id).toList();
+    state = _applyFilter(
+      _cache,
+      ref.read(favoriteFilterControllerProvider),
+    );
+    final repo = ref.read(userRepositoryProvider);
+    try {
+      if (item.type == FavoriteType.video) {
+        await repo.toggleFavoriteWorkout(item.id);
+      } else {
+        await repo.toggleFavoriteRecipe(item.id);
+      }
+      ref.invalidate(currentUserProfileProvider);
+    } catch (_) {
+      // Left removed locally — a stale favorite id is harmless, and the
+      // next full profile refresh reconciles it either way.
+    }
+  }
 }

@@ -121,7 +121,8 @@ class _ManageDataPageState extends State<ManageDataPage> {
                   const SizedBox(height: 22),
                   PremiumSectionHeader(title: l10n.manageDataExportSection),
                   const SizedBox(height: 12),
-                  PremiumGlassCard(
+                  Padding(
+                    padding: EdgeInsets.zero,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

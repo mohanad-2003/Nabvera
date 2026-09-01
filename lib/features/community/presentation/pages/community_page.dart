@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/featured_card.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
+import '../../../../core/widgets/smart_image.dart';
 import '../../domain/community_models.dart';
 import '../providers/community_controller.dart';
 import 'forum_detail_page.dart';
@@ -68,7 +71,16 @@ class CommunityPage extends ConsumerWidget {
                 key: ValueKey(tab),
                 child:
                     tab == CommunityTab.forum
-                        ? _ForumTab(forums: forums, compact: compact)
+                        ? _ForumTab(
+                          forums: forums,
+                          featuredChallenge:
+                              challenges.isEmpty ? null : challenges.first,
+                          compact: compact,
+                          onToggleLike:
+                              (id) => ref
+                                  .read(communityForumsProvider.notifier)
+                                  .toggleLike(id),
+                        )
                         : _ChallengesTab(challenges: challenges),
               ),
             ),
@@ -80,14 +92,22 @@ class CommunityPage extends ConsumerWidget {
 }
 
 class _ForumTab extends StatelessWidget {
-  const _ForumTab({required this.forums, required this.compact});
+  const _ForumTab({
+    required this.forums,
+    required this.featuredChallenge,
+    required this.compact,
+    required this.onToggleLike,
+  });
 
   final List<ForumThread> forums;
+  final ChallengeItem? featuredChallenge;
   final bool compact;
+  final ValueChanged<String> onToggleLike;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final challenge = featuredChallenge;
 
     // One CustomScrollView: the hero challenge card + section header live
     // in a SliverToBoxAdapter, and "Forums" is a SliverList right below it
@@ -99,19 +119,23 @@ class _ForumTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FeaturedCard(
-                image: 'assets/comm.png',
+                image: challenge?.image ?? 'assets/workout.png',
                 badge: l10n.communityChallengeBadge,
                 // Community's secondary accent per the design system.
                 badgeColor: AppColors.aquaBlue,
-                title: l10n.communityFeaturedChallengeName,
+                title: challenge?.name ?? l10n.communityFeaturedChallengeName,
                 metas: [
                   FeaturedCardMeta(
-                    icon: 'assets/time.png',
-                    label: l10n.communityFeaturedChallengeDuration,
+                    icon: AppIcons.time,
+                    label:
+                        challenge?.durationLabel ??
+                        l10n.communityFeaturedChallengeDuration,
                   ),
                   FeaturedCardMeta(
-                    icon: 'assets/calories.png',
-                    label: l10n.communityFeaturedChallengeCalories,
+                    icon: AppIcons.calories,
+                    label:
+                        challenge?.caloriesLabel ??
+                        l10n.communityFeaturedChallengeCalories,
                   ),
                 ],
                 height: compact ? 170 : 220,
@@ -124,9 +148,19 @@ class _ForumTab extends StatelessWidget {
         ),
         SliverList.separated(
           itemCount: forums.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          separatorBuilder:
+              (context, _) => Divider(
+                height: 1,
+                color:
+                    Theme.of(
+                      context,
+                    ).extension<AppThemeExtension>()!.glassBorder,
+              ),
           itemBuilder:
-              (context, index) => _ForumThreadCard(thread: forums[index]),
+              (context, index) => _ForumThreadCard(
+                thread: forums[index],
+                onToggleLike: () => onToggleLike(forums[index].id),
+              ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
       ],
@@ -135,80 +169,120 @@ class _ForumTab extends StatelessWidget {
 }
 
 class _ForumThreadCard extends StatelessWidget {
-  const _ForumThreadCard({required this.thread});
+  const _ForumThreadCard({required this.thread, required this.onToggleLike});
 
   final ForumThread thread;
+  final VoidCallback onToggleLike;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
 
-    return PremiumGlassCard(
-      padding: const EdgeInsets.all(16),
+    // No card container — the list separates threads with a divider
+    // instead (see _ForumTab's SliverList).
+    return InkWell(
       onTap:
           () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => ForumDetailPage(thread: thread),
             ),
           ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: ext.accentGradient,
+      borderRadius: BorderRadius.circular(AppRadius.card),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: ext.accentGradient,
+              ),
+              child: Icon(Icons.forum_rounded, color: ext.onAccent),
             ),
-            child: Icon(Icons.forum_rounded, color: ext.onAccent),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    thread.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    thread.subtitle.trim(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: onToggleLike,
+                        child: Icon(
+                          thread.liked
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 16,
+                          color:
+                              thread.liked
+                                  ? Theme.of(context).colorScheme.primary
+                                  : ext.textMuted,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${thread.likesCount}',
+                        style: TextStyle(fontSize: 12, color: ext.textMuted),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
+                        Icons.mode_comment_outlined,
+                        size: 15,
+                        color: ext.textMuted,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${thread.commentsCount}',
+                        style: TextStyle(fontSize: 12, color: ext.textMuted),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  thread.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: ext.textPrimary,
-                    fontWeight: FontWeight.w900,
+                  thread.allLabel,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 6),
                 Text(
-                  thread.subtitle.trim(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  thread.date,
                   style: Theme.of(
                     context,
-                  ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+                  ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                thread.allLabel,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                thread.date,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -238,7 +312,14 @@ class _ChallengesTab extends StatelessWidget {
         ),
         SliverList.separated(
           itemCount: challenges.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
+          separatorBuilder:
+              (context, _) => Divider(
+                height: 1,
+                color:
+                    Theme.of(
+                      context,
+                    ).extension<AppThemeExtension>()!.glassBorder,
+              ),
           itemBuilder:
               (context, index) => _ChallengeCard(challenge: challenges[index]),
         ),
@@ -258,48 +339,52 @@ class _ChallengeCard extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final imageWidth = MediaQuery.sizeOf(context).width < 380 ? 92.0 : 112.0;
 
-    return PremiumGlassCard(
-      padding: const EdgeInsets.all(12),
+    // No card container — the list separates challenges with a divider
+    // instead (see _ChallengesTab's SliverList).
+    return InkWell(
       onTap: () => context.push(AppRoutes.communityChallenge, extra: challenge),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: Image.asset(
-              challenge.image,
-              width: imageWidth,
-              height: imageWidth,
-              fit: BoxFit.cover,
+      borderRadius: BorderRadius.circular(AppRadius.card),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: SmartImage(
+                challenge.image,
+                width: imageWidth,
+                height: imageWidth,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  challenge.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: ext.textPrimary,
-                    fontWeight: FontWeight.w900,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    challenge.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  challenge.details,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    challenge.details,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(Icons.chevron_right_rounded, color: ext.textMuted),
-        ],
+            Icon(Icons.chevron_right_rounded, color: ext.textMuted),
+          ],
+        ),
       ),
     );
   }

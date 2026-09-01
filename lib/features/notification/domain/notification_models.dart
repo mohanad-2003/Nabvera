@@ -50,6 +50,18 @@ enum NotificationCategory {
   };
 }
 
+/// Maps the backend `Notification.type` enum (`workout_reminder`, `streak`,
+/// `like`, `comment`, `meal_plan`, `system`) onto the UI's richer category
+/// set. `challenge` has no backend equivalent, so it never gets a real
+/// notification — its filter chip just stays empty.
+NotificationCategory notificationCategoryFromApi(String? type) => switch (type) {
+  'workout_reminder' => NotificationCategory.workout,
+  'streak' => NotificationCategory.achievement,
+  'like' || 'comment' => NotificationCategory.community,
+  'meal_plan' => NotificationCategory.nutrition,
+  _ => NotificationCategory.reminder,
+};
+
 class NotificationItem {
   const NotificationItem({
     required this.id,
@@ -78,4 +90,22 @@ class NotificationItem {
     isRead: isRead ?? this.isRead,
     actionLabel: actionLabel,
   );
+
+  /// Builds a display item from a `/api/notifications` JSON document.
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String?;
+    return NotificationItem(
+      id: json['_id'] as String? ?? '',
+      category: notificationCategoryFromApi(type),
+      title: (json['title'] as String?) ?? '',
+      body: (json['body'] as String?) ?? '',
+      timestamp: DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime.now(),
+      isRead: (json['isRead'] as bool?) ?? false,
+      actionLabel: switch (type) {
+        'workout_reminder' => 'Start',
+        'meal_plan' || 'like' || 'comment' => 'View',
+        _ => null,
+      },
+    );
+  }
 }

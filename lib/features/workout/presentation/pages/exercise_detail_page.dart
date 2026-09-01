@@ -2,17 +2,50 @@ import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
+import 'package:fitness_app/features/workout/presentation/widgets/exercise_video_player.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 
 /// Generic exercise video/detail screen — replaces the legacy squat_page,
 /// kettlball, video_advance, details_page, and details_dumple_setup, which
 /// were the same layout copy-pasted with different hardcoded strings.
-class ExerciseDetailPage extends StatelessWidget {
+class ExerciseDetailPage extends StatefulWidget {
   const ExerciseDetailPage({super.key, required this.data});
 
   final ExerciseDetailData data;
+
+  @override
+  State<ExerciseDetailPage> createState() => _ExerciseDetailPageState();
+}
+
+class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
+  final _videoKey = GlobalKey<ExerciseVideoPlayerState>();
+  final _scrollController = ScrollController();
+
+  ExerciseDetailData get data => widget.data;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _startWorkout(BuildContext context, AppLocalizations l10n) {
+    if (data.videoUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.workoutNoVideoAvailable)),
+      );
+      return;
+    }
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+    _videoKey.currentState?.play();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +56,7 @@ class ExerciseDetailPage extends StatelessWidget {
     return PremiumScaffold(
       padding: EdgeInsets.zero,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,21 +74,32 @@ class ExerciseDetailPage extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(24),
-                      child: Hero(
-                        tag: data.heroImage,
-                        child: Image.asset(data.heroImage, fit: BoxFit.cover),
-                      ),
+                      child:
+                          data.videoUrl == null
+                              ? Hero(
+                                tag: data.heroImage,
+                                child: SmartImage(data.heroImage),
+                              )
+                              : ExerciseVideoPlayer(
+                                key: _videoKey,
+                                videoUrl: data.videoUrl!,
+                                poster: SmartImage(data.heroImage),
+                              ),
                     ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withValues(alpha: 0.05),
-                            Colors.black.withValues(alpha: 0.65),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                    IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.55),
+                            ],
+                            stops: const [0, 0.5, 1],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
                         ),
                       ),
                     ),
@@ -66,28 +111,29 @@ class ExerciseDetailPage extends StatelessWidget {
                         color: ext.accentGlow,
                       ),
                     ),
-                    Center(
-                      child: Container(
-                        width: 76,
-                        height: 76,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: ext.accentGradient,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ext.accentGlow.withValues(alpha: 0.45),
-                              blurRadius: 24,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.play_arrow_rounded,
-                          color: ext.onAccent,
-                          size: 40,
+                    if (data.videoUrl == null)
+                      Center(
+                        child: Container(
+                          width: 76,
+                          height: 76,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: ext.accentGradient,
+                            boxShadow: [
+                              BoxShadow(
+                                color: ext.accentGlow.withValues(alpha: 0.45),
+                                blurRadius: 24,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.play_arrow_rounded,
+                            color: ext.onAccent,
+                            size: 40,
+                          ),
                         ),
                       ),
-                    ),
                     Positioned(
                       left: 16,
                       bottom: 16,
@@ -178,7 +224,7 @@ class ExerciseDetailPage extends StatelessWidget {
               child: PrimaryButton(
                 label: l10n.workoutStartWorkout,
                 icon: Icons.play_arrow_rounded,
-                onPressed: () {},
+                onPressed: () => _startWorkout(context, l10n),
               ),
             ),
             const SizedBox(height: 20),

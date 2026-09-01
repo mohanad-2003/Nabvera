@@ -23,7 +23,7 @@ class MealIdeaPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final category = ref.watch(mealIdeaCategoryControllerProvider);
-    final section = ref.watch(mealIdeaSectionProvider(category));
+    final section = ref.watch(mealIdeaSectionControllerProvider(category));
     final favorites = ref.watch(mealIdeaFavoritesProvider.notifier);
     final favSet = ref.watch(mealIdeaFavoritesProvider);
     final l10n = AppLocalizations.of(context);

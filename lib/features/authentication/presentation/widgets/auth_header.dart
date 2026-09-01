@@ -8,9 +8,15 @@ import '../../../../core/theme/app_theme_extension.dart';
 /// lib/view/header_back.dart) — back arrow now pops via GoRouter instead of
 /// `Get.back()`.
 class AuthHeader extends StatelessWidget {
-  const AuthHeader({super.key, this.title});
+  const AuthHeader({super.key, this.title, this.showBack = true});
 
   final String? title;
+
+  /// False for auth-flow roots (login, signup) reached fresh from
+  /// Welcome/Splash with no meaningful "back" destination — and for the
+  /// biometric prompt, which is a one-time post-signup step, not a page the
+  /// user should retreat from mid-way.
+  final bool showBack;
 
   @override
   Widget build(BuildContext context) {
@@ -23,40 +29,41 @@ class AuthHeader extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: GestureDetector(
-              onTap: () => context.canPop() ? context.pop() : null,
-              child: Container(
-                height: 42,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: ext.glassFill,
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: ext.glassBorder),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 16,
-                      color: accent,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.actionBack,
-                      style: TextStyle(
+          if (showBack)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: GestureDetector(
+                onTap: () => context.canPop() ? context.pop() : null,
+                child: Container(
+                  height: 42,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: ext.glassFill,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: ext.glassBorder),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 16,
                         color: accent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 6),
+                      Text(
+                        l10n.actionBack,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
           if (title != null)
             Text(
               title!,

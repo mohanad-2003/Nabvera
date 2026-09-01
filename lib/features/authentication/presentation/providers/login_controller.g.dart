@@ -45,7 +45,7 @@ final class LoginControllerProvider
   LoginController create() => LoginController();
 }
 
-String _$loginControllerHash() => r'03c29d7dd6f515bbb45ac13f18a264502ff36d4f';
+String _$loginControllerHash() => r'3778b6493dd317b6235d2269184deca4b39f1807';
 
 /// TextEditingControllers stay as plain fields (Riverpod doesn't manage
 /// widget lifecycle objects) but submission is exposed through an

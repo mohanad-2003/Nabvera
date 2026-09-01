@@ -2,13 +2,29 @@ import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/fade_slide_in.dart';
+import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/core/widgets/user_avatar.dart';
 import 'package:fitness_app/features/home/domain/home_models.dart';
 import 'package:fitness_app/features/home/presentation/providers/home_controller.dart';
+import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+/// A daily activity-minutes target used to frame the raw "minutes trained"
+/// number as progress toward a goal. No backend field carries a per-user
+/// target yet, so this mirrors common fitness-app defaults.
+const int _kDailyMinutesGoal = 30;
+
+/// Weekly workout-count target for the "Weekly Progress" section, for the
+/// same reason as [_kDailyMinutesGoal].
+const int _kWeeklyWorkoutGoal = 5;
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -18,26 +34,50 @@ class HomePage extends ConsumerWidget {
     final categories = ref.watch(homeCategoriesProvider);
     final recommendations = ref.watch(homeRecommendationsProvider);
     final articles = ref.watch(homeArticlesProvider);
+    final profile = ref.watch(currentUserProfileProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+    // AppBottomNav floats over the body (Scaffold.extendBody) at ~66dp tall
+    // plus its own bottom safe-area margin — pad the list an extra amount
+    // beyond that so the last section never sits under the glass pill.
+    final navClearance = MediaQuery.paddingOf(context).bottom + 66 + 46;
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: ext.backgroundGradient),
         child: SafeArea(
-          // The surrounding SafeArea already consumes the nav-bar height
-          // that the shell's `extendBody: true` Scaffold reports through
-          // MediaQuery padding — no manual clearance needed here.
+          bottom: false,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+            padding: EdgeInsets.fromLTRB(20, 18, 20, navClearance),
             children: [
-              _HomeHeader(
-                onNotificationTap: () => context.push(AppRoutes.notifications),
+              FadeSlideIn(
+                child: _HomeHeader(
+                  firstName: _firstName(profile.name),
+                  avatarUrl: profile.avatarUrl,
+                  streak: profile.currentStreak,
+                  onNotificationTap:
+                      () => context.push(AppRoutes.notifications),
+                ),
               ),
               const SizedBox(height: 22),
-              const _TodayHeroCard(),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: _TodayHeroCard(
+                  onOpen: () => _openTodayWorkout(context, ref),
+                ),
+              ),
               const SizedBox(height: 18),
-              const _MetricGrid(),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: const _MetricGrid(),
+              ),
+              const SizedBox(height: 22),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 130),
+                child: _NextStepCard(
+                  onOpen: (route) => _openNextStep(context, ref, route),
+                ),
+              ),
               const SizedBox(height: 26),
               _SectionHeader(
                 title: l10n.homeWorkoutCategories,
@@ -58,27 +98,14 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 14),
               SizedBox(
                 height: 216,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: recommendations.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 14),
-                  itemBuilder: (context, index) {
-                    final workout = recommendations[index];
-                    return _WorkoutCard(
-                      workout: workout,
-                      onTap:
-                          () => context.push(
-                            AppRoutes.exerciseDetail,
-                            extra: ExerciseDetailData(
-                              headerTitle: l10n.homeRecommended,
-                              heroImage: workout.image,
-                              title: workout.title,
-                              duration: workout.duration,
-                              reps: workout.calories,
-                            ),
-                          ),
-                    );
-                  },
+                child: _RecommendedRow(
+                  section: recommendations,
+                  onTap: (workout) => _openWorkout(context, ref, workout.id),
+                  onRetry:
+                      () =>
+                          ref
+                              .read(homeRecommendationsProvider.notifier)
+                              .reload(),
                 ),
               ),
               const SizedBox(height: 26),
@@ -88,13 +115,13 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 14),
               SizedBox(
                 height: 160,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: articles.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 14),
-                  itemBuilder:
-                      (context, index) =>
-                          _ArticleCard(article: articles[index]),
+                child: _ArticlesRow(
+                  section: articles,
+                  onTap:
+                      (article) =>
+                          context.push(AppRoutes.articleDetail, extra: article),
+                  onRetry:
+                      () => ref.read(homeArticlesProvider.notifier).reload(),
                 ),
               ),
             ],
@@ -102,6 +129,11 @@ class HomePage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  static String _firstName(String fullName) {
+    if (fullName.trim().isEmpty) return '';
+    return fullName.trim().split(RegExp(r'\s+')).first;
   }
 
   void _openCategory(BuildContext context, int index) {
@@ -116,12 +148,79 @@ class HomePage extends ConsumerWidget {
         context.go(AppRoutes.community);
     }
   }
+
+  void _openNextStep(
+    BuildContext context,
+    WidgetRef ref,
+    _NextStepRoute route,
+  ) {
+    switch (route) {
+      case _NextStepRoute.water:
+      case _NextStepRoute.meal:
+        context.go(AppRoutes.nutrition);
+      case _NextStepRoute.workout:
+        _openTodayWorkout(context, ref);
+      case _NextStepRoute.none:
+        break;
+    }
+  }
+
+  Future<void> _openTodayWorkout(BuildContext context, WidgetRef ref) async {
+    final featured = ref.read(homeFeaturedWorkoutControllerProvider);
+    if (featured == null || featured.id.isEmpty) {
+      context.go(AppRoutes.workout);
+      return;
+    }
+    await _openWorkout(context, ref, featured.id);
+  }
+
+  /// Fetches the full workout and opens it as a real [CategoryDetailData]
+  /// — same as [WorkoutPage]'s cards — instead of faking a single-exercise
+  /// [ExerciseDetailData] for what is actually a whole workout (which is
+  /// why "Start Workout" always reported no video: a workout itself has
+  /// none, only its individual exercises do).
+  Future<void> _openWorkout(
+    BuildContext context,
+    WidgetRef ref,
+    String workoutId,
+  ) async {
+    if (workoutId.isEmpty) return;
+    try {
+      final json = await ref
+          .read(workoutRepositoryProvider)
+          .fetchWorkoutById(workoutId);
+      if (!context.mounted) return;
+      context.push(
+        AppRoutes.workoutCategoryDetail,
+        extra: CategoryDetailData.fromWorkoutJson(json),
+      );
+    } catch (_) {
+      // Backend unreachable / workout deleted — silently do nothing.
+    }
+  }
 }
 
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({required this.onNotificationTap});
+  const _HomeHeader({
+    required this.firstName,
+    required this.avatarUrl,
+    required this.streak,
+    required this.onNotificationTap,
+  });
 
+  final String firstName;
+  final String? avatarUrl;
+  final int streak;
   final VoidCallback onNotificationTap;
+
+  /// Picks a time-of-day appropriate greeting instead of an always-"Good
+  /// Morning" that reads oddly by evening.
+  String _greeting(AppLocalizations l10n) {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return l10n.homeGreetingMorningPlain;
+    if (hour < 18) return l10n.homeGreetingAfternoonPlain;
+    return l10n.homeGreetingEveningPlain;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +232,7 @@ class _HomeHeader extends StatelessWidget {
           radius: 26,
           borderColor: Theme.of(context).colorScheme.primary,
           borderWidth: 2,
+          imageUrl: avatarUrl,
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -140,7 +240,15 @@ class _HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.homeGreeting('Madison'),
+                _greeting(l10n),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+              ),
+              Text(
+                firstName.isEmpty ? '...' : firstName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -149,12 +257,32 @@ class _HomeHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                l10n.homeTagline,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
-              ),
+              if (streak > 0)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.local_fire_department_rounded,
+                      size: 15,
+                      color: AppColors.electricOrange,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n.homeStreakDays(streak),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.electricOrange,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Text(
+                  l10n.homeTagline,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+                ),
             ],
           ),
         ),
@@ -199,99 +327,194 @@ class _HeaderIcon extends StatelessWidget {
   }
 }
 
-class _TodayHeroCard extends StatelessWidget {
-  const _TodayHeroCard();
+/// The single hero card on the page — "Today's Plan" — fully tappable with
+/// a clear primary CTA that reflects real progress: "Start" when nothing is
+/// logged today, "Continue" once some (but not all) of the plan's minutes
+/// are in, "Completed" once today's trained minutes reach the plan's target.
+class _TodayHeroCard extends ConsumerWidget {
+  const _TodayHeroCard({required this.onOpen});
+
+  final VoidCallback onOpen;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
+    final featured = ref.watch(homeFeaturedWorkoutControllerProvider);
+    final todayMinutes =
+        ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
+    ref.watch(weeklyActivityControllerProvider);
+
+    final title = featured?.title ?? l10n.homeHeroTitle;
+    final duration = featured?.durationMinutes ?? 42;
+    final calories = featured?.estimatedCalories ?? 380;
+    final moves = featured?.exerciseCount ?? 8;
+    final level = switch (featured?.difficulty) {
+      'intermediate' => l10n.workoutLevelIntermediate,
+      'advanced' => l10n.workoutLevelAdvanced,
+      'beginner' => l10n.workoutLevelBeginner,
+      _ => l10n.workoutLevelIntermediate,
+    };
+
+    final progress =
+        duration <= 0 ? 0.0 : (todayMinutes / duration).clamp(0.0, 1.0);
+    final isCompleted = progress >= 1.0;
+    final hasStarted = todayMinutes > 0;
+    final ctaLabel =
+        isCompleted
+            ? l10n.homeCtaCompleted
+            : hasStarted
+            ? l10n.homeCtaContinue
+            : l10n.homeCtaStart;
+    final ctaIcon =
+        isCompleted ? Icons.check_rounded : Icons.play_arrow_rounded;
+
+    return PressableScale(
+      child: InkWell(
+        onTap: onOpen,
         borderRadius: BorderRadius.circular(34),
-        gradient: const LinearGradient(
-          colors: [AppColors.seedViolet, AppColors.seedInk],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.seedViolet.withValues(alpha: 0.30),
-            blurRadius: 28,
-            offset: const Offset(0, 18),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -30,
-            right: -30,
-            child: Icon(
-              Icons.fitness_center_rounded,
-              size: 160,
-              color: Colors.white.withValues(alpha: 0.06),
+        child: Container(
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(34),
+            gradient: const LinearGradient(
+              colors: [AppColors.seedViolet, AppColors.seedInk],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.seedViolet.withValues(alpha: 0.30),
+                blurRadius: 28,
+                offset: const Offset(0, 18),
+              ),
+            ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatusPill(
-                      label: l10n.homeTodayPlanLabel,
-                      icon: Icons.bolt_rounded,
-                    ),
-                  ),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: ext.accentGradient,
-                    ),
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: ext.onAccent,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Text(
-                l10n.homeHeroTitle,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  height: 1.02,
+              Positioned(
+                top: -30,
+                right: -30,
+                child: Icon(
+                  Icons.fitness_center_rounded,
+                  size: 160,
+                  color: Colors.white.withValues(alpha: 0.06),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.homeHeroSubtitle(42, 8, l10n.workoutLevelIntermediate),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.72),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _HeroChip(
-                    icon: Icons.timer_outlined,
-                    label: l10n.homeHeroDuration(42),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatusPill(
+                          label:
+                              isCompleted
+                                  ? l10n.homeHeroCompletionPercent(100)
+                                  : l10n.homeTodayPlanLabel,
+                          icon:
+                              isCompleted
+                                  ? Icons.check_circle_rounded
+                                  : Icons.bolt_rounded,
+                        ),
+                      ),
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: ext.accentGradient,
+                        ),
+                        child: Icon(ctaIcon, color: ext.onAccent),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  _HeroChip(
-                    icon: Icons.local_fire_department_outlined,
-                    label: l10n.homeHeroCalories(380),
+                  const SizedBox(height: 18),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      height: 1.02,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.homeHeroSubtitle(duration, moves, level),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.72),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      _HeroChip(
+                        icon: Icons.timer_outlined,
+                        label: l10n.homeHeroDuration(duration),
+                      ),
+                      const SizedBox(width: 10),
+                      _HeroChip(
+                        icon: Icons.local_fire_department_outlined,
+                        label: l10n.homeHeroCalories(calories),
+                      ),
+                      const SizedBox(width: 10),
+                      _HeroChip(
+                        icon: Icons.checklist_rounded,
+                        label: l10n.homeHeroExercises(moves),
+                      ),
+                    ],
+                  ),
+                  if (hasStarted && !isCompleted) ...[
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 6,
+                        backgroundColor: Colors.white.withValues(alpha: 0.14),
+                        valueColor: AlwaysStoppedAnimation(ext.accentGlow),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.homeHeroCompletionPercent((progress * 100).round()),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            gradient: ext.accentGradient,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Text(
+                            ctaLabel,
+                            style: TextStyle(
+                              color: ext.onAccent,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -330,39 +553,71 @@ class _HeroChip extends StatelessWidget {
   }
 }
 
-class _MetricGrid extends StatelessWidget {
+class _MetricGrid extends ConsumerWidget {
   const _MetricGrid();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final nutrition = ref.watch(dailyNutritionSummaryControllerProvider);
+    final streak = ref.watch(currentUserProfileProvider).currentStreak;
+    final todayMinutes =
+        ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
+    // Watch the list too so this rebuilds once the async load resolves —
+    // `.notifier` alone wouldn't trigger a rebuild on state change.
+    ref.watch(weeklyActivityControllerProvider);
+
+    final remaining = (nutrition.goalCalories - nutrition.consumedCalories)
+        .clamp(0, nutrition.goalCalories);
+    final caloriesValue = remaining <= 0 ? '🎉' : '$remaining';
+    final caloriesLabel =
+        remaining <= 0 ? l10n.homeCaloriesGoalReached : l10n.homeUnitKcal;
+    final caloriesSub =
+        remaining <= 0
+            ? ''
+            : l10n.homeCaloriesConsumedOf(
+              nutrition.consumedCalories,
+              nutrition.goalCalories,
+            );
+
+    final streakLabel =
+        streak <= 0
+            ? l10n.homeStreakStartMessage
+            : streak >= 7
+            ? l10n.homeStreakOnFire
+            : l10n.homeStreakKeepGoing;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: _MetricCard(
-            label: l10n.homeMetricCalories,
-            value: '640',
-            unit: l10n.homeUnitKcal,
+          child: _MetricStat(
+            label: caloriesLabel,
+            value: caloriesValue,
+            sublabel: caloriesSub,
             icon: Icons.local_fire_department_rounded,
             color: AppColors.electricOrange,
           ),
         ),
-        const SizedBox(width: 12),
+        const _MetricDivider(),
         Expanded(
-          child: _MetricCard(
-            label: l10n.homeMetricSteps,
-            value: '8.2K',
-            unit: l10n.homeUnitToday,
-            icon: Icons.directions_walk_rounded,
+          child: _MetricStat(
+            label: l10n.profileStatStreak,
+            value: '$streak',
+            sublabel: streakLabel,
+            icon: Icons.bolt_rounded,
             color: AppColors.seedLime,
           ),
         ),
-        const SizedBox(width: 12),
+        const _MetricDivider(),
         Expanded(
-          child: _MetricCard(
+          child: _MetricStat(
             label: l10n.homeMetricDuration,
-            value: '52',
-            unit: l10n.homeUnitMin,
+            value: '$todayMinutes',
+            sublabel: l10n.homeActivityProgress(
+              todayMinutes,
+              _kDailyMinutesGoal,
+            ),
             icon: Icons.timer_rounded,
             color: AppColors.aquaBlue,
           ),
@@ -372,51 +627,173 @@ class _MetricGrid extends StatelessWidget {
   }
 }
 
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({
+/// A metric shown directly on the page background — no card container —
+/// separated from its neighbors by a thin [_MetricDivider] instead. Frames
+/// the raw number with a goal-relative [sublabel] ("120 of 2000 kcal",
+/// "Keep it going!") instead of a bare unit tag.
+class _MetricStat extends StatelessWidget {
+  const _MetricStat({
     required this.label,
     required this.value,
-    required this.unit,
+    required this.sublabel,
     required this.icon,
     required this.color,
   });
 
   final String label;
   final String value;
-  final String unit;
+  final String sublabel;
   final IconData icon;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: ext.textPrimary,
-              fontWeight: FontWeight.w900,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color, size: 22),
+        const SizedBox(height: 10),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w900,
           ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
+        ),
+        if (sublabel.isNotEmpty) ...[
           const SizedBox(height: 2),
           Text(
-            '$label · $unit',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
+            sublabel,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
+      ],
+    );
+  }
+}
+
+class _MetricDivider extends StatelessWidget {
+  const _MetricDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(width: 1, height: 52, color: ext.glassBorder),
+    );
+  }
+}
+
+enum _NextStepRoute { water, meal, workout, none }
+
+/// A single personalized suggestion — never more than one, so the user
+/// always has exactly one obvious next action instead of a checklist.
+/// Priority: start today's workout if untouched, then hydration, then
+/// logging a meal if calorie intake is low this late in the day, else a
+/// plain "great job" acknowledgement.
+class _NextStepCard extends ConsumerWidget {
+  const _NextStepCard({required this.onOpen});
+
+  final void Function(_NextStepRoute route) onOpen;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final todayMinutes =
+        ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
+    ref.watch(weeklyActivityControllerProvider);
+    final nutrition = ref.watch(dailyNutritionSummaryControllerProvider);
+    final waterParts = nutrition.waterIntake.split('/');
+    final waterCups =
+        waterParts.isEmpty ? 0 : int.tryParse(waterParts.first.trim()) ?? 0;
+    final hour = DateTime.now().hour;
+
+    late final String text;
+    late final IconData icon;
+    late final _NextStepRoute route;
+
+    if (todayMinutes <= 0) {
+      text = l10n.homeNextStepStartWorkout;
+      icon = Icons.play_circle_outline_rounded;
+      route = _NextStepRoute.workout;
+    } else if (waterCups < 4 && hour < 20) {
+      text = l10n.homeNextStepDrinkWater;
+      icon = Icons.water_drop_outlined;
+      route = _NextStepRoute.water;
+    } else if (nutrition.consumedCalories < nutrition.goalCalories * 0.5 &&
+        hour >= 12) {
+      text = l10n.homeNextStepLogMeal;
+      icon = Icons.restaurant_menu_rounded;
+      route = _NextStepRoute.meal;
+    } else {
+      text = l10n.homeNextStepAllDone;
+      icon = Icons.emoji_events_outlined;
+      route = _NextStepRoute.none;
+    }
+
+    return PressableScale(
+      enabled: route != _NextStepRoute.none,
+      child: InkWell(
+        onTap: route == _NextStepRoute.none ? null : () => onOpen(route),
+        borderRadius: BorderRadius.circular(20),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ext.accentGlow.withValues(alpha: 0.16),
+              ),
+              child: Icon(icon, color: ext.accentGlow),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.homeNextStepTitle,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    text,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (route != _NextStepRoute.none)
+              Icon(Icons.chevron_right_rounded, color: ext.textMuted),
+          ],
+        ),
       ),
     );
   }
@@ -473,48 +850,242 @@ class _CategoryRail extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
           final accent = accents[index % accents.length];
-          return InkWell(
-            onTap: () => onTap(index),
-            borderRadius: BorderRadius.circular(26),
-            child: Container(
-              width: 104,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(26),
-                border: Border.all(color: accent.withValues(alpha: 0.22)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: ext.glassFill,
-                      borderRadius: BorderRadius.circular(16),
+          return PressableScale(
+            child: InkWell(
+              onTap: () => onTap(index),
+              borderRadius: BorderRadius.circular(26),
+              child: Container(
+                width: 104,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(26),
+                  border: Border.all(color: accent.withValues(alpha: 0.22)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: ext.glassFill,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(9),
+                        child: SmartImage(category.image),
+                      ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(9),
-                      child: Image.asset(category.image),
+                    const Spacer(),
+                    Text(
+                      category.name.replaceAll('\n', ' '),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        height: 1.05,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    category.name.replaceAll('\n', ' '),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w800,
-                      height: 1.05,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Recommended-workouts row: skeleton while loading, a friendly retry
+/// prompt on failure, an empty-state message, or the real horizontal list.
+class _RecommendedRow extends StatelessWidget {
+  const _RecommendedRow({
+    required this.section,
+    required this.onTap,
+    required this.onRetry,
+  });
+
+  final HomeSectionState<RecommendedWorkout> section;
+  final ValueChanged<RecommendedWorkout> onTap;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (section.status) {
+      case HomeLoadStatus.loading:
+        return _SkeletonRow(width: 238);
+      case HomeLoadStatus.error:
+        return _SectionMessage(
+          icon: Icons.cloud_off_rounded,
+          message: l10n.homeRecommendedError,
+          onRetry: onRetry,
+        );
+      case HomeLoadStatus.loaded:
+        if (section.items.isEmpty) {
+          return _SectionMessage(
+            icon: Icons.inbox_outlined,
+            message: l10n.homeRecommendedEmpty,
+          );
+        }
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: section.items.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 14),
+          itemBuilder: (context, index) {
+            final workout = section.items[index];
+            return _WorkoutCard(workout: workout, onTap: () => onTap(workout));
+          },
+        );
+    }
+  }
+}
+
+class _ArticlesRow extends StatelessWidget {
+  const _ArticlesRow({
+    required this.section,
+    required this.onTap,
+    required this.onRetry,
+  });
+
+  final HomeSectionState<ArticleTip> section;
+  final ValueChanged<ArticleTip> onTap;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (section.status) {
+      case HomeLoadStatus.loading:
+        return _SkeletonRow(width: 232);
+      case HomeLoadStatus.error:
+        return _SectionMessage(
+          icon: Icons.cloud_off_rounded,
+          message: l10n.homeArticlesError,
+          onRetry: onRetry,
+        );
+      case HomeLoadStatus.loaded:
+        if (section.items.isEmpty) {
+          return _SectionMessage(
+            icon: Icons.article_outlined,
+            message: l10n.homeArticlesEmpty,
+          );
+        }
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: section.items.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 14),
+          itemBuilder:
+              (context, index) => _ArticleCard(
+                article: section.items[index],
+                onTap: () => onTap(section.items[index]),
+              ),
+        );
+    }
+  }
+}
+
+/// A horizontally-scrolling row of shimmering placeholder cards, shown
+/// while a section's real data is still loading.
+class _SkeletonRow extends StatelessWidget {
+  const _SkeletonRow({required this.width});
+
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: 3,
+      separatorBuilder: (_, _) => const SizedBox(width: 14),
+      itemBuilder: (context, index) => _ShimmerBox(width: width),
+    );
+  }
+}
+
+class _ShimmerBox extends StatefulWidget {
+  const _ShimmerBox({required this.width});
+
+  final double width;
+
+  @override
+  State<_ShimmerBox> createState() => _ShimmerBoxState();
+}
+
+class _ShimmerBoxState extends State<_ShimmerBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return Container(
+          width: widget.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            color: Color.lerp(
+              ext.glassFill,
+              ext.glassBorder,
+              _controller.value,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Compact inline error/empty state for a horizontal section — an icon, a
+/// message, and (when [onRetry] is given) a retry button, all centered in
+/// the row's own height so it doesn't collapse the layout.
+class _SectionMessage extends StatelessWidget {
+  const _SectionMessage({
+    required this.icon,
+    required this.message,
+    this.onRetry,
+  });
+
+  final IconData icon;
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: ext.textMuted, size: 26),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 8),
+            TextButton(onPressed: onRetry, child: Text(l10n.actionRetry)),
+          ],
+        ],
       ),
     );
   }
@@ -529,84 +1100,89 @@ class _WorkoutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        width: 238,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          image: DecorationImage(
-            image: AssetImage(workout.image),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.24),
-              BlendMode.darken,
-            ),
-          ),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-        ),
+    return PressableScale(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(30),
         child: Container(
-          padding: const EdgeInsets.all(18),
+          width: 238,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            gradient: LinearGradient(
-              colors: [Colors.transparent, scaffoldBg.withValues(alpha: 0.92)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+            image: DecorationImage(
+              image: smartImageProvider(workout.image),
+              fit: BoxFit.cover,
             ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _StatusPill(
-                label: l10n.homeRecommendedBadge,
-                icon: Icons.star_rounded,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                workout.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  height: 1.02,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    color: Colors.white.withValues(alpha: 0.70),
-                    size: 18,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    workout.duration,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.70),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Icon(
-                    Icons.local_fire_department_outlined,
-                    color: AppColors.electricOrange,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    workout.calories,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.70),
-                    ),
-                  ),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              // Clean black scrim (not the app's tinted scaffold background)
+              // that only darkens the bottom half, so the photo stays vivid
+              // up top instead of looking muddied over its full height.
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.75),
                 ],
+                stops: const [0, 0.45, 1],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-            ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _StatusPill(
+                  label: l10n.homeRecommendedBadge,
+                  icon: Icons.star_rounded,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  workout.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    height: 1.02,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.timer_outlined,
+                      color: Colors.white.withValues(alpha: 0.70),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      workout.duration,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.70),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Icon(
+                      Icons.local_fire_department_outlined,
+                      color: AppColors.electricOrange,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      workout.calories,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.70),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -614,150 +1190,186 @@ class _WorkoutCard extends StatelessWidget {
   }
 }
 
-class _WeeklyProgressCard extends StatelessWidget {
+class _WeeklyProgressCard extends ConsumerWidget {
   const _WeeklyProgressCard();
 
-  static const _bars = [0.52, 0.78, 0.44, 0.88, 0.68, 0.96, 0.58];
-  static const _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    final days = [
+      l10n.homeDayMon,
+      l10n.homeDayTue,
+      l10n.homeDayWed,
+      l10n.homeDayThu,
+      l10n.homeDayFri,
+      l10n.homeDaySat,
+      l10n.homeDaySun,
+    ];
+    final minutesByDay = ref.watch(weeklyActivityControllerProvider);
+    final todayIndex = DateTime.now().weekday - 1;
+    final workoutsThisWeek = minutesByDay.where((m) => m > 0).length;
+    final maxMinutes = minutesByDay.fold(0, (max, m) => m > max ? m : max);
+    final bars = [
+      for (final m in minutesByDay) maxMinutes == 0 ? 0.0 : m / maxMinutes,
+    ];
+    // A day with no logged minutes still gets a faint sliver so the chart
+    // never renders a row of literal zero-height bars.
+    final barHeights = [for (final b in bars) b == 0 ? 0.04 : b];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              l10n.homeWeeklyProgress,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: ext.textPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const Spacer(),
+            _StatusPill(
+              label: '$workoutsThisWeek/$_kWeeklyWorkoutGoal',
+              icon: Icons.trending_up_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.homeWeeklyGoalSummary(workoutsThisWeek, _kWeeklyWorkoutGoal),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 138,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                l10n.homeWeeklyProgress,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: ext.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const Spacer(),
-              _StatusPill(
-                label: l10n.homeWeeklyProgressPercent(82),
-                icon: Icons.trending_up_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.homeWeeklyProgressSummary(5, 2),
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 122,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                for (var i = 0; i < _bars.length; i++)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: FractionallySizedBox(
-                                heightFactor: _bars[i],
-                                widthFactor: 0.58,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(999),
-                                    gradient:
-                                        i == 5
-                                            ? ext.accentGradient
-                                            : LinearGradient(
-                                              colors: [
-                                                ext.glassBorder,
-                                                ext.glassFill,
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                            ),
-                                  ),
+              for (var i = 0; i < barHeights.length; i++)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (i == todayIndex && minutesByDay[i] == 0)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              l10n.homeWeeklyRestDay,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: ext.accentGlow,
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FractionallySizedBox(
+                              heightFactor: barHeights[i],
+                              widthFactor: 0.58,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(999),
+                                  gradient:
+                                      i == todayIndex
+                                          ? ext.accentGradient
+                                          : LinearGradient(
+                                            colors: [
+                                              ext.glassBorder,
+                                              ext.glassFill,
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            _days[i],
-                            style: TextStyle(
-                              color: i == 5 ? ext.accentGlow : ext.textMuted,
-                              fontWeight: FontWeight.w800,
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          days[i],
+                          style: TextStyle(
+                            color:
+                                i == todayIndex
+                                    ? ext.accentGlow
+                                    : ext.textMuted,
+                            fontWeight: FontWeight.w800,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
 class _ArticleCard extends StatelessWidget {
-  const _ArticleCard({required this.article});
+  const _ArticleCard({required this.article, required this.onTap});
 
   final ArticleTip article;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
-    return Container(
-      width: 232,
-      decoration: BoxDecoration(
+    return PressableScale(
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(26),
-        image: DecorationImage(
-          image: AssetImage(article.image),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withValues(alpha: 0.28),
-            BlendMode.darken,
+        child: Container(
+          width: 232,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            image: DecorationImage(
+              image: smartImageProvider(article.image),
+              fit: BoxFit.cover,
+            ),
+            border: Border.all(color: ext.glassBorder),
           ),
-        ),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          gradient: LinearGradient(
-            colors: [Colors.transparent, scaffoldBg.withValues(alpha: 0.88)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        alignment: Alignment.bottomLeft,
-        child: Text(
-          article.description,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(26),
+              // Clean black scrim, bottom half only — see _WorkoutCard for
+              // why this replaced the old scaffold-background-tinted one.
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.72),
+                ],
+                stops: const [0, 0.45, 1],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            alignment: Alignment.bottomLeft,
+            child: Text(
+              article.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ),
       ),

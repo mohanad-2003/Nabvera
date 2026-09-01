@@ -1,5 +1,7 @@
+import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/featured_card.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
@@ -19,6 +21,7 @@ class CategoryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final compact = MediaQuery.sizeOf(context).height < 720;
 
     return PremiumScaffold(
@@ -48,15 +51,15 @@ class CategoryDetailPage extends StatelessWidget {
                       title: data.heroLabel,
                       metas: [
                         FeaturedCardMeta(
-                          icon: 'assets/time.png',
+                          icon: AppIcons.time,
                           label: data.time,
                         ),
                         FeaturedCardMeta(
-                          icon: 'assets/calories.png',
+                          icon: AppIcons.calories,
                           label: data.calories,
                         ),
                         FeaturedCardMeta(
-                          icon: 'assets/run.png',
+                          icon: AppIcons.run,
                           label: data.levelLabel,
                         ),
                       ],
@@ -78,7 +81,7 @@ class CategoryDetailPage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 4),
                           for (final item in group.items) ...[
                             RoundItemTile(
                               item: item,
@@ -90,9 +93,10 @@ class CategoryDetailPage extends StatelessWidget {
                                         extra: item.exerciseDetail,
                                       ),
                             ),
-                            const SizedBox(height: 10),
+                            if (item != group.items.last)
+                              Divider(height: 1, color: ext.glassBorder),
                           ],
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 18),
                         ],
                       ],
                     ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'smart_image.dart';
+
 /// Small icon+text stat (time/calories/reps/etc.), duplicated as a private
 /// `_buildIconText` method in ~8 legacy workout screens.
 class IconStat extends StatelessWidget {
@@ -24,7 +26,7 @@ class IconStat extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(icon, width: iconSize, height: iconSize, color: color),
+          SmartImage(icon, width: iconSize, height: iconSize, color: color),
           const SizedBox(width: 4),
           Flexible(
             child: Text(

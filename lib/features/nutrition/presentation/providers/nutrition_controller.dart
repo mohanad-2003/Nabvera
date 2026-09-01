@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/nutrition_repository.dart';
 import '../../domain/nutrition_models.dart';
 
 part 'nutrition_controller.g.dart';
@@ -14,67 +15,81 @@ class NutritionTabController extends _$NutritionTabController {
   void select(NutritionTab tab) => state = tab;
 }
 
+/// Loads `/api/recipes` once and splits it: the two highest-rated recipes
+/// become "Recommended", the rest fill "Recipes for you".
 @riverpod
-List<MealItem> nutritionRecommended(Ref ref) => const [
-  MealItem(
-    image: 'assets/fruit.png',
-    name: 'Fruit smoothie',
-    subtitle: 'Berry blend with banana and oat milk.',
-    time: '12 Minutes',
-    calories: '120 Cal',
-    protein: '4g',
-    carbs: '22g',
-    fat: '2g',
-    rating: 4.7,
-    difficulty: 'Easy',
-  ),
-  MealItem(
-    image: 'assets/salad.png',
-    name: 'Salads with quinoa',
-    subtitle: 'Fresh greens, quinoa, and lemon dressing.',
-    time: '12 Minutes',
-    calories: '120 Cal',
-    protein: '6g',
-    carbs: '18g',
-    fat: '4g',
-    rating: 4.5,
-    difficulty: 'Easy',
-  ),
-];
-
-@riverpod
-List<MealItem> nutritionRecipes(Ref ref) => const [
-  MealItem(
-    image: 'assets/del.png',
-    name: 'Delights with\n Greek yogurt',
-    time: '6 Minutes',
-    calories: '200 Cal',
-    protein: '14g',
-    carbs: '24g',
-    fat: '5g',
-    rating: 4.8,
-    difficulty: 'Easy',
-  ),
-  MealItem(
-    image: 'assets/salmon.png',
-    name: 'Baked salmon',
-    time: '30 Minutes',
-    calories: '350 Cal',
-    protein: '32g',
-    carbs: '6g',
-    fat: '18g',
-    rating: 4.9,
-    difficulty: 'Medium',
-  ),
-];
-
-@riverpod
-DailyNutritionSummary dailyNutritionSummary(Ref ref) =>
-    const DailyNutritionSummary(
-      consumedCalories: 1450,
-      goalCalories: 2200,
-      proteinFraction: 0.62,
-      carbsFraction: 0.48,
-      fatFraction: 0.35,
-      waterIntake: '5 / 8 cups',
+class NutritionRecommended extends _$NutritionRecommended {
+  @override
+  List<MealItem> build() {
+    ref.watch(_recipesProvider);
+    return ref.watch(_recipesProvider).maybeWhen(
+      data: (recipes) => recipes.take(2).map(MealItem.fromJson).toList(),
+      orElse: () => const [],
     );
+  }
+}
+
+@riverpod
+class NutritionRecipes extends _$NutritionRecipes {
+  @override
+  List<MealItem> build() {
+    return ref.watch(_recipesProvider).maybeWhen(
+      data: (recipes) => recipes.skip(2).map(MealItem.fromJson).toList(),
+      orElse: () => const [],
+    );
+  }
+}
+
+@riverpod
+Future<List<Map<String, dynamic>>> _recipes(Ref ref) {
+  final recipes =
+      ref.watch(nutritionRepositoryProvider).fetchRecipes();
+  return recipes.then((list) => list..sort(
+    (a, b) => ((b['rating'] as num?) ?? 0).compareTo((a['rating'] as num?) ?? 0),
+  ));
+}
+
+/// Loads the real `/api/nutrition/today` document and converts it into
+/// display fractions/strings.
+@riverpod
+class DailyNutritionSummaryController extends _$DailyNutritionSummaryController {
+  @override
+  DailyNutritionSummary build() {
+    Future.microtask(_load);
+    return const DailyNutritionSummary(
+      consumedCalories: 0,
+      goalCalories: 2000,
+      proteinFraction: 0,
+      carbsFraction: 0,
+      fatFraction: 0,
+      waterIntake: '0 / 8 cups',
+    );
+  }
+
+  Future<void> _load() async {
+    try {
+      final entry = await ref.read(nutritionRepositoryProvider).fetchToday();
+      final calorieGoal = (entry['calorieGoal'] as num?) ?? 2000;
+      final proteinGoal = (entry['proteinGoalG'] as num?) ?? 1;
+      final carbsGoal = (entry['carbsGoalG'] as num?) ?? 1;
+      final fatGoal = (entry['fatGoalG'] as num?) ?? 1;
+      final waterGoalMl = (entry['waterGoalMl'] as num?) ?? 2000;
+      final waterConsumedMl = (entry['waterConsumedMl'] as num?) ?? 0;
+      // ~250ml per "cup", matching the UI's original "X / 8 cups" copy.
+      const mlPerCup = 250;
+
+      state = DailyNutritionSummary(
+        consumedCalories: ((entry['caloriesConsumed'] as num?) ?? 0).round(),
+        goalCalories: calorieGoal.round(),
+        proteinFraction: (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal).clamp(0, 1).toDouble(),
+        carbsFraction: (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal).clamp(0, 1).toDouble(),
+        fatFraction: (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal).clamp(0, 1).toDouble(),
+        waterIntake:
+            '${(waterConsumedMl / mlPerCup).round()} / ${(waterGoalMl / mlPerCup).round()} cups',
+      );
+    } catch (_) {
+      // Left at the default placeholder — see WorkoutListByLevel for the
+      // same pattern.
+    }
+  }
+}

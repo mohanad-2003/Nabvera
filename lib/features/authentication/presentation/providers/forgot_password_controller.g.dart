@@ -13,7 +13,7 @@ part of 'forgot_password_controller.dart';
 final forgotPasswordControllerProvider = ForgotPasswordControllerProvider._();
 
 final class ForgotPasswordControllerProvider
-    extends $NotifierProvider<ForgotPasswordController, void> {
+    extends $AsyncNotifierProvider<ForgotPasswordController, void> {
   ForgotPasswordControllerProvider._()
     : super(
         from: null,
@@ -31,30 +31,22 @@ final class ForgotPasswordControllerProvider
   @$internal
   @override
   ForgotPasswordController create() => ForgotPasswordController();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(void value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<void>(value),
-    );
-  }
 }
 
 String _$forgotPasswordControllerHash() =>
-    r'd8f24f3d91ca0c2383a912088e273314d2466e16';
+    r'c00b918bc8254fa1a78d642a8a34a1c2dc67ae35';
 
-abstract class _$ForgotPasswordController extends $Notifier<void> {
-  void build();
+abstract class _$ForgotPasswordController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<void, void>;
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<void, void>,
-              void,
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
               Object?,
               Object?
             >;

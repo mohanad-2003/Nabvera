@@ -61,11 +61,21 @@ abstract class _$WorkoutTab extends $Notifier<WorkoutLevel> {
   }
 }
 
+/// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+/// empty and fills in once the fetch resolves — matches the pattern used by
+/// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
+
 @ProviderFor(WorkoutListByLevel)
 final workoutListByLevelProvider = WorkoutListByLevelFamily._();
 
+/// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+/// empty and fills in once the fetch resolves — matches the pattern used by
+/// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
 final class WorkoutListByLevelProvider
     extends $NotifierProvider<WorkoutListByLevel, List<WorkoutListItem>> {
+  /// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+  /// empty and fills in once the fetch resolves — matches the pattern used by
+  /// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
   WorkoutListByLevelProvider._({
     required WorkoutListByLevelFamily super.from,
     required WorkoutLevel super.argument,
@@ -111,7 +121,11 @@ final class WorkoutListByLevelProvider
 }
 
 String _$workoutListByLevelHash() =>
-    r'809b30649c7627fc56cbb95a27280e4f8a1eb780';
+    r'2519f7e65968848f9fde6cf22e69974b9d9804b7';
+
+/// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+/// empty and fills in once the fetch resolves — matches the pattern used by
+/// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
 
 final class WorkoutListByLevelFamily extends $Family
     with
@@ -131,12 +145,20 @@ final class WorkoutListByLevelFamily extends $Family
         isAutoDispose: true,
       );
 
+  /// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+  /// empty and fills in once the fetch resolves — matches the pattern used by
+  /// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
+
   WorkoutListByLevelProvider call(WorkoutLevel level) =>
       WorkoutListByLevelProvider._(argument: level, from: this);
 
   @override
   String toString() => r'workoutListByLevelProvider';
 }
+
+/// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
+/// empty and fills in once the fetch resolves — matches the pattern used by
+/// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
 
 abstract class _$WorkoutListByLevel extends $Notifier<List<WorkoutListItem>> {
   late final _$args = ref.$arg as WorkoutLevel;

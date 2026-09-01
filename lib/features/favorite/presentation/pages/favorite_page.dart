@@ -7,6 +7,11 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
+import '../../../../core/widgets/smart_image.dart';
+import '../../../nutrition/data/nutrition_repository.dart';
+import '../../../nutrition/domain/nutrition_models.dart';
+import '../../../workout/data/workout_repository.dart';
+import '../../../workout/domain/exercise_detail_models.dart';
 import '../../domain/favorite_models.dart';
 import '../providers/favorite_controller.dart';
 
@@ -104,7 +109,14 @@ class FavoritePage extends ConsumerWidget {
                                   child: child,
                                 ),
                               ),
-                          child: _FavoriteCard(item: item),
+                          child: _FavoriteCard(
+                            item: item,
+                            onOpen: () => _openFavorite(context, ref, item),
+                            onUnfavorite:
+                                () => ref
+                                    .read(filteredFavoritesProvider.notifier)
+                                    .remove(item),
+                          ),
                         );
                       },
                     ),
@@ -126,6 +138,36 @@ class FavoritePage extends ConsumerWidget {
     FavoriteFilter.video => Icons.fitness_center_rounded,
     FavoriteFilter.article => Icons.restaurant_rounded,
   };
+
+  Future<void> _openFavorite(
+    BuildContext context,
+    WidgetRef ref,
+    FavoriteItem item,
+  ) async {
+    if (item.id.isEmpty) return;
+
+    try {
+      if (item.type == FavoriteType.video) {
+        final json = await ref
+            .read(workoutRepositoryProvider)
+            .fetchWorkoutById(item.id);
+        if (!context.mounted) return;
+        context.push(
+          AppRoutes.workoutCategoryDetail,
+          extra: CategoryDetailData.fromWorkoutJson(json),
+        );
+        return;
+      }
+
+      final json = await ref
+          .read(nutritionRepositoryProvider)
+          .fetchRecipeById(item.id);
+      if (!context.mounted) return;
+      context.push(AppRoutes.mealDetail, extra: MealDetail.fromJson(json));
+    } catch (_) {
+      // A deleted or unavailable favorite cannot be opened.
+    }
+  }
 }
 
 class _FilterPill extends StatelessWidget {
@@ -187,14 +229,23 @@ class _FilterPill extends StatelessWidget {
 }
 
 class _FavoriteCard extends StatefulWidget {
-  const _FavoriteCard({required this.item});
+  const _FavoriteCard({
+    required this.item,
+    required this.onOpen,
+    required this.onUnfavorite,
+  });
   final FavoriteItem item;
+  final VoidCallback onOpen;
+  final VoidCallback onUnfavorite;
 
   @override
   State<_FavoriteCard> createState() => _FavoriteCardState();
 }
 
 class _FavoriteCardState extends State<_FavoriteCard> {
+  // Every item reaching this card came from the user's real favorites, so
+  // it always starts favorited — tapping the star unfavorites it for real
+  // (see [FilteredFavorites.remove]) rather than toggling local-only state.
   bool _favorited = true;
 
   @override
@@ -203,13 +254,19 @@ class _FavoriteCardState extends State<_FavoriteCard> {
     final item = widget.item;
     final isWorkout = item.type == FavoriteType.video;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: ext.glassFill,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: widget.onOpen,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: Row(
+        child: Container(
+          decoration: BoxDecoration(
+            color: ext.glassFill,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: ext.glassBorder),
+          ),
+          child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
@@ -278,13 +335,16 @@ class _FavoriteCardState extends State<_FavoriteCard> {
                     borderRadius: const BorderRadius.horizontal(
                       right: Radius.circular(24),
                     ),
-                    child: Image.asset(item.image, fit: BoxFit.cover),
+                    child: SmartImage(item.image),
                   ),
                   Positioned(
                     top: 8,
                     right: 8,
                     child: GestureDetector(
-                      onTap: () => setState(() => _favorited = !_favorited),
+                      onTap: () {
+                        setState(() => _favorited = !_favorited);
+                        if (!_favorited) widget.onUnfavorite();
+                      },
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 220),
                         transitionBuilder:
@@ -338,6 +398,8 @@ class _FavoriteCardState extends State<_FavoriteCard> {
             ),
           ),
         ],
+          ),
+        ),
       ),
     );
   }

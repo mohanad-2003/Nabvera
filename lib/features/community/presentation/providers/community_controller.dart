@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../profile/presentation/providers/profile_controller.dart';
+import '../../data/community_repository.dart';
 import '../../domain/community_models.dart';
 
 part 'community_controller.g.dart';
@@ -14,58 +16,88 @@ class CommunityTabController extends _$CommunityTabController {
   void select(CommunityTab tab) => state = tab;
 }
 
+/// Loads `/api/challenges` for the Community "Challenges" tab.
 @riverpod
-List<ChallengeItem> communityChallenges(Ref ref) => const [
-  ChallengeItem(
-    image: 'assets/cyc.png',
-    name: 'Cycling Challenge',
-    details:
-        '15 minutes a day, 7 days straight. Log a ride of any intensity to keep your streak alive and climb the weekly leaderboard.',
-  ),
-  ChallengeItem(
-    image: 'assets/power.png',
-    name: 'Power Squat',
-    details:
-        '5 sets of squats at increasing depth each day this week. Built to build raw leg strength and improve mobility.',
-  ),
-  ChallengeItem(
-    image: 'assets/leg_press.png',
-    name: 'Press Leg Ultimate',
-    details:
-        'A 4-week progressive leg press program — start light, add weight every session, and track your one-rep max at the finish.',
-  ),
-  ChallengeItem(
-    image: 'assets/cycling.png',
-    name: 'Cycling',
-    details:
-        'Cover 50km this week at your own pace, indoors or out. Split it however works for your schedule.',
-  ),
-];
+class CommunityChallenges extends _$CommunityChallenges {
+  @override
+  List<ChallengeItem> build() {
+    Future.microtask(_load);
+    return const [];
+  }
 
+  Future<void> _load() async {
+    try {
+      final docs = await ref.read(communityRepositoryProvider).fetchChallenges();
+      state = docs.map(ChallengeItem.fromJson).toList();
+    } catch (_) {
+      // Left empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
+}
+
+/// Loads the real community feed from `/api/posts`.
 @riverpod
-List<ForumThread> communityForums(Ref ref) => const [
-  ForumThread(
-    title: 'Strength Training Techniques',
-    subtitle: ' Discussion on training methods',
-    allLabel: 'See All',
-    date: 'Today 17:05',
-  ),
-  ForumThread(
-    title: 'Nutrition and Diet Strategies',
-    subtitle: ' Discussion on training methods',
-    allLabel: 'See All',
-    date: 'Today 17:05',
-  ),
-  ForumThread(
-    title: 'Cardiovascular Fitness',
-    subtitle: ' Discussion on training methods',
-    allLabel: 'See All',
-    date: 'Today 17:05',
-  ),
-  ForumThread(
-    title: 'Strength Training Techniques',
-    subtitle: ' Discussion on training methods',
-    allLabel: 'See All',
-    date: 'Today 17:05',
-  ),
-];
+class CommunityForums extends _$CommunityForums {
+  @override
+  List<ForumThread> build() {
+    Future.microtask(_load);
+    return const [];
+  }
+
+  Future<void> _load() async {
+    try {
+      final currentUserId = ref.read(currentUserProfileProvider).id;
+      final docs = await ref.read(communityRepositoryProvider).fetchFeed();
+      state = [
+        for (final doc in docs)
+          ForumThread.fromJson(doc, currentUserId: currentUserId),
+      ];
+    } catch (_) {
+      // Left empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
+
+  Future<void> toggleLike(String postId) async {
+    final index = state.indexWhere((t) => t.id == postId);
+    if (index == -1) return;
+    final thread = state[index];
+    final optimistic = thread.copyWith(
+      liked: !thread.liked,
+      likesCount: thread.liked ? thread.likesCount - 1 : thread.likesCount + 1,
+    );
+    state = [for (var i = 0; i < state.length; i++) if (i == index) optimistic else state[i]];
+    try {
+      final (likesCount, liked) =
+          await ref.read(communityRepositoryProvider).toggleLike(postId);
+      final confirmed = thread.copyWith(likesCount: likesCount, liked: liked);
+      state = [for (var i = 0; i < state.length; i++) if (i == index) confirmed else state[i]];
+    } catch (_) {
+      state = [for (var i = 0; i < state.length; i++) if (i == index) thread else state[i]];
+    }
+  }
+}
+
+/// Loads `/api/posts/:id/comments` for one thread.
+@riverpod
+class ForumComments extends _$ForumComments {
+  @override
+  List<ForumComment> build(String postId) {
+    Future.microtask(_load);
+    return const [];
+  }
+
+  Future<void> _load() async {
+    try {
+      final docs = await ref.read(communityRepositoryProvider).fetchComments(postId);
+      state = [for (final doc in docs) ForumComment.fromJson(doc)];
+    } catch (_) {
+      // Left empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
+
+  Future<void> add(String text) async {
+    if (text.trim().isEmpty) return;
+    await ref.read(communityRepositoryProvider).addComment(postId, text.trim());
+    await _load();
+  }
+}

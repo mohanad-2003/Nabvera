@@ -3,6 +3,7 @@ import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
 /// Premium row card for the "Choose Exercises" library: thumbnail, name,
@@ -63,7 +64,7 @@ class ExerciseCard extends StatelessWidget {
                 aspectRatio: 1,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(image, fit: BoxFit.cover),
+                  child: SmartImage(image),
                 ),
               ),
             ),

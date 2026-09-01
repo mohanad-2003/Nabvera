@@ -1,23 +1,34 @@
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fill_bar.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:fitness_app/features/workout/domain/workout_models.dart';
 import 'package:fitness_app/features/workout/presentation/providers/workout_progress_controller.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/progress_tab_bar.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CategoryChartsPage extends StatelessWidget {
+/// Weekly training charts — real data from `/api/workout-logs`: a calories
+/// bar chart, a sessions/minutes/calories summary row, and the most recent
+/// sessions. Replaces the previous entirely-hardcoded mock (fake step
+/// counts, a static "January 12th" date, three fixed daily-detail cards).
+class CategoryChartsPage extends ConsumerWidget {
   const CategoryChartsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
-    final accent = theme.colorScheme.primary;
+    final days = ref.watch(weeklyChartProvider);
+    final recentLogs = ref.watch(activityLogProvider).take(3).toList();
+
+    final totalSessions = days.fold(0, (sum, d) => sum + d.sessions);
+    final totalMinutes = days.fold(0, (sum, d) => sum + d.minutes);
+    final totalCalories = days.fold(0, (sum, d) => sum + d.calories);
+    final avgSession = totalSessions == 0 ? 0 : totalMinutes ~/ totalSessions;
+
     return PremiumScaffold(
       padding: EdgeInsets.zero,
       child: SingleChildScrollView(
@@ -26,141 +37,83 @@ class CategoryChartsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WorkoutHeader(title: l10n.progressTitle),
+              WorkoutHeader(title: l10n.progressTitle, showBack: false),
               const SizedBox(height: 20),
               ProgressTabBar(
                 selected: ProgressTab.charts,
                 onLogsTap: () => context.pop(),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Text(
-                l10n.progressMyProgress,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: accent,
-                  fontWeight: FontWeight.bold,
+                l10n.progressWeeklyOverview,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.fitness_center_rounded,
+                      value: '$totalSessions',
+                      label: l10n.progressStatSessions,
+                    ),
+                  ),
+                  _StatDivider(),
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.timer_rounded,
+                      value: '$totalMinutes',
+                      label: l10n.progressStatMinutes,
+                    ),
+                  ),
+                  _StatDivider(),
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.local_fire_department_rounded,
+                      value: '$totalCalories',
+                      label: l10n.profileStatCalories,
+                    ),
+                  ),
+                  _StatDivider(),
+                  Expanded(
+                    child: _StatTile(
+                      icon: Icons.speed_rounded,
+                      value: '$avgSession',
+                      label: l10n.progressStatAvgSession,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+              _WeeklyCaloriesChart(days: days),
+              const SizedBox(height: 28),
               Text(
-                'January 12th',
-                style: TextStyle(fontSize: 24, color: accent),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                height: 285,
-                decoration: BoxDecoration(
-                  color: ext.glassFill,
-                  border: Border.all(color: ext.glassBorder),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                    horizontal: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.progressSteps,
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: accent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        height: 147,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                for (final value in const [
-                                  '170',
-                                  '165',
-                                  '155',
-                                  '150',
-                                ])
-                                  Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: accent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: const [
-                                  FillBar(fillFraction: 0.60),
-                                  FillBar(fillFraction: 0.80),
-                                  FillBar(fillFraction: 0.40),
-                                  FillBar(fillFraction: 0.40),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(color: ext.glassBorder),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for (final month in const [
-                              'Jan',
-                              'Feb',
-                              'Mar',
-                              'Apr',
-                            ])
-                              Text(
-                                month,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: accent,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                l10n.progressRecentSessions,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 20),
-              const _DailyDetail(
-                day: 'Thu',
-                numDay: '14',
-                steps: '3,679',
-                duration: '1hr40m',
-              ),
-              const SizedBox(height: 10),
-              _DailyDetail(
-                day: 'Wed',
-                numDay: '20',
-                steps: '5,789',
-                duration: '1hr20m',
-              ),
-              const SizedBox(height: 10),
-              _DailyDetail(
-                day: 'Sat',
-                numDay: '22',
-                steps: '1,859',
-                duration: '1hr10m',
-              ),
+              const SizedBox(height: 12),
+              if (recentLogs.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Center(
+                    child: Text(
+                      l10n.progressNoSessionsYet,
+                      style: TextStyle(color: ext.textMuted),
+                    ),
+                  ),
+                )
+              else
+                for (var i = 0; i < recentLogs.length; i++) ...[
+                  _RecentSessionRow(item: recentLogs[i]),
+                  if (i != recentLogs.length - 1)
+                    Divider(height: 1, color: ext.glassBorder),
+                ],
             ],
           ),
         ),
@@ -169,99 +122,216 @@ class CategoryChartsPage extends StatelessWidget {
   }
 }
 
-class _DailyDetail extends StatelessWidget {
-  const _DailyDetail({
-    required this.day,
-    required this.numDay,
-    required this.steps,
-    required this.duration,
-  });
-
-  final String day;
-  final String numDay;
-  final String steps;
-  final String duration;
+class _StatDivider extends StatelessWidget {
+  const _StatDivider();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.seedViolet, AppColors.electricOrange],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Container(width: 1, height: 44, color: ext.glassBorder);
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Column(
+      children: [
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  day,
-                  style: const TextStyle(fontSize: 13, color: Colors.white),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  numDay,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Container(width: 1, height: 40, color: Colors.white),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context).progressSteps,
-                  style: const TextStyle(fontSize: 13, color: Colors.white),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  steps,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context).progressDuration,
-                  style: const TextStyle(fontSize: 13, color: Colors.white),
-                ),
-                const SizedBox(height: 5),
-                Row(
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: ext.textMuted),
+        ),
+      ],
+    );
+  }
+}
+
+/// Calorie-burn bar chart for the last 7 days — same visual language as the
+/// Home weekly-progress chart (theme-aware bars, today highlighted), so the
+/// two "progress" surfaces in the app feel consistent.
+class _WeeklyCaloriesChart extends StatelessWidget {
+  const _WeeklyCaloriesChart({required this.days});
+
+  final List<DayActivity> days;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    final dayLabels = [
+      l10n.homeDayMon,
+      l10n.homeDayTue,
+      l10n.homeDayWed,
+      l10n.homeDayThu,
+      l10n.homeDayFri,
+      l10n.homeDaySat,
+      l10n.homeDaySun,
+    ];
+    final todayIndex = DateTime.now().weekday - 1;
+    final maxCalories = days.fold(0, (m, d) => d.calories > m ? d.calories : m);
+    final heights = [
+      for (final d in days)
+        maxCalories == 0 ? 0.04 : (d.calories / maxCalories).clamp(0.04, 1.0),
+    ];
+
+    return SizedBox(
+      height: 150,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var i = 0; i < heights.length; i++)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Image.asset('assets/time.png', color: Colors.white),
-                    const SizedBox(width: 5),
+                    if (days[i].calories > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '${days[i].calories}',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: ext.textMuted,
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FractionallySizedBox(
+                          heightFactor: heights[i],
+                          widthFactor: 0.58,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(999),
+                              gradient:
+                                  i == todayIndex
+                                      ? ext.accentGradient
+                                      : LinearGradient(
+                                        colors: [ext.glassBorder, ext.glassFill],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     Text(
-                      duration,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      dayLabels[i],
+                      style: TextStyle(
+                        color: i == todayIndex ? ext.accentGlow : ext.textMuted,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecentSessionRow extends StatelessWidget {
+  const _RecentSessionRow({required this.item});
+
+  final ActivityLogItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: ext.accentGradient,
+            ),
+            child: Icon(Icons.fitness_center_rounded, color: ext.onAccent, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  item.date,
+                  style: TextStyle(fontSize: 12, color: ext.textMuted),
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                item.duration,
+                style: TextStyle(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                item.calories,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

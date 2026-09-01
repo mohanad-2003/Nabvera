@@ -62,17 +62,15 @@ abstract class _$CommunityTabController extends $Notifier<CommunityTab> {
   }
 }
 
-@ProviderFor(communityChallenges)
+/// Loads `/api/challenges` for the Community "Challenges" tab.
+
+@ProviderFor(CommunityChallenges)
 final communityChallengesProvider = CommunityChallengesProvider._();
 
+/// Loads `/api/challenges` for the Community "Challenges" tab.
 final class CommunityChallengesProvider
-    extends
-        $FunctionalProvider<
-          List<ChallengeItem>,
-          List<ChallengeItem>,
-          List<ChallengeItem>
-        >
-    with $Provider<List<ChallengeItem>> {
+    extends $NotifierProvider<CommunityChallenges, List<ChallengeItem>> {
+  /// Loads `/api/challenges` for the Community "Challenges" tab.
   CommunityChallengesProvider._()
     : super(
         from: null,
@@ -89,14 +87,7 @@ final class CommunityChallengesProvider
 
   @$internal
   @override
-  $ProviderElement<List<ChallengeItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<ChallengeItem> create(Ref ref) {
-    return communityChallenges(ref);
-  }
+  CommunityChallenges create() => CommunityChallenges();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<ChallengeItem> value) {
@@ -108,19 +99,37 @@ final class CommunityChallengesProvider
 }
 
 String _$communityChallengesHash() =>
-    r'0a9d6e1e2a48902b4cdd17b14d01f9f7cfca160b';
+    r'aa86f6f2d411f58780b2c3e29a8dcfbd7abe3e48';
 
-@ProviderFor(communityForums)
+/// Loads `/api/challenges` for the Community "Challenges" tab.
+
+abstract class _$CommunityChallenges extends $Notifier<List<ChallengeItem>> {
+  List<ChallengeItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<ChallengeItem>, List<ChallengeItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<ChallengeItem>, List<ChallengeItem>>,
+              List<ChallengeItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Loads the real community feed from `/api/posts`.
+
+@ProviderFor(CommunityForums)
 final communityForumsProvider = CommunityForumsProvider._();
 
+/// Loads the real community feed from `/api/posts`.
 final class CommunityForumsProvider
-    extends
-        $FunctionalProvider<
-          List<ForumThread>,
-          List<ForumThread>,
-          List<ForumThread>
-        >
-    with $Provider<List<ForumThread>> {
+    extends $NotifierProvider<CommunityForums, List<ForumThread>> {
+  /// Loads the real community feed from `/api/posts`.
   CommunityForumsProvider._()
     : super(
         from: null,
@@ -137,14 +146,7 @@ final class CommunityForumsProvider
 
   @$internal
   @override
-  $ProviderElement<List<ForumThread>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<ForumThread> create(Ref ref) {
-    return communityForums(ref);
-  }
+  CommunityForums create() => CommunityForums();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<ForumThread> value) {
@@ -155,4 +157,131 @@ final class CommunityForumsProvider
   }
 }
 
-String _$communityForumsHash() => r'6b6293520baf3b5c3c2a7acdbe3325ebb3efb415';
+String _$communityForumsHash() => r'5c23e002e3fc4e1110bbbe2c8029c6d1b9ddebae';
+
+/// Loads the real community feed from `/api/posts`.
+
+abstract class _$CommunityForums extends $Notifier<List<ForumThread>> {
+  List<ForumThread> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<ForumThread>, List<ForumThread>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<ForumThread>, List<ForumThread>>,
+              List<ForumThread>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Loads `/api/posts/:id/comments` for one thread.
+
+@ProviderFor(ForumComments)
+final forumCommentsProvider = ForumCommentsFamily._();
+
+/// Loads `/api/posts/:id/comments` for one thread.
+final class ForumCommentsProvider
+    extends $NotifierProvider<ForumComments, List<ForumComment>> {
+  /// Loads `/api/posts/:id/comments` for one thread.
+  ForumCommentsProvider._({
+    required ForumCommentsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'forumCommentsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$forumCommentsHash();
+
+  @override
+  String toString() {
+    return r'forumCommentsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  ForumComments create() => ForumComments();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<ForumComment> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<ForumComment>>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ForumCommentsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$forumCommentsHash() => r'9dc16b3d3d541d3fd27895f5ba9a105f4cd83757';
+
+/// Loads `/api/posts/:id/comments` for one thread.
+
+final class ForumCommentsFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ForumComments,
+          List<ForumComment>,
+          List<ForumComment>,
+          List<ForumComment>,
+          String
+        > {
+  ForumCommentsFamily._()
+    : super(
+        retry: null,
+        name: r'forumCommentsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Loads `/api/posts/:id/comments` for one thread.
+
+  ForumCommentsProvider call(String postId) =>
+      ForumCommentsProvider._(argument: postId, from: this);
+
+  @override
+  String toString() => r'forumCommentsProvider';
+}
+
+/// Loads `/api/posts/:id/comments` for one thread.
+
+abstract class _$ForumComments extends $Notifier<List<ForumComment>> {
+  late final _$args = ref.$arg as String;
+  String get postId => _$args;
+
+  List<ForumComment> build(String postId);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<ForumComment>, List<ForumComment>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<ForumComment>, List<ForumComment>>,
+              List<ForumComment>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}

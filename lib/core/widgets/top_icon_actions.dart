@@ -1,7 +1,6 @@
+import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../routing/app_routes.dart';
 
 /// The search/notifications/profile icon trio duplicated across ~6 legacy
 /// screens (home, search, header_workout, favorite, meal_plane, challenge).

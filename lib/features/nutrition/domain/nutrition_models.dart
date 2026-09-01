@@ -1,7 +1,10 @@
+import '../../../core/localization/generated/app_localizations.dart';
+
 /// Replaces the `Map<String, dynamic>` meal entries used throughout the
 /// legacy nutrition/meal-idea controllers.
 class MealItem {
   const MealItem({
+    this.id = '',
     required this.image,
     required this.name,
     required this.time,
@@ -12,8 +15,13 @@ class MealItem {
     this.fat,
     this.rating,
     this.difficulty,
+    this.prepTimeMinutes,
+    this.caloriesValue,
   });
 
+  /// Backend `Recipe._id` — used to fetch the full detail on tap and to
+  /// key the favorite toggle.
+  final String id;
   final String image;
   final String name;
   final String time;
@@ -30,7 +38,38 @@ class MealItem {
   final String? carbs;
   final String? fat;
   final double? rating;
+
+  /// Raw backend value (`easy`/`medium`/`hard`) — the widget layer maps
+  /// this to a localized label instead of showing it verbatim, unlike
+  /// [time]/[calories] which are pre-formatted (English-only) fallbacks
+  /// for call sites that haven't been updated to use [prepTimeMinutes]/
+  /// [caloriesValue] with `AppLocalizations` yet.
   final String? difficulty;
+  final int? prepTimeMinutes;
+  final int? caloriesValue;
+
+  /// Builds a grid-card item from a `/api/recipes` JSON document.
+  factory MealItem.fromJson(Map<String, dynamic> json) {
+    final nutrition = json['nutrition'] as Map<String, dynamic>? ?? const {};
+    final minutes = (json['prepTimeMinutes'] as num?)?.toInt();
+    final calories = (nutrition['calories'] as num?)?.toInt();
+    return MealItem(
+      id: json['_id'] as String? ?? '',
+      image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
+      name: (json['title'] as String?) ?? '',
+      subtitle: (json['description'] as String?) ?? '',
+      time: '${minutes ?? '—'} Minutes',
+      calories: '${calories ?? '—'} Cal',
+      prepTimeMinutes: minutes,
+      caloriesValue: calories,
+      protein:
+          nutrition['proteinG'] == null ? null : '${nutrition['proteinG']}g',
+      carbs: nutrition['carbsG'] == null ? null : '${nutrition['carbsG']}g',
+      fat: nutrition['fatG'] == null ? null : '${nutrition['fatG']}g',
+      rating: (json['rating'] as num?)?.toDouble(),
+      difficulty: json['difficulty'] as String?,
+    );
+  }
 }
 
 class MealDetail {
@@ -50,6 +89,9 @@ class MealDetail {
     this.servings,
     this.tips = const [],
     this.benefits = const [],
+    this.prepTimeMinutes,
+    this.caloriesValue,
+    this.similarRecipes = const [],
   });
 
   final String image;
@@ -69,10 +111,69 @@ class MealDetail {
   final String? carbs;
   final String? fat;
   final double? rating;
+
+  /// See the doc comment on [MealItem.difficulty] — same raw-value contract.
   final String? difficulty;
   final String? servings;
   final List<String> tips;
   final List<String> benefits;
+  final int? prepTimeMinutes;
+  final int? caloriesValue;
+
+  /// Other recipes in the same category — from the backend's
+  /// `getRecipeById`, which computes this specifically for the recipe
+  /// being viewed (not a generic "recommended" list shared by every recipe).
+  final List<MealItem> similarRecipes;
+
+  /// Builds a detail-page model from a `/api/recipes/:id` (or list) JSON
+  /// document. `favoriteKey` is the recipe's `_id`, matched against
+  /// `UserProfile.favoriteRecipeIds`.
+  factory MealDetail.fromJson(Map<String, dynamic> json) {
+    final nutrition = json['nutrition'] as Map<String, dynamic>? ?? const {};
+    final ingredients =
+        (json['ingredients'] as List? ?? const []).cast<Map<String, dynamic>>();
+    final steps =
+        (json['steps'] as List? ?? const []).cast<Map<String, dynamic>>()..sort(
+          (a, b) =>
+              ((a['order'] as num?) ?? 0).compareTo((b['order'] as num?) ?? 0),
+        );
+    final minutes = (json['prepTimeMinutes'] as num?)?.toInt();
+    final calories = (nutrition['calories'] as num?)?.toInt();
+
+    return MealDetail(
+      image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
+      name: (json['title'] as String?) ?? '',
+      time: '${minutes ?? '—'} Minutes',
+      calories: '${calories ?? '—'} Cal',
+      prepTimeMinutes: minutes,
+      caloriesValue: calories,
+      ingredients: [
+        for (final i in ingredients)
+          '${i['amount'] ?? ''} ${i['name'] ?? ''}'.trim(),
+      ],
+      preparation: [for (final s in steps) (s['instruction'] as String?) ?? ''],
+      favoriteKey: json['_id'] as String?,
+      protein:
+          nutrition['proteinG'] == null ? null : '${nutrition['proteinG']}g',
+      carbs: nutrition['carbsG'] == null ? null : '${nutrition['carbsG']}g',
+      fat: nutrition['fatG'] == null ? null : '${nutrition['fatG']}g',
+      rating: (json['rating'] as num?)?.toDouble(),
+      difficulty: json['difficulty'] as String?,
+      tips: (json['tips'] as List? ?? const []).cast<String>(),
+      benefits: (json['benefits'] as List? ?? const []).cast<String>(),
+      similarRecipes: [
+        for (final r in (json['similarRecipes'] as List? ?? const []))
+          MealItem.fromJson(r as Map<String, dynamic>),
+      ],
+    );
+  }
+
+  static const empty = MealDetail(
+    image: 'assets/workout.png',
+    name: 'No recipes yet',
+    time: '—',
+    calories: '—',
+  );
 }
 
 enum MealCategory { breakfast, lunch, dinner }
@@ -155,3 +256,29 @@ class BreakfastOption {
     preparation: preparation,
   );
 }
+
+/// Maps the backend's raw `Recipe.difficulty` (`easy`/`medium`/`hard`) to a
+/// localized label — shared by every widget that renders a recipe's
+/// difficulty chip.
+String recipeDifficultyLabel(AppLocalizations l10n, String? difficulty) =>
+    switch (difficulty) {
+      'medium' => l10n.nutritionDifficultyMedium,
+      'hard' => l10n.nutritionDifficultyHard,
+      _ => l10n.nutritionDifficultyEasy,
+    };
+
+/// Localized "{n} Minutes" — falls back to the pre-formatted (English-only)
+/// [fallback] when the raw value wasn't available (e.g. from an older
+/// cached model that only has the formatted string).
+String recipeMinutesLabel(
+  AppLocalizations l10n,
+  int? minutes,
+  String fallback,
+) => minutes == null ? fallback : l10n.nutritionMinutesValue(minutes);
+
+/// Localized "{n} Cal" — same fallback contract as [recipeMinutesLabel].
+String recipeCaloriesLabel(
+  AppLocalizations l10n,
+  int? calories,
+  String fallback,
+) => calories == null ? fallback : l10n.nutritionCaloriesValue(calories);

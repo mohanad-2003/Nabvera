@@ -4,6 +4,7 @@ import '../theme/app_spacing.dart';
 import '../theme/app_theme_extension.dart';
 import 'icon_stat.dart';
 import 'pressable_scale.dart';
+import 'smart_image.dart';
 
 /// One meta entry (asset icon + label) on a [FeaturedCard]'s stats row.
 class FeaturedCardMeta {
@@ -82,9 +83,8 @@ class _FeaturedCardState extends State<FeaturedCard> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.card),
-                child: Image.asset(
+                child: SmartImage(
                   widget.image,
-                  fit: BoxFit.cover,
                   color: Colors.black.withValues(alpha: 0.12),
                   colorBlendMode: BlendMode.darken,
                 ),

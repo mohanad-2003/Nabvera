@@ -482,6 +482,174 @@ abstract class AppLocalizations {
   /// **'Skip for now'**
   String get authSkipForNow;
 
+  /// No description provided for @authErrorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'That email address looks invalid'**
+  String get authErrorInvalidEmail;
+
+  /// No description provided for @authErrorUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with that email'**
+  String get authErrorUserNotFound;
+
+  /// No description provided for @authErrorWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email or password'**
+  String get authErrorWrongPassword;
+
+  /// No description provided for @authErrorEmailInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account already exists with this email'**
+  String get authErrorEmailInUse;
+
+  /// No description provided for @authErrorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak'**
+  String get authErrorWeakPassword;
+
+  /// No description provided for @authErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error, please check your connection'**
+  String get authErrorNetwork;
+
+  /// No description provided for @authErrorGoogleCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled'**
+  String get authErrorGoogleCancelled;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong, please try again'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authResetEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent — check your inbox'**
+  String get authResetEmailSent;
+
+  /// No description provided for @authContinueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueWithGoogle;
+
+  /// No description provided for @authRememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get authRememberMe;
+
+  /// No description provided for @authAgreeTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get authAgreeTermsPrefix;
+
+  /// No description provided for @authAgreeTermsAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get authAgreeTermsAnd;
+
+  /// No description provided for @authTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please accept the Terms and Privacy Policy to continue'**
+  String get authTermsRequired;
+
+  /// No description provided for @authCheckYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get authCheckYourEmail;
+
+  /// No description provided for @authResetLinkSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a password reset link to {email}'**
+  String authResetLinkSentTo(String email);
+
+  /// No description provided for @authResendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend link'**
+  String get authResendLink;
+
+  /// No description provided for @authResendLinkIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String authResendLinkIn(int seconds);
+
+  /// No description provided for @authChangeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email'**
+  String get authChangeEmail;
+
+  /// No description provided for @authBackToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get authBackToLogin;
+
+  /// No description provided for @authBiometricEnableSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock enabled'**
+  String get authBiometricEnableSuccess;
+
+  /// No description provided for @authBiometricEnableFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify your biometrics — try again'**
+  String get authBiometricEnableFailed;
+
+  /// No description provided for @authBiometricUnlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Nabvera'**
+  String get authBiometricUnlockTitle;
+
+  /// No description provided for @authBiometricUnlockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to continue.'**
+  String get authBiometricUnlockBody;
+
+  /// No description provided for @authBiometricUnlockCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get authBiometricUnlockCta;
+
+  /// No description provided for @authBiometricLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out instead'**
+  String get authBiometricLogout;
+
+  /// No description provided for @authBiometricRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get authBiometricRetry;
+
+  /// No description provided for @onboardingSetupTimeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal setup takes less than a minute'**
+  String get onboardingSetupTimeNote;
+
   /// No description provided for @validationEmailRequired.
   ///
   /// In en, this message translates to:
@@ -572,10 +740,22 @@ abstract class AppLocalizations {
   /// **'Progress'**
   String get welcomeBadgeProgress;
 
+  /// No description provided for @welcomeCtaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Now'**
+  String get welcomeCtaStart;
+
+  /// No description provided for @welcomeHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an account, log in'**
+  String get welcomeHaveAccount;
+
   /// No description provided for @onboardingBrand.
   ///
   /// In en, this message translates to:
-  /// **'FITBODY'**
+  /// **'NABVERA'**
   String get onboardingBrand;
 
   /// No description provided for @onboardingSkip.
@@ -617,37 +797,37 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSlide2Kicker.
   ///
   /// In en, this message translates to:
-  /// **'TRACK EVERY REP'**
+  /// **'TRAIN SMARTER'**
   String get onboardingSlide2Kicker;
 
   /// No description provided for @onboardingSlide2Title.
   ///
   /// In en, this message translates to:
-  /// **'See your workouts, streaks, and progress in one place.'**
+  /// **'Find strength, cardio, and functional sessions fast.'**
   String get onboardingSlide2Title;
 
   /// No description provided for @onboardingSlide2Description.
   ///
   /// In en, this message translates to:
-  /// **'Turn effort into insight with daily metrics and clear performance feedback.'**
+  /// **'Choose the right intensity for your day and move with confidence.'**
   String get onboardingSlide2Description;
 
   /// No description provided for @onboardingSlide3Kicker.
   ///
   /// In en, this message translates to:
-  /// **'TRAIN SMARTER'**
+  /// **'TRACK EVERY REP'**
   String get onboardingSlide3Kicker;
 
   /// No description provided for @onboardingSlide3Title.
   ///
   /// In en, this message translates to:
-  /// **'Find strength, cardio, yoga, and HIIT sessions fast.'**
+  /// **'See your workouts, streaks, and progress in one place.'**
   String get onboardingSlide3Title;
 
   /// No description provided for @onboardingSlide3Description.
   ///
   /// In en, this message translates to:
-  /// **'Choose the right intensity for your day and move with confidence.'**
+  /// **'Turn effort into insight with daily metrics and clear performance feedback.'**
   String get onboardingSlide3Description;
 
   /// No description provided for @onboardingSlide4Kicker.
@@ -854,11 +1034,53 @@ abstract class AppLocalizations {
   /// **'Good Morning, {name}'**
   String homeGreeting(String name);
 
+  /// No description provided for @homeGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning, {name}'**
+  String homeGreetingMorning(String name);
+
+  /// No description provided for @homeGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon, {name}'**
+  String homeGreetingAfternoon(String name);
+
+  /// No description provided for @homeGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening, {name}'**
+  String homeGreetingEvening(String name);
+
+  /// No description provided for @homeGreetingMorningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get homeGreetingMorningPlain;
+
+  /// No description provided for @homeGreetingAfternoonPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get homeGreetingAfternoonPlain;
+
+  /// No description provided for @homeGreetingEveningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get homeGreetingEveningPlain;
+
   /// No description provided for @homeTagline.
   ///
   /// In en, this message translates to:
   /// **'Train hard. Recover smart. Repeat.'**
   String get homeTagline;
+
+  /// No description provided for @homeStreakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day streak'**
+  String homeStreakDays(int days);
 
   /// No description provided for @homeTodayPlanLabel.
   ///
@@ -980,6 +1202,192 @@ abstract class AppLocalizations {
   /// **'min'**
   String get homeUnitMin;
 
+  /// No description provided for @homeCtaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Workout'**
+  String get homeCtaStart;
+
+  /// No description provided for @homeCtaContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Workout'**
+  String get homeCtaContinue;
+
+  /// No description provided for @homeCtaCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Completed'**
+  String get homeCtaCompleted;
+
+  /// No description provided for @homeHeroCompletionPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% done'**
+  String homeHeroCompletionPercent(int percent);
+
+  /// No description provided for @homeHeroExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} exercises'**
+  String homeHeroExercises(int count);
+
+  /// No description provided for @homeCaloriesConsumedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} of {goal} kcal'**
+  String homeCaloriesConsumedOf(int consumed, int goal);
+
+  /// No description provided for @homeCaloriesRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} kcal left'**
+  String homeCaloriesRemaining(int remaining);
+
+  /// No description provided for @homeCaloriesGoalReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached'**
+  String get homeCaloriesGoalReached;
+
+  /// No description provided for @homeActivityProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {goal} min'**
+  String homeActivityProgress(int done, int goal);
+
+  /// No description provided for @homeStreakStartMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak today'**
+  String get homeStreakStartMessage;
+
+  /// No description provided for @homeStreakKeepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it going!'**
+  String get homeStreakKeepGoing;
+
+  /// No description provided for @homeStreakOnFire.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on fire!'**
+  String get homeStreakOnFire;
+
+  /// No description provided for @homeNextStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Next Step'**
+  String get homeNextStepTitle;
+
+  /// No description provided for @homeNextStepDrinkWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Drink a glass of water'**
+  String get homeNextStepDrinkWater;
+
+  /// No description provided for @homeNextStepStartWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Start today\'s workout'**
+  String get homeNextStepStartWorkout;
+
+  /// No description provided for @homeNextStepLogMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your next meal'**
+  String get homeNextStepLogMeal;
+
+  /// No description provided for @homeNextStepAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'You crushed today — keep it up!'**
+  String get homeNextStepAllDone;
+
+  /// No description provided for @homeNextStepGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get homeNextStepGo;
+
+  /// No description provided for @homeWeeklyGoalSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {goal} workouts this week'**
+  String homeWeeklyGoalSummary(int done, int goal);
+
+  /// No description provided for @homeWeeklyRestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest day'**
+  String get homeWeeklyRestDay;
+
+  /// No description provided for @homeDayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get homeDayMon;
+
+  /// No description provided for @homeDayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get homeDayTue;
+
+  /// No description provided for @homeDayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get homeDayWed;
+
+  /// No description provided for @homeDayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get homeDayThu;
+
+  /// No description provided for @homeDayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get homeDayFri;
+
+  /// No description provided for @homeDaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get homeDaySat;
+
+  /// No description provided for @homeDaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get homeDaySun;
+
+  /// No description provided for @homeRecommendedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load recommendations'**
+  String get homeRecommendedError;
+
+  /// No description provided for @homeArticlesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load articles'**
+  String get homeArticlesError;
+
+  /// No description provided for @homeRecommendedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No recommendations yet'**
+  String get homeRecommendedEmpty;
+
+  /// No description provided for @homeArticlesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles yet'**
+  String get homeArticlesEmpty;
+
   /// No description provided for @workoutTitle.
   ///
   /// In en, this message translates to:
@@ -1015,6 +1423,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start Workout'**
   String get workoutStartWorkout;
+
+  /// No description provided for @workoutNoVideoAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No video available for this exercise yet'**
+  String get workoutNoVideoAvailable;
 
   /// No description provided for @workoutDifficultyLabel.
   ///
@@ -1465,6 +1879,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Steps'**
   String get progressSteps;
+
+  /// No description provided for @progressWeeklyOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get progressWeeklyOverview;
+
+  /// No description provided for @progressStatSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get progressStatSessions;
+
+  /// No description provided for @progressStatMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get progressStatMinutes;
+
+  /// No description provided for @progressStatAvgSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg / Session'**
+  String get progressStatAvgSession;
+
+  /// No description provided for @progressRecentSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Sessions'**
+  String get progressRecentSessions;
+
+  /// No description provided for @progressNoSessionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions this week'**
+  String get progressNoSessionsYet;
 
   /// No description provided for @notificationsTitle.
   ///
@@ -2105,7 +2555,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsBody.
   ///
   /// In en, this message translates to:
-  /// **'By using FitBody you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Privacy → Delete My Account.'**
+  /// **'By using Nabvera you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Delete My Account.'**
   String get legalTermsBody;
 
   /// No description provided for @manageDataTitle.
@@ -2315,7 +2765,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationSettingsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose how FitBody keeps you in the loop'**
+  /// **'Choose how Nabvera keeps you in the loop'**
   String get notificationSettingsSubtitle;
 
   /// No description provided for @notificationToggleGeneral.
@@ -2731,6 +3181,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Servings'**
   String get nutritionServingsShort;
+
+  /// No description provided for @nutritionMinutesValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} Minutes'**
+  String nutritionMinutesValue(int minutes);
+
+  /// No description provided for @nutritionCaloriesValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{calories} Cal'**
+  String nutritionCaloriesValue(int calories);
+
+  /// No description provided for @nutritionDifficultyEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get nutritionDifficultyEasy;
+
+  /// No description provided for @nutritionDifficultyMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get nutritionDifficultyMedium;
+
+  /// No description provided for @nutritionDifficultyHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get nutritionDifficultyHard;
 
   /// No description provided for @mealIdeaTitle.
   ///

@@ -83,12 +83,43 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _nameError = null;
       _saving = true;
     });
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() => _saving = false);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.editProfileSuccessMessage)));
+
+    final patch = <String, dynamic>{
+      'name': _nameController.text.trim(),
+      'gender': _gender.name,
+    };
+    final weight = num.tryParse(_weightController.text.trim());
+    if (weight != null) patch['weightKg'] = weight;
+    final height = num.tryParse(_heightController.text.trim());
+    if (height != null) patch['heightCm'] = height;
+    final dob = _parseDob(_dobController.text.trim());
+    if (dob != null) patch['dateOfBirth'] = dob.toIso8601String();
+
+    try {
+      await ref.read(currentUserProfileProvider.notifier).update(patch);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.editProfileSuccessMessage)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.authErrorGeneric)));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Parses the "dd / MM / yyyy" text the date picker writes back.
+  DateTime? _parseDob(String text) {
+    final parts = text.split('/').map((p) => p.trim()).toList();
+    if (parts.length != 3) return null;
+    final day = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+    if (day == null || month == null || year == null) return null;
+    return DateTime(year, month, day);
   }
 
   @override
@@ -97,13 +128,27 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
 
-    if (!_initialized) {
+    if (!_initialized && profile.email.isNotEmpty) {
       _initialized = true;
       _nameController.text = profile.name;
       _emailController.text = profile.email;
-      _weightController.text = profile.weightKg;
-      _heightController.text = profile.heightM;
-      _dobController.text = '01 / 04 / 1996';
+      if (profile.weightKgRaw != null) {
+        _weightController.text = profile.weightKgRaw!.round().toString();
+      }
+      if (profile.heightCmRaw != null) {
+        _heightController.text = profile.heightCmRaw!.round().toString();
+      }
+      final dob = profile.dateOfBirth;
+      if (dob != null) {
+        _dobController.text =
+            '${dob.day.toString().padLeft(2, '0')} / '
+            '${dob.month.toString().padLeft(2, '0')} / ${dob.year}';
+      }
+      _gender = switch (profile.gender) {
+        'male' => _Gender.male,
+        'female' => _Gender.female,
+        _ => _Gender.other,
+      };
     }
 
     return PremiumScaffold(
@@ -142,7 +187,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        const UserAvatar(radius: 52),
+                        UserAvatar(radius: 52, imageUrl: profile.avatarUrl),
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -191,7 +236,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             const SizedBox(height: 22),
             FadeSlideIn(
               delay: const Duration(milliseconds: 100),
-              child: PremiumGlassCard(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 child: ProfileStatRow(profile: profile),
               ),
@@ -206,6 +251,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     controller: _nameController,
                     label: l10n.editProfileFullName,
                     prefixIcon: Icons.person_outline_rounded,
+                    flat: true,
                     onChanged: (_) {
                       if (_nameError != null) {
                         setState(() => _nameError = null);
@@ -224,6 +270,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     controller: _emailController,
                     label: l10n.authEmail,
                     prefixIcon: Icons.alternate_email_rounded,
+                    flat: true,
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 15),
@@ -231,6 +278,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     controller: _mobileController,
                     label: l10n.editProfileMobileNumber,
                     prefixIcon: Icons.phone_outlined,
+                    flat: true,
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 15),
@@ -241,6 +289,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         controller: _dobController,
                         label: l10n.editProfileDateOfBirth,
                         prefixIcon: Icons.cake_outlined,
+                        flat: true,
                         suffixIcon: const Icon(Icons.calendar_today_rounded),
                       ),
                     ),
@@ -250,12 +299,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     controller: _weightController,
                     label: l10n.editProfileWeight,
                     prefixIcon: Icons.monitor_weight_outlined,
+                    flat: true,
                   ),
                   const SizedBox(height: 15),
                   AppTextField(
                     controller: _heightController,
                     label: l10n.editProfileHeight,
                     prefixIcon: Icons.height_rounded,
+                    flat: true,
                   ),
                   const SizedBox(height: 20),
                   Text(

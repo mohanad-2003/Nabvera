@@ -1,8 +1,9 @@
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
 import 'workout_info_chip.dart';
 
 /// Premium grid card for the "Most Popular" workout list: image with a
@@ -74,7 +75,7 @@ class _PopularWorkoutCardState extends State<PopularWorkoutCard> {
                   clipBehavior: Clip.none,
                   children: [
                     Positioned.fill(
-                      child: Image.asset(widget.image, fit: BoxFit.cover),
+                      child: SmartImage(widget.image),
                     ),
                     Positioned.fill(
                       child: DecoratedBox(
@@ -103,8 +104,7 @@ class _PopularWorkoutCardState extends State<PopularWorkoutCard> {
                       top: 6,
                       end: 6,
                       child: GestureDetector(
-                        onTap:
-                            () => setState(() => _isFavorite = !_isFavorite),
+                        onTap: () => setState(() => _isFavorite = !_isFavorite),
                         child: Container(
                           width: 30,
                           height: 30,
@@ -179,7 +179,10 @@ class _PopularWorkoutCardState extends State<PopularWorkoutCard> {
                             widget.duration,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11, color: ext.textMuted),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: ext.textMuted,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -194,7 +197,10 @@ class _PopularWorkoutCardState extends State<PopularWorkoutCard> {
                             widget.calories,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11, color: ext.textMuted),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: ext.textMuted,
+                            ),
                           ),
                         ),
                       ],

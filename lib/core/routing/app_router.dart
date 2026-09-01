@@ -1,16 +1,17 @@
 import 'package:fitness_app/core/widgets/app_bottom_nav.dart';
+import 'package:fitness_app/features/authentication/presentation/pages/biometric_unlock_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/finger_print_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/forgot_password_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/login_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/onboarding_carousel_page.dart';
-import 'package:fitness_app/features/authentication/presentation/pages/set_password_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/signup_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/splash_page.dart';
-import 'package:fitness_app/features/authentication/presentation/pages/welcome_page.dart';
 import 'package:fitness_app/features/community/domain/community_models.dart';
 import 'package:fitness_app/features/community/presentation/pages/challenge_page.dart';
 import 'package:fitness_app/features/community/presentation/pages/community_page.dart';
 import 'package:fitness_app/features/favorite/presentation/pages/favorite_page.dart';
+import 'package:fitness_app/features/home/domain/home_models.dart';
+import 'package:fitness_app/features/home/presentation/pages/article_detail_page.dart';
 import 'package:fitness_app/features/home/presentation/pages/home_page.dart';
 import 'package:fitness_app/features/notification/presentation/pages/notification_page.dart';
 import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
@@ -69,10 +70,6 @@ GoRouter appRouter(Ref ref) {
         builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
-        path: AppRoutes.welcome,
-        builder: (context, state) => const WelcomePage(),
-      ),
-      GoRoute(
         path: AppRoutes.onboarding,
         builder: (context, state) => const OnboardingCarouselPage(),
       ),
@@ -89,12 +86,12 @@ GoRouter appRouter(Ref ref) {
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
-        path: AppRoutes.setPassword,
-        builder: (context, state) => const SetPasswordPage(),
-      ),
-      GoRoute(
         path: AppRoutes.fingerprint,
         builder: (context, state) => const FingerPrintPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.biometricUnlock,
+        builder: (context, state) => const BiometricUnlockPage(),
       ),
       GoRoute(
         path: AppRoutes.setup,
@@ -182,6 +179,12 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.favorite,
         builder: (context, state) => const FavoritePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.articleDetail,
+        builder:
+            (context, state) =>
+                ArticleDetailPage(article: state.extra as ArticleTip),
       ),
       GoRoute(
         path: AppRoutes.workoutCategoryDetail,

@@ -9,6 +9,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/smart_image.dart';
 import '../../../workout/presentation/widgets/workout_header.dart';
 import '../providers/meal_breakfast_controller.dart';
 
@@ -145,12 +146,7 @@ class _BreakfastOptionCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
-                  Image.asset(
-                    image,
-                    width: 88,
-                    height: 88,
-                    fit: BoxFit.cover,
-                  ),
+                  SmartImage(image, width: 88, height: 88),
                   PositionedDirectional(
                     top: 6,
                     end: 6,

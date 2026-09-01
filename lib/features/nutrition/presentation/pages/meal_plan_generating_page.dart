@@ -1,5 +1,6 @@
 import 'package:fitness_app/features/onboarding/presentation/widgets/wizard_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/generated/app_localizations.dart';
@@ -7,19 +8,28 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
 import '../../../workout/presentation/widgets/workout_header.dart';
+import '../providers/meal_plan_wizard_controller.dart';
 
-class MealPlanGeneratingPage extends StatefulWidget {
+class MealPlanGeneratingPage extends ConsumerStatefulWidget {
   const MealPlanGeneratingPage({super.key});
 
   @override
-  State<MealPlanGeneratingPage> createState() => _MealPlanGeneratingPageState();
+  ConsumerState<MealPlanGeneratingPage> createState() =>
+      _MealPlanGeneratingPageState();
 }
 
-class _MealPlanGeneratingPageState extends State<MealPlanGeneratingPage> {
+class _MealPlanGeneratingPageState
+    extends ConsumerState<MealPlanGeneratingPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    // Submits the plan while the animation plays, so the two-second wait
+    // the wizard already shows the user is put to real use instead of
+    // being a pure fake delay.
+    Future.wait([
+      ref.read(mealPlanWizardControllerProvider.notifier).submit(),
+      Future.delayed(const Duration(seconds: 2)),
+    ]).then((_) {
       if (mounted) context.go(AppRoutes.mealPlanBreakfast);
     });
   }

@@ -206,6 +206,98 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authSkipForNow => 'تخطَّ الآن';
 
   @override
+  String get authErrorInvalidEmail => 'صيغة البريد الإلكتروني غير صحيحة';
+
+  @override
+  String get authErrorUserNotFound => 'لا يوجد حساب بهذا البريد الإلكتروني';
+
+  @override
+  String get authErrorWrongPassword =>
+      'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+
+  @override
+  String get authErrorEmailInUse => 'يوجد حساب بالفعل بهذا البريد الإلكتروني';
+
+  @override
+  String get authErrorWeakPassword => 'كلمة المرور ضعيفة جداً';
+
+  @override
+  String get authErrorNetwork => 'خطأ في الشبكة، يرجى التحقق من الاتصال';
+
+  @override
+  String get authErrorGoogleCancelled => 'تم إلغاء تسجيل الدخول عبر جوجل';
+
+  @override
+  String get authErrorGeneric => 'حدث خطأ ما، يرجى المحاولة مرة أخرى';
+
+  @override
+  String get authResetEmailSent =>
+      'تم إرسال رابط إعادة تعيين كلمة المرور — تحقق من بريدك';
+
+  @override
+  String get authContinueWithGoogle => 'المتابعة عبر جوجل';
+
+  @override
+  String get authRememberMe => 'تذكرني';
+
+  @override
+  String get authAgreeTermsPrefix => 'أوافق على ';
+
+  @override
+  String get authAgreeTermsAnd => ' و ';
+
+  @override
+  String get authTermsRequired =>
+      'يرجى الموافقة على الشروط وسياسة الخصوصية للمتابعة';
+
+  @override
+  String get authCheckYourEmail => 'تحقق من بريدك الإلكتروني';
+
+  @override
+  String authResetLinkSentTo(String email) {
+    return 'أرسلنا رابط إعادة تعيين كلمة المرور إلى $email';
+  }
+
+  @override
+  String get authResendLink => 'إعادة إرسال الرابط';
+
+  @override
+  String authResendLinkIn(int seconds) {
+    return 'إعادة الإرسال خلال $seconds ث';
+  }
+
+  @override
+  String get authChangeEmail => 'تغيير البريد الإلكتروني';
+
+  @override
+  String get authBackToLogin => 'العودة لتسجيل الدخول';
+
+  @override
+  String get authBiometricEnableSuccess => 'تم تفعيل البصمة';
+
+  @override
+  String get authBiometricEnableFailed =>
+      'تعذّر التحقق من بصمتك — حاول مرة أخرى';
+
+  @override
+  String get authBiometricUnlockTitle => 'افتح Nabvera';
+
+  @override
+  String get authBiometricUnlockBody => 'أكّد أنها أنت للمتابعة.';
+
+  @override
+  String get authBiometricUnlockCta => 'فتح';
+
+  @override
+  String get authBiometricLogout => 'تسجيل الخروج بدلاً من ذلك';
+
+  @override
+  String get authBiometricRetry => 'حاول مرة أخرى';
+
+  @override
+  String get onboardingSetupTimeNote => 'الإعداد الشخصي سيأخذ أقل من دقيقة';
+
+  @override
   String get validationEmailRequired => 'البريد الإلكتروني مطلوب';
 
   @override
@@ -252,7 +344,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeBadgeProgress => 'التقدم';
 
   @override
-  String get onboardingBrand => 'FITBODY';
+  String get welcomeCtaStart => 'ابدأ الآن';
+
+  @override
+  String get welcomeHaveAccount => 'لدي حساب، تسجيل الدخول';
+
+  @override
+  String get onboardingBrand => 'NABVERA';
 
   @override
   String get onboardingSkip => 'تخطى';
@@ -274,26 +372,26 @@ class AppLocalizationsAr extends AppLocalizations {
       'تساعدك التدفقات التدريبية المخصصة على البدء اليوم والبقاء ثابتًا غدًا.';
 
   @override
-  String get onboardingSlide2Kicker => 'تابع كل تكرار';
+  String get onboardingSlide2Kicker => 'تدرّب بذكاء';
 
   @override
   String get onboardingSlide2Title =>
-      'شاهد تمارينك والمسارات والتقدم في مكان واحد.';
+      'اعثر على تمارين القوة والكارديو والحركات الوظيفية بسرعة.';
 
   @override
   String get onboardingSlide2Description =>
-      'حوّل الجهد إلى رؤى باستخدام المقاييس اليومية وملاحظات الأداء الواضحة.';
+      'اختر الشدة المناسبة ليومك وتحرّك بثقة.';
 
   @override
-  String get onboardingSlide3Kicker => 'تدرب بذكاء';
+  String get onboardingSlide3Kicker => 'تابع كل تكرار';
 
   @override
   String get onboardingSlide3Title =>
-      'اعثر على تمارين القوة والكارديو واليوغا وHIIT بسرعة.';
+      'شاهد تمارينك والمسارات والتقدم في مكان واحد.';
 
   @override
   String get onboardingSlide3Description =>
-      'اختر المستوى المناسب ليومك وحرك جسمك بثقة.';
+      'حوّل الجهد إلى رؤى باستخدام المقاييس اليومية وملاحظات الأداء الواضحة.';
 
   @override
   String get onboardingSlide4Kicker => 'حقق الأهداف';
@@ -409,7 +507,36 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String homeGreetingMorning(String name) {
+    return 'صباح الخير، $name';
+  }
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'مساء الخير، $name';
+  }
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'مساء الخير، $name';
+  }
+
+  @override
+  String get homeGreetingMorningPlain => 'صباح الخير';
+
+  @override
+  String get homeGreetingAfternoonPlain => 'مساء الخير';
+
+  @override
+  String get homeGreetingEveningPlain => 'مساء الخير';
+
+  @override
   String get homeTagline => 'تدرّب بجد. تعافَ بذكاء. كرّر.';
+
+  @override
+  String homeStreakDays(int days) {
+    return 'سلسلة $days يوم';
+  }
 
   @override
   String get homeTodayPlanLabel => 'خطة اليوم';
@@ -482,6 +609,111 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeUnitMin => 'دقيقة';
 
   @override
+  String get homeCtaStart => 'ابدأ التمرين';
+
+  @override
+  String get homeCtaContinue => 'أكمل التمرين';
+
+  @override
+  String get homeCtaCompleted => 'تم إنجاز التمرين';
+
+  @override
+  String homeHeroCompletionPercent(int percent) {
+    return 'اكتمل $percent٪';
+  }
+
+  @override
+  String homeHeroExercises(int count) {
+    return '$count تمرين';
+  }
+
+  @override
+  String homeCaloriesConsumedOf(int consumed, int goal) {
+    return '$consumed من $goal سعرة';
+  }
+
+  @override
+  String homeCaloriesRemaining(int remaining) {
+    return 'متبقّي $remaining سعرة';
+  }
+
+  @override
+  String get homeCaloriesGoalReached => 'تم بلوغ الهدف';
+
+  @override
+  String homeActivityProgress(int done, int goal) {
+    return '$done من $goal دقيقة';
+  }
+
+  @override
+  String get homeStreakStartMessage => 'ابدأ سلسلتك اليوم';
+
+  @override
+  String get homeStreakKeepGoing => 'حافظ على الاستمرارية!';
+
+  @override
+  String get homeStreakOnFire => 'أنت في أوج حماسك!';
+
+  @override
+  String get homeNextStepTitle => 'خطوتك التالية';
+
+  @override
+  String get homeNextStepDrinkWater => 'اشرب كوب ماء';
+
+  @override
+  String get homeNextStepStartWorkout => 'ابدأ تمرين اليوم';
+
+  @override
+  String get homeNextStepLogMeal => 'سجّل وجبتك القادمة';
+
+  @override
+  String get homeNextStepAllDone => 'أنجزت أهداف اليوم، استمر!';
+
+  @override
+  String get homeNextStepGo => 'انطلق';
+
+  @override
+  String homeWeeklyGoalSummary(int done, int goal) {
+    return '$done من $goal تمارين هذا الأسبوع';
+  }
+
+  @override
+  String get homeWeeklyRestDay => 'يوم راحة';
+
+  @override
+  String get homeDayMon => 'إثن';
+
+  @override
+  String get homeDayTue => 'ثلا';
+
+  @override
+  String get homeDayWed => 'أرب';
+
+  @override
+  String get homeDayThu => 'خمي';
+
+  @override
+  String get homeDayFri => 'جمع';
+
+  @override
+  String get homeDaySat => 'سبت';
+
+  @override
+  String get homeDaySun => 'أحد';
+
+  @override
+  String get homeRecommendedError => 'تعذّر تحميل التوصيات';
+
+  @override
+  String get homeArticlesError => 'تعذّر تحميل المقالات';
+
+  @override
+  String get homeRecommendedEmpty => 'لا توجد توصيات بعد';
+
+  @override
+  String get homeArticlesEmpty => 'لا توجد مقالات بعد';
+
+  @override
   String get workoutTitle => 'التمارين';
 
   @override
@@ -498,6 +730,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workoutStartWorkout => 'ابدأ التمرين';
+
+  @override
+  String get workoutNoVideoAvailable => 'لا يوجد فيديو لهذا التمرين حالياً';
 
   @override
   String get workoutDifficultyLabel => 'الصعوبة';
@@ -730,6 +965,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get progressSteps => 'الخطوات';
+
+  @override
+  String get progressWeeklyOverview => 'هذا الأسبوع';
+
+  @override
+  String get progressStatSessions => 'الجلسات';
+
+  @override
+  String get progressStatMinutes => 'الدقائق';
+
+  @override
+  String get progressStatAvgSession => 'متوسط الجلسة';
+
+  @override
+  String get progressRecentSessions => 'آخر الجلسات';
+
+  @override
+  String get progressNoSessionsYet => 'لا توجد جلسات هذا الأسبوع';
 
   @override
   String get notificationsTitle => 'الإشعارات';
@@ -1065,7 +1318,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get legalTermsBody =>
-      'باستخدامك لتطبيق FitBody فإنك توافق على استخدام التطبيق لتتبع لياقتك الشخصية فقط، والحفاظ على أمان بيانات حسابك، واحترام إرشادات المجتمع عند النشر في قسم المجتمع.\n\nإرشادات التمارين والتغذية في هذا التطبيق هي لأغراض إعلامية عامة وليست بديلاً عن الاستشارة الطبية المتخصصة — استشر طبيبًا قبل البدء ببرنامج لياقة أو تغذية جديد.\n\nقد نقوم بتحديث هذه الشروط مع تطور التطبيق؛ واستمرارك في الاستخدام بعد أي تحديث يعني موافقتك على الشروط المعدَّلة. يمكنك حذف حسابك في أي وقت من الملف الشخصي ← الخصوصية ← حذف حسابي.';
+      'باستخدامك لتطبيق Nabvera فإنك توافق على استخدام التطبيق لتتبع لياقتك الشخصية فقط، والحفاظ على أمان بيانات حسابك، واحترام إرشادات المجتمع عند النشر في قسم المجتمع.\n\nإرشادات التمارين والتغذية في هذا التطبيق هي لأغراض إعلامية عامة وليست بديلاً عن الاستشارة الطبية المتخصصة — استشر طبيبًا قبل البدء ببرنامج لياقة أو تغذية جديد.\n\nقد نقوم بتحديث هذه الشروط مع تطور التطبيق؛ واستمرارك في الاستخدام بعد أي تحديث يعني موافقتك على الشروط المعدَّلة. يمكنك حذف حسابك في أي وقت من الملف الشخصي ← حذف حسابي.';
 
   @override
   String get manageDataTitle => 'إدارة بياناتك';
@@ -1183,7 +1436,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationSettingsTitle => 'إعدادات الإشعارات';
 
   @override
-  String get notificationSettingsSubtitle => 'اختر كيف يبقيك FitBody على اطلاع';
+  String get notificationSettingsSubtitle => 'اختر كيف يبقيك Nabvera على اطلاع';
 
   @override
   String get notificationToggleGeneral => 'الإشعارات العامة';
@@ -1396,6 +1649,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nutritionServingsShort => 'حصص';
+
+  @override
+  String nutritionMinutesValue(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String nutritionCaloriesValue(int calories) {
+    return '$calories سعرة';
+  }
+
+  @override
+  String get nutritionDifficultyEasy => 'سهل';
+
+  @override
+  String get nutritionDifficultyMedium => 'متوسط';
+
+  @override
+  String get nutritionDifficultyHard => 'صعب';
 
   @override
   String get mealIdeaTitle => 'أفكار وجبات';

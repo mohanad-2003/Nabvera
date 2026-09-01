@@ -1,8 +1,8 @@
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
 
 /// Premium vertical recipe card: large image with a glass gradient overlay,
 /// a floating favorite button, an optional difficulty badge and rating
@@ -49,38 +49,25 @@ class PremiumRecipeCard extends StatelessWidget {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
 
+    // No wrapping card box — just a rounded photo with its stats sitting
+    // plainly underneath, directly on the page background.
     return PressableScale(
       enabled: onTap != null,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(AppRadius.card),
-            border: Border.all(color: ext.glassBorder),
-            boxShadow:
-                theme.brightness == Brightness.dark
-                    ? const []
-                    : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              child: SizedBox(
                 height: imageHeight,
                 width: double.infinity,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(image, fit: BoxFit.cover),
+                    SmartImage(image),
                     Positioned.fill(
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -118,7 +105,9 @@ class PremiumRecipeCard extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                            isFavorite
+                                ? Icons.star_rounded
+                                : Icons.star_border_rounded,
                             color: isFavorite ? ext.accentGlow : Colors.white,
                             size: 18,
                           ),
@@ -140,83 +129,83 @@ class PremiumRecipeCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: ext.textPrimary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: ext.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
                     ),
-                    if (subtitle != null && subtitle!.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: ext.textMuted, fontSize: 11),
+                  ),
+                  if (subtitle != null && subtitle!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: ext.textMuted, fontSize: 11),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.timer_outlined,
+                        size: 13,
+                        color: ext.textMuted,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          time,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 11, color: ext.textMuted),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 13,
+                        color: theme.colorScheme.secondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          calories,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 11, color: ext.textMuted),
+                        ),
                       ),
                     ],
+                  ),
+                  if (protein != null || carbs != null || fat != null) ...[
                     const SizedBox(height: 8),
-                    Row(
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
                       children: [
-                        Icon(
-                          Icons.timer_outlined,
-                          size: 13,
-                          color: ext.textMuted,
-                        ),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            time,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11, color: ext.textMuted),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.local_fire_department_rounded,
-                          size: 13,
-                          color: theme.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            calories,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11, color: ext.textMuted),
-                          ),
-                        ),
+                        if (protein != null)
+                          _MacroTag(label: 'P', value: protein!),
+                        if (carbs != null) _MacroTag(label: 'C', value: carbs!),
+                        if (fat != null) _MacroTag(label: 'F', value: fat!),
                       ],
                     ),
-                    if (protein != null || carbs != null || fat != null) ...[
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: [
-                          if (protein != null)
-                            _MacroTag(label: 'P', value: protein!),
-                          if (carbs != null) _MacroTag(label: 'C', value: carbs!),
-                          if (fat != null) _MacroTag(label: 'F', value: fat!),
-                        ],
-                      ),
-                    ],
                   ],
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -254,108 +243,104 @@ class PremiumRecipeListTile extends StatelessWidget {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
 
+    // No card container — the list separates rows with a divider instead
+    // (see the pages that build this tile).
     return PressableScale(
       enabled: onTap != null,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(AppRadius.card),
-            border: Border.all(color: ext.glassBorder),
-          ),
-          child: Row(
-            children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      image,
-                      width: 92,
-                      height: 92,
-                      fit: BoxFit.cover,
+        child: Row(
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SmartImage(image, width: 92, height: 92),
+                ),
+                PositionedDirectional(
+                  top: 6,
+                  end: 6,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: onFavoriteTap,
+                    child: Icon(
+                      isFavorite
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
+                      color: isFavorite ? ext.danger : Colors.white,
+                      size: 20,
                     ),
                   ),
-                  PositionedDirectional(
-                    top: 6,
-                    end: 6,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: onFavoriteTap,
-                      child: Icon(
-                        isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                        color: isFavorite ? ext.danger : Colors.white,
-                        size: 20,
-                      ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.timer_outlined,
+                        size: 15,
+                        color: ext.textMuted,
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          time,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12, color: ext.textMuted),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 15,
+                        color: theme.colorScheme.secondary,
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          calories,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 12, color: ext.textMuted),
+                        ),
+                      ),
+                      if (rating != null) ...[
+                        const SizedBox(width: 12),
+                        Icon(
+                          Icons.star_rounded,
+                          size: 15,
+                          color: ext.accentGlow,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          rating!.toStringAsFixed(1),
+                          style: TextStyle(fontSize: 12, color: ext.textMuted),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: ext.textPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.timer_outlined, size: 15, color: ext.textMuted),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            time,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Icons.local_fire_department_rounded,
-                          size: 15,
-                          color: theme.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            calories,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          ),
-                        ),
-                        if (rating != null) ...[
-                          const SizedBox(width: 12),
-                          Icon(Icons.star_rounded, size: 15, color: ext.accentGlow),
-                          const SizedBox(width: 3),
-                          Text(
-                            rating!.toStringAsFixed(1),
-                            style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: theme.colorScheme.primary,
-              ),
-            ],
-          ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: theme.colorScheme.primary),
+          ],
         ),
       ),
     );

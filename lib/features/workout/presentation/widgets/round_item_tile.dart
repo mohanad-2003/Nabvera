@@ -1,7 +1,13 @@
+import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/core/widgets/pressable_scale.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
 
+/// A single exercise row within a category's round list. No card container
+/// — the caller separates rows with a [Divider] instead, matching the
+/// flat-list pattern used across the rest of the app.
 class RoundItemTile extends StatelessWidget {
   const RoundItemTile({super.key, required this.item, this.onTap});
 
@@ -11,18 +17,13 @@ class RoundItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 65,
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: ext.glassBorder),
-        ),
+    return PressableScale(
+      enabled: onTap != null,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
               Container(
@@ -64,7 +65,7 @@ class RoundItemTile extends StatelessWidget {
                         Text(
                           item.reps,
                           style: TextStyle(
-                            color: ext.accentGlow,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
@@ -74,8 +75,8 @@ class RoundItemTile extends StatelessWidget {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        Image.asset(
-                          'assets/time.png',
+                        SmartImage(
+                          AppIcons.time,
                           color: ext.textMuted,
                           width: 14,
                           height: 14,
@@ -96,6 +97,8 @@ class RoundItemTile extends StatelessWidget {
                   ],
                 ),
               ),
+              if (onTap != null)
+                Icon(Icons.chevron_right_rounded, color: ext.textMuted),
             ],
           ),
         ),

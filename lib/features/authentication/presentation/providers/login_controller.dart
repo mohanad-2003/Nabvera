@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../domain/auth_credentials.dart';
+import '../../data/firebase_auth_service.dart';
 
 part 'login_controller.g.dart';
 
@@ -22,15 +22,22 @@ class LoginController extends _$LoginController {
     });
   }
 
-  Future<LoginCredentials> submit() async {
+  Future<void> submit() async {
     state = const AsyncLoading();
-    final credentials = LoginCredentials(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
-    // No backend yet — this is where the auth repository call goes later.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    state = const AsyncData(null);
-    return credentials;
+    state = await AsyncValue.guard(() async {
+      await ref
+          .read(firebaseAuthServiceProvider)
+          .signInWithEmail(
+            email: emailController.text.trim(),
+            password: passwordController.text,
+          );
+    });
+  }
+
+  Future<void> submitWithGoogle() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(firebaseAuthServiceProvider).signInWithGoogle();
+    });
   }
 }

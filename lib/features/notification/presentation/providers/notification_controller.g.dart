@@ -65,13 +65,26 @@ abstract class _$NotificationFilterController
   }
 }
 
+/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
+/// applied to local state immediately, then sent to the backend; failures
+/// are silently left as-is rather than reverted, since a missed
+/// read/delete sync here is low-stakes and self-corrects on next refresh.
+
 @ProviderFor(NotificationListController)
 final notificationListControllerProvider =
     NotificationListControllerProvider._();
 
+/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
+/// applied to local state immediately, then sent to the backend; failures
+/// are silently left as-is rather than reverted, since a missed
+/// read/delete sync here is low-stakes and self-corrects on next refresh.
 final class NotificationListControllerProvider
     extends
         $NotifierProvider<NotificationListController, List<NotificationItem>> {
+  /// Loads the real `/api/notifications` inbox. Mutations are optimistic —
+  /// applied to local state immediately, then sent to the backend; failures
+  /// are silently left as-is rather than reverted, since a missed
+  /// read/delete sync here is low-stakes and self-corrects on next refresh.
   NotificationListControllerProvider._()
     : super(
         from: null,
@@ -100,7 +113,12 @@ final class NotificationListControllerProvider
 }
 
 String _$notificationListControllerHash() =>
-    r'0265a21f1dd9c6fb58148b159389f9a13928831f';
+    r'561bff431298e12f3f97829b27846e8671764d8d';
+
+/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
+/// applied to local state immediately, then sent to the backend; failures
+/// are silently left as-is rather than reverted, since a missed
+/// read/delete sync here is low-stakes and self-corrects on next refresh.
 
 abstract class _$NotificationListController
     extends $Notifier<List<NotificationItem>> {

@@ -5,6 +5,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme_extension.dart';
 import 'pressable_scale.dart';
+import 'smart_image.dart';
 
 class PremiumScaffold extends StatelessWidget {
   const PremiumScaffold({
@@ -332,7 +333,7 @@ class PremiumImageCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
         image: DecorationImage(
-          image: AssetImage(image),
+          image: smartImageProvider(image),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
             Colors.black.withValues(alpha: 0.28),

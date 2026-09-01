@@ -1,28 +1,35 @@
-import 'dart:async';
-
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/storage/preferences_service.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/glow_orb.dart';
+import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Premium, fully-vector splash screen: an ambient gradient backdrop, a
 /// pulsing energy ring around the brand mark, and a staggered fade/scale
 /// entrance for the wordmark, tagline, stat pills, and loading bar.
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
+class _SplashPageState extends ConsumerState<SplashPage>
     with TickerProviderStateMixin {
+  // Short enough to read as "instant" rather than a loading wait — this is
+  // purely the entrance animation's own duration, not an artificial delay;
+  // navigation fires the moment it finishes (see the status listener below),
+  // by which point the (local, synchronous) session/onboarding checks are
+  // long done.
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2200),
-  )..forward();
+    duration: const Duration(milliseconds: 1100),
+  )..addStatusListener(_handleAnimationStatus)
+   ..forward();
 
   late final AnimationController _pulseController = AnimationController(
     vsync: this,
@@ -50,28 +57,43 @@ class _SplashPageState extends State<SplashPage>
       curve: const Interval(0.25, 0.65, curve: Curves.easeOutCubic),
     ),
   );
-  late final Animation<double> _pillsFade = CurvedAnimation(
-    parent: _controller,
-    curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
-  );
   late final Animation<double> _barFade = CurvedAnimation(
     parent: _controller,
     curve: const Interval(0.65, 0.9, curve: Curves.easeOut),
   );
 
-  Timer? _navigationTimer;
+  bool _navigated = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _navigationTimer = Timer(const Duration(milliseconds: 3000), () {
-      if (mounted) context.go(AppRoutes.welcome);
-    });
+  void _handleAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed || _navigated) return;
+    _navigated = true;
+    if (!mounted) return;
+
+    // The onboarding carousel is a one-time, first-run intro — every later
+    // launch skips straight past it. Both checks below are local/
+    // synchronous (SharedPreferences + Firebase's cached current user), so
+    // there is nothing to actually "wait" on beyond the entrance animation
+    // itself.
+    final onboardingComplete =
+        ref.read(preferencesServiceProvider).onboardingComplete;
+    if (!onboardingComplete) {
+      context.go(AppRoutes.onboarding);
+      return;
+    }
+    final signedIn = ref.read(firebaseAuthServiceProvider).currentUser != null;
+    if (!signedIn) {
+      context.go(AppRoutes.login);
+      return;
+    }
+    // A signed-in user who opted into the biometric app-lock must confirm
+    // it's them before reaching real data — see BiometricUnlockPage.
+    final biometricEnabled =
+        ref.read(preferencesServiceProvider).biometricEnabled;
+    context.go(biometricEnabled ? AppRoutes.biometricUnlock : AppRoutes.home);
   }
 
   @override
   void dispose() {
-    _navigationTimer?.cancel();
     _controller.dispose();
     _pulseController.dispose();
     super.dispose();
@@ -186,25 +208,6 @@ class _SplashPageState extends State<SplashPage>
                               ),
                             ),
                           ),
-                          const SizedBox(height: 26),
-                          FadeTransition(
-                            opacity: _pillsFade,
-                            child: Row(
-                              children: [
-                                _MetricPill(
-                                  icon: Icons.bolt_rounded,
-                                  label: '12K+',
-                                  value: l10n.splashMetricWorkouts,
-                                ),
-                                const SizedBox(width: 10),
-                                _MetricPill(
-                                  icon: Icons.workspace_premium_rounded,
-                                  label: 'Pro',
-                                  value: l10n.splashMetricPlans,
-                                ),
-                              ],
-                            ),
-                          ),
                           const Spacer(flex: 4),
                           FadeTransition(
                             opacity: _barFade,
@@ -304,8 +307,8 @@ class _PulsingLogo extends StatelessWidget {
                   ],
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(size * 0.16),
-                  child: Image.asset('assets/FB.png'),
+                  padding: EdgeInsets.all(size * 0.14),
+                  child: Image.asset('assets/app_logo.png'),
                 ),
               ),
             ],
@@ -327,53 +330,6 @@ class _PulsingLogo extends StatelessWidget {
           color: ringColor.withValues(alpha: opacity.clamp(0.0, 1.0)),
           width: 1.4,
         ),
-      ),
-    );
-  }
-}
-
-class _MetricPill extends StatelessWidget {
-  const _MetricPill({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ext = theme.extension<AppThemeExtension>()!;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(
-          alpha: 0.10,
-        ),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.12),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: theme.colorScheme.primary),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(value, style: TextStyle(color: ext.textMuted)),
-        ],
       ),
     );
   }

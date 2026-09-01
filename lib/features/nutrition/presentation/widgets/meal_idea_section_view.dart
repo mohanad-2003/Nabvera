@@ -4,6 +4,7 @@ import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/pressable_scale.dart';
+import '../../../../core/widgets/smart_image.dart';
 import '../../domain/nutrition_models.dart';
 import 'premium_recipe_card.dart';
 
@@ -28,6 +29,7 @@ class MealIdeaSectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,13 +72,27 @@ class MealIdeaSectionView extends StatelessWidget {
                         child: PremiumRecipeCard(
                           image: item.image,
                           name: item.name,
-                          time: item.time,
-                          calories: item.calories,
+                          time: recipeMinutesLabel(
+                            l10n,
+                            item.prepTimeMinutes,
+                            item.time,
+                          ),
+                          calories: recipeCaloriesLabel(
+                            l10n,
+                            item.caloriesValue,
+                            item.calories,
+                          ),
                           protein: item.protein,
                           carbs: item.carbs,
                           fat: item.fat,
                           rating: item.rating,
-                          difficulty: item.difficulty,
+                          difficulty:
+                              item.difficulty == null
+                                  ? null
+                                  : recipeDifficultyLabel(
+                                    l10n,
+                                    item.difficulty,
+                                  ),
                           isFavorite: isFavorite(item.favoriteKey),
                           onFavoriteTap:
                               () => onToggleFavorite(item.favoriteKey),
@@ -106,16 +122,31 @@ class MealIdeaSectionView extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: section.recipes.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder:
+                      (_, _) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Divider(height: 1, color: ext.glassBorder),
+                      ),
                   itemBuilder: (context, index) {
                     final item = section.recipes[index];
                     return PremiumRecipeListTile(
                       image: item.image,
                       name: item.name,
-                      time: item.time,
-                      calories: item.calories,
+                      time: recipeMinutesLabel(
+                        l10n,
+                        item.prepTimeMinutes,
+                        item.time,
+                      ),
+                      calories: recipeCaloriesLabel(
+                        l10n,
+                        item.caloriesValue,
+                        item.calories,
+                      ),
                       rating: item.rating,
-                      difficulty: item.difficulty,
+                      difficulty:
+                          item.difficulty == null
+                              ? null
+                              : recipeDifficultyLabel(l10n, item.difficulty),
                       isFavorite: isFavorite(item.favoriteKey),
                       onFavoriteTap: () => onToggleFavorite(item.favoriteKey),
                       onTap:
@@ -152,6 +183,7 @@ class _TopRecipeHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
 
     return PressableScale(
       child: GestureDetector(
@@ -167,7 +199,7 @@ class _TopRecipeHero extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.asset(meal.image, fit: BoxFit.cover),
+                SmartImage(meal.image),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -258,7 +290,11 @@ class _TopRecipeHero extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            meal.time,
+                            recipeMinutesLabel(
+                              l10n,
+                              meal.prepTimeMinutes,
+                              meal.time,
+                            ),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white,
@@ -272,7 +308,11 @@ class _TopRecipeHero extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            meal.calories,
+                            recipeCaloriesLabel(
+                              l10n,
+                              meal.caloriesValue,
+                              meal.calories,
+                            ),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white,

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/generated/app_localizations.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../data/nutrition_repository.dart';
 import '../../domain/nutrition_models.dart';
 import '../providers/meal_idea_controller.dart';
-import '../providers/nutrition_controller.dart';
 import '../widgets/meal_detail_header.dart';
 
 /// Generic recipe/meal detail screen — replaces the legacy
@@ -28,7 +30,7 @@ class MealDetailPage extends ConsumerWidget {
     final isFavorite = ref
         .watch(mealIdeaFavoritesProvider)
         .contains(meal.favoriteKey);
-    final similar = ref.watch(nutritionRecommendedProvider);
+    final similar = meal.similarRecipes;
 
     return Scaffold(
       body: Stack(
@@ -51,6 +53,7 @@ class MealDetailPage extends ConsumerWidget {
                         ? null
                         : () => favorites.toggle(meal.favoriteKey),
                 similar: similar,
+                onTapSimilar: (item) => _openRecipe(context, ref, item.id),
               ),
             ),
           ),
@@ -76,5 +79,24 @@ class MealDetailPage extends ConsumerWidget {
                 ),
               ),
     );
+  }
+
+  /// Fetches the full recipe and pushes a new [MealDetailPage] for it — the
+  /// similar-recipe card only carries the trimmed list fields.
+  Future<void> _openRecipe(
+    BuildContext context,
+    WidgetRef ref,
+    String recipeId,
+  ) async {
+    if (recipeId.isEmpty) return;
+    try {
+      final json = await ref
+          .read(nutritionRepositoryProvider)
+          .fetchRecipeById(recipeId);
+      if (!context.mounted) return;
+      context.push(AppRoutes.mealDetail, extra: MealDetail.fromJson(json));
+    } catch (_) {
+      // Backend unreachable / recipe deleted — silently do nothing.
+    }
   }
 }

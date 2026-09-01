@@ -1,90 +1,28 @@
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:fitness_app/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'create_routine_controller.g.dart';
 
-const _library = [
-  RoutineExercise(
-    id: 'barbell_rows',
-    image: 'assets/barbell.png',
-    name: 'Barbell Rows',
-    muscleGroup: MuscleGroup.back,
-    time: '10 Minutes',
-    defaultSets: 3,
-    defaultReps: 12,
-    isFavorite: true,
-  ),
-  RoutineExercise(
-    id: 'hammer_curls',
-    image: 'assets/hammer.png',
-    name: 'Hammer Curls',
-    muscleGroup: MuscleGroup.arms,
-    time: '15 Minutes',
-    defaultSets: 4,
-    defaultReps: 12,
-  ),
-  RoutineExercise(
-    id: 'leg_press',
-    image: 'assets/leg_press.png',
-    name: 'Leg Press',
-    muscleGroup: MuscleGroup.legs,
-    time: '15 Minutes',
-    defaultSets: 4,
-    defaultReps: 10,
-  ),
-  RoutineExercise(
-    id: 'plank',
-    image: 'assets/plank.png',
-    name: 'Plank',
-    muscleGroup: MuscleGroup.strength,
-    time: '10 Minutes',
-    defaultSets: 3,
-    defaultReps: 1,
-    isFavorite: true,
-  ),
-  RoutineExercise(
-    id: 'cable_chest_press',
-    image: 'assets/cable.png',
-    name: 'Cable Chest Press',
-    muscleGroup: MuscleGroup.chest,
-    time: '10 Minutes',
-    defaultSets: 3,
-    defaultReps: 12,
-  ),
-  RoutineExercise(
-    id: 'tricep_dips',
-    image: 'assets/tricep.png',
-    name: 'Tricep Dips',
-    muscleGroup: MuscleGroup.arms,
-    time: '15 Minutes',
-    defaultSets: 4,
-    defaultReps: 12,
-  ),
-  RoutineExercise(
-    id: 'push_ups',
-    image: 'assets/push_up.png',
-    name: 'Push-Ups',
-    muscleGroup: MuscleGroup.chest,
-    time: '10 Minutes',
-    defaultSets: 3,
-    defaultReps: 15,
-    isFavorite: true,
-  ),
-  RoutineExercise(
-    id: 'trx_straps',
-    image: 'assets/trx.png',
-    name: 'TRX Suspension Straps',
-    muscleGroup: MuscleGroup.cardio,
-    time: '10 Minutes',
-    defaultSets: 3,
-    defaultReps: 12,
-  ),
-];
-
 @riverpod
 class CreateRoutineController extends _$CreateRoutineController {
   @override
-  CreateRoutineState build() => const CreateRoutineState(library: _library);
+  CreateRoutineState build() {
+    Future.microtask(_loadLibrary);
+    return const CreateRoutineState(library: []);
+  }
+
+  Future<void> _loadLibrary() async {
+    try {
+      final docs = await ref.read(workoutRepositoryProvider).fetchExercises();
+      state = state.copyWith(
+        library: [for (final doc in docs) RoutineExercise.fromJson(doc)],
+      );
+    } catch (_) {
+      // Left empty — the picker just shows nothing to choose from rather
+      // than crashing when the backend is unreachable.
+    }
+  }
 
   void setName(String name) => state = state.copyWith(name: name);
 
@@ -168,4 +106,44 @@ class CreateRoutineController extends _$CreateRoutineController {
     selected.insert(newIndex, item);
     state = state.copyWith(selected: selected);
   }
+
+  /// Submits the routine to `POST /api/routines`. Throws on failure — the
+  /// page decides how to surface that (see CreateRoutinePage._handleCreate).
+  Future<void> create(String name) async {
+    final payload = <String, dynamic>{
+      'name': name,
+      if (state.goal != null) 'goal': _goalToApi(state.goal!),
+      if (state.difficulty != null) 'difficulty': state.difficulty!.name,
+      'weeklySchedule': [
+        for (final day in state.selectedDays) _weekdayToApi(day),
+      ],
+      'exercises': [
+        for (var i = 0; i < state.selected.length; i++)
+          {
+            'exercise': state.selected[i].exerciseId,
+            'sets': state.selected[i].sets,
+            'reps': state.selected[i].reps,
+            'order': i,
+          },
+      ],
+    };
+    await ref.read(workoutRepositoryProvider).createRoutine(payload);
+  }
+
+  static String _goalToApi(RoutineGoal goal) => switch (goal) {
+    RoutineGoal.muscleGain => 'gain_muscle',
+    RoutineGoal.fatLoss => 'lose_weight',
+    RoutineGoal.strength => 'keep_fit',
+    RoutineGoal.endurance => 'endurance',
+  };
+
+  static String _weekdayToApi(Weekday day) => switch (day) {
+    Weekday.monday => 'mon',
+    Weekday.tuesday => 'tue',
+    Weekday.wednesday => 'wed',
+    Weekday.thursday => 'thu',
+    Weekday.friday => 'fri',
+    Weekday.saturday => 'sat',
+    Weekday.sunday => 'sun',
+  };
 }

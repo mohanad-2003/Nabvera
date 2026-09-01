@@ -111,6 +111,7 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                                   duration: item.time,
                                   reps: item.calories,
                                   level: item.difficulty,
+                                  videoUrl: item.videoUrl,
                                 ),
                               ),
                         );

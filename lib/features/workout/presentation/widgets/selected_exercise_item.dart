@@ -1,6 +1,7 @@
 import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
 /// Row item for the "My Routine" reorderable list: thumbnail, name, editable
@@ -49,7 +50,7 @@ class SelectedExerciseItem extends StatelessWidget {
           if (dragHandle != null) ...[dragHandle!, const SizedBox(width: 6)],
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(image, width: 50, height: 50, fit: BoxFit.cover),
+            child: SmartImage(image, width: 50, height: 50),
           ),
           const SizedBox(width: 10),
           Expanded(

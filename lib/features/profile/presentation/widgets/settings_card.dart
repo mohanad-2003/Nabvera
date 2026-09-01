@@ -1,13 +1,7 @@
-import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
-import 'settings_toggle_row.dart';
-
-/// Glass card that groups a list of rows (e.g. [SettingsToggleRow]s or
-/// radio/option tiles) with a hairline divider between each — the shared
-/// wrapper behind Settings' theme/language cards and every toggle group in
-/// Notification Settings / Manage Data.
+/// Groups settings rows with a hairline divider and no enclosing surface.
 class SettingsCard extends StatelessWidget {
   const SettingsCard({
     super.key,
@@ -21,13 +15,8 @@ class SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Container(
+    return Padding(
       padding: padding,
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: ext.glassBorder),
-      ),
       child: Column(
         children: [
           for (var i = 0; i < children.length; i++) ...[

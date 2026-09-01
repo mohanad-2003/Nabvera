@@ -8,18 +8,14 @@ part of 'home_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Mock data provider — a straight Provider (not a Notifier) since nothing
-/// on the home dashboard is mutated, matching the legacy `Homecontroller`
-/// which never called `.obs`. Swap the body for a repository call once a
-/// backend exists; the page never needs to change.
+/// The four fixed nav tiles — see [HomeCategory]'s doc comment for why
+/// these stay a plain list instead of a backend-fetched one.
 
 @ProviderFor(homeCategories)
 final homeCategoriesProvider = HomeCategoriesProvider._();
 
-/// Mock data provider — a straight Provider (not a Notifier) since nothing
-/// on the home dashboard is mutated, matching the legacy `Homecontroller`
-/// which never called `.obs`. Swap the body for a repository call once a
-/// backend exists; the page never needs to change.
+/// The four fixed nav tiles — see [HomeCategory]'s doc comment for why
+/// these stay a plain list instead of a backend-fetched one.
 
 final class HomeCategoriesProvider
     extends
@@ -29,10 +25,8 @@ final class HomeCategoriesProvider
           List<HomeCategory>
         >
     with $Provider<List<HomeCategory>> {
-  /// Mock data provider — a straight Provider (not a Notifier) since nothing
-  /// on the home dashboard is mutated, matching the legacy `Homecontroller`
-  /// which never called `.obs`. Swap the body for a repository call once a
-  /// backend exists; the page never needs to change.
+  /// The four fixed nav tiles — see [HomeCategory]'s doc comment for why
+  /// these stay a plain list instead of a backend-fetched one.
   HomeCategoriesProvider._()
     : super(
         from: null,
@@ -67,19 +61,24 @@ final class HomeCategoriesProvider
   }
 }
 
-String _$homeCategoriesHash() => r'2e8e6729038a8710583a2c320f65e6b5254f84a2';
+String _$homeCategoriesHash() => r'9d9f326784533e4095908db8918d04552d53ce0a';
 
-@ProviderFor(homeRecommendations)
+/// Loads a few popular workouts from `/api/workouts?popular=true` for the
+/// "Recommended" row.
+
+@ProviderFor(HomeRecommendations)
 final homeRecommendationsProvider = HomeRecommendationsProvider._();
 
+/// Loads a few popular workouts from `/api/workouts?popular=true` for the
+/// "Recommended" row.
 final class HomeRecommendationsProvider
     extends
-        $FunctionalProvider<
-          List<RecommendedWorkout>,
-          List<RecommendedWorkout>,
-          List<RecommendedWorkout>
-        >
-    with $Provider<List<RecommendedWorkout>> {
+        $NotifierProvider<
+          HomeRecommendations,
+          HomeSectionState<RecommendedWorkout>
+        > {
+  /// Loads a few popular workouts from `/api/workouts?popular=true` for the
+  /// "Recommended" row.
   HomeRecommendationsProvider._()
     : super(
         from: null,
@@ -96,38 +95,60 @@ final class HomeRecommendationsProvider
 
   @$internal
   @override
-  $ProviderElement<List<RecommendedWorkout>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<RecommendedWorkout> create(Ref ref) {
-    return homeRecommendations(ref);
-  }
+  HomeRecommendations create() => HomeRecommendations();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<RecommendedWorkout> value) {
+  Override overrideWithValue(HomeSectionState<RecommendedWorkout> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<RecommendedWorkout>>(value),
+      providerOverride:
+          $SyncValueProvider<HomeSectionState<RecommendedWorkout>>(value),
     );
   }
 }
 
 String _$homeRecommendationsHash() =>
-    r'167868147cf506565136e48801cd9c2a86967ce0';
+    r'b014548bf2bfb487c808cccdcbb532878302b20a';
 
-@ProviderFor(homeArticles)
+/// Loads a few popular workouts from `/api/workouts?popular=true` for the
+/// "Recommended" row.
+
+abstract class _$HomeRecommendations
+    extends $Notifier<HomeSectionState<RecommendedWorkout>> {
+  HomeSectionState<RecommendedWorkout> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              HomeSectionState<RecommendedWorkout>,
+              HomeSectionState<RecommendedWorkout>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                HomeSectionState<RecommendedWorkout>,
+                HomeSectionState<RecommendedWorkout>
+              >,
+              HomeSectionState<RecommendedWorkout>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Loads `/api/articles` for the "Articles & Tips" row.
+
+@ProviderFor(HomeArticles)
 final homeArticlesProvider = HomeArticlesProvider._();
 
+/// Loads `/api/articles` for the "Articles & Tips" row.
 final class HomeArticlesProvider
-    extends
-        $FunctionalProvider<
-          List<ArticleTip>,
-          List<ArticleTip>,
-          List<ArticleTip>
-        >
-    with $Provider<List<ArticleTip>> {
+    extends $NotifierProvider<HomeArticles, HomeSectionState<ArticleTip>> {
+  /// Loads `/api/articles` for the "Articles & Tips" row.
   HomeArticlesProvider._()
     : super(
         from: null,
@@ -144,21 +165,40 @@ final class HomeArticlesProvider
 
   @$internal
   @override
-  $ProviderElement<List<ArticleTip>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<ArticleTip> create(Ref ref) {
-    return homeArticles(ref);
-  }
+  HomeArticles create() => HomeArticles();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<ArticleTip> value) {
+  Override overrideWithValue(HomeSectionState<ArticleTip> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<ArticleTip>>(value),
+      providerOverride: $SyncValueProvider<HomeSectionState<ArticleTip>>(value),
     );
   }
 }
 
-String _$homeArticlesHash() => r'698332484eb6e8c676dfc6edc4842b258b4a4a18';
+String _$homeArticlesHash() => r'95b71775c9acd312eb9b122c27f9d4c451162c05';
+
+/// Loads `/api/articles` for the "Articles & Tips" row.
+
+abstract class _$HomeArticles extends $Notifier<HomeSectionState<ArticleTip>> {
+  HomeSectionState<ArticleTip> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<HomeSectionState<ArticleTip>, HomeSectionState<ArticleTip>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                HomeSectionState<ArticleTip>,
+                HomeSectionState<ArticleTip>
+              >,
+              HomeSectionState<ArticleTip>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

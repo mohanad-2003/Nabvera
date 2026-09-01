@@ -5,6 +5,7 @@ import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
+import '../../../../core/widgets/smart_image.dart';
 import '../../../../core/widgets/top_icon_actions.dart';
 import '../../domain/community_models.dart';
 
@@ -23,7 +24,7 @@ class ChallengePage extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(challenge.image, fit: BoxFit.cover),
+            child: SmartImage(challenge.image),
           ),
           Positioned.fill(
             child: DecoratedBox(

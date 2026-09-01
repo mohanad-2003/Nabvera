@@ -9,17 +9,11 @@ part of 'popular_exercises_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(popularExercises)
+@ProviderFor(PopularExercises)
 final popularExercisesProvider = PopularExercisesProvider._();
 
 final class PopularExercisesProvider
-    extends
-        $FunctionalProvider<
-          List<PopularExerciseItem>,
-          List<PopularExerciseItem>,
-          List<PopularExerciseItem>
-        >
-    with $Provider<List<PopularExerciseItem>> {
+    extends $NotifierProvider<PopularExercises, List<PopularExerciseItem>> {
   PopularExercisesProvider._()
     : super(
         from: null,
@@ -36,14 +30,7 @@ final class PopularExercisesProvider
 
   @$internal
   @override
-  $ProviderElement<List<PopularExerciseItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<PopularExerciseItem> create(Ref ref) {
-    return popularExercises(ref);
-  }
+  PopularExercises create() => PopularExercises();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<PopularExerciseItem> value) {
@@ -54,4 +41,23 @@ final class PopularExercisesProvider
   }
 }
 
-String _$popularExercisesHash() => r'6fcdee13e964794a1e5bd450c68e2cdc809a91de';
+String _$popularExercisesHash() => r'bfba3ec21987295c79ec61a03ccaf1299a5b84dc';
+
+abstract class _$PopularExercises extends $Notifier<List<PopularExerciseItem>> {
+  List<PopularExerciseItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<List<PopularExerciseItem>, List<PopularExerciseItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<PopularExerciseItem>, List<PopularExerciseItem>>,
+              List<PopularExerciseItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

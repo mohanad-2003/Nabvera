@@ -62,17 +62,18 @@ abstract class _$SearchTabController extends $Notifier<SearchTab> {
   }
 }
 
-@ProviderFor(searchFeaturedWorkouts)
+/// Two popular workouts shown above the results regardless of the current
+/// query — a "you might like" strip, same idea as Home's recommendations.
+
+@ProviderFor(SearchFeaturedWorkouts)
 final searchFeaturedWorkoutsProvider = SearchFeaturedWorkoutsProvider._();
 
+/// Two popular workouts shown above the results regardless of the current
+/// query — a "you might like" strip, same idea as Home's recommendations.
 final class SearchFeaturedWorkoutsProvider
-    extends
-        $FunctionalProvider<
-          List<SearchResultItem>,
-          List<SearchResultItem>,
-          List<SearchResultItem>
-        >
-    with $Provider<List<SearchResultItem>> {
+    extends $NotifierProvider<SearchFeaturedWorkouts, List<SearchResultItem>> {
+  /// Two popular workouts shown above the results regardless of the current
+  /// query — a "you might like" strip, same idea as Home's recommendations.
   SearchFeaturedWorkoutsProvider._()
     : super(
         from: null,
@@ -89,14 +90,7 @@ final class SearchFeaturedWorkoutsProvider
 
   @$internal
   @override
-  $ProviderElement<List<SearchResultItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<SearchResultItem> create(Ref ref) {
-    return searchFeaturedWorkouts(ref);
-  }
+  SearchFeaturedWorkouts create() => SearchFeaturedWorkouts();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<SearchResultItem> value) {
@@ -108,19 +102,109 @@ final class SearchFeaturedWorkoutsProvider
 }
 
 String _$searchFeaturedWorkoutsHash() =>
-    r'9f0d998e2c8d1a48699305702505ffd155ec4deb';
+    r'3b4ef119c2092ba2915f96e01e53def5379ab8a3';
 
-@ProviderFor(searchAllResults)
+/// Two popular workouts shown above the results regardless of the current
+/// query — a "you might like" strip, same idea as Home's recommendations.
+
+abstract class _$SearchFeaturedWorkouts
+    extends $Notifier<List<SearchResultItem>> {
+  List<SearchResultItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<List<SearchResultItem>, List<SearchResultItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<SearchResultItem>, List<SearchResultItem>>,
+              List<SearchResultItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// The search box's live text — a plain [TextEditingController] the query
+/// provider watches indirectly via [SearchQueryController.submit].
+
+@ProviderFor(SearchQueryController)
+final searchQueryControllerProvider = SearchQueryControllerProvider._();
+
+/// The search box's live text — a plain [TextEditingController] the query
+/// provider watches indirectly via [SearchQueryController.submit].
+final class SearchQueryControllerProvider
+    extends $NotifierProvider<SearchQueryController, String> {
+  /// The search box's live text — a plain [TextEditingController] the query
+  /// provider watches indirectly via [SearchQueryController.submit].
+  SearchQueryControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'searchQueryControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$searchQueryControllerHash();
+
+  @$internal
+  @override
+  SearchQueryController create() => SearchQueryController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$searchQueryControllerHash() =>
+    r'0b773bb3a59505866bd8ab578a70c607dd07e999';
+
+/// The search box's live text — a plain [TextEditingController] the query
+/// provider watches indirectly via [SearchQueryController.submit].
+
+abstract class _$SearchQueryController extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Debounced live search across `/api/workouts?search=` and
+/// `/api/recipes?search=` — empty query means empty results (nothing
+/// fabricated to fill the screen before the user types).
+
+@ProviderFor(SearchAllResults)
 final searchAllResultsProvider = SearchAllResultsProvider._();
 
+/// Debounced live search across `/api/workouts?search=` and
+/// `/api/recipes?search=` — empty query means empty results (nothing
+/// fabricated to fill the screen before the user types).
 final class SearchAllResultsProvider
-    extends
-        $FunctionalProvider<
-          List<SearchResultItem>,
-          List<SearchResultItem>,
-          List<SearchResultItem>
-        >
-    with $Provider<List<SearchResultItem>> {
+    extends $NotifierProvider<SearchAllResults, List<SearchResultItem>> {
+  /// Debounced live search across `/api/workouts?search=` and
+  /// `/api/recipes?search=` — empty query means empty results (nothing
+  /// fabricated to fill the screen before the user types).
   SearchAllResultsProvider._()
     : super(
         from: null,
@@ -137,14 +221,7 @@ final class SearchAllResultsProvider
 
   @$internal
   @override
-  $ProviderElement<List<SearchResultItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<SearchResultItem> create(Ref ref) {
-    return searchAllResults(ref);
-  }
+  SearchAllResults create() => SearchAllResults();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<SearchResultItem> value) {
@@ -155,4 +232,27 @@ final class SearchAllResultsProvider
   }
 }
 
-String _$searchAllResultsHash() => r'7974c753feee407d2b46cf28e67e203116191dd4';
+String _$searchAllResultsHash() => r'5dcbba4938fdacc69ab49432ee316ef9a7fdc3ed';
+
+/// Debounced live search across `/api/workouts?search=` and
+/// `/api/recipes?search=` — empty query means empty results (nothing
+/// fabricated to fill the screen before the user types).
+
+abstract class _$SearchAllResults extends $Notifier<List<SearchResultItem>> {
+  List<SearchResultItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<List<SearchResultItem>, List<SearchResultItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<SearchResultItem>, List<SearchResultItem>>,
+              List<SearchResultItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

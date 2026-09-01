@@ -4,37 +4,30 @@ import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Confirmation sheet for the destructive "delete account" action, shared by
-/// [PrivacyPage] and [SettingsPage] so the two entry points don't diverge.
+/// Centered confirmation dialog for the destructive delete-account action.
 Future<void> showDeleteAccountSheet(BuildContext context) {
   final ext = Theme.of(context).extension<AppThemeExtension>()!;
   final l10n = AppLocalizations.of(context);
 
-  return showModalBottomSheet<void>(
-    backgroundColor: Colors.transparent,
+  return showDialog<void>(
+    barrierDismissible: false,
     useRootNavigator: true,
     context: context,
-    builder: (context) {
-      return SafeArea(
+    builder: (dialogContext) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: ext.cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            borderRadius: BorderRadius.circular(28),
             border: Border.all(color: ext.glassBorder),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 44,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: ext.glassBorder,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              const SizedBox(height: 20),
               Container(
                 width: 64,
                 height: 64,
@@ -67,10 +60,10 @@ Future<void> showDeleteAccountSheet(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 130,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => dialogContext.pop(),
+                      child: Container(
                       height: 44,
                       decoration: BoxDecoration(
                         color: ext.glassFill,
@@ -87,16 +80,17 @@ Future<void> showDeleteAccountSheet(BuildContext context) {
                           ),
                         ),
                       ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      context.pop();
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                      dialogContext.pop();
                       context.go(AppRoutes.login);
-                    },
-                    child: Container(
-                      width: 130,
+                      },
+                      child: Container(
                       height: 44,
                       decoration: BoxDecoration(
                         color: ext.danger,
@@ -111,6 +105,7 @@ Future<void> showDeleteAccountSheet(BuildContext context) {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
                       ),
                     ),
                   ),

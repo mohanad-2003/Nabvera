@@ -62,17 +62,27 @@ abstract class _$FavoriteFilterController extends $Notifier<FavoriteFilter> {
   }
 }
 
-@ProviderFor(filteredFavorites)
+/// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
+/// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`
+/// from `/api/recipes/:id` ("article" cards). There's no batch-by-ids
+/// endpoint, so this fetches each favorite individually; fine at the
+/// small scale a favorites list actually reaches.
+
+@ProviderFor(FilteredFavorites)
 final filteredFavoritesProvider = FilteredFavoritesProvider._();
 
+/// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
+/// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`
+/// from `/api/recipes/:id` ("article" cards). There's no batch-by-ids
+/// endpoint, so this fetches each favorite individually; fine at the
+/// small scale a favorites list actually reaches.
 final class FilteredFavoritesProvider
-    extends
-        $FunctionalProvider<
-          List<FavoriteItem>,
-          List<FavoriteItem>,
-          List<FavoriteItem>
-        >
-    with $Provider<List<FavoriteItem>> {
+    extends $NotifierProvider<FilteredFavorites, List<FavoriteItem>> {
+  /// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
+  /// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`
+  /// from `/api/recipes/:id` ("article" cards). There's no batch-by-ids
+  /// endpoint, so this fetches each favorite individually; fine at the
+  /// small scale a favorites list actually reaches.
   FilteredFavoritesProvider._()
     : super(
         from: null,
@@ -89,14 +99,7 @@ final class FilteredFavoritesProvider
 
   @$internal
   @override
-  $ProviderElement<List<FavoriteItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  List<FavoriteItem> create(Ref ref) {
-    return filteredFavorites(ref);
-  }
+  FilteredFavorites create() => FilteredFavorites();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(List<FavoriteItem> value) {
@@ -107,4 +110,28 @@ final class FilteredFavoritesProvider
   }
 }
 
-String _$filteredFavoritesHash() => r'93055f0832692fd1a00d4ce94c4a01f3a13469d9';
+String _$filteredFavoritesHash() => r'6bd35efe41a704e2285845a5026299fd603e3662';
+
+/// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
+/// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`
+/// from `/api/recipes/:id` ("article" cards). There's no batch-by-ids
+/// endpoint, so this fetches each favorite individually; fine at the
+/// small scale a favorites list actually reaches.
+
+abstract class _$FilteredFavorites extends $Notifier<List<FavoriteItem>> {
+  List<FavoriteItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<FavoriteItem>, List<FavoriteItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<FavoriteItem>, List<FavoriteItem>>,
+              List<FavoriteItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

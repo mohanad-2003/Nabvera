@@ -1,49 +1,112 @@
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../domain/community_models.dart';
+import '../providers/community_controller.dart';
 
-class ForumDetailPage extends StatelessWidget {
+class ForumDetailPage extends ConsumerStatefulWidget {
   const ForumDetailPage({super.key, required this.thread});
 
   final ForumThread thread;
 
   @override
+  ConsumerState<ForumDetailPage> createState() => _ForumDetailPageState();
+}
+
+class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
+  final _replyController = TextEditingController();
+  bool _sending = false;
+
+  @override
+  void dispose() {
+    _replyController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    final text = _replyController.text.trim();
+    if (text.isEmpty) return;
+    setState(() => _sending = true);
+    try {
+      await ref
+          .read(forumCommentsProvider(widget.thread.id).notifier)
+          .add(text);
+      _replyController.clear();
+    } catch (_) {
+      // Swallow — the composer just stays populated so the user can retry.
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final l10n = AppLocalizations.of(context);
-    final posts = [
-      l10n.communityPost1,
-      l10n.communityPost2,
-      l10n.communityPost3,
-      l10n.communityPost4,
-      l10n.communityPost5,
-    ];
+    final comments = ref.watch(forumCommentsProvider(widget.thread.id));
 
     return PremiumScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PremiumHeader(
-            title: thread.title,
-            subtitle: thread.subtitle.trim(),
+            title: widget.thread.subtitle,
+            subtitle: widget.thread.date,
             showBack: true,
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: ListView.separated(
+            child: ListView(
               padding: const EdgeInsets.only(bottom: 8),
-              itemCount: posts.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder:
-                  (context, index) => _DiscussionCard(
+              children: [
+                _DiscussionCard(
+                  ext: ext,
+                  authorName: widget.thread.subtitle,
+                  body: widget.thread.content,
+                  isTopContribution: true,
+                ),
+                for (final comment in comments) ...[
+                  Divider(height: 1, color: ext.glassBorder),
+                  _DiscussionCard(
                     ext: ext,
-                    featured: index == 0,
-                    body: posts[index],
+                    authorName: comment.authorName,
+                    body: comment.text,
+                    isTopContribution: false,
                   ),
+                ],
+              ],
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      controller: _replyController,
+                      hint: 'Write a reply…',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: _sending ? null : _send,
+                    icon:
+                        _sending
+                            ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Icon(Icons.send_rounded),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -55,21 +118,23 @@ class ForumDetailPage extends StatelessWidget {
 class _DiscussionCard extends StatelessWidget {
   const _DiscussionCard({
     required this.ext,
-    required this.featured,
+    required this.authorName,
     required this.body,
+    required this.isTopContribution,
   });
 
   final AppThemeExtension ext;
-  final bool featured;
+  final String authorName;
   final String body;
+  final bool isTopContribution;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return PremiumGlassCard(
-      padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -82,14 +147,14 @@ class _DiscussionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Madison',
+                      authorName,
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: ext.textPrimary,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                     Text(
-                      featured
+                      isTopContribution
                           ? l10n.communityTopContribution
                           : l10n.communityMember,
                       style: theme.textTheme.labelSmall?.copyWith(
@@ -99,57 +164,17 @@ class _DiscussionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                featured ? Icons.star_rounded : Icons.star_border_rounded,
-                color: theme.colorScheme.primary,
-              ),
+              if (isTopContribution)
+                Icon(Icons.star_rounded, color: theme.colorScheme.primary),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             body,
-            maxLines: 4,
-            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 14,
-            runSpacing: 8,
-            children: [
-              _Stat(icon: Icons.star_rounded, value: '30,254'),
-              _Stat(icon: Icons.message_rounded, value: '12,254'),
-              _Stat(icon: Icons.visibility_rounded, value: '1,254'),
-            ],
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  const _Stat({required this.icon, required this.value});
-
-  final IconData icon;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 18),
-        const SizedBox(width: 5),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: ext.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
     );
   }
 }

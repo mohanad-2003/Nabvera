@@ -16,6 +16,7 @@ class ProfileMenuTile extends StatelessWidget {
     this.subtitle,
     this.onTap,
     this.iconColor,
+    this.flat = false,
   });
 
   final IconData icon;
@@ -23,6 +24,7 @@ class ProfileMenuTile extends StatelessWidget {
   final String? subtitle;
   final VoidCallback? onTap;
   final Color? iconColor;
+  final bool flat;
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +35,16 @@ class ProfileMenuTile extends StatelessWidget {
     return PressableScale(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(flat ? 12 : 20),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: ext.glassBorder),
-          ),
+          decoration: flat
+              ? null
+              : BoxDecoration(
+                  color: ext.glassFill,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: ext.glassBorder),
+                ),
           child: Row(
             children: [
               Container(

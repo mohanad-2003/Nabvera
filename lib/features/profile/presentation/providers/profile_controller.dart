@@ -1,22 +1,35 @@
+import 'package:fitness_app/features/profile/data/user_repository.dart';
 import 'package:fitness_app/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_controller.g.dart';
 
+/// Loads the signed-in user's profile from the backend on first read.
+/// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing
+/// consumer keeps working unchanged: it starts as [UserProfile.empty] and
+/// swaps in the real data — or stays empty on failure — once the fetch
+/// resolves, notifying listeners like any other state change.
 @riverpod
-UserProfile currentUserProfile(Ref ref) => const UserProfile(
-  name: 'Madison Smith',
-  email: 'madisons@example.com',
-  birthday: 'April 1st',
-  weightKg: '75 Kg',
-  ageYears: '28',
-  heightM: '1.65 m',
-  fitnessLevel: 'Intermediate',
-  completedWorkouts: 128,
-  caloriesBurned: 42600,
-  trainingDays: 96,
-  currentStreak: 7,
-);
+class CurrentUserProfile extends _$CurrentUserProfile {
+  @override
+  UserProfile build() {
+    Future.microtask(refresh);
+    return UserProfile.empty;
+  }
+
+  Future<void> refresh() async {
+    try {
+      state = await ref.read(userRepositoryProvider).fetchMe();
+    } catch (_) {
+      // Left at the previous (or empty) state — pages render their empty
+      // placeholders rather than crashing when the backend is unreachable.
+    }
+  }
+
+  Future<void> update(Map<String, dynamic> patch) async {
+    state = await ref.read(userRepositoryProvider).updateProfile(patch);
+  }
+}
 
 @riverpod
 List<DocumentItem> userDocuments(Ref ref) => const [

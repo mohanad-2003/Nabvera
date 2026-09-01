@@ -119,7 +119,8 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              PremiumGlassCard(
+              Padding(
+                padding: EdgeInsets.zero,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -136,6 +137,7 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
                       controller: _currentController,
                       obscureText: !_showCurrent,
                       prefixIcon: Icons.lock_outline,
+                      flat: true,
                       onChanged: (_) {
                         if (_error != null) setState(() => _error = null);
                       },
@@ -172,6 +174,7 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
                       controller: _newController,
                       obscureText: !_showNew,
                       prefixIcon: Icons.lock_reset_rounded,
+                      flat: true,
                       onChanged: (_) {
                         setState(() => _error = null);
                       },
@@ -222,6 +225,7 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
                       controller: _confirmController,
                       obscureText: !_showConfirm,
                       prefixIcon: Icons.lock_outline,
+                      flat: true,
                       onChanged: (_) {
                         if (_error != null) setState(() => _error = null);
                       },

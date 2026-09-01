@@ -6,6 +6,7 @@ import '../../../../core/localization/generated/app_localizations.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/selectable_option_card.dart';
+import '../../../profile/presentation/providers/profile_controller.dart';
 import '../providers/onboarding_profile_controller.dart';
 import '../widgets/wizard_scaffold.dart';
 
@@ -51,7 +52,11 @@ class PhysicalActivityPage extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: PrimaryButton(
           label: l10n.actionContinue,
-          onPressed: () => context.go(AppRoutes.home),
+          onPressed: () async {
+            await controller.submit();
+            ref.invalidate(currentUserProfileProvider);
+            if (context.mounted) context.go(AppRoutes.home);
+          },
         ),
       ),
     );
