@@ -4,19 +4,67 @@ import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/featured_card.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/round_item_tile.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
+import 'package:fitness_app/features/workout/presentation/widgets/workout_rating_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Generic workout-category screen — replaces the legacy AdvanceCategory,
 /// IntermediateCategory, and FunctionalPage, which shared this exact
 /// layout (hero card + round groups) and only differed by data.
-class CategoryDetailPage extends StatelessWidget {
+class CategoryDetailPage extends ConsumerStatefulWidget {
   const CategoryDetailPage({super.key, required this.data});
 
   final CategoryDetailData data;
+
+  @override
+  ConsumerState<CategoryDetailPage> createState() =>
+      _CategoryDetailPageState();
+}
+
+class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
+  bool _submitting = false;
+
+  CategoryDetailData get data => widget.data;
+
+  /// Prompts for a difficulty rating (skippable), then logs the workout
+  /// regardless of whether a rating was given. Rating collection and
+  /// logging are one user action — asking again separately later would
+  /// just add friction for something the rating sheet's Skip already covers.
+  Future<void> _finishWorkout(BuildContext context, AppLocalizations l10n) async {
+    if (_submitting) return;
+    final rating = await showWorkoutRatingSheet(context);
+    if (!context.mounted) return;
+
+    setState(() => _submitting = true);
+    try {
+      await ref
+          .read(workoutRepositoryProvider)
+          .createWorkoutLog(
+            title: data.heroLabel,
+            durationMinutes: data.durationMinutes,
+            caloriesBurned: data.estimatedCalories,
+            workoutId: data.workoutId,
+            difficultyRating: rating,
+          );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSavedSuccess)));
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSaveFailed)));
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +146,16 @@ class CategoryDetailPage extends StatelessWidget {
                           ],
                           const SizedBox(height: 18),
                         ],
+                        // Only a real backed-by-the-API workout has an id to
+                        // log against — curated/mock content (no workoutId)
+                        // has nothing for "finish" to actually save.
+                        if (data.workoutId != null)
+                          PrimaryButton(
+                            label: l10n.workoutFinishWorkout,
+                            icon: Icons.check_circle_outline_rounded,
+                            isLoading: _submitting,
+                            onPressed: () => _finishWorkout(context, l10n),
+                          ),
                       ],
                     ),
                   ),

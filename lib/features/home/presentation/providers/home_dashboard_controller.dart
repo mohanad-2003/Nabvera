@@ -1,3 +1,4 @@
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:fitness_app/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -14,6 +15,7 @@ class HomeFeaturedWorkout {
     required this.estimatedCalories,
     required this.difficulty,
     required this.exerciseCount,
+    required this.recommendationBasis,
   });
 
   final String id;
@@ -22,35 +24,80 @@ class HomeFeaturedWorkout {
   final int estimatedCalories;
   final String difficulty;
   final int exerciseCount;
+  final RecommendationBasis recommendationBasis;
 }
+
+enum RecommendationBasis { personalized, fallback }
 
 @riverpod
 class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
   @override
   HomeFeaturedWorkout? build() {
-    Future.microtask(_load);
+    final profile = ref.watch(currentUserProfileProvider);
+    Future.microtask(() => _load(profile: profile));
     return null;
   }
 
-  Future<void> _load() async {
+  Future<void> _load({required dynamic profile, bool easierOnly = false}) async {
     try {
       final repo = ref.read(workoutRepositoryProvider);
-      var docs = await repo.fetchWorkouts(featured: true);
-      if (docs.isEmpty) docs = await repo.fetchWorkouts();
+      final docs = await repo.fetchWorkouts();
       if (docs.isEmpty) return;
-      final doc = docs.first;
-      state = HomeFeaturedWorkout(
+      final preferredLevel = easierOnly ? 'beginner' : (profile.activityLevel as String? ?? 'beginner');
+      final preferredMinutes = profile.availableMinutes as int? ?? 30;
+      final equipment = profile.availableEquipment as List<String>? ?? const <String>[];
+      final preferredCategory = switch (profile.goal as String?) {
+        'gain_muscle' => 'strength',
+        'lose_weight' || 'endurance' => 'cardio',
+        _ => null,
+      };
+      final exact = docs.where((doc) =>
+          doc['difficulty'] == preferredLevel &&
+          (preferredCategory == null || doc['category'] == preferredCategory) &&
+          _fitsTime(doc, preferredMinutes) &&
+          _matchesEquipment(doc, equipment) &&
+          doc['_id'] != state?.id).toList();
+      final compatible = docs.where((doc) =>
+          _fitsTime(doc, preferredMinutes) &&
+          _matchesEquipment(doc, equipment) &&
+          doc['_id'] != state?.id).toList();
+      final doc = exact.isNotEmpty ? exact.first : compatible.isNotEmpty ? compatible.first : docs.first;
+      state = _toFeatured(doc, exact.isNotEmpty ? RecommendationBasis.personalized : RecommendationBasis.fallback);
+    } catch (_) {
+      // Left null — see WorkoutListByLevel for the same pattern.
+    }
+  }
+
+  Future<void> chooseEasierWorkout() async {
+    await _load(profile: ref.read(currentUserProfileProvider), easierOnly: true);
+  }
+
+  static bool _fitsTime(Map<String, dynamic> workout, int availableMinutes) =>
+      (workout['durationMinutes'] as num? ?? 0) <= availableMinutes;
+
+  static bool _matchesEquipment(Map<String, dynamic> workout, List<String> availableEquipment) {
+    if (availableEquipment.isEmpty) return true;
+    final available = availableEquipment.toSet();
+    final exercises = workout['exercises'] as List? ?? const [];
+    return exercises.every((entry) {
+      if (entry is! Map) return true;
+      final exercise = entry['exercise'];
+      if (exercise is! Map) return true;
+      final required = exercise['equipment'] as String? ?? 'none';
+      return required == 'none' || available.contains(required);
+    });
+  }
+
+  static HomeFeaturedWorkout _toFeatured(Map<String, dynamic> doc, RecommendationBasis basis) =>
+      HomeFeaturedWorkout(
         id: (doc['_id'] as String?) ?? '',
         title: (doc['title'] as String?) ?? '',
         durationMinutes: (doc['durationMinutes'] as num?)?.toInt() ?? 0,
         estimatedCalories: (doc['estimatedCalories'] as num?)?.toInt() ?? 0,
         difficulty: (doc['difficulty'] as String?) ?? 'beginner',
         exerciseCount: (doc['exercises'] as List?)?.length ?? 0,
+        recommendationBasis: basis,
       );
-    } catch (_) {
-      // Left null — see WorkoutListByLevel for the same pattern.
-    }
-  }
 }
 
 /// This week's per-day trained minutes, built from `/api/workout-logs`, for

@@ -76,6 +76,9 @@ class CategoryDetailData {
     required this.calories,
     required this.levelLabel,
     required this.rounds,
+    this.workoutId,
+    this.durationMinutes = 0,
+    this.estimatedCalories = 0,
   });
 
   final String headerTitle;
@@ -85,6 +88,15 @@ class CategoryDetailData {
   final String calories;
   final String levelLabel;
   final List<RoundGroup> rounds;
+
+  /// The backing `/api/workouts` document id, plus its raw numeric duration
+  /// and calories — kept alongside the already-formatted display strings
+  /// above (`time`, `calories`) so "Finish Workout" can log a real
+  /// [WorkoutLog] without re-parsing display text. Null/zero for curated
+  /// content that has no real workout behind it (finishing is hidden then).
+  final String? workoutId;
+  final int durationMinutes;
+  final int estimatedCalories;
 
   static const _accents = [
     AppColors.seedViolet,
@@ -132,6 +144,9 @@ class CategoryDetailData {
       calories: '${json['estimatedCalories'] ?? '—'} Kcal',
       levelLabel: _difficultyLabels[difficulty] ?? 'Beginner',
       rounds: [RoundGroup(title: 'Exercises', items: items)],
+      workoutId: json['_id'] as String?,
+      durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
+      estimatedCalories: (json['estimatedCalories'] as num?)?.toInt() ?? 0,
     );
   }
 

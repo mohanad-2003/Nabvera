@@ -349,6 +349,7 @@ class _TodayHeroCard extends ConsumerWidget {
     final duration = featured?.durationMinutes ?? 42;
     final calories = featured?.estimatedCalories ?? 380;
     final moves = featured?.exerciseCount ?? 8;
+    final profile = ref.watch(currentUserProfileProvider);
     final level = switch (featured?.difficulty) {
       'intermediate' => l10n.workoutLevelIntermediate,
       'advanced' => l10n.workoutLevelAdvanced,
@@ -447,7 +448,31 @@ class _TodayHeroCard extends ConsumerWidget {
                       color: Colors.white.withValues(alpha: 0.72),
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _recommendationReason(
+                      l10n,
+                      featured?.recommendationBasis,
+                      profile.availableMinutes,
+                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.68),
+                    ),
+                  ),
                   const SizedBox(height: 18),
+                  if (!isCompleted) ...[
+                    TextButton.icon(
+                      onPressed: () => ref
+                          .read(homeFeaturedWorkoutControllerProvider.notifier)
+                          .chooseEasierWorkout(),
+                      icon: const Icon(Icons.tune_rounded, size: 17),
+                      label: Text(l10n.homeHeroTooHard),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white.withValues(alpha: 0.86),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
                   Row(
                     children: [
                       _HeroChip(
@@ -517,6 +542,17 @@ class _TodayHeroCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _recommendationReason(
+    AppLocalizations l10n,
+    RecommendationBasis? basis,
+    int? availableMinutes,
+  ) {
+    if (basis != RecommendationBasis.personalized) {
+      return l10n.homeHeroFallbackReason;
+    }
+    return l10n.homeHeroPersonalizedReason(availableMinutes ?? 30);
   }
 }
 

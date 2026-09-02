@@ -39,6 +39,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actionRetry => 'إعادة المحاولة';
 
   @override
+  String get actionSkip => 'تخطي';
+
+  @override
   String get settingsTheme => 'المظهر';
 
   @override
@@ -443,6 +446,49 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر مستوى نشاطك البدني لتخصيص خطتك الرياضية.';
 
   @override
+  String get onboardingEquipmentTitle => 'ما المعدات المتوفرة لديك؟';
+
+  @override
+  String get onboardingEquipmentBody =>
+      'اختر كل المعدات المتاحة لك، وسنتجنب التمارين التي تحتاج معدات غير موجودة.';
+
+  @override
+  String get onboardingEquipmentNone => 'بدون معدات / وزن الجسم فقط';
+
+  @override
+  String get onboardingEquipmentDumbbell => 'دمبل';
+
+  @override
+  String get onboardingEquipmentBarbell => 'بار حديد';
+
+  @override
+  String get onboardingEquipmentMachine => 'أجهزة النادي';
+
+  @override
+  String get onboardingEquipmentBand => 'أشرطة مقاومة';
+
+  @override
+  String get onboardingEquipmentKettlebell => 'كيتل بيل';
+
+  @override
+  String get onboardingTimeTitle => 'كم من الوقت لديك؟';
+
+  @override
+  String get onboardingTimeBody => 'سنضبط تمرينك اليومي ليتناسب مع هذا الوقت.';
+
+  @override
+  String get onboardingTime15 => '15 دقيقة';
+
+  @override
+  String get onboardingTime30 => '30 دقيقة';
+
+  @override
+  String get onboardingTime45 => '45 دقيقة';
+
+  @override
+  String get onboardingTime60 => '60 دقيقة';
+
+  @override
   String get onboardingFillProfileTitle => 'أكمل ملفك الشخصي';
 
   @override
@@ -566,6 +612,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeHeroTitle => 'قوة الجزء العلوي';
+
+  @override
+  String homeHeroPersonalizedReason(int minutes) {
+    return 'اخترناه لهدفك ومستواك ومعداتك والوقت المتاح: $minutes دقيقة.';
+  }
+
+  @override
+  String get homeHeroFallbackReason =>
+      'جلسة متوازنة اخترناها من مكتبة التمارين الحالية.';
+
+  @override
+  String get homeHeroTooHard => 'التمرين صعب؟ اعرض تمرينًا أسهل';
 
   @override
   String homeHeroSubtitle(int minutes, int moves, String level) {
@@ -730,6 +788,33 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workoutNoVideoAvailable => 'لا يوجد فيديو لهذا التمرين حالياً';
+
+  @override
+  String get workoutFinishWorkout => 'إنهاء التمرين';
+
+  @override
+  String get workoutRatingTitle => 'كيف كان هذا التمرين؟';
+
+  @override
+  String get workoutRatingSubtitle => 'ملاحظتك بتساعدنا نظبط اقتراح الغد.';
+
+  @override
+  String get workoutRatingTooEasy => 'سهل جداً';
+
+  @override
+  String get workoutRatingAppropriate => 'مناسب';
+
+  @override
+  String get workoutRatingHard => 'صعب';
+
+  @override
+  String get workoutRatingTooHard => 'صعب جداً';
+
+  @override
+  String get workoutLogSavedSuccess => 'تم حفظ التمرين — أحسنت!';
+
+  @override
+  String get workoutLogSaveFailed => 'تعذّر حفظ التمرين — تحقق من اتصالك.';
 
   @override
   String get workoutDifficultyLabel => 'الصعوبة';

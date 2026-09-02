@@ -17,6 +17,9 @@ class UserProfile {
     this.heightCmRaw,
     this.weightKgRaw,
     this.goal,
+    this.activityLevel,
+    this.availableEquipment = const [],
+    this.availableMinutes,
     this.avatarUrl,
     this.favoriteWorkoutIds = const [],
     this.favoriteRecipeIds = const [],
@@ -48,6 +51,9 @@ class UserProfile {
   final num? heightCmRaw;
   final num? weightKgRaw;
   final String? goal;
+  final String? activityLevel;
+  final List<String> availableEquipment;
+  final int? availableMinutes;
   final String? avatarUrl;
   final List<String> favoriteWorkoutIds;
   final List<String> favoriteRecipeIds;
@@ -93,6 +99,9 @@ class UserProfile {
       heightCmRaw: heightCm,
       weightKgRaw: weightKg,
       goal: json['goal'] as String?,
+      activityLevel: json['activityLevel'] as String?,
+      availableEquipment: _stringList(json['availableEquipment']),
+      availableMinutes: (json['availableMinutes'] as num?)?.toInt(),
       avatarUrl: json['avatarUrl'] as String?,
       favoriteWorkoutIds: _idList(json['favoriteWorkouts']),
       favoriteRecipeIds: _idList(json['favoriteRecipes']),
@@ -102,6 +111,11 @@ class UserProfile {
   static List<String> _idList(Object? value) {
     if (value is! List) return const [];
     return value.map((e) => e.toString()).toList();
+  }
+
+  static List<String> _stringList(Object? value) {
+    if (value is! List) return const [];
+    return value.whereType<String>().toList();
   }
 
   static int _ageFrom(DateTime dateOfBirth) {

@@ -8,6 +8,10 @@ enum Gender { male, female }
 
 enum ActivityLevel { beginner, intermediate, advanced }
 
+enum AvailableEquipment { none, dumbbell, barbell, machine, resistanceBand, kettlebell }
+
+enum AvailableTime { minutes15, minutes30, minutes45, minutes60 }
+
 /// Stable identifiers for fitness goals — the UI maps these to localized
 /// labels, so a language switch mid-wizard keeps the selection intact.
 enum FitnessGoal { loseWeight, gainWeight, muscleMassGain, shapeBody, others }
@@ -20,6 +24,8 @@ class OnboardingProfile {
     this.weightKg = 75,
     this.goal,
     this.activityLevel,
+    this.availableEquipment = const {AvailableEquipment.none},
+    this.availableTime = AvailableTime.minutes30,
   });
 
   final Gender? gender;
@@ -28,6 +34,8 @@ class OnboardingProfile {
   final int weightKg;
   final FitnessGoal? goal;
   final ActivityLevel? activityLevel;
+  final Set<AvailableEquipment> availableEquipment;
+  final AvailableTime availableTime;
 
   OnboardingProfile copyWith({
     Gender? gender,
@@ -36,6 +44,8 @@ class OnboardingProfile {
     int? weightKg,
     FitnessGoal? goal,
     ActivityLevel? activityLevel,
+    Set<AvailableEquipment>? availableEquipment,
+    AvailableTime? availableTime,
   }) {
     return OnboardingProfile(
       gender: gender ?? this.gender,
@@ -44,6 +54,8 @@ class OnboardingProfile {
       weightKg: weightKg ?? this.weightKg,
       goal: goal ?? this.goal,
       activityLevel: activityLevel ?? this.activityLevel,
+      availableEquipment: availableEquipment ?? this.availableEquipment,
+      availableTime: availableTime ?? this.availableTime,
     );
   }
 }
@@ -64,6 +76,20 @@ class OnboardingProfileController extends _$OnboardingProfileController {
   void selectGoal(FitnessGoal goal) => state = state.copyWith(goal: goal);
   void selectActivityLevel(ActivityLevel level) =>
       state = state.copyWith(activityLevel: level);
+  void toggleEquipment(AvailableEquipment equipment) {
+    final selected = {...state.availableEquipment};
+    if (equipment == AvailableEquipment.none) {
+      selected
+        ..clear()
+        ..add(equipment);
+    } else {
+      selected.remove(AvailableEquipment.none);
+      if (!selected.add(equipment)) selected.remove(equipment);
+      if (selected.isEmpty) selected.add(AvailableEquipment.none);
+    }
+    state = state.copyWith(availableEquipment: selected);
+  }
+  void selectAvailableTime(AvailableTime time) => state = state.copyWith(availableTime: time);
 
   /// Persists the wizard's answers to the user's backend profile. Best
   /// effort: onboarding still finishes and lands on Home even if this
@@ -80,6 +106,9 @@ class OnboardingProfileController extends _$OnboardingProfileController {
           Gender.female => 'female',
         },
       if (s.goal != null) 'goal': _goalToApi(s.goal!),
+      if (s.activityLevel != null) 'activityLevel': s.activityLevel!.name,
+      'availableEquipment': s.availableEquipment.map(_equipmentToApi).toList(),
+      'availableMinutes': _timeToMinutes(s.availableTime),
     };
     try {
       await ref.read(userRepositoryProvider).updateProfile(patch);
@@ -94,5 +123,17 @@ class OnboardingProfileController extends _$OnboardingProfileController {
     FitnessGoal.muscleMassGain => 'gain_muscle',
     FitnessGoal.shapeBody => 'keep_fit',
     FitnessGoal.others => 'keep_fit',
+  };
+
+  static String _equipmentToApi(AvailableEquipment equipment) => switch (equipment) {
+    AvailableEquipment.resistanceBand => 'resistance_band',
+    _ => equipment.name,
+  };
+
+  static int _timeToMinutes(AvailableTime time) => switch (time) {
+    AvailableTime.minutes15 => 15,
+    AvailableTime.minutes30 => 30,
+    AvailableTime.minutes45 => 45,
+    AvailableTime.minutes60 => 60,
   };
 }

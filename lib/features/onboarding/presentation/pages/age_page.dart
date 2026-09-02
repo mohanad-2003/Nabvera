@@ -40,7 +40,7 @@ class _AgePageState extends ConsumerState<AgePage> {
 
     return WizardScaffold(
       step: 2,
-      totalSteps: 6,
+      totalSteps: 8,
       title: l10n.onboardingAgeTitle,
       description: l10n.onboardingAgeBody,
       body: Column(

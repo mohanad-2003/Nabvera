@@ -158,6 +158,12 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get actionRetry;
 
+  /// No description provided for @actionSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get actionSkip;
+
   /// No description provided for @settingsTheme.
   ///
   /// In en, this message translates to:
@@ -914,6 +920,90 @@ abstract class AppLocalizations {
   /// **'Select your physical activity level to personalize your fitness plan.'**
   String get onboardingPhysicalBody;
 
+  /// No description provided for @onboardingEquipmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What equipment do you have?'**
+  String get onboardingEquipmentTitle;
+
+  /// No description provided for @onboardingEquipmentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose everything available to you. We will avoid workouts that need equipment you do not have.'**
+  String get onboardingEquipmentBody;
+
+  /// No description provided for @onboardingEquipmentNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No equipment / bodyweight only'**
+  String get onboardingEquipmentNone;
+
+  /// No description provided for @onboardingEquipmentDumbbell.
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbells'**
+  String get onboardingEquipmentDumbbell;
+
+  /// No description provided for @onboardingEquipmentBarbell.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell'**
+  String get onboardingEquipmentBarbell;
+
+  /// No description provided for @onboardingEquipmentMachine.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym machines'**
+  String get onboardingEquipmentMachine;
+
+  /// No description provided for @onboardingEquipmentBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Resistance bands'**
+  String get onboardingEquipmentBand;
+
+  /// No description provided for @onboardingEquipmentKettlebell.
+  ///
+  /// In en, this message translates to:
+  /// **'Kettlebell'**
+  String get onboardingEquipmentKettlebell;
+
+  /// No description provided for @onboardingTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How much time do you have?'**
+  String get onboardingTimeTitle;
+
+  /// No description provided for @onboardingTimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We will fit your daily workout into this time.'**
+  String get onboardingTimeBody;
+
+  /// No description provided for @onboardingTime15.
+  ///
+  /// In en, this message translates to:
+  /// **'15 minutes'**
+  String get onboardingTime15;
+
+  /// No description provided for @onboardingTime30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 minutes'**
+  String get onboardingTime30;
+
+  /// No description provided for @onboardingTime45.
+  ///
+  /// In en, this message translates to:
+  /// **'45 minutes'**
+  String get onboardingTime45;
+
+  /// No description provided for @onboardingTime60.
+  ///
+  /// In en, this message translates to:
+  /// **'60 minutes'**
+  String get onboardingTime60;
+
   /// No description provided for @onboardingFillProfileTitle.
   ///
   /// In en, this message translates to:
@@ -1135,6 +1225,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upper Body Strength'**
   String get homeHeroTitle;
+
+  /// No description provided for @homeHeroPersonalizedReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for your goal, level, equipment, and {minutes}-minute schedule.'**
+  String homeHeroPersonalizedReason(int minutes);
+
+  /// No description provided for @homeHeroFallbackReason.
+  ///
+  /// In en, this message translates to:
+  /// **'A balanced session selected from the current workout library.'**
+  String get homeHeroFallbackReason;
+
+  /// No description provided for @homeHeroTooHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Too intense? Show an easier workout'**
+  String get homeHeroTooHard;
 
   /// No description provided for @homeHeroSubtitle.
   ///
@@ -1423,6 +1531,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No video available for this exercise yet'**
   String get workoutNoVideoAvailable;
+
+  /// No description provided for @workoutFinishWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Workout'**
+  String get workoutFinishWorkout;
+
+  /// No description provided for @workoutRatingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was this workout?'**
+  String get workoutRatingTitle;
+
+  /// No description provided for @workoutRatingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feedback helps tune tomorrow\'s suggestion.'**
+  String get workoutRatingSubtitle;
+
+  /// No description provided for @workoutRatingTooEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Too Easy'**
+  String get workoutRatingTooEasy;
+
+  /// No description provided for @workoutRatingAppropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Just Right'**
+  String get workoutRatingAppropriate;
+
+  /// No description provided for @workoutRatingHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get workoutRatingHard;
+
+  /// No description provided for @workoutRatingTooHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Too Hard'**
+  String get workoutRatingTooHard;
+
+  /// No description provided for @workoutLogSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout saved — great job!'**
+  String get workoutLogSavedSuccess;
+
+  /// No description provided for @workoutLogSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your workout — check your connection.'**
+  String get workoutLogSaveFailed;
 
   /// No description provided for @workoutDifficultyLabel.
   ///

@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,16 +8,13 @@ part 'api_client.g.dart';
 
 /// Origin of the Node/Express backend (no path suffix).
 ///
-/// `10.0.2.2` is the Android emulator's alias for the host machine's
-/// `localhost`; iOS simulators and desktop can reach `localhost` directly.
-/// Override with `--dart-define=API_BASE_URL=https://your-api.example.com/api`
-/// when pointing at a deployed backend — [apiOrigin] derives the plain
-/// origin from it by stripping the trailing `/api`.
-String get _defaultOrigin {
-  if (kIsWeb) return 'http://localhost:5000';
-  if (Platform.isAndroid) return 'http://10.0.2.2:5000';
-  return 'http://localhost:5000';
-}
+/// Defaults to the deployed Render backend so a plain `flutter run` works
+/// out of the box without a local server. Override with
+/// `--dart-define=API_BASE_URL=http://10.0.2.2:5000/api` (Android emulator)
+/// or `http://localhost:5000/api` (iOS simulator/desktop/web) to point at a
+/// local dev server instead — [apiOrigin] derives the plain origin from
+/// whichever URL is active by stripping the trailing `/api`.
+String get _defaultOrigin => 'https://nabvera-backend.onrender.com';
 
 const _apiBaseUrlOverride = String.fromEnvironment('API_BASE_URL');
 

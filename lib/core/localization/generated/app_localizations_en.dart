@@ -39,6 +39,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionRetry => 'Retry';
 
   @override
+  String get actionSkip => 'Skip';
+
+  @override
   String get settingsTheme => 'Theme';
 
   @override
@@ -447,6 +450,50 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select your physical activity level to personalize your fitness plan.';
 
   @override
+  String get onboardingEquipmentTitle => 'What equipment do you have?';
+
+  @override
+  String get onboardingEquipmentBody =>
+      'Choose everything available to you. We will avoid workouts that need equipment you do not have.';
+
+  @override
+  String get onboardingEquipmentNone => 'No equipment / bodyweight only';
+
+  @override
+  String get onboardingEquipmentDumbbell => 'Dumbbells';
+
+  @override
+  String get onboardingEquipmentBarbell => 'Barbell';
+
+  @override
+  String get onboardingEquipmentMachine => 'Gym machines';
+
+  @override
+  String get onboardingEquipmentBand => 'Resistance bands';
+
+  @override
+  String get onboardingEquipmentKettlebell => 'Kettlebell';
+
+  @override
+  String get onboardingTimeTitle => 'How much time do you have?';
+
+  @override
+  String get onboardingTimeBody =>
+      'We will fit your daily workout into this time.';
+
+  @override
+  String get onboardingTime15 => '15 minutes';
+
+  @override
+  String get onboardingTime30 => '30 minutes';
+
+  @override
+  String get onboardingTime45 => '45 minutes';
+
+  @override
+  String get onboardingTime60 => '60 minutes';
+
+  @override
   String get onboardingFillProfileTitle => 'Fill Your Profile';
 
   @override
@@ -571,6 +618,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeHeroTitle => 'Upper Body Strength';
+
+  @override
+  String homeHeroPersonalizedReason(int minutes) {
+    return 'Picked for your goal, level, equipment, and $minutes-minute schedule.';
+  }
+
+  @override
+  String get homeHeroFallbackReason =>
+      'A balanced session selected from the current workout library.';
+
+  @override
+  String get homeHeroTooHard => 'Too intense? Show an easier workout';
 
   @override
   String homeHeroSubtitle(int minutes, int moves, String level) {
@@ -736,6 +795,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workoutNoVideoAvailable =>
       'No video available for this exercise yet';
+
+  @override
+  String get workoutFinishWorkout => 'Finish Workout';
+
+  @override
+  String get workoutRatingTitle => 'How was this workout?';
+
+  @override
+  String get workoutRatingSubtitle =>
+      'Your feedback helps tune tomorrow\'s suggestion.';
+
+  @override
+  String get workoutRatingTooEasy => 'Too Easy';
+
+  @override
+  String get workoutRatingAppropriate => 'Just Right';
+
+  @override
+  String get workoutRatingHard => 'Hard';
+
+  @override
+  String get workoutRatingTooHard => 'Too Hard';
+
+  @override
+  String get workoutLogSavedSuccess => 'Workout saved — great job!';
+
+  @override
+  String get workoutLogSaveFailed =>
+      'Couldn\'t save your workout — check your connection.';
 
   @override
   String get workoutDifficultyLabel => 'Difficulty';

@@ -4,44 +4,44 @@ import 'package:fitness_app/core/widgets/primary_button.dart';
 import 'package:fitness_app/core/widgets/selectable_option_card.dart';
 import 'package:fitness_app/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
 import 'package:fitness_app/features/onboarding/presentation/widgets/wizard_scaffold.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-String _levelLabel(AppLocalizations l10n, ActivityLevel level) =>
-    switch (level) {
-      ActivityLevel.beginner => l10n.workoutLevelBeginner,
-      ActivityLevel.intermediate => l10n.workoutLevelIntermediate,
-      ActivityLevel.advanced => l10n.workoutLevelAdvanced,
-    };
+String _timeLabel(AppLocalizations l10n, AvailableTime time) => switch (time) {
+  AvailableTime.minutes15 => l10n.onboardingTime15,
+  AvailableTime.minutes30 => l10n.onboardingTime30,
+  AvailableTime.minutes45 => l10n.onboardingTime45,
+  AvailableTime.minutes60 => l10n.onboardingTime60,
+};
 
-class PhysicalActivityPage extends ConsumerWidget {
-  const PhysicalActivityPage({super.key});
+class TimeAvailabilityPage extends ConsumerWidget {
+  const TimeAvailabilityPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected =
-        ref.watch(onboardingProfileControllerProvider).activityLevel;
+        ref.watch(onboardingProfileControllerProvider).availableTime;
     final controller = ref.read(onboardingProfileControllerProvider.notifier);
     final l10n = AppLocalizations.of(context);
-
     return WizardScaffold(
-      step: 6,
+      step: 8,
       totalSteps: 8,
-      title: l10n.onboardingPhysicalTitle,
-      description: l10n.onboardingPhysicalBody,
+      title: l10n.onboardingTimeTitle,
+      description: l10n.onboardingTimeBody,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            for (final level in ActivityLevel.values) ...[
+            for (final time in AvailableTime.values) ...[
               SelectableOptionCard(
-                label: _levelLabel(l10n, level),
-                isSelected: selected == level,
+                label: _timeLabel(l10n, time),
+                isSelected: selected == time,
                 centered: true,
-                onTap: () => controller.selectActivityLevel(level),
+                onTap: () => controller.selectAvailableTime(time),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
             ],
           ],
         ),
@@ -49,8 +49,12 @@ class PhysicalActivityPage extends ConsumerWidget {
       button: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: PrimaryButton(
-          label: l10n.actionContinue,
-          onPressed: () => context.push(AppRoutes.setupEquipment),
+          label: l10n.onboardingStart,
+          onPressed: () async {
+            await controller.submit();
+            ref.invalidate(currentUserProfileProvider);
+            if (context.mounted) context.go(AppRoutes.home);
+          },
         ),
       ),
     );

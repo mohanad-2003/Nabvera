@@ -1,13 +1,12 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
+import 'package:fitness_app/features/onboarding/presentation/widgets/wizard_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../providers/onboarding_profile_controller.dart';
-import '../widgets/wizard_scaffold.dart';
 
 class WeightPage extends ConsumerStatefulWidget {
   const WeightPage({super.key});
@@ -40,7 +39,7 @@ class _WeightPageState extends ConsumerState<WeightPage> {
 
     return WizardScaffold(
       step: 3,
-      totalSteps: 6,
+      totalSteps: 8,
       title: l10n.onboardingWeightTitle,
       description: l10n.onboardingWeightBody,
       body: Column(

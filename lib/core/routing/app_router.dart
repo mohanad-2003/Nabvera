@@ -25,11 +25,13 @@ import 'package:fitness_app/features/nutrition/presentation/pages/meal_plan_intr
 import 'package:fitness_app/features/nutrition/presentation/pages/meal_plan_preferences_page.dart';
 import 'package:fitness_app/features/nutrition/presentation/pages/nutrition_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/age_page.dart';
+import 'package:fitness_app/features/onboarding/presentation/pages/equipment_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/gender_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/goal_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/height_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/physical_activity_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/setup_intro_page.dart';
+import 'package:fitness_app/features/onboarding/presentation/pages/time_availability_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/weight_page.dart';
 import 'package:fitness_app/features/profile/presentation/pages/document_page.dart';
 import 'package:fitness_app/features/profile/presentation/pages/edit_profile_page.dart';
@@ -120,6 +122,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.setupPhysical,
         builder: (context, state) => const PhysicalActivityPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.setupEquipment,
+        builder: (context, state) => const EquipmentPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.setupTime,
+        builder: (context, state) => const TimeAvailabilityPage(),
       ),
       GoRoute(
         path: AppRoutes.search,
