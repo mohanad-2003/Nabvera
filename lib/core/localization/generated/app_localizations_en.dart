@@ -322,10 +322,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationPasswordMismatch => 'Passwords do not match';
 
   @override
-  String get splashBrandFit => 'FIT';
-
-  @override
-  String get splashBrandBody => 'BODY';
+  String get splashBrandName => 'Nabvera';
 
   @override
   String get splashTagline => 'Fitness + strength + health + progress.';

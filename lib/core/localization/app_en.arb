@@ -110,8 +110,7 @@
   "validationFullNameRequired": "Full name is required",
   "validationPasswordMismatch": "Passwords do not match",
 
-  "splashBrandFit": "FIT",
-  "splashBrandBody": "BODY",
+  "splashBrandName": "Nabvera",
   "splashTagline": "Fitness + strength + health + progress.",
   "splashMetricWorkouts": "Workouts",
   "splashMetricPlans": "Plans",

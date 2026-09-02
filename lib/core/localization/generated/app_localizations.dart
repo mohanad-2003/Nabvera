@@ -692,17 +692,11 @@ abstract class AppLocalizations {
   /// **'Passwords do not match'**
   String get validationPasswordMismatch;
 
-  /// No description provided for @splashBrandFit.
+  /// No description provided for @splashBrandName.
   ///
   /// In en, this message translates to:
-  /// **'FIT'**
-  String get splashBrandFit;
-
-  /// No description provided for @splashBrandBody.
-  ///
-  /// In en, this message translates to:
-  /// **'BODY'**
-  String get splashBrandBody;
+  /// **'Nabvera'**
+  String get splashBrandName;
 
   /// No description provided for @splashTagline.
   ///

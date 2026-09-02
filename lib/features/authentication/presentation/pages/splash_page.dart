@@ -171,30 +171,13 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                     blendMode: BlendMode.srcIn,
                                     shaderCallback: (bounds) =>
                                         ext.accentGradient.createShader(bounds),
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(text: l10n.splashBrandFit),
-                                        ],
-                                      ),
-                                      style: theme.textTheme.displayLarge
-                                          ?.copyWith(
-                                        fontSize: 58,
-                                        height: 0.94,
-                                        letterSpacing: -2,
-                                      ),
-                                    ),
-                                  ),
-                                  Transform.translate(
-                                    offset: const Offset(0, -14),
                                     child: Text(
-                                      l10n.splashBrandBody,
+                                      l10n.splashBrandName,
                                       style: theme.textTheme.displayLarge
                                           ?.copyWith(
-                                        color: theme.colorScheme.onSurface,
-                                        fontSize: 58,
-                                        height: 0.94,
-                                        letterSpacing: -2,
+                                        fontSize: 48,
+                                        height: 1.0,
+                                        letterSpacing: -1,
                                       ),
                                     ),
                                   ),

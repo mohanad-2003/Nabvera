@@ -320,10 +320,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validationPasswordMismatch => 'كلمتا المرور غير متطابقتين';
 
   @override
-  String get splashBrandFit => 'FIT';
-
-  @override
-  String get splashBrandBody => 'BODY';
+  String get splashBrandName => 'Nabvera';
 
   @override
   String get splashTagline => 'لياقة + قوة + صحة + تقدم.';

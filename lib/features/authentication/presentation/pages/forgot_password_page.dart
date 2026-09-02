@@ -186,7 +186,7 @@ class _ConfirmationView extends StatelessWidget {
             subtitle: l10n.authResetLinkSentTo(email),
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 32),
         FadeSlideIn(
           delay: const Duration(milliseconds: 120),
           child: Column(

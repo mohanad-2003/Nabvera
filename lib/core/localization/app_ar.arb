@@ -103,8 +103,7 @@
   "validationFullNameRequired": "الاسم الكامل مطلوب",
   "validationPasswordMismatch": "كلمتا المرور غير متطابقتين",
 
-  "splashBrandFit": "FIT",
-  "splashBrandBody": "BODY",
+  "splashBrandName": "Nabvera",
   "splashTagline": "لياقة + قوة + صحة + تقدم.",
   "splashMetricWorkouts": "تمارين",
   "splashMetricPlans": "خطط",

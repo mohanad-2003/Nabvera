@@ -25,43 +25,18 @@ class AuthHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Stack(
         alignment: Alignment.center,
         children: [
           if (showBack)
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: GestureDetector(
-                onTap: () => context.canPop() ? context.pop() : null,
-                child: Container(
-                  height: 42,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: ext.glassFill,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: ext.glassBorder),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 16,
-                        color: accent,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        l10n.actionBack,
-                        style: TextStyle(
-                          color: accent,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: IconButton(
+                tooltip: l10n.actionBack,
+                onPressed: context.canPop() ? context.pop : null,
+                icon: BackButtonIcon(),
+                color: accent,
               ),
             ),
           if (title != null)
