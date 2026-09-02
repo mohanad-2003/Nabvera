@@ -632,6 +632,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeroTooHard => 'Too intense? Show an easier workout';
 
   @override
+  String get homeReasonLastWorkoutTooHard =>
+      'We eased up the difficulty after your last session felt tough.';
+
+  @override
+  String get homeReasonTwoEasyInARow =>
+      'You\'ve been crushing it — we bumped up the difficulty.';
+
+  @override
+  String get homeReasonOnTrack =>
+      'Right at your level — keep the momentum going.';
+
+  @override
+  String get homeReasonUserRequestedEasier =>
+      'Here\'s an easier option for today.';
+
+  @override
+  String get homeReasonNoWorkoutsAvailable =>
+      'No workout matches your setup yet — check back soon.';
+
+  @override
+  String get homeRecoveryTitle => 'Recovery';
+
+  @override
+  String get homeRecoveryReady => 'Ready';
+
+  @override
+  String get homeRecoveryNeedsRecovery => 'Recovering';
+
+  @override
+  String get homeAlternativeAvailable =>
+      'Those muscles need recovery — try this instead:';
+
+  @override
+  String get homeSwitchToAlternative => 'Switch workout';
+
+  @override
+  String get muscleGroupChest => 'Chest';
+
+  @override
+  String get muscleGroupBack => 'Back';
+
+  @override
+  String get muscleGroupLegs => 'Legs';
+
+  @override
+  String get muscleGroupShoulders => 'Shoulders';
+
+  @override
+  String get muscleGroupArms => 'Arms';
+
+  @override
+  String get muscleGroupCore => 'Core';
+
+  @override
+  String get muscleGroupFullBody => 'Full Body';
+
+  @override
+  String get muscleGroupCardio => 'Cardio';
+
+  @override
   String homeHeroSubtitle(int minutes, int moves, String level) {
     return '$minutes min · $moves movements · $level intensity';
   }

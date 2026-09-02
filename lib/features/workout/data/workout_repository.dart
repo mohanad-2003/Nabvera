@@ -101,6 +101,35 @@ class WorkoutRepository {
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
   }
+
+  /// The rule-based recommendation from `backend/src/services/
+  /// recommendationEngine.js` — a `{ workout, reasonCode, recoveryMap,
+  /// alternative }` document. [easier] mirrors the old client-side "show an
+  /// easier workout" action; [excludeId] skips a specific workout (the one
+  /// already shown) when picking.
+  Future<Map<String, dynamic>> fetchRecommendedWorkout({
+    bool easier = false,
+    String? excludeId,
+  }) async {
+    final params = <String, String>{
+      if (easier) 'easier': 'true',
+      if (excludeId != null && excludeId.isNotEmpty) 'excludeId': excludeId,
+    };
+    final query =
+        params.isEmpty ? '' : '?${Uri(queryParameters: params).query}';
+    final response = await _client.get('/workouts/recommended$query');
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  /// Per-muscle-group `{ status, lastTrainedAt }` from the last 48h of
+  /// workout logs — same shape as the `recoveryMap` field embedded in
+  /// [fetchRecommendedWorkout]'s response.
+  Future<Map<String, dynamic>> fetchRecoveryMap() async {
+    final response = await _client.get('/recovery-map');
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
 }
 
 @Riverpod(keepAlive: true)

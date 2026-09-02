@@ -44,7 +44,7 @@ final class HomeFeaturedWorkoutControllerProvider
 }
 
 String _$homeFeaturedWorkoutControllerHash() =>
-    r'27b0f39b9c85fa1bf83f8d024da7216e191bf149';
+    r'57ba5da29164a6bcf3ad0881587afcf5bb30053c';
 
 abstract class _$HomeFeaturedWorkoutController
     extends $Notifier<HomeFeaturedWorkout?> {
@@ -58,6 +58,80 @@ abstract class _$HomeFeaturedWorkoutController
             as $ClassProviderElement<
               AnyNotifier<HomeFeaturedWorkout?, HomeFeaturedWorkout?>,
               HomeFeaturedWorkout?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Standalone recovery-map fetch for the Home page's compact recovery row
+/// — independent of [HomeFeaturedWorkoutController] so it still renders
+/// even if that request fails, and so it isn't tied to any one
+/// recommendation.
+
+@ProviderFor(RecoveryMapController)
+final recoveryMapControllerProvider = RecoveryMapControllerProvider._();
+
+/// Standalone recovery-map fetch for the Home page's compact recovery row
+/// — independent of [HomeFeaturedWorkoutController] so it still renders
+/// even if that request fails, and so it isn't tied to any one
+/// recommendation.
+final class RecoveryMapControllerProvider
+    extends
+        $NotifierProvider<RecoveryMapController, List<MuscleGroupRecovery>> {
+  /// Standalone recovery-map fetch for the Home page's compact recovery row
+  /// — independent of [HomeFeaturedWorkoutController] so it still renders
+  /// even if that request fails, and so it isn't tied to any one
+  /// recommendation.
+  RecoveryMapControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recoveryMapControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$recoveryMapControllerHash();
+
+  @$internal
+  @override
+  RecoveryMapController create() => RecoveryMapController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<MuscleGroupRecovery> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<MuscleGroupRecovery>>(value),
+    );
+  }
+}
+
+String _$recoveryMapControllerHash() =>
+    r'9ed84fd8be38ac7462e89d01b946da6b915a4817';
+
+/// Standalone recovery-map fetch for the Home page's compact recovery row
+/// — independent of [HomeFeaturedWorkoutController] so it still renders
+/// even if that request fails, and so it isn't tied to any one
+/// recommendation.
+
+abstract class _$RecoveryMapController
+    extends $Notifier<List<MuscleGroupRecovery>> {
+  List<MuscleGroupRecovery> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<List<MuscleGroupRecovery>, List<MuscleGroupRecovery>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<MuscleGroupRecovery>, List<MuscleGroupRecovery>>,
+              List<MuscleGroupRecovery>,
               Object?,
               Object?
             >;

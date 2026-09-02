@@ -1,7 +1,7 @@
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/app_spacing.dart';
-import '../theme/app_theme_extension.dart';
 import 'icon_stat.dart';
 import 'pressable_scale.dart';
 import 'smart_image.dart';

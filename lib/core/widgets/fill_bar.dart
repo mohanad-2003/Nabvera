@@ -1,6 +1,5 @@
+import 'package:fitness_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-
-import '../theme/app_colors.dart';
 
 /// Vertical fill-bar chart primitive. Renamed from the legacy `Bar` widget
 /// (lib/view/bar.dart) and moved to core since it's a generic chart mark,

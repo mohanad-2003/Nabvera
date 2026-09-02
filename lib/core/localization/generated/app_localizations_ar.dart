@@ -626,6 +626,64 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeHeroTooHard => 'التمرين صعب؟ اعرض تمرينًا أسهل';
 
   @override
+  String get homeReasonLastWorkoutTooHard =>
+      'خفّفنا الصعوبة بعد ما حسّيت إن تمرينك الأخير كان صعب.';
+
+  @override
+  String get homeReasonTwoEasyInARow =>
+      'كنت قوي بآخر تمرينين — رفعنا لك الصعوبة.';
+
+  @override
+  String get homeReasonOnTrack => 'بمستواك المناسب تمامًا — كمّل بنفس الإيقاع.';
+
+  @override
+  String get homeReasonUserRequestedEasier => 'هاي نسخة أسهل لليوم.';
+
+  @override
+  String get homeReasonNoWorkoutsAvailable =>
+      'لا يوجد تمرين مناسب حالياً — جرّب لاحقاً.';
+
+  @override
+  String get homeRecoveryTitle => 'التعافي';
+
+  @override
+  String get homeRecoveryReady => 'جاهزة';
+
+  @override
+  String get homeRecoveryNeedsRecovery => 'بحاجة تعافي';
+
+  @override
+  String get homeAlternativeAvailable =>
+      'هاي العضلات بحاجة تعافي — جرّب هاد بدالها:';
+
+  @override
+  String get homeSwitchToAlternative => 'بدّل التمرين';
+
+  @override
+  String get muscleGroupChest => 'الصدر';
+
+  @override
+  String get muscleGroupBack => 'الظهر';
+
+  @override
+  String get muscleGroupLegs => 'الأرجل';
+
+  @override
+  String get muscleGroupShoulders => 'الأكتاف';
+
+  @override
+  String get muscleGroupArms => 'الذراعين';
+
+  @override
+  String get muscleGroupCore => 'البطن';
+
+  @override
+  String get muscleGroupFullBody => 'الجسم كامل';
+
+  @override
+  String get muscleGroupCardio => 'الكارديو';
+
+  @override
   String homeHeroSubtitle(int minutes, int moves, String level) {
     return '$minutes دقيقة · $moves حركات · شدة $level';
   }

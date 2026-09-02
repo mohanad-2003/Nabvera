@@ -55,7 +55,7 @@ final class OnboardingProfileControllerProvider
 }
 
 String _$onboardingProfileControllerHash() =>
-    r'dd607b08be1967bcfe8aa892f8d6cf84ed594167';
+    r'1220badbc0b3be4abeebb2a6f495520e295b2ea5';
 
 /// Single source of truth for the whole profile-setup wizard, replacing
 /// five separate near-identical GetX controllers (GenderController,

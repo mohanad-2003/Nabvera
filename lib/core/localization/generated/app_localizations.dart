@@ -1244,6 +1244,114 @@ abstract class AppLocalizations {
   /// **'Too intense? Show an easier workout'**
   String get homeHeroTooHard;
 
+  /// No description provided for @homeReasonLastWorkoutTooHard.
+  ///
+  /// In en, this message translates to:
+  /// **'We eased up the difficulty after your last session felt tough.'**
+  String get homeReasonLastWorkoutTooHard;
+
+  /// No description provided for @homeReasonTwoEasyInARow.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve been crushing it — we bumped up the difficulty.'**
+  String get homeReasonTwoEasyInARow;
+
+  /// No description provided for @homeReasonOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Right at your level — keep the momentum going.'**
+  String get homeReasonOnTrack;
+
+  /// No description provided for @homeReasonUserRequestedEasier.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s an easier option for today.'**
+  String get homeReasonUserRequestedEasier;
+
+  /// No description provided for @homeReasonNoWorkoutsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No workout matches your setup yet — check back soon.'**
+  String get homeReasonNoWorkoutsAvailable;
+
+  /// No description provided for @homeRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get homeRecoveryTitle;
+
+  /// No description provided for @homeRecoveryReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get homeRecoveryReady;
+
+  /// No description provided for @homeRecoveryNeedsRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovering'**
+  String get homeRecoveryNeedsRecovery;
+
+  /// No description provided for @homeAlternativeAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Those muscles need recovery — try this instead:'**
+  String get homeAlternativeAvailable;
+
+  /// No description provided for @homeSwitchToAlternative.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch workout'**
+  String get homeSwitchToAlternative;
+
+  /// No description provided for @muscleGroupChest.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest'**
+  String get muscleGroupChest;
+
+  /// No description provided for @muscleGroupBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get muscleGroupBack;
+
+  /// No description provided for @muscleGroupLegs.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get muscleGroupLegs;
+
+  /// No description provided for @muscleGroupShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulders'**
+  String get muscleGroupShoulders;
+
+  /// No description provided for @muscleGroupArms.
+  ///
+  /// In en, this message translates to:
+  /// **'Arms'**
+  String get muscleGroupArms;
+
+  /// No description provided for @muscleGroupCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Core'**
+  String get muscleGroupCore;
+
+  /// No description provided for @muscleGroupFullBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get muscleGroupFullBody;
+
+  /// No description provided for @muscleGroupCardio.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get muscleGroupCardio;
+
   /// No description provided for @homeHeroSubtitle.
   ///
   /// In en, this message translates to:

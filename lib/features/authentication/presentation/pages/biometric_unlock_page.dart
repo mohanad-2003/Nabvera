@@ -1,17 +1,16 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_colors.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/fade_slide_in.dart';
+import 'package:fitness_app/core/widgets/primary_button.dart';
 import 'package:fitness_app/features/authentication/data/biometric_service.dart';
 import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/auth_background.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/auth_section_hero.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/fade_slide_in.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../widgets/auth_background.dart';
-import '../widgets/auth_section_hero.dart';
 
 /// The app-lock gate shown on launch when the signed-in user previously
 /// opted into biometric unlock (see [FingerPrintPage]). Firebase's own
@@ -19,7 +18,6 @@ import '../widgets/auth_section_hero.dart';
 /// re-confirmation in front of it, not a second sign-in.
 class BiometricUnlockPage extends ConsumerStatefulWidget {
   const BiometricUnlockPage({super.key});
-
   @override
   ConsumerState<BiometricUnlockPage> createState() =>
       _BiometricUnlockPageState();
@@ -32,8 +30,6 @@ class _BiometricUnlockPageState extends ConsumerState<BiometricUnlockPage> {
   @override
   void initState() {
     super.initState();
-    // Prompt immediately on arrival — the user shouldn't have to tap once
-    // just to get the OS sheet to appear.
     WidgetsBinding.instance.addPostFrameCallback((_) => _unlock());
   }
 

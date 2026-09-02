@@ -17,12 +17,6 @@ class PremiumScaffold extends StatelessWidget {
 
   final Widget child;
 
-  /// Nav-bar clearance note: no manual reservation is needed here. For the
-  /// five tab-root screens the app shell uses `Scaffold(extendBody: true)`,
-  /// which reports the floating nav bar's full height through the body's
-  /// `MediaQuery.padding.bottom` — the [SafeArea] below consumes it, so
-  /// content always stops above the bar automatically. Adding extra manual
-  /// padding on top of that double-counts and leaves a large dead zone.
   final EdgeInsetsGeometry padding;
   final bool safeArea;
 
@@ -289,13 +283,13 @@ class PremiumPill extends StatelessWidget {
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 170),
                   child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: selected ? AppColors.seedInk : ext.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: selected ? AppColors.seedInk : ext.textPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
             ],

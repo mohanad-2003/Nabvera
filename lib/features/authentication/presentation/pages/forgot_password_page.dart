@@ -1,21 +1,20 @@
 import 'dart:async';
 
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/utils/validators.dart';
+import 'package:fitness_app/core/widgets/fade_slide_in.dart';
+import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/features/authentication/domain/auth_error_translator.dart';
+import 'package:fitness_app/features/authentication/presentation/providers/forgot_password_controller.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/auth_background.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/auth_header.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/auth_logo_hero.dart';
+import 'package:fitness_app/features/authentication/presentation/widgets/premium_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../core/widgets/fade_slide_in.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../domain/auth_error_translator.dart';
-import '../providers/forgot_password_controller.dart';
-import '../widgets/auth_background.dart';
-import '../widgets/auth_header.dart';
-import '../widgets/auth_logo_hero.dart';
-import '../widgets/premium_text_field.dart';
 
 const _resendCooldown = Duration(seconds: 30);
 
@@ -23,8 +22,7 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  ConsumerState<ForgotPasswordPage> createState() =>
-      _ForgotPasswordPageState();
+  ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {

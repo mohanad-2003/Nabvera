@@ -64,12 +64,18 @@ class HomePage extends ConsumerWidget {
                 delay: const Duration(milliseconds: 60),
                 child: _TodayHeroCard(
                   onOpen: () => _openTodayWorkout(context, ref),
+                  onSwitchTo: (id) => _openWorkout(context, ref, id),
                 ),
               ),
               const SizedBox(height: 18),
               FadeSlideIn(
                 delay: const Duration(milliseconds: 100),
                 child: const _MetricGrid(),
+              ),
+              const SizedBox(height: 22),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 115),
+                child: const _RecoveryMapRow(),
               ),
               const SizedBox(height: 22),
               FadeSlideIn(
@@ -332,9 +338,14 @@ class _HeaderIcon extends StatelessWidget {
 /// logged today, "Continue" once some (but not all) of the plan's minutes
 /// are in, "Completed" once today's trained minutes reach the plan's target.
 class _TodayHeroCard extends ConsumerWidget {
-  const _TodayHeroCard({required this.onOpen});
+  const _TodayHeroCard({required this.onOpen, required this.onSwitchTo});
 
   final VoidCallback onOpen;
+
+  /// Opens a specific workout id — used by the recovery-aware alternative
+  /// suggestion, separate from [onOpen] (which opens whatever is currently
+  /// featured).
+  final ValueChanged<String> onSwitchTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -452,13 +463,20 @@ class _TodayHeroCard extends ConsumerWidget {
                   Text(
                     _recommendationReason(
                       l10n,
-                      featured?.recommendationBasis,
+                      featured?.reasonCode,
                       profile.availableMinutes,
                     ),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.68),
                     ),
                   ),
+                  if (featured?.alternative != null) ...[
+                    const SizedBox(height: 10),
+                    _AlternativeSuggestion(
+                      alternative: featured!.alternative!,
+                      onSwitchTo: onSwitchTo,
+                    ),
+                  ],
                   const SizedBox(height: 18),
                   if (!isCompleted) ...[
                     TextButton.icon(
@@ -544,15 +562,99 @@ class _TodayHeroCard extends ConsumerWidget {
     );
   }
 
+  /// Translates the backend's `reasonCode` (a plain enum-like string — see
+  /// `recommendationEngine.js`) into localized copy. The backend never
+  /// sends pre-rendered text, only this code.
   String _recommendationReason(
     AppLocalizations l10n,
-    RecommendationBasis? basis,
+    String? reasonCode,
     int? availableMinutes,
   ) {
-    if (basis != RecommendationBasis.personalized) {
-      return l10n.homeHeroFallbackReason;
-    }
-    return l10n.homeHeroPersonalizedReason(availableMinutes ?? 30);
+    return switch (reasonCode) {
+      'last_workout_too_hard' => l10n.homeReasonLastWorkoutTooHard,
+      'two_easy_in_a_row' => l10n.homeReasonTwoEasyInARow,
+      'user_requested_easier' => l10n.homeReasonUserRequestedEasier,
+      'no_workouts_available' => l10n.homeReasonNoWorkoutsAvailable,
+      'on_track' => l10n.homeReasonOnTrack,
+      'no_history' => l10n.homeHeroPersonalizedReason(availableMinutes ?? 30),
+      _ => l10n.homeHeroFallbackReason,
+    };
+  }
+}
+
+/// Shown under the hero card's reason line when the primary recommendation
+/// touches a muscle group that needs recovery but a fully-recovered
+/// alternative is available — a swap, not a warning.
+class _AlternativeSuggestion extends StatelessWidget {
+  const _AlternativeSuggestion({
+    required this.alternative,
+    required this.onSwitchTo,
+  });
+
+  final AlternativeWorkoutSuggestion alternative;
+  final ValueChanged<String> onSwitchTo;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.self_improvement_rounded,
+            size: 18,
+            color: Colors.white.withValues(alpha: 0.8),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.homeAlternativeAvailable,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  alternative.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () => onSwitchTo(alternative.id),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.white.withValues(alpha: 0.14),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+            child: Text(
+              l10n.homeSwitchToAlternative,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -734,6 +836,102 @@ class _MetricDivider extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(width: 1, height: 52, color: ext.glassBorder),
+    );
+  }
+}
+
+/// Compact, always-visible row of every muscle group's recovery status —
+/// independent of the hero card's own recommendation, from
+/// `GET /api/recovery-map`. Purely "trained recently vs not"; no medical
+/// claim, just a plain readiness signal.
+class _RecoveryMapRow extends ConsumerWidget {
+  const _RecoveryMapRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final groups = ref.watch(recoveryMapControllerProvider);
+    if (groups.isEmpty) return const SizedBox.shrink();
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.homeRecoveryTitle,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 34,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: groups.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder:
+                (context, index) => _RecoveryChip(group: groups[index]),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RecoveryChip extends StatelessWidget {
+  const _RecoveryChip({required this.group});
+
+  final MuscleGroupRecovery group;
+
+  static String _label(AppLocalizations l10n, String group) => switch (group) {
+    'chest' => l10n.muscleGroupChest,
+    'back' => l10n.muscleGroupBack,
+    'legs' => l10n.muscleGroupLegs,
+    'shoulders' => l10n.muscleGroupShoulders,
+    'arms' => l10n.muscleGroupArms,
+    'core' => l10n.muscleGroupCore,
+    'full_body' => l10n.muscleGroupFullBody,
+    'cardio' => l10n.muscleGroupCardio,
+    _ => group,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final needsRecovery = group.status == RecoveryStatus.needsRecovery;
+    final color = needsRecovery ? AppColors.electricOrange : AppColors.seedLime;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.26)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            needsRecovery
+                ? Icons.hourglass_bottom_rounded
+                : Icons.check_circle_rounded,
+            size: 13,
+            color: color,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            _label(l10n, group.group),
+            style: TextStyle(
+              color: ext.textPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

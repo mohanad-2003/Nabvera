@@ -1,7 +1,6 @@
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
-
-import '../theme/app_spacing.dart';
-import '../theme/app_theme_extension.dart';
 
 /// Base card surface (soft shadow, rounded corners) used by feature-level
 /// cards (workout card, meal card, category card, etc.) instead of each

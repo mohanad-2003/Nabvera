@@ -1,12 +1,11 @@
 import 'dart:ui';
 
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/theme/app_colors.dart';
+import 'package:fitness_app/core/theme/app_radius_shadows.dart';
+import 'package:fitness_app/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../localization/generated/app_localizations.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_radius_shadows.dart';
-import '../theme/app_spacing.dart';
 
 class AppBottomNavItem {
   const AppBottomNavItem({
@@ -177,10 +176,14 @@ class _NavItemButton extends StatelessWidget {
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
-              transitionBuilder: (child, animation) => ScaleTransition(
-                scale: Tween<double>(begin: 0.84, end: 1).animate(animation),
-                child: FadeTransition(opacity: animation, child: child),
-              ),
+              transitionBuilder:
+                  (child, animation) => ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.84,
+                      end: 1,
+                    ).animate(animation),
+                    child: FadeTransition(opacity: animation, child: child),
+                  ),
               child: Opacity(
                 key: ValueKey(selected),
                 opacity: selected ? 1 : 0.58,
@@ -189,11 +192,9 @@ class _NavItemButton extends StatelessWidget {
                   width: 25,
                   height: 25,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, _, _) => Icon(
-                    item.fallbackIcon,
-                    color: color,
-                    size: 23,
-                  ),
+                  errorBuilder:
+                      (_, _, _) =>
+                          Icon(item.fallbackIcon, color: color, size: 23),
                 ),
               ),
             ),
