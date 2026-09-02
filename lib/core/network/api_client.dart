@@ -48,40 +48,53 @@ class ApiClient {
   final String baseUrl;
   final http.Client _client = http.Client();
 
-  Future<Map<String, String>> _headers() async {
-    final token = await _authService.getIdToken();
+  Future<Map<String, String>> _headers({bool forceRefresh = false}) async {
+    final token = await _authService.getIdToken(forceRefresh: forceRefresh);
     return {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
 
-  Future<http.Response> get(String path) async {
-    return _client.get(Uri.parse('$baseUrl$path'), headers: await _headers());
+  /// Sends the request and, if the backend rejects the token as invalid or
+  /// expired, retries exactly once with a force-refreshed one. Firebase's
+  /// own auto-refresh timer normally keeps `getIdToken()` current, but it
+  /// can miss a beat after the app sits backgrounded/idle for a while —
+  /// without this, that shows up to the user as a real request (e.g.
+  /// finishing a workout) failing for no visible reason.
+  Future<http.Response> _send(
+    String method,
+    String path, {
+    Object? body,
+  }) async {
+    final uri = Uri.parse('$baseUrl$path');
+    final encodedBody = body == null ? null : jsonEncode(body);
+
+    Future<http.Response> attempt(bool forceRefresh) async {
+      final headers = await _headers(forceRefresh: forceRefresh);
+      return switch (method) {
+        'GET' => _client.get(uri, headers: headers),
+        'POST' => _client.post(uri, headers: headers, body: encodedBody),
+        'PATCH' => _client.patch(uri, headers: headers, body: encodedBody),
+        'DELETE' => _client.delete(uri, headers: headers),
+        _ => throw ArgumentError('Unsupported method: $method'),
+      };
+    }
+
+    final response = await attempt(false);
+    if (response.statusCode != 401) return response;
+    return attempt(true);
   }
 
-  Future<http.Response> post(String path, {Object? body}) async {
-    return _client.post(
-      Uri.parse('$baseUrl$path'),
-      headers: await _headers(),
-      body: body == null ? null : jsonEncode(body),
-    );
-  }
+  Future<http.Response> get(String path) => _send('GET', path);
 
-  Future<http.Response> patch(String path, {Object? body}) async {
-    return _client.patch(
-      Uri.parse('$baseUrl$path'),
-      headers: await _headers(),
-      body: body == null ? null : jsonEncode(body),
-    );
-  }
+  Future<http.Response> post(String path, {Object? body}) =>
+      _send('POST', path, body: body);
 
-  Future<http.Response> delete(String path) async {
-    return _client.delete(
-      Uri.parse('$baseUrl$path'),
-      headers: await _headers(),
-    );
-  }
+  Future<http.Response> patch(String path, {Object? body}) =>
+      _send('PATCH', path, body: body);
+
+  Future<http.Response> delete(String path) => _send('DELETE', path);
 
   /// Decodes a JSON body and throws [ApiException] for non-2xx responses,
   /// matching the backend's `{ success, message }` error shape.

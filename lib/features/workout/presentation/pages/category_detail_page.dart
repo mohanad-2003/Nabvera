@@ -56,7 +56,11 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSavedSuccess)));
-    } catch (_) {
+    } catch (error, stackTrace) {
+      // Temporary: surface the real cause in the debug console instead of
+      // only the generic user-facing message, while we track down why
+      // saving is failing for real users.
+      debugPrint('Finish workout failed: $error\n$stackTrace');
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
