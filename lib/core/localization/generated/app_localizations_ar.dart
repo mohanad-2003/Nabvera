@@ -1165,6 +1165,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get progressNoSessionsYet => 'لا توجد جلسات هذا الأسبوع';
 
   @override
+  String get notificationActionStart => 'ابدأ';
+
+  @override
+  String get notificationActionView => 'عرض';
+
+  @override
+  String get notificationWorkoutCompletedTitle => 'تم إنهاء التمرين!';
+
+  @override
+  String notificationWorkoutCompletedBody(int calories) {
+    return 'تم حرق $calories سعرة حرارية. عمل رائع!';
+  }
+
+  @override
+  String notificationStreakTitle(int days) {
+    return 'سلسلة $days يوم متتالية!';
+  }
+
+  @override
+  String notificationStreakBody(int days) {
+    return 'لقد تمرّنت $days يومًا متتاليًا. استمر!';
+  }
+
+  @override
+  String get notificationWorkoutReminderTitle => 'لم تتمرّن اليوم بعد';
+
+  @override
+  String get notificationWorkoutReminderBody =>
+      'بضع دقائق الآن لا تزال مهمة — أكمل من حيث توقفت.';
+
+  @override
   String get notificationsTitle => 'الإشعارات';
 
   @override

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fitness_app/core/notifications/push_notification_service.dart';
 import 'package:fitness_app/features/profile/data/user_repository.dart';
 import 'package:fitness_app/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -29,6 +32,14 @@ class CurrentUserProfile extends _$CurrentUserProfile {
   Future<void> refresh() async {
     try {
       state = await ref.read(userRepositoryProvider).fetchMe();
+      if (state.id.isNotEmpty) {
+        // Fire-and-forget: registering for push shouldn't block or fail
+        // profile loading, and PushNotificationService is itself
+        // idempotent past the first successful call.
+        unawaited(
+          ref.read(pushNotificationServiceProvider).initializeIfNeeded(),
+        );
+      }
     } catch (_) {
       // Left at the previous (or empty) state — pages render their empty
       // placeholders rather than crashing when the backend is unreachable.

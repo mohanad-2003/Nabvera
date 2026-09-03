@@ -1177,6 +1177,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressNoSessionsYet => 'No sessions this week';
 
   @override
+  String get notificationActionStart => 'Start';
+
+  @override
+  String get notificationActionView => 'View';
+
+  @override
+  String get notificationWorkoutCompletedTitle => 'Workout completed!';
+
+  @override
+  String notificationWorkoutCompletedBody(int calories) {
+    return '$calories kcal burned. Great job!';
+  }
+
+  @override
+  String notificationStreakTitle(int days) {
+    return '$days-day streak!';
+  }
+
+  @override
+  String notificationStreakBody(int days) {
+    return 'You\'ve worked out $days days in a row. Keep it up!';
+  }
+
+  @override
+  String get notificationWorkoutReminderTitle => 'Haven\'t trained today yet';
+
+  @override
+  String get notificationWorkoutReminderBody =>
+      'A few minutes now still counts — pick up where you left off.';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override

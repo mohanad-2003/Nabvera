@@ -2228,6 +2228,54 @@ abstract class AppLocalizations {
   /// **'No sessions this week'**
   String get progressNoSessionsYet;
 
+  /// No description provided for @notificationActionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get notificationActionStart;
+
+  /// No description provided for @notificationActionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get notificationActionView;
+
+  /// No description provided for @notificationWorkoutCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout completed!'**
+  String get notificationWorkoutCompletedTitle;
+
+  /// No description provided for @notificationWorkoutCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{calories} kcal burned. Great job!'**
+  String notificationWorkoutCompletedBody(int calories);
+
+  /// No description provided for @notificationStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day streak!'**
+  String notificationStreakTitle(int days);
+
+  /// No description provided for @notificationStreakBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve worked out {days} days in a row. Keep it up!'**
+  String notificationStreakBody(int days);
+
+  /// No description provided for @notificationWorkoutReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Haven\'t trained today yet'**
+  String get notificationWorkoutReminderTitle;
+
+  /// No description provided for @notificationWorkoutReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes now still counts — pick up where you left off.'**
+  String get notificationWorkoutReminderBody;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:

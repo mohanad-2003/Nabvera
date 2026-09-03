@@ -366,6 +366,15 @@
   "progressRecentSessions": "آخر الجلسات",
   "progressNoSessionsYet": "لا توجد جلسات هذا الأسبوع",
 
+  "notificationActionStart": "ابدأ",
+  "notificationActionView": "عرض",
+  "notificationWorkoutCompletedTitle": "تم إنهاء التمرين!",
+  "notificationWorkoutCompletedBody": "تم حرق {calories} سعرة حرارية. عمل رائع!",
+  "notificationStreakTitle": "سلسلة {days} يوم متتالية!",
+  "notificationStreakBody": "لقد تمرّنت {days} يومًا متتاليًا. استمر!",
+  "notificationWorkoutReminderTitle": "لم تتمرّن اليوم بعد",
+  "notificationWorkoutReminderBody": "بضع دقائق الآن لا تزال مهمة — أكمل من حيث توقفت.",
+
   "notificationsTitle": "الإشعارات",
   "notificationsSubtitle": "ابقَ متحفزًا. لا تفوّت رحلتك الرياضية أبدًا.",
   "notificationsMarkAllRead": "تعليم الكل كمقروء",

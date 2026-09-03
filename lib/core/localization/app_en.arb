@@ -431,6 +431,24 @@
   "progressRecentSessions": "Recent Sessions",
   "progressNoSessionsYet": "No sessions this week",
 
+  "notificationActionStart": "Start",
+  "notificationActionView": "View",
+  "notificationWorkoutCompletedTitle": "Workout completed!",
+  "notificationWorkoutCompletedBody": "{calories} kcal burned. Great job!",
+  "@notificationWorkoutCompletedBody": {
+    "placeholders": {"calories": {"type": "int"}}
+  },
+  "notificationStreakTitle": "{days}-day streak!",
+  "@notificationStreakTitle": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "notificationStreakBody": "You've worked out {days} days in a row. Keep it up!",
+  "@notificationStreakBody": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "notificationWorkoutReminderTitle": "Haven't trained today yet",
+  "notificationWorkoutReminderBody": "A few minutes now still counts — pick up where you left off.",
+
   "notificationsTitle": "Notifications",
   "notificationsSubtitle": "Stay motivated. Never miss your fitness journey.",
   "notificationsMarkAllRead": "Mark all as read",

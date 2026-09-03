@@ -88,9 +88,10 @@ class EmptyNotificationsView extends StatelessWidget {
             Text(
               body,
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: ext.textMuted, height: 1.4),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: ext.textMuted,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 26),
             PrimaryButton(

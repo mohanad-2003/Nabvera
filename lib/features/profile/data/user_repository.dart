@@ -34,15 +34,32 @@ class UserRepository {
   }
 
   Future<List<String>> toggleFavoriteWorkout(String workoutId) async {
-    final response = await _client.post('/users/me/favorites/workouts/$workoutId');
+    final response = await _client.post(
+      '/users/me/favorites/workouts/$workoutId',
+    );
     final body = _client.decode(response);
     return (body['data'] as List).map((e) => e.toString()).toList();
   }
 
   Future<List<String>> toggleFavoriteRecipe(String recipeId) async {
-    final response = await _client.post('/users/me/favorites/recipes/$recipeId');
+    final response = await _client.post(
+      '/users/me/favorites/recipes/$recipeId',
+    );
     final body = _client.decode(response);
     return (body['data'] as List).map((e) => e.toString()).toList();
+  }
+
+  /// Registers this device for push notifications (see
+  /// `PushNotificationService`). Safe to call repeatedly with the same
+  /// token — the backend de-dupes.
+  Future<void> registerFcmToken(String token) async {
+    await _client.post('/users/me/fcm-token', body: {'token': token});
+  }
+
+  /// Removes this device's token — call on sign-out so a shared/reused
+  /// device doesn't keep receiving another account's pushes.
+  Future<void> unregisterFcmToken(String token) async {
+    await _client.delete('/users/me/fcm-token', body: {'token': token});
   }
 }
 
