@@ -1,12 +1,12 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/responsive/app_responsive.dart';
+import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/smart_image.dart';
+import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/responsive/app_responsive.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/smart_image.dart';
-import '../../domain/nutrition_models.dart';
 import 'premium_recipe_card.dart';
 
 /// Full scrollable body of the recipe-detail screen: large hero image with
@@ -95,8 +95,7 @@ class MealDetailHeader extends StatelessWidget {
                   if (meal.servings != null)
                     _Stat(
                       icon: Icons.people_alt_outlined,
-                      label:
-                          '${meal.servings} ${l10n.nutritionServingsShort}',
+                      label: '${meal.servings} ${l10n.nutritionServingsShort}',
                     ),
                   if (meal.difficulty != null)
                     _Stat(
@@ -193,7 +192,8 @@ class MealDetailHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final benefit in meal.benefits) _Bullet(text: benefit),
+                      for (final benefit in meal.benefits)
+                        _Bullet(text: benefit),
                     ],
                   ),
                 ),
@@ -228,7 +228,11 @@ class MealDetailHeader extends StatelessWidget {
                   child: PremiumRecipeCard(
                     image: item.image,
                     name: item.name,
-                    time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
+                    time: recipeMinutesLabel(
+                      l10n,
+                      item.prepTimeMinutes,
+                      item.time,
+                    ),
                     calories: recipeCaloriesLabel(
                       l10n,
                       item.caloriesValue,
@@ -244,9 +248,7 @@ class MealDetailHeader extends StatelessWidget {
                             : recipeDifficultyLabel(l10n, item.difficulty),
                     imageHeight: 140,
                     onTap:
-                        onTapSimilar == null
-                            ? null
-                            : () => onTapSimilar!(item),
+                        onTapSimilar == null ? null : () => onTapSimilar!(item),
                   ),
                 );
               },
@@ -456,10 +458,7 @@ class _MacroStat extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: ext.textMuted),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: ext.textMuted)),
       ],
     );
   }

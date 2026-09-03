@@ -1,21 +1,20 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/network/app_icons.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_colors.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/featured_card.dart';
+import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:fitness_app/features/nutrition/data/nutrition_repository.dart';
+import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/meal_idea_controller.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:fitness_app/features/nutrition/presentation/widgets/nutrition_summary_card.dart';
+import 'package:fitness_app/features/nutrition/presentation/widgets/premium_recipe_card.dart';
+import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/featured_card.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../workout/presentation/widgets/workout_header.dart';
-import '../../data/nutrition_repository.dart';
-import '../../domain/nutrition_models.dart';
-import '../providers/meal_idea_controller.dart';
-import '../providers/nutrition_controller.dart';
-import '../widgets/nutrition_summary_card.dart';
-import '../widgets/premium_recipe_card.dart';
 
 class NutritionPage extends ConsumerWidget {
   const NutritionPage({super.key});
@@ -109,11 +108,8 @@ class NutritionPage extends ConsumerWidget {
                   onTap:
                       recommended.isEmpty
                           ? null
-                          : () => _openRecipe(
-                            context,
-                            ref,
-                            recommended.first.id,
-                          ),
+                          : () =>
+                              _openRecipe(context, ref, recommended.first.id),
                 ),
                 SizedBox(height: compact ? 14 : 22),
                 PremiumSectionHeader(title: l10n.nutritionRecommended),
@@ -131,38 +127,35 @@ class NutritionPage extends ConsumerWidget {
               // large empty gap under every card regardless of content.
               mainAxisExtent: 220,
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final item = recommended[index];
-                return PremiumRecipeCard(
-                  image: item.image,
-                  name: item.name,
-                  time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
-                  calories: recipeCaloriesLabel(
-                    l10n,
-                    item.caloriesValue,
-                    item.calories,
-                  ),
-                  subtitle: item.subtitle,
-                  protein: item.protein,
-                  carbs: item.carbs,
-                  fat: item.fat,
-                  rating: item.rating,
-                  difficulty:
-                      item.difficulty == null
-                          ? null
-                          : recipeDifficultyLabel(l10n, item.difficulty),
-                  imageHeight: 104,
-                  isFavorite: favorites.contains(item.id),
-                  onFavoriteTap:
-                      () => ref
-                          .read(mealIdeaFavoritesProvider.notifier)
-                          .toggle(item.id),
-                  onTap: () => _openRecipe(context, ref, item.id),
-                );
-              },
-              childCount: recommended.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final item = recommended[index];
+              return PremiumRecipeCard(
+                image: item.image,
+                name: item.name,
+                time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
+                calories: recipeCaloriesLabel(
+                  l10n,
+                  item.caloriesValue,
+                  item.calories,
+                ),
+                subtitle: item.subtitle,
+                protein: item.protein,
+                carbs: item.carbs,
+                fat: item.fat,
+                rating: item.rating,
+                difficulty:
+                    item.difficulty == null
+                        ? null
+                        : recipeDifficultyLabel(l10n, item.difficulty),
+                imageHeight: 104,
+                isFavorite: favorites.contains(item.id),
+                onFavoriteTap:
+                    () => ref
+                        .read(mealIdeaFavoritesProvider.notifier)
+                        .toggle(item.id),
+                onTap: () => _openRecipe(context, ref, item.id),
+              );
+            }, childCount: recommended.length),
           ),
           SliverToBoxAdapter(
             child: Column(

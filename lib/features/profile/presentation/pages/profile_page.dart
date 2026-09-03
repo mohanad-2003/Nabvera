@@ -276,7 +276,7 @@ class ProfilePage extends ConsumerWidget {
                         isPrimary: true,
                         onTap: () async {
                           dialogContext.pop();
-                          await ref.read(firebaseAuthServiceProvider).signOut();
+                          await signOutCurrentUser(ref.read);
                           ref.invalidate(currentUserProfileProvider);
                           if (context.mounted) context.go(AppRoutes.login);
                         },

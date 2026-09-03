@@ -55,7 +55,7 @@ class _BiometricUnlockPageState extends ConsumerState<BiometricUnlockPage> {
   }
 
   Future<void> _logout() async {
-    await ref.read(firebaseAuthServiceProvider).signOut();
+    await signOutCurrentUser(ref.read);
     if (!mounted) return;
     context.go(AppRoutes.login);
   }

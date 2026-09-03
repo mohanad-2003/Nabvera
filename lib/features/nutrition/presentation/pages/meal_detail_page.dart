@@ -1,15 +1,14 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/features/nutrition/data/nutrition_repository.dart';
+import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/meal_idea_controller.dart';
+import 'package:fitness_app/features/nutrition/presentation/widgets/meal_detail_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../data/nutrition_repository.dart';
-import '../../domain/nutrition_models.dart';
-import '../providers/meal_idea_controller.dart';
-import '../widgets/meal_detail_header.dart';
 
 /// Generic recipe/meal detail screen — replaces the legacy
 /// detailsMealPage.dart and the three ad-hoc detail branches inline in

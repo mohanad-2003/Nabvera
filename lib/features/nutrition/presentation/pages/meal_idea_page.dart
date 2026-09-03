@@ -1,15 +1,14 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/meal_idea_controller.dart';
+import 'package:fitness_app/features/nutrition/presentation/widgets/meal_idea_section_view.dart';
+import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../domain/nutrition_models.dart';
-import '../../../workout/presentation/widgets/workout_header.dart';
-import '../providers/meal_idea_controller.dart';
-import '../widgets/meal_idea_section_view.dart';
+import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
 
 const _categoryEmoji = {
   MealCategory.breakfast: '🍳',
@@ -57,8 +56,7 @@ class MealIdeaPage extends ConsumerWidget {
                           onTap:
                               () => ref
                                   .read(
-                                    mealIdeaCategoryControllerProvider
-                                        .notifier,
+                                    mealIdeaCategoryControllerProvider.notifier,
                                   )
                                   .select(cat),
                         );

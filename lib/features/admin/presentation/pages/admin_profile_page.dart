@@ -87,7 +87,7 @@ class AdminProfilePage extends ConsumerWidget {
                   label: l10n.profileMenuLogout,
                   iconColor: ext.danger,
                   onTap: () async {
-                    await ref.read(firebaseAuthServiceProvider).signOut();
+                    await signOutCurrentUser(ref.read);
                     ref.invalidate(currentUserProfileProvider);
                     if (context.mounted) context.go(AppRoutes.login);
                   },

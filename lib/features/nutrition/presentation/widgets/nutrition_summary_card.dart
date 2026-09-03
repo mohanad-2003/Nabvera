@@ -1,9 +1,8 @@
+import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/theme/app_colors.dart';
+import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../domain/nutrition_models.dart';
 
 /// "Today's Nutrition" summary: a calorie ring plus protein/carbs/fat
 /// meters and a water-intake row, sitting directly on the page background
