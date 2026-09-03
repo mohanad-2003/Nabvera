@@ -1532,6 +1532,54 @@ abstract class AppLocalizations {
   /// **'Rest day'**
   String get homeWeeklyRestDay;
 
+  /// No description provided for @homeWeeklyTotalMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min this week'**
+  String homeWeeklyTotalMinutes(int minutes);
+
+  /// No description provided for @homeWeeklyMoreThanLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min more than last week'**
+  String homeWeeklyMoreThanLastWeek(int minutes);
+
+  /// No description provided for @homeWeeklyLessThanLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min less than last week'**
+  String homeWeeklyLessThanLastWeek(int minutes);
+
+  /// No description provided for @homeWeeklySameAsLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as last week'**
+  String get homeWeeklySameAsLastWeek;
+
+  /// No description provided for @homeWeeklyNoLastWeekData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data from last week yet'**
+  String get homeWeeklyNoLastWeekData;
+
+  /// No description provided for @homeWeeklyLongestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{No streak yet} =1{1-day streak} other{{days}-day streak}}'**
+  String homeWeeklyLongestStreak(int days);
+
+  /// No description provided for @homeWeeklyEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No workouts logged yet'**
+  String get homeWeeklyEmptyStateTitle;
+
+  /// No description provided for @homeWeeklyEmptyStateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish your first workout to start seeing your weekly progress here.'**
+  String get homeWeeklyEmptyStateBody;
+
   /// No description provided for @homeDayMon.
   ///
   /// In en, this message translates to:
@@ -2665,6 +2713,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated successfully!'**
   String get editProfileSuccessMessage;
+
+  /// No description provided for @editProfilePreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Preferences'**
+  String get editProfilePreferencesTitle;
+
+  /// No description provided for @editProfilePreferencesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update these any time to get better-matched workout recommendations.'**
+  String get editProfilePreferencesSubtitle;
+
+  /// No description provided for @editProfilePreferencesGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get editProfilePreferencesGoalLabel;
+
+  /// No description provided for @editProfilePreferencesLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Level'**
+  String get editProfilePreferencesLevelLabel;
+
+  /// No description provided for @editProfilePreferencesEquipmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Equipment'**
+  String get editProfilePreferencesEquipmentLabel;
+
+  /// No description provided for @editProfilePreferencesTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Time'**
+  String get editProfilePreferencesTimeLabel;
+
+  /// No description provided for @editProfilePreferencesSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Preferences'**
+  String get editProfilePreferencesSave;
 
   /// No description provided for @privacyTitle.
   ///

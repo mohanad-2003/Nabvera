@@ -794,6 +794,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeWeeklyRestDay => 'يوم راحة';
 
   @override
+  String homeWeeklyTotalMinutes(int minutes) {
+    return '$minutes دقيقة هذا الأسبوع';
+  }
+
+  @override
+  String homeWeeklyMoreThanLastWeek(int minutes) {
+    return 'أكثر بـ $minutes دقيقة من الأسبوع الماضي';
+  }
+
+  @override
+  String homeWeeklyLessThanLastWeek(int minutes) {
+    return 'أقل بـ $minutes دقيقة من الأسبوع الماضي';
+  }
+
+  @override
+  String get homeWeeklySameAsLastWeek => 'مثل الأسبوع الماضي';
+
+  @override
+  String get homeWeeklyNoLastWeekData => 'لا توجد بيانات من الأسبوع الماضي بعد';
+
+  @override
+  String homeWeeklyLongestStreak(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'تتابع $days أيام',
+      one: 'تتابع يوم واحد',
+      zero: 'لا يوجد تتابع بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWeeklyEmptyStateTitle => 'لا توجد تمارين مسجّلة بعد';
+
+  @override
+  String get homeWeeklyEmptyStateBody =>
+      'أنهِ تمرينك الأول لتبدأ برؤية تقدمك الأسبوعي هنا.';
+
+  @override
   String get homeDayMon => 'إثن';
 
   @override
@@ -1376,6 +1416,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileSuccessMessage => 'تم تحديث الملف الشخصي بنجاح!';
+
+  @override
+  String get editProfilePreferencesTitle => 'تفضيلات التمرين';
+
+  @override
+  String get editProfilePreferencesSubtitle =>
+      'حدّث هذه الإعدادات في أي وقت للحصول على توصيات تمارين أكثر ملاءمة لك.';
+
+  @override
+  String get editProfilePreferencesGoalLabel => 'الهدف';
+
+  @override
+  String get editProfilePreferencesLevelLabel => 'مستوى النشاط';
+
+  @override
+  String get editProfilePreferencesEquipmentLabel => 'المعدات المتاحة';
+
+  @override
+  String get editProfilePreferencesTimeLabel => 'الوقت المتاح';
+
+  @override
+  String get editProfilePreferencesSave => 'حفظ التفضيلات';
 
   @override
   String get privacyTitle => 'الخصوصية';

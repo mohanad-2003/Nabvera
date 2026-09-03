@@ -72,6 +72,7 @@ class WorkoutRepository {
     required int caloriesBurned,
     String? workoutId,
     DifficultyRating? difficultyRating,
+    int? actualDurationMinutes,
   }) async {
     final response = await _client.post(
       '/workout-logs',
@@ -82,6 +83,8 @@ class WorkoutRepository {
         if (workoutId != null) 'workout': workoutId,
         if (difficultyRating != null)
           'difficultyRating': difficultyRating.apiValue,
+        if (actualDurationMinutes != null)
+          'actualDurationMinutes': actualDurationMinutes,
       },
     );
     final body = _client.decode(response);

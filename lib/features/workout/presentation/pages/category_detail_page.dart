@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fitness_app/core/analytics/analytics_service.dart';
 import 'package:fitness_app/core/network/app_icons.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
@@ -5,7 +8,9 @@ import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/featured_card.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart';
 import 'package:fitness_app/features/workout/data/workout_repository.dart';
+import 'package:fitness_app/features/workout/domain/difficulty_rating.dart';
 import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/round_item_tile.dart';
 import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
@@ -13,6 +18,13 @@ import 'package:fitness_app/features/workout/presentation/widgets/workout_rating
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+/// A logged duration must be a real, plausible measurement — mirrors the
+/// backend's own bounds (`backend/src/utils/workoutLogHelpers.js`) so a
+/// client-side timer glitch (screen left open for days, or finished within
+/// the same second it started) can't produce a rejected or nonsensical log.
+const int _kMinLoggedMinutes = 1;
+const int _kMaxLoggedMinutes = 300;
 
 /// Generic workout-category screen — replaces the legacy AdvanceCategory,
 /// IntermediateCategory, and FunctionalPage, which shared this exact
@@ -23,26 +35,67 @@ class CategoryDetailPage extends ConsumerStatefulWidget {
   final CategoryDetailData data;
 
   @override
-  ConsumerState<CategoryDetailPage> createState() =>
-      _CategoryDetailPageState();
+  ConsumerState<CategoryDetailPage> createState() => _CategoryDetailPageState();
 }
 
 class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
   bool _submitting = false;
+  DateTime? _startedAt;
+  Timer? _ticker;
+  Duration _elapsed = Duration.zero;
 
   CategoryDetailData get data => widget.data;
+  bool get _started => _startedAt != null;
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  void _startWorkout() {
+    if (_started) return;
+    setState(() {
+      _startedAt = DateTime.now();
+      _elapsed = Duration.zero;
+    });
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      final startedAt = _startedAt;
+      if (startedAt == null || !mounted) return;
+      setState(() => _elapsed = DateTime.now().difference(startedAt));
+    });
+    unawaited(
+      ref.read(analyticsServiceProvider).logEvent(AnalyticsEvent.workoutStarted, {
+        if (data.workoutId != null) 'workoutId': data.workoutId,
+        'durationMinutes': data.durationMinutes,
+      }),
+    );
+  }
 
   /// Prompts for a difficulty rating (skippable), then logs the workout
   /// regardless of whether a rating was given. Rating collection and
   /// logging are one user action — asking again separately later would
   /// just add friction for something the rating sheet's Skip already covers.
-  Future<void> _finishWorkout(BuildContext context, AppLocalizations l10n) async {
+  Future<void> _finishWorkout(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     if (_submitting) return;
     final rating = await showWorkoutRatingSheet(context);
     if (!context.mounted) return;
 
     setState(() => _submitting = true);
+    _ticker?.cancel();
+    // The real, measured elapsed time — never 0 (a workout finished within
+    // the same minute it started still counts as at least one minute) and
+    // capped well above any realistic single session.
+    final actualMinutes = _startedAt == null
+        ? null
+        : _elapsed.inSeconds ~/ 60 == 0 && _elapsed.inSeconds > 0
+            ? _kMinLoggedMinutes
+            : _elapsed.inMinutes.clamp(_kMinLoggedMinutes, _kMaxLoggedMinutes);
     try {
+      final analytics = ref.read(analyticsServiceProvider);
       await ref
           .read(workoutRepositoryProvider)
           .createWorkoutLog(
@@ -51,23 +104,52 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
             caloriesBurned: data.estimatedCalories,
             workoutId: data.workoutId,
             difficultyRating: rating,
+            actualDurationMinutes: actualMinutes,
           );
+      unawaited(
+        analytics.logEvent(AnalyticsEvent.workoutCompleted, {
+          if (data.workoutId != null) 'workoutId': data.workoutId,
+          'durationMinutes': data.durationMinutes,
+          if (actualMinutes != null) 'actualDurationMinutes': actualMinutes,
+        }),
+      );
+      if (rating != null) {
+        unawaited(
+          analytics.logEvent(AnalyticsEvent.workoutRated, {
+            if (data.workoutId != null) 'workoutId': data.workoutId,
+            'difficultyRating': rating.apiValue,
+          }),
+        );
+      }
+      // The workout log just changed today's minutes, this week's
+      // progress, and (via a rating) tomorrow's recommendation — refresh
+      // Home so it's current the moment the user navigates back, with no
+      // restart or manual pull needed.
+      refreshHomeProviders(ref);
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSavedSuccess)));
-    } catch (error, stackTrace) {
-      // Temporary: surface the real cause in the debug console instead of
-      // only the generic user-facing message, while we track down why
-      // saving is failing for real users.
-      debugPrint('Finish workout failed: $error\n$stackTrace');
+    } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSaveFailed)));
     } finally {
-      if (mounted) setState(() => _submitting = false);
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+          _startedAt = null;
+          _elapsed = Duration.zero;
+        });
+      }
     }
+  }
+
+  String _formatElapsed(Duration elapsed) {
+    final minutes = elapsed.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = elapsed.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   @override
@@ -102,10 +184,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                       badge: l10n.workoutTrainingOfTheDay.toUpperCase(),
                       title: data.heroLabel,
                       metas: [
-                        FeaturedCardMeta(
-                          icon: AppIcons.time,
-                          label: data.time,
-                        ),
+                        FeaturedCardMeta(icon: AppIcons.time, label: data.time),
                         FeaturedCardMeta(
                           icon: AppIcons.calories,
                           label: data.calories,
@@ -152,14 +231,35 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                         ],
                         // Only a real backed-by-the-API workout has an id to
                         // log against — curated/mock content (no workoutId)
-                        // has nothing for "finish" to actually save.
-                        if (data.workoutId != null)
+                        // has nothing for "start"/"finish" to actually save.
+                        if (data.workoutId != null && !_started)
+                          PrimaryButton(
+                            label: l10n.workoutStartWorkout,
+                            icon: Icons.play_circle_outline_rounded,
+                            onPressed: _startWorkout,
+                          ),
+                        if (data.workoutId != null && _started) ...[
+                          Center(
+                            child: Text(
+                              _formatElapsed(_elapsed),
+                              style: TextStyle(
+                                color: ext.textPrimary,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
                           PrimaryButton(
                             label: l10n.workoutFinishWorkout,
                             icon: Icons.check_circle_outline_rounded,
                             isLoading: _submitting,
                             onPressed: () => _finishWorkout(context, l10n),
                           ),
+                        ],
                       ],
                     ),
                   ),

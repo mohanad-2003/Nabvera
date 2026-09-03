@@ -297,6 +297,26 @@
     "placeholders": {"done": {"type": "int"}, "goal": {"type": "int"}}
   },
   "homeWeeklyRestDay": "Rest day",
+  "homeWeeklyTotalMinutes": "{minutes} min this week",
+  "@homeWeeklyTotalMinutes": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklyMoreThanLastWeek": "{minutes} min more than last week",
+  "@homeWeeklyMoreThanLastWeek": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklyLessThanLastWeek": "{minutes} min less than last week",
+  "@homeWeeklyLessThanLastWeek": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklySameAsLastWeek": "Same as last week",
+  "homeWeeklyNoLastWeekData": "No data from last week yet",
+  "homeWeeklyLongestStreak": "{days, plural, =0{No streak yet} =1{1-day streak} other{{days}-day streak}}",
+  "@homeWeeklyLongestStreak": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "homeWeeklyEmptyStateTitle": "No workouts logged yet",
+  "homeWeeklyEmptyStateBody": "Finish your first workout to start seeing your weekly progress here.",
   "homeDayMon": "Mon",
   "homeDayTue": "Tue",
   "homeDayWed": "Wed",
@@ -499,6 +519,13 @@
   "editProfileUpdate": "Update Profile",
   "editProfileNameValidation": "Please enter your name",
   "editProfileSuccessMessage": "Profile updated successfully!",
+  "editProfilePreferencesTitle": "Workout Preferences",
+  "editProfilePreferencesSubtitle": "Update these any time to get better-matched workout recommendations.",
+  "editProfilePreferencesGoalLabel": "Goal",
+  "editProfilePreferencesLevelLabel": "Activity Level",
+  "editProfilePreferencesEquipmentLabel": "Available Equipment",
+  "editProfilePreferencesTimeLabel": "Available Time",
+  "editProfilePreferencesSave": "Save Preferences",
 
   "privacyTitle": "Privacy",
   "privacySectionLegal": "Legal",

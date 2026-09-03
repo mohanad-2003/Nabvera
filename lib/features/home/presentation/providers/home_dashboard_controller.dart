@@ -1,4 +1,11 @@
+import 'dart:async';
+
+import 'package:fitness_app/core/analytics/analytics_service.dart';
+import 'package:fitness_app/features/home/domain/weekly_progress_calculator.dart';
+import 'package:fitness_app/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:fitness_app/features/workout/data/workout_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_dashboard_controller.g.dart';
@@ -27,7 +34,9 @@ class MuscleGroupRecovery {
 
   static List<MuscleGroupRecovery> listFromJson(Map<String, dynamic>? json) {
     if (json == null) return const [];
-    return [for (final entry in json.entries) _fromEntry(entry.key, entry.value)];
+    return [
+      for (final entry in json.entries) _fromEntry(entry.key, entry.value),
+    ];
   }
 }
 
@@ -111,8 +120,7 @@ class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
         id: (workout['_id'] as String?) ?? '',
         title: (workout['title'] as String?) ?? '',
         durationMinutes: (workout['durationMinutes'] as num?)?.toInt() ?? 0,
-        estimatedCalories:
-            (workout['estimatedCalories'] as num?)?.toInt() ?? 0,
+        estimatedCalories: (workout['estimatedCalories'] as num?)?.toInt() ?? 0,
         difficulty: (workout['difficulty'] as String?) ?? 'beginner',
         exerciseCount: (workout['exercises'] as List?)?.length ?? 0,
         reasonCode: (data['reasonCode'] as String?) ?? 'on_track',
@@ -123,6 +131,24 @@ class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
           data['alternative'] as Map<String, dynamic>?,
         ),
       );
+      final shown = state;
+      if (shown != null) {
+        unawaited(
+          ref.read(analyticsServiceProvider).logEvent(
+            AnalyticsEvent.recommendationViewed,
+            {
+              'workoutId': shown.id,
+              'reasonCode': shown.reasonCode,
+              'durationMinutes': shown.durationMinutes,
+            },
+            // Same recommendation shown again (e.g. a widget rebuild, or
+            // navigating back to Home) shouldn't log a second view — only
+            // a genuinely different workout/reason combo counts as "viewed
+            // again".
+            '${shown.id}|${shown.reasonCode}',
+          ),
+        );
+      }
     } catch (_) {
       // Left as-is — see WorkoutListByLevel for the same pattern.
     }
@@ -132,8 +158,20 @@ class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
   /// backend's difficulty-adjustment rule to `decrease` and excludes the
   /// currently-shown workout instead of re-picking the same one.
   Future<void> chooseEasierWorkout() async {
+    final previousId = state?.id;
+    unawaited(
+      ref.read(analyticsServiceProvider).logEvent(
+        AnalyticsEvent.easierWorkoutRequested,
+        {if (previousId != null) 'workoutId': previousId},
+      ),
+    );
     await _load(easier: true);
   }
+
+  /// Re-fetches today's recommendation from scratch — used by
+  /// [refreshHomeProviders] (pull-to-refresh, and after anything that could
+  /// change what "today's plan" should be).
+  Future<void> refresh() => _load();
 }
 
 /// Standalone recovery-map fetch for the Home page's compact recovery row
@@ -156,6 +194,8 @@ class RecoveryMapController extends _$RecoveryMapController {
       // Left empty — see WorkoutListByLevel for the same pattern.
     }
   }
+
+  Future<void> refresh() => _load();
 }
 
 /// This week's per-day trained minutes, built from `/api/workout-logs`, for
@@ -200,4 +240,53 @@ class WeeklyActivityController extends _$WeeklyActivityController {
     final todayIndex = DateTime.now().weekday - 1;
     return state[todayIndex];
   }
+
+  Future<void> refresh() => _load();
+}
+
+/// The richer weekly-progress numbers (total minutes, week-over-week
+/// comparison, longest streak, "any logs at all" for the empty state) —
+/// kept as its own provider rather than folded into
+/// [WeeklyActivityController] so that widget's existing, already-shipped
+/// consumers (hero card, metrics grid) are untouched by this addition.
+/// Costs one extra `fetchWorkoutLogs()` call, which is an accepted,
+/// existing pattern in this codebase for independent per-feature fetches.
+@riverpod
+class WeeklyProgressStatsController extends _$WeeklyProgressStatsController {
+  @override
+  WeeklyProgressStats build() {
+    Future.microtask(_load);
+    return WeeklyProgressStats.empty;
+  }
+
+  Future<void> _load() async {
+    try {
+      final logs = await ref.read(workoutRepositoryProvider).fetchWorkoutLogs();
+      state = computeWeeklyProgress(logs);
+    } catch (_) {
+      // Left at empty — see WorkoutListByLevel for the same pattern.
+    }
+  }
+
+  Future<void> refresh() => _load();
+}
+
+/// Central "something important changed" refresh hook for the whole Home
+/// screen. Invalidates every provider the hero card, weekly progress card,
+/// and next-step card depend on, so a fresh watch anywhere on Home picks
+/// up new data on its own — no app restart, no manual navigation. Used
+/// after finishing/rating a workout, after saving workout preferences from
+/// Edit Profile, and from Home's own pull-to-refresh.
+///
+/// Invalidating (rather than calling `.refresh()` directly) is deliberately
+/// cheap and safe even when Home isn't the currently visible screen: an
+/// unwatched autoDispose provider just discards its cached state and
+/// recomputes lazily the next time something watches it.
+void refreshHomeProviders(WidgetRef ref) {
+  ref.invalidate(homeFeaturedWorkoutControllerProvider);
+  ref.invalidate(recoveryMapControllerProvider);
+  ref.invalidate(weeklyActivityControllerProvider);
+  ref.invalidate(weeklyProgressStatsControllerProvider);
+  ref.invalidate(currentUserProfileProvider);
+  ref.invalidate(dailyNutritionSummaryControllerProvider);
 }

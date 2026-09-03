@@ -1,28 +1,39 @@
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
+import 'package:fitness_app/core/storage/preferences_service.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/settings_card.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/settings_toggle_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Consolidates the four "coming soon" stub tiles that used to sit behind
 /// Manage Personal Data / App Permissions / Data Collection / Download My
 /// Data into one real, working screen: permission toggles, data-collection
 /// preferences, and an export action with a genuine confirmation.
-class ManageDataPage extends StatefulWidget {
+class ManageDataPage extends ConsumerStatefulWidget {
   const ManageDataPage({super.key});
 
   @override
-  State<ManageDataPage> createState() => _ManageDataPageState();
+  ConsumerState<ManageDataPage> createState() => _ManageDataPageState();
 }
 
-class _ManageDataPageState extends State<ManageDataPage> {
+class _ManageDataPageState extends ConsumerState<ManageDataPage> {
   bool _cameraAccess = true;
   bool _locationAccess = false;
   bool _notificationsAccess = true;
-  bool _analytics = true;
+  // The only toggle here with a real, functional effect right now: it's
+  // read by AnalyticsService before every event send. The others are
+  // device-permission stubs with nothing on the backend to wire to yet.
+  late bool _analytics;
   bool _personalizedRecommendations = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _analytics = ref.read(preferencesServiceProvider).analyticsEnabled;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +114,12 @@ class _ManageDataPageState extends State<ManageDataPage> {
                         title: l10n.manageDataAnalyticsToggle,
                         subtitle: l10n.manageDataAnalyticsToggleBody,
                         value: _analytics,
-                        onChanged:
-                            (value) => setState(() => _analytics = value),
+                        onChanged: (value) {
+                          setState(() => _analytics = value);
+                          ref
+                              .read(preferencesServiceProvider)
+                              .setAnalyticsEnabled(value);
+                        },
                       ),
                       SettingsToggleRow(
                         icon: Icons.auto_awesome_outlined,

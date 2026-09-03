@@ -117,23 +117,88 @@ class OnboardingProfileController extends _$OnboardingProfileController {
     }
   }
 
-  static String _goalToApi(FitnessGoal goal) => switch (goal) {
-    FitnessGoal.loseWeight => 'lose_weight',
-    FitnessGoal.gainWeight => 'gain_muscle',
-    FitnessGoal.muscleMassGain => 'gain_muscle',
-    FitnessGoal.shapeBody => 'keep_fit',
-    FitnessGoal.others => 'keep_fit',
-  };
+  static String _goalToApi(FitnessGoal goal) => goalToApi(goal);
 
-  static String _equipmentToApi(AvailableEquipment equipment) => switch (equipment) {
-    AvailableEquipment.resistanceBand => 'resistance_band',
-    _ => equipment.name,
-  };
+  static String _equipmentToApi(AvailableEquipment equipment) => equipmentToApi(equipment);
 
-  static int _timeToMinutes(AvailableTime time) => switch (time) {
-    AvailableTime.minutes15 => 15,
-    AvailableTime.minutes30 => 30,
-    AvailableTime.minutes45 => 45,
-    AvailableTime.minutes60 => 60,
-  };
+  static int _timeToMinutes(AvailableTime time) => timeToMinutes(time);
 }
+
+// --- Shared enum <-> API-string mappers -------------------------------
+//
+// Onboarding only ever writes these (a fresh wizard has no prior value to
+// parse back), but Edit Profile needs to go the other way too: it opens
+// with the user's *existing* saved profile and has to reconstruct which
+// enum value that corresponds to. Kept as public top-level functions here,
+// next to the enums they describe, so both directions live in one place.
+
+String goalToApi(FitnessGoal goal) => switch (goal) {
+  FitnessGoal.loseWeight => 'lose_weight',
+  FitnessGoal.gainWeight => 'gain_muscle',
+  FitnessGoal.muscleMassGain => 'gain_muscle',
+  FitnessGoal.shapeBody => 'keep_fit',
+  FitnessGoal.others => 'keep_fit',
+};
+
+/// Inverse of [goalToApi]. Several enum values collapse to the same API
+/// string (e.g. both `gainWeight` and `muscleMassGain` save as
+/// `gain_muscle`) so this can't perfectly round-trip — it picks the most
+/// common/representative enum value for each API string, which is all
+/// Edit Profile needs (a sensible pre-selected option, not a guarantee of
+/// recovering the exact original wizard choice).
+FitnessGoal? goalFromApi(String? value) => switch (value) {
+  'lose_weight' => FitnessGoal.loseWeight,
+  'gain_muscle' => FitnessGoal.gainWeight,
+  'keep_fit' => FitnessGoal.shapeBody,
+  _ => null,
+};
+
+String equipmentToApi(AvailableEquipment equipment) => switch (equipment) {
+  AvailableEquipment.resistanceBand => 'resistance_band',
+  _ => equipment.name,
+};
+
+AvailableEquipment? equipmentFromApi(String value) => switch (value) {
+  'resistance_band' => AvailableEquipment.resistanceBand,
+  'none' => AvailableEquipment.none,
+  'dumbbell' => AvailableEquipment.dumbbell,
+  'barbell' => AvailableEquipment.barbell,
+  'machine' => AvailableEquipment.machine,
+  'kettlebell' => AvailableEquipment.kettlebell,
+  _ => null,
+};
+
+int timeToMinutes(AvailableTime time) => switch (time) {
+  AvailableTime.minutes15 => 15,
+  AvailableTime.minutes30 => 30,
+  AvailableTime.minutes45 => 45,
+  AvailableTime.minutes60 => 60,
+};
+
+/// Inverse of [timeToMinutes]. Snaps to the nearest known bucket so any
+/// value saved outside the wizard's fixed options (or a stale/odd value on
+/// an old account) still resolves to something selectable in the UI.
+AvailableTime minutesToTime(int? minutes) {
+  if (minutes == null) return AvailableTime.minutes30;
+  const options = AvailableTime.values;
+  const values = [15, 30, 45, 60];
+  var closest = options.first;
+  var bestDiff = (minutes - values.first).abs();
+  for (var i = 1; i < options.length; i++) {
+    final diff = (minutes - values[i]).abs();
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      closest = options[i];
+    }
+  }
+  return closest;
+}
+
+/// Inverse of [ActivityLevel.name] (used directly as the API string, no
+/// separate mapper needed for the forward direction).
+ActivityLevel? activityLevelFromApi(String? value) => switch (value) {
+  'beginner' => ActivityLevel.beginner,
+  'intermediate' => ActivityLevel.intermediate,
+  'advanced' => ActivityLevel.advanced,
+  _ => null,
+};

@@ -802,6 +802,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeWeeklyRestDay => 'Rest day';
 
   @override
+  String homeWeeklyTotalMinutes(int minutes) {
+    return '$minutes min this week';
+  }
+
+  @override
+  String homeWeeklyMoreThanLastWeek(int minutes) {
+    return '$minutes min more than last week';
+  }
+
+  @override
+  String homeWeeklyLessThanLastWeek(int minutes) {
+    return '$minutes min less than last week';
+  }
+
+  @override
+  String get homeWeeklySameAsLastWeek => 'Same as last week';
+
+  @override
+  String get homeWeeklyNoLastWeekData => 'No data from last week yet';
+
+  @override
+  String homeWeeklyLongestStreak(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days-day streak',
+      one: '1-day streak',
+      zero: 'No streak yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWeeklyEmptyStateTitle => 'No workouts logged yet';
+
+  @override
+  String get homeWeeklyEmptyStateBody =>
+      'Finish your first workout to start seeing your weekly progress here.';
+
+  @override
   String get homeDayMon => 'Mon';
 
   @override
@@ -1388,6 +1428,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileSuccessMessage => 'Profile updated successfully!';
+
+  @override
+  String get editProfilePreferencesTitle => 'Workout Preferences';
+
+  @override
+  String get editProfilePreferencesSubtitle =>
+      'Update these any time to get better-matched workout recommendations.';
+
+  @override
+  String get editProfilePreferencesGoalLabel => 'Goal';
+
+  @override
+  String get editProfilePreferencesLevelLabel => 'Activity Level';
+
+  @override
+  String get editProfilePreferencesEquipmentLabel => 'Available Equipment';
+
+  @override
+  String get editProfilePreferencesTimeLabel => 'Available Time';
+
+  @override
+  String get editProfilePreferencesSave => 'Save Preferences';
 
   @override
   String get privacyTitle => 'Privacy';
