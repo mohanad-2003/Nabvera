@@ -57,6 +57,11 @@ class NotificationListController extends _$NotificationListController {
     }
   }
 
+  /// Re-fetches the inbox — used after a foreground push arrives (see
+  /// `PushNotificationService`) so the list/badge reflect it without
+  /// requiring the user to manually pull-to-refresh.
+  Future<void> refresh() => _load();
+
   void markAsRead(String id) {
     state = [
       for (final item in state)
@@ -92,10 +97,11 @@ Map<NotificationDayGroup, List<NotificationItem>> groupedNotifications(
 
   final filtered =
       all.where((item) {
-        if (filter == NotificationFilter.unread) return !item.isRead;
-        final category = filter.category;
-        return category == null || item.category == category;
-      }).toList()..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+          if (filter == NotificationFilter.unread) return !item.isRead;
+          final category = filter.category;
+          return category == null || item.category == category;
+        }).toList()
+        ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
   final now = DateTime.now();
   final yesterday = now.subtract(const Duration(days: 1));

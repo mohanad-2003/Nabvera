@@ -1,10 +1,17 @@
+import 'dart:async';
+
+import 'package:fitness_app/core/analytics/analytics_service.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/theme/app_theme_extension.dart';
 import 'package:fitness_app/core/widgets/app_text_field.dart';
 import 'package:fitness_app/core/widgets/fade_slide_in.dart';
 import 'package:fitness_app/core/widgets/premium_scaffold.dart';
 import 'package:fitness_app/core/widgets/primary_button.dart';
+import 'package:fitness_app/core/widgets/selectable_option_card.dart';
 import 'package:fitness_app/core/widgets/user_avatar.dart';
+import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart'
+    show refreshHomeProviders;
+import 'package:fitness_app/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
 import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:fitness_app/features/profile/presentation/widgets/profile_stat_row.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +19,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 enum _Gender { male, female, other }
+
+String _goalLabel(AppLocalizations l10n, FitnessGoal goal) => switch (goal) {
+  FitnessGoal.loseWeight => l10n.goalLoseWeight,
+  FitnessGoal.gainWeight => l10n.goalGainWeight,
+  FitnessGoal.muscleMassGain => l10n.goalMuscleMassGain,
+  FitnessGoal.shapeBody => l10n.goalShapeBody,
+  FitnessGoal.others => l10n.goalOthers,
+};
+
+String _levelLabel(AppLocalizations l10n, ActivityLevel level) => switch (level) {
+  ActivityLevel.beginner => l10n.workoutLevelBeginner,
+  ActivityLevel.intermediate => l10n.workoutLevelIntermediate,
+  ActivityLevel.advanced => l10n.workoutLevelAdvanced,
+};
+
+String _equipmentLabel(AppLocalizations l10n, AvailableEquipment equipment) =>
+    switch (equipment) {
+      AvailableEquipment.none => l10n.onboardingEquipmentNone,
+      AvailableEquipment.dumbbell => l10n.onboardingEquipmentDumbbell,
+      AvailableEquipment.barbell => l10n.onboardingEquipmentBarbell,
+      AvailableEquipment.machine => l10n.onboardingEquipmentMachine,
+      AvailableEquipment.resistanceBand => l10n.onboardingEquipmentBand,
+      AvailableEquipment.kettlebell => l10n.onboardingEquipmentKettlebell,
+    };
+
+String _timeLabel(AppLocalizations l10n, AvailableTime time) => switch (time) {
+  AvailableTime.minutes15 => l10n.onboardingTime15,
+  AvailableTime.minutes30 => l10n.onboardingTime30,
+  AvailableTime.minutes45 => l10n.onboardingTime45,
+  AvailableTime.minutes60 => l10n.onboardingTime60,
+};
 
 class EditProfilePage extends ConsumerStatefulWidget {
   const EditProfilePage({super.key});
@@ -31,6 +69,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   bool _saving = false;
   String? _nameError;
   bool _initialized = false;
+
+  // Workout-preferences section — separate save action/state from the
+  // identity fields above, since these map onto the recommendation engine
+  // rather than the profile card.
+  FitnessGoal? _goal;
+  ActivityLevel? _activityLevel;
+  Set<AvailableEquipment> _equipment = {AvailableEquipment.none};
+  AvailableTime _availableTime = AvailableTime.minutes30;
+  bool _preferencesInitialized = false;
+  bool _savingPreferences = false;
 
   @override
   void initState() {
@@ -111,6 +159,53 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     }
   }
 
+  /// Saves the workout-preferences section only — kept independent of
+  /// [_handleSave] since these fields (goal/level/equipment/time) feed the
+  /// recommendation engine, not the profile card, and a user editing one
+  /// shouldn't be forced to also submit the other.
+  Future<void> _handleSavePreferences(AppLocalizations l10n) async {
+    setState(() => _savingPreferences = true);
+    final goal = _goal;
+    final level = _activityLevel;
+    final minutes = timeToMinutes(_availableTime);
+    final equipment = _equipment.map(equipmentToApi).toList();
+    final patch = <String, dynamic>{
+      if (goal != null) 'goal': goalToApi(goal),
+      if (level != null) 'activityLevel': level.name,
+      'availableEquipment': equipment,
+      'availableMinutes': minutes,
+    };
+    try {
+      await ref.read(currentUserProfileProvider.notifier).update(patch);
+      // The Home recommendation, recovery map, and next-step card don't
+      // watch the profile provider directly — refresh them explicitly so
+      // Home reflects the new preferences the moment the user goes back,
+      // with no restart or manual navigation needed.
+      refreshHomeProviders(ref);
+      unawaited(
+        ref
+            .read(analyticsServiceProvider)
+            .logEvent(AnalyticsEvent.workoutPreferencesUpdated, {
+              if (goal != null) 'goal': goalToApi(goal),
+              if (level != null) 'activityLevel': level.name,
+              'availableEquipment': equipment,
+              'availableMinutes': minutes,
+            }),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.editProfileSuccessMessage)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.authErrorGeneric)));
+    } finally {
+      if (mounted) setState(() => _savingPreferences = false);
+    }
+  }
+
   /// Parses the "dd / MM / yyyy" text the date picker writes back.
   DateTime? _parseDob(String text) {
     final parts = text.split('/').map((p) => p.trim()).toList();
@@ -149,6 +244,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         'female' => _Gender.female,
         _ => _Gender.other,
       };
+    }
+
+    if (!_preferencesInitialized && profile.email.isNotEmpty) {
+      _preferencesInitialized = true;
+      _goal = goalFromApi(profile.goal);
+      _activityLevel = activityLevelFromApi(profile.activityLevel);
+      final savedEquipment =
+          profile.availableEquipment.map(equipmentFromApi).whereType<AvailableEquipment>().toSet();
+      _equipment = savedEquipment.isEmpty
+          ? {AvailableEquipment.none}
+          : savedEquipment;
+      _availableTime = minutesToTime(profile.availableMinutes);
     }
 
     return PremiumScaffold(
@@ -345,8 +452,176 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 onPressed: () => _handleSave(l10n),
               ),
             ),
+            const SizedBox(height: 30),
+            Divider(color: ext.glassBorder),
+            const SizedBox(height: 22),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 220),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.editProfilePreferencesTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.editProfilePreferencesSubtitle,
+                    style: TextStyle(color: ext.textMuted, fontSize: 12.5),
+                  ),
+                  const SizedBox(height: 18),
+                  _SectionLabel(l10n.editProfilePreferencesGoalLabel, ext),
+                  const SizedBox(height: 8),
+                  for (final goal in FitnessGoal.values) ...[
+                    SelectableOptionCard(
+                      label: _goalLabel(l10n, goal),
+                      isSelected: _goal == goal,
+                      showCheckmark: true,
+                      onTap: () => setState(() => _goal = goal),
+                    ),
+                    if (goal != FitnessGoal.values.last)
+                      const SizedBox(height: 10),
+                  ],
+                  const SizedBox(height: 18),
+                  _SectionLabel(l10n.editProfilePreferencesLevelLabel, ext),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      for (final level in ActivityLevel.values) ...[
+                        if (level != ActivityLevel.values.first)
+                          const SizedBox(width: 8),
+                        Expanded(
+                          child: _GenderChip(
+                            label: _levelLabel(l10n, level),
+                            selected: _activityLevel == level,
+                            onTap: () =>
+                                setState(() => _activityLevel = level),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  _SectionLabel(l10n.editProfilePreferencesEquipmentLabel, ext),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final equipment in AvailableEquipment.values)
+                        _EquipmentChip(
+                          label: _equipmentLabel(l10n, equipment),
+                          selected: _equipment.contains(equipment),
+                          onTap: () => setState(() {
+                            final selected = {..._equipment};
+                            if (equipment == AvailableEquipment.none) {
+                              selected
+                                ..clear()
+                                ..add(equipment);
+                            } else {
+                              selected.remove(AvailableEquipment.none);
+                              if (!selected.add(equipment)) {
+                                selected.remove(equipment);
+                              }
+                              if (selected.isEmpty) {
+                                selected.add(AvailableEquipment.none);
+                              }
+                            }
+                            _equipment = selected;
+                          }),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  _SectionLabel(l10n.editProfilePreferencesTimeLabel, ext),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      for (final time in AvailableTime.values) ...[
+                        if (time != AvailableTime.values.first)
+                          const SizedBox(width: 8),
+                        Expanded(
+                          child: _GenderChip(
+                            label: _timeLabel(l10n, time),
+                            selected: _availableTime == time,
+                            onTap: () =>
+                                setState(() => _availableTime = time),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 22),
+                  PrimaryButton(
+                    label: l10n.editProfilePreferencesSave,
+                    isLoading: _savingPreferences,
+                    onPressed: () => _handleSavePreferences(l10n),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 10),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.label, this.ext);
+
+  final String label;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    label,
+    style: TextStyle(
+      color: ext.textPrimary,
+      fontWeight: FontWeight.w800,
+      fontSize: 13,
+    ),
+  );
+}
+
+class _EquipmentChip extends StatelessWidget {
+  const _EquipmentChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        decoration: BoxDecoration(
+          gradient: selected ? ext.accentGradient : null,
+          color: selected ? null : ext.glassFill,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: selected ? Colors.transparent : ext.glassBorder,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? ext.onAccent : ext.textPrimary,
+            fontWeight: FontWeight.w700,
+            fontSize: 12.5,
+          ),
         ),
       ),
     );

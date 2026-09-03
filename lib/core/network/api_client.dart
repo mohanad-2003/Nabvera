@@ -42,7 +42,9 @@ class ApiClient {
   ApiClient(this._authService, {String? baseUrl})
     : baseUrl =
           baseUrl ??
-          (_apiBaseUrlOverride.isNotEmpty ? _apiBaseUrlOverride : '$_defaultOrigin/api');
+          (_apiBaseUrlOverride.isNotEmpty
+              ? _apiBaseUrlOverride
+              : '$_defaultOrigin/api');
 
   final FirebaseAuthService _authService;
   final String baseUrl;
@@ -76,7 +78,7 @@ class ApiClient {
         'GET' => _client.get(uri, headers: headers),
         'POST' => _client.post(uri, headers: headers, body: encodedBody),
         'PATCH' => _client.patch(uri, headers: headers, body: encodedBody),
-        'DELETE' => _client.delete(uri, headers: headers),
+        'DELETE' => _client.delete(uri, headers: headers, body: encodedBody),
         _ => throw ArgumentError('Unsupported method: $method'),
       };
     }
@@ -94,7 +96,8 @@ class ApiClient {
   Future<http.Response> patch(String path, {Object? body}) =>
       _send('PATCH', path, body: body);
 
-  Future<http.Response> delete(String path) => _send('DELETE', path);
+  Future<http.Response> delete(String path, {Object? body}) =>
+      _send('DELETE', path, body: body);
 
   /// Decodes a JSON body and throws [ApiException] for non-2xx responses,
   /// matching the backend's `{ success, message }` error shape.

@@ -263,7 +263,7 @@ final class DailyNutritionSummaryControllerProvider
 }
 
 String _$dailyNutritionSummaryControllerHash() =>
-    r'fc51d468e2ad332f9c5ac14a7b1d699c802f7c43';
+    r'a032fb5abdf4a2ca361c95f85e0242bc3bfb32e6';
 
 /// Loads the real `/api/nutrition/today` document and converts it into
 /// display fractions/strings.

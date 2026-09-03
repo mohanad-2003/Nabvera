@@ -113,7 +113,7 @@ final class NotificationListControllerProvider
 }
 
 String _$notificationListControllerHash() =>
-    r'561bff431298e12f3f97829b27846e8671764d8d';
+    r'5577f67b118d16dd9e002371cc9a8522c02075ea';
 
 /// Loads the real `/api/notifications` inbox. Mutations are optimistic —
 /// applied to local state immediately, then sent to the backend; failures

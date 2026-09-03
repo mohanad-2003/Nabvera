@@ -297,6 +297,26 @@
     "placeholders": {"done": {"type": "int"}, "goal": {"type": "int"}}
   },
   "homeWeeklyRestDay": "Rest day",
+  "homeWeeklyTotalMinutes": "{minutes} min this week",
+  "@homeWeeklyTotalMinutes": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklyMoreThanLastWeek": "{minutes} min more than last week",
+  "@homeWeeklyMoreThanLastWeek": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklyLessThanLastWeek": "{minutes} min less than last week",
+  "@homeWeeklyLessThanLastWeek": {
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "homeWeeklySameAsLastWeek": "Same as last week",
+  "homeWeeklyNoLastWeekData": "No data from last week yet",
+  "homeWeeklyLongestStreak": "{days, plural, =0{No streak yet} =1{1-day streak} other{{days}-day streak}}",
+  "@homeWeeklyLongestStreak": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "homeWeeklyEmptyStateTitle": "No workouts logged yet",
+  "homeWeeklyEmptyStateBody": "Finish your first workout to start seeing your weekly progress here.",
   "homeDayMon": "Mon",
   "homeDayTue": "Tue",
   "homeDayWed": "Wed",
@@ -411,6 +431,24 @@
   "progressRecentSessions": "Recent Sessions",
   "progressNoSessionsYet": "No sessions this week",
 
+  "notificationActionStart": "Start",
+  "notificationActionView": "View",
+  "notificationWorkoutCompletedTitle": "Workout completed!",
+  "notificationWorkoutCompletedBody": "{calories} kcal burned. Great job!",
+  "@notificationWorkoutCompletedBody": {
+    "placeholders": {"calories": {"type": "int"}}
+  },
+  "notificationStreakTitle": "{days}-day streak!",
+  "@notificationStreakTitle": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "notificationStreakBody": "You've worked out {days} days in a row. Keep it up!",
+  "@notificationStreakBody": {
+    "placeholders": {"days": {"type": "int"}}
+  },
+  "notificationWorkoutReminderTitle": "Haven't trained today yet",
+  "notificationWorkoutReminderBody": "A few minutes now still counts — pick up where you left off.",
+
   "notificationsTitle": "Notifications",
   "notificationsSubtitle": "Stay motivated. Never miss your fitness journey.",
   "notificationsMarkAllRead": "Mark all as read",
@@ -499,6 +537,13 @@
   "editProfileUpdate": "Update Profile",
   "editProfileNameValidation": "Please enter your name",
   "editProfileSuccessMessage": "Profile updated successfully!",
+  "editProfilePreferencesTitle": "Workout Preferences",
+  "editProfilePreferencesSubtitle": "Update these any time to get better-matched workout recommendations.",
+  "editProfilePreferencesGoalLabel": "Goal",
+  "editProfilePreferencesLevelLabel": "Activity Level",
+  "editProfilePreferencesEquipmentLabel": "Available Equipment",
+  "editProfilePreferencesTimeLabel": "Available Time",
+  "editProfilePreferencesSave": "Save Preferences",
 
   "privacyTitle": "Privacy",
   "privacySectionLegal": "Legal",
@@ -695,5 +740,92 @@
   "communityPost2": "Swapped my rest day walk for a 20-minute cardio session today and felt great afterward. Small wins add up.",
   "communityPost3": "Question for the group: how do you stay consistent with meal prep on busy weeks? Looking for quick high-protein ideas.",
   "communityPost4": "Hit a new personal best on kettlebell swings this morning. The weekly challenge really pushed me to show up.",
-  "communityPost5": "Loving the new routine builder — put together a full upper-body session in under two minutes."
+  "communityPost5": "Loving the new routine builder — put together a full upper-body session in under two minutes.",
+
+  "profileMenuAdminConsole": "Admin Console",
+  "profileMenuAdminConsoleSubtitle": "Manage workouts, recipes, and content",
+
+  "adminNavDashboard": "Dashboard",
+  "adminNavWorkouts": "Workouts",
+  "adminNavExercises": "Exercises",
+  "adminNavRecipes": "Recipes",
+  "adminNavArticles": "Articles",
+  "adminNavChallenges": "Challenges",
+  "adminNavProfile": "Profile",
+  "adminNavMore": "More",
+
+  "adminActionEdit": "Edit",
+  "adminActionDelete": "Delete",
+  "adminActionRetry": "Retry",
+  "adminSearchHint": "Search…",
+  "adminNoResultsTitle": "No matches",
+  "adminNoResultsMessage": "Try a different search term or filter.",
+  "adminFilterAll": "All",
+
+  "adminUnauthorizedTitle": "Admins only",
+  "adminUnauthorizedBody": "Your account doesn't have access to the Admin console.",
+  "adminUnauthorizedAction": "Back to Home",
+
+  "adminDashboardTitle": "Admin Dashboard",
+  "adminDashboardSubtitle": "A quick look at your content library.",
+  "adminStatUnavailable": "Unavailable",
+
+  "adminRoleBadge": "Administrator",
+  "adminBackToApp": "Back to the app",
+
+  "adminLoadErrorTitle": "Couldn't load this list",
+  "adminSaveFailed": "Couldn't save — check your connection and try again.",
+  "adminSave": "Save",
+  "adminDeleteConfirmTitle": "Delete this item?",
+  "adminDeleteConfirmBody": "\"{name}\" will be permanently removed. This can't be undone.",
+  "@adminDeleteConfirmBody": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "adminFeaturedBadge": "Featured",
+
+  "adminWorkoutsEmptyTitle": "No workouts yet",
+  "adminWorkoutsEmptyMessage": "Add your first workout to get started.",
+  "adminExercisesEmptyTitle": "No exercises yet",
+  "adminExercisesEmptyMessage": "Add your first exercise to get started.",
+  "adminRecipesEmptyTitle": "No recipes yet",
+  "adminRecipesEmptyMessage": "Add your first recipe to get started.",
+  "adminArticlesEmptyTitle": "No articles yet",
+  "adminArticlesEmptyMessage": "Add your first article to get started.",
+  "adminChallengesEmptyTitle": "No challenges yet",
+  "adminChallengesEmptyMessage": "Add your first challenge to get started.",
+
+  "adminEditWorkoutTitle": "Edit Workout",
+  "adminAddWorkoutTitle": "Add Workout",
+  "adminEditExerciseTitle": "Edit Exercise",
+  "adminAddExerciseTitle": "Add Exercise",
+  "adminEditRecipeTitle": "Edit Recipe",
+  "adminAddRecipeTitle": "Add Recipe",
+  "adminAddArticleTitle": "Add Article",
+  "adminAddChallengeTitle": "Add Challenge",
+
+  "adminFieldTitle": "Title",
+  "adminFieldName": "Name",
+  "adminFieldDescription": "Description",
+  "adminFieldImageUrl": "Image URL",
+  "adminFieldVideoUrl": "Video URL",
+  "adminFieldDurationMinutes": "Duration (minutes)",
+  "adminFieldCalories": "Calories",
+  "adminFieldCategory": "Category",
+  "adminFieldDifficulty": "Difficulty",
+  "adminFieldMuscleGroup": "Muscle Group",
+  "adminFieldEquipment": "Equipment",
+  "adminFieldFeatured": "Featured",
+  "adminFieldPopular": "Popular",
+  "adminFieldPrepTimeMinutes": "Prep Time (minutes)",
+  "adminFieldNutrition": "Nutrition",
+  "adminFieldProtein": "Protein (g)",
+  "adminFieldCarbs": "Carbs (g)",
+  "adminFieldFat": "Fat (g)",
+  "adminFieldIngredients": "Ingredients",
+  "adminFieldSteps": "Steps",
+  "adminFieldOnePerLine": "One per line",
+  "adminFieldContent": "Content (paragraphs)",
+  "adminFieldReadTimeMinutes": "Read Time (minutes)",
+  "adminFieldGoal": "Goal",
+  "adminFieldDuration": "Duration"
 }

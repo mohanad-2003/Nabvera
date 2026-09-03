@@ -32,156 +32,159 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     final accent = item.category.gradient.first;
 
     return FadeSlideIn(
       delay: entranceDelay,
       duration: const Duration(milliseconds: 320),
       child: Dismissible(
-          key: ValueKey(item.id),
-          background: _SwipeBackground(
-            alignment: AlignmentDirectional.centerStart,
-            color: ext.success,
-            icon: Icons.done_rounded,
-          ),
-          secondaryBackground: _SwipeBackground(
-            alignment: AlignmentDirectional.centerEnd,
-            color: ext.danger,
-            icon: Icons.delete_rounded,
-          ),
-          confirmDismiss: (direction) async {
-            if (direction == DismissDirection.startToEnd) {
-              onMarkRead();
-              return false;
-            }
-            return true;
-          },
-          onDismissed: (_) => onDelete(),
-          child: PressableScale(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(AppRadius.card),
-                child: Ink(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: item.isRead ? ext.glassFill : ext.cardColor,
-                    borderRadius: BorderRadius.circular(AppRadius.card),
-                    border: Border.all(
-                      color: item.isRead ? ext.glassBorder : accent.withValues(alpha: 0.4),
+        key: ValueKey(item.id),
+        background: _SwipeBackground(
+          alignment: AlignmentDirectional.centerStart,
+          color: ext.success,
+          icon: Icons.done_rounded,
+        ),
+        secondaryBackground: _SwipeBackground(
+          alignment: AlignmentDirectional.centerEnd,
+          color: ext.danger,
+          icon: Icons.delete_rounded,
+        ),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            onMarkRead();
+            return false;
+          }
+          return true;
+        },
+        onDismissed: (_) => onDelete(),
+        child: PressableScale(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              child: Ink(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: item.isRead ? ext.glassFill : ext.cardColor,
+                  borderRadius: BorderRadius.circular(AppRadius.card),
+                  border: Border.all(
+                    color:
+                        item.isRead
+                            ? ext.glassBorder
+                            : accent.withValues(alpha: 0.4),
+                  ),
+                  boxShadow: item.isRead ? const [] : ext.cardShadow,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Colored unread side-stripe.
+                    Container(
+                      width: 3,
+                      height: 46,
+                      margin: const EdgeInsetsDirectional.only(end: 12),
+                      decoration: BoxDecoration(
+                        color: item.isRead ? Colors.transparent : accent,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                    boxShadow: item.isRead ? const [] : ext.cardShadow,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Colored unread side-stripe.
-                      Container(
-                        width: 3,
-                        height: 46,
-                        margin: const EdgeInsetsDirectional.only(end: 12),
-                        decoration: BoxDecoration(
-                          color: item.isRead ? Colors.transparent : accent,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      NotificationIcon(category: item.category),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: ext.textPrimary,
-                                      fontSize: 14.5,
-                                      fontWeight:
-                                          item.isRead
-                                              ? FontWeight.w600
-                                              : FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                                if (!item.isRead) ...[
-                                  const SizedBox(width: 6),
-                                  UnreadIndicator(color: accent),
-                                ],
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              item.body,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: ext.textMuted,
-                                fontSize: 12.5,
-                                height: 1.35,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Text(
-                                  _relativeTime(
-                                    item.timestamp,
-                                    AppLocalizations.of(context),
-                                  ),
+                    NotificationIcon(category: item.category),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.localizedTitle(l10n),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: ext.textMuted,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
+                                    color: ext.textPrimary,
+                                    fontSize: 14.5,
+                                    fontWeight:
+                                        item.isRead
+                                            ? FontWeight.w600
+                                            : FontWeight.w800,
                                   ),
                                 ),
-                                if (item.actionLabel != null) ...[
-                                  const Spacer(),
-                                  GestureDetector(
-                                    onTap: onTap,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 5,
+                              ),
+                              if (!item.isRead) ...[
+                                const SizedBox(width: 6),
+                                UnreadIndicator(color: accent),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            item.localizedBody(l10n),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: ext.textMuted,
+                              fontSize: 12.5,
+                              height: 1.35,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Text(
+                                _relativeTime(
+                                  item.timestamp,
+                                  AppLocalizations.of(context),
+                                ),
+                                style: TextStyle(
+                                  color: ext.textMuted,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              if (item.action != null) ...[
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: onTap,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: accent.withValues(alpha: 0.14),
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.pill,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: accent.withValues(alpha: 0.14),
-                                        borderRadius: BorderRadius.circular(
-                                          AppRadius.pill,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        item.actionLabel!,
-                                        style: TextStyle(
-                                          color: accent,
-                                          fontSize: 11.5,
-                                          fontWeight: FontWeight.w800,
-                                        ),
+                                    ),
+                                    child: Text(
+                                      item.action!.label(l10n),
+                                      style: TextStyle(
+                                        color: accent,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w800,
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
                               ],
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }
-
 
 String _relativeTime(DateTime timestamp, AppLocalizations l10n) {
   final diff = DateTime.now().difference(timestamp);

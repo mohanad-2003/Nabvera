@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/notifications/push_notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,8 +9,9 @@ part 'firebase_auth_service.g.dart';
 /// app never touches the plugins directly — swapping providers later only
 /// means editing this file.
 class FirebaseAuthService {
-  FirebaseAuthService(this._auth, this._googleSignIn);
+  FirebaseAuthService(this._ref, this._auth, this._googleSignIn);
 
+  final Ref _ref;
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
@@ -54,21 +56,24 @@ class FirebaseAuthService {
     return _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future<void> signOut() {
-    return Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
+  Future<void> signOut() async {
+    // Must happen before the actual sign-out: unregistering needs an
+    // Authorization header, which requires `_auth.currentUser` to still
+    // exist (see ApiClient._headers).
+    await _ref.read(pushNotificationServiceProvider).unregisterCurrentDevice();
+    await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
   }
 
   /// The Firebase ID token to send as `Authorization: Bearer <token>` on
   /// backend requests. Null when signed out.
   Future<String?> getIdToken({bool forceRefresh = false}) {
-    return _auth.currentUser?.getIdToken(forceRefresh) ??
-        Future.value(null);
+    return _auth.currentUser?.getIdToken(forceRefresh) ?? Future.value(null);
   }
 }
 
 @Riverpod(keepAlive: true)
 FirebaseAuthService firebaseAuthService(Ref ref) {
-  return FirebaseAuthService(FirebaseAuth.instance, GoogleSignIn());
+  return FirebaseAuthService(ref, FirebaseAuth.instance, GoogleSignIn());
 }
 
 /// Live auth state — a page can `ref.watch` this to react to sign-in /

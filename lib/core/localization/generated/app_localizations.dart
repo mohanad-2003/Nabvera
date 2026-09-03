@@ -1532,6 +1532,54 @@ abstract class AppLocalizations {
   /// **'Rest day'**
   String get homeWeeklyRestDay;
 
+  /// No description provided for @homeWeeklyTotalMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min this week'**
+  String homeWeeklyTotalMinutes(int minutes);
+
+  /// No description provided for @homeWeeklyMoreThanLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min more than last week'**
+  String homeWeeklyMoreThanLastWeek(int minutes);
+
+  /// No description provided for @homeWeeklyLessThanLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min less than last week'**
+  String homeWeeklyLessThanLastWeek(int minutes);
+
+  /// No description provided for @homeWeeklySameAsLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as last week'**
+  String get homeWeeklySameAsLastWeek;
+
+  /// No description provided for @homeWeeklyNoLastWeekData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data from last week yet'**
+  String get homeWeeklyNoLastWeekData;
+
+  /// No description provided for @homeWeeklyLongestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{No streak yet} =1{1-day streak} other{{days}-day streak}}'**
+  String homeWeeklyLongestStreak(int days);
+
+  /// No description provided for @homeWeeklyEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No workouts logged yet'**
+  String get homeWeeklyEmptyStateTitle;
+
+  /// No description provided for @homeWeeklyEmptyStateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish your first workout to start seeing your weekly progress here.'**
+  String get homeWeeklyEmptyStateBody;
+
   /// No description provided for @homeDayMon.
   ///
   /// In en, this message translates to:
@@ -2180,6 +2228,54 @@ abstract class AppLocalizations {
   /// **'No sessions this week'**
   String get progressNoSessionsYet;
 
+  /// No description provided for @notificationActionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get notificationActionStart;
+
+  /// No description provided for @notificationActionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get notificationActionView;
+
+  /// No description provided for @notificationWorkoutCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout completed!'**
+  String get notificationWorkoutCompletedTitle;
+
+  /// No description provided for @notificationWorkoutCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{calories} kcal burned. Great job!'**
+  String notificationWorkoutCompletedBody(int calories);
+
+  /// No description provided for @notificationStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day streak!'**
+  String notificationStreakTitle(int days);
+
+  /// No description provided for @notificationStreakBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve worked out {days} days in a row. Keep it up!'**
+  String notificationStreakBody(int days);
+
+  /// No description provided for @notificationWorkoutReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Haven\'t trained today yet'**
+  String get notificationWorkoutReminderTitle;
+
+  /// No description provided for @notificationWorkoutReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes now still counts — pick up where you left off.'**
+  String get notificationWorkoutReminderBody;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:
@@ -2665,6 +2761,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated successfully!'**
   String get editProfileSuccessMessage;
+
+  /// No description provided for @editProfilePreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Preferences'**
+  String get editProfilePreferencesTitle;
+
+  /// No description provided for @editProfilePreferencesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update these any time to get better-matched workout recommendations.'**
+  String get editProfilePreferencesSubtitle;
+
+  /// No description provided for @editProfilePreferencesGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get editProfilePreferencesGoalLabel;
+
+  /// No description provided for @editProfilePreferencesLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Level'**
+  String get editProfilePreferencesLevelLabel;
+
+  /// No description provided for @editProfilePreferencesEquipmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Equipment'**
+  String get editProfilePreferencesEquipmentLabel;
+
+  /// No description provided for @editProfilePreferencesTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Time'**
+  String get editProfilePreferencesTimeLabel;
+
+  /// No description provided for @editProfilePreferencesSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Preferences'**
+  String get editProfilePreferencesSave;
 
   /// No description provided for @privacyTitle.
   ///
@@ -3757,6 +3895,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loving the new routine builder — put together a full upper-body session in under two minutes.'**
   String get communityPost5;
+
+  /// No description provided for @profileMenuAdminConsole.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Console'**
+  String get profileMenuAdminConsole;
+
+  /// No description provided for @profileMenuAdminConsoleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage workouts, recipes, and content'**
+  String get profileMenuAdminConsoleSubtitle;
+
+  /// No description provided for @adminNavDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get adminNavDashboard;
+
+  /// No description provided for @adminNavWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get adminNavWorkouts;
+
+  /// No description provided for @adminNavExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get adminNavExercises;
+
+  /// No description provided for @adminNavRecipes.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipes'**
+  String get adminNavRecipes;
+
+  /// No description provided for @adminNavArticles.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles'**
+  String get adminNavArticles;
+
+  /// No description provided for @adminNavChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get adminNavChallenges;
+
+  /// No description provided for @adminNavProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get adminNavProfile;
+
+  /// No description provided for @adminNavMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get adminNavMore;
+
+  /// No description provided for @adminActionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get adminActionEdit;
+
+  /// No description provided for @adminActionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get adminActionDelete;
+
+  /// No description provided for @adminActionRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get adminActionRetry;
+
+  /// No description provided for @adminSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search…'**
+  String get adminSearchHint;
+
+  /// No description provided for @adminNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches'**
+  String get adminNoResultsTitle;
+
+  /// No description provided for @adminNoResultsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term or filter.'**
+  String get adminNoResultsMessage;
+
+  /// No description provided for @adminFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get adminFilterAll;
+
+  /// No description provided for @adminUnauthorizedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admins only'**
+  String get adminUnauthorizedTitle;
+
+  /// No description provided for @adminUnauthorizedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account doesn\'t have access to the Admin console.'**
+  String get adminUnauthorizedBody;
+
+  /// No description provided for @adminUnauthorizedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get adminUnauthorizedAction;
+
+  /// No description provided for @adminDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard'**
+  String get adminDashboardTitle;
+
+  /// No description provided for @adminDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick look at your content library.'**
+  String get adminDashboardSubtitle;
+
+  /// No description provided for @adminStatUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get adminStatUnavailable;
+
+  /// No description provided for @adminRoleBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator'**
+  String get adminRoleBadge;
+
+  /// No description provided for @adminBackToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the app'**
+  String get adminBackToApp;
+
+  /// No description provided for @adminLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this list'**
+  String get adminLoadErrorTitle;
+
+  /// No description provided for @adminSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — check your connection and try again.'**
+  String get adminSaveFailed;
+
+  /// No description provided for @adminSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get adminSave;
+
+  /// No description provided for @adminDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this item?'**
+  String get adminDeleteConfirmTitle;
+
+  /// No description provided for @adminDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" will be permanently removed. This can\'t be undone.'**
+  String adminDeleteConfirmBody(String name);
+
+  /// No description provided for @adminFeaturedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get adminFeaturedBadge;
+
+  /// No description provided for @adminWorkoutsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No workouts yet'**
+  String get adminWorkoutsEmptyTitle;
+
+  /// No description provided for @adminWorkoutsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first workout to get started.'**
+  String get adminWorkoutsEmptyMessage;
+
+  /// No description provided for @adminExercisesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises yet'**
+  String get adminExercisesEmptyTitle;
+
+  /// No description provided for @adminExercisesEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first exercise to get started.'**
+  String get adminExercisesEmptyMessage;
+
+  /// No description provided for @adminRecipesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipes yet'**
+  String get adminRecipesEmptyTitle;
+
+  /// No description provided for @adminRecipesEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first recipe to get started.'**
+  String get adminRecipesEmptyMessage;
+
+  /// No description provided for @adminArticlesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles yet'**
+  String get adminArticlesEmptyTitle;
+
+  /// No description provided for @adminArticlesEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first article to get started.'**
+  String get adminArticlesEmptyMessage;
+
+  /// No description provided for @adminChallengesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges yet'**
+  String get adminChallengesEmptyTitle;
+
+  /// No description provided for @adminChallengesEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first challenge to get started.'**
+  String get adminChallengesEmptyMessage;
+
+  /// No description provided for @adminEditWorkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Workout'**
+  String get adminEditWorkoutTitle;
+
+  /// No description provided for @adminAddWorkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Workout'**
+  String get adminAddWorkoutTitle;
+
+  /// No description provided for @adminEditExerciseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Exercise'**
+  String get adminEditExerciseTitle;
+
+  /// No description provided for @adminAddExerciseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Exercise'**
+  String get adminAddExerciseTitle;
+
+  /// No description provided for @adminEditRecipeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Recipe'**
+  String get adminEditRecipeTitle;
+
+  /// No description provided for @adminAddRecipeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Recipe'**
+  String get adminAddRecipeTitle;
+
+  /// No description provided for @adminAddArticleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Article'**
+  String get adminAddArticleTitle;
+
+  /// No description provided for @adminAddChallengeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Challenge'**
+  String get adminAddChallengeTitle;
+
+  /// No description provided for @adminFieldTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get adminFieldTitle;
+
+  /// No description provided for @adminFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get adminFieldName;
+
+  /// No description provided for @adminFieldDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get adminFieldDescription;
+
+  /// No description provided for @adminFieldImageUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Image URL'**
+  String get adminFieldImageUrl;
+
+  /// No description provided for @adminFieldVideoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Video URL'**
+  String get adminFieldVideoUrl;
+
+  /// No description provided for @adminFieldDurationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (minutes)'**
+  String get adminFieldDurationMinutes;
+
+  /// No description provided for @adminFieldCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'Calories'**
+  String get adminFieldCalories;
+
+  /// No description provided for @adminFieldCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get adminFieldCategory;
+
+  /// No description provided for @adminFieldDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get adminFieldDifficulty;
+
+  /// No description provided for @adminFieldMuscleGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle Group'**
+  String get adminFieldMuscleGroup;
+
+  /// No description provided for @adminFieldEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get adminFieldEquipment;
+
+  /// No description provided for @adminFieldFeatured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get adminFieldFeatured;
+
+  /// No description provided for @adminFieldPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get adminFieldPopular;
+
+  /// No description provided for @adminFieldPrepTimeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Prep Time (minutes)'**
+  String get adminFieldPrepTimeMinutes;
+
+  /// No description provided for @adminFieldNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get adminFieldNutrition;
+
+  /// No description provided for @adminFieldProtein.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein (g)'**
+  String get adminFieldProtein;
+
+  /// No description provided for @adminFieldCarbs.
+  ///
+  /// In en, this message translates to:
+  /// **'Carbs (g)'**
+  String get adminFieldCarbs;
+
+  /// No description provided for @adminFieldFat.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat (g)'**
+  String get adminFieldFat;
+
+  /// No description provided for @adminFieldIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredients'**
+  String get adminFieldIngredients;
+
+  /// No description provided for @adminFieldSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get adminFieldSteps;
+
+  /// No description provided for @adminFieldOnePerLine.
+  ///
+  /// In en, this message translates to:
+  /// **'One per line'**
+  String get adminFieldOnePerLine;
+
+  /// No description provided for @adminFieldContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Content (paragraphs)'**
+  String get adminFieldContent;
+
+  /// No description provided for @adminFieldReadTimeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Time (minutes)'**
+  String get adminFieldReadTimeMinutes;
+
+  /// No description provided for @adminFieldGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get adminFieldGoal;
+
+  /// No description provided for @adminFieldDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get adminFieldDuration;
 }
 
 class _AppLocalizationsDelegate

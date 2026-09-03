@@ -118,7 +118,12 @@ class ProfilePage extends ConsumerWidget {
             ),
           ),
           SliverList.separated(
-            itemCount: 3,
+            // The Admin Console entry only exists for an admin account —
+            // this is a convenience shortcut, not the actual access
+            // control: `adminRouteGuard` in app_router.dart is what
+            // structurally blocks a non-admin from every /admin route,
+            // regardless of whether this tile is shown.
+            itemCount: profile.isAdmin ? 4 : 3,
             separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
             itemBuilder: (context, index) {
               switch (index) {
@@ -138,13 +143,21 @@ class ProfilePage extends ConsumerWidget {
                     flat: true,
                     onTap: () => context.push(AppRoutes.favorite),
                   );
-                default:
+                case 2:
                   return ProfileMenuTile(
                     icon: Icons.lock_outline_rounded,
                     title: l10n.profileMenuPrivacyPolicy,
                     subtitle: l10n.profileMenuPrivacyPolicySubtitle,
                     flat: true,
                     onTap: () => context.push(AppRoutes.privacy),
+                  );
+                default:
+                  return ProfileMenuTile(
+                    icon: Icons.shield_moon_outlined,
+                    title: l10n.profileMenuAdminConsole,
+                    subtitle: l10n.profileMenuAdminConsoleSubtitle,
+                    flat: true,
+                    onTap: () => context.push(AppRoutes.adminDashboard),
                   );
               }
             },
@@ -263,9 +276,7 @@ class ProfilePage extends ConsumerWidget {
                         isPrimary: true,
                         onTap: () async {
                           dialogContext.pop();
-                          await ref
-                              .read(firebaseAuthServiceProvider)
-                              .signOut();
+                          await ref.read(firebaseAuthServiceProvider).signOut();
                           ref.invalidate(currentUserProfileProvider);
                           if (context.mounted) context.go(AppRoutes.login);
                         },

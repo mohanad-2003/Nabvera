@@ -15,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.flat = false,
+    this.maxLines = 1,
   });
 
   final TextEditingController? controller;
@@ -27,6 +28,11 @@ class AppTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final Widget? suffixIcon;
   final bool flat;
+
+  /// Defaults to a single line, matching every prior call site. Pass a
+  /// larger value (or `null` for unbounded) for multi-line fields like an
+  /// Admin description/content editor.
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +47,7 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       onChanged: onChanged,
+      maxLines: maxLines,
       style: Theme.of(context).textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
@@ -51,14 +58,15 @@ class AppTextField extends StatelessWidget {
         fillColor: flat ? Colors.transparent : null,
         border: flat ? border : null,
         enabledBorder: flat ? border : null,
-        focusedBorder: flat
-            ? border.copyWith(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1.2,
-                ),
-              )
-            : null,
+        focusedBorder:
+            flat
+                ? border.copyWith(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1.2,
+                  ),
+                )
+                : null,
       ),
     );
   }

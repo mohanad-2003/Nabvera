@@ -16,6 +16,7 @@ class PreferencesService {
   static const _onboardingCompleteKey = 'app.onboarding_complete';
   static const _biometricEnabledKey = 'app.biometric_enabled';
   static const _rememberedEmailKey = 'app.remembered_email';
+  static const _analyticsEnabledKey = 'app.analytics_enabled';
 
   String? get themeMode => _prefs.getString(_themeModeKey);
   Future<void> setThemeMode(String value) =>
@@ -45,6 +46,13 @@ class PreferencesService {
       value == null || value.isEmpty
           ? _prefs.remove(_rememberedEmailKey)
           : _prefs.setString(_rememberedEmailKey, value);
+
+  /// The "Usage analytics" toggle on the Manage Data page — checked by
+  /// [AnalyticsService] before every event send. Defaults to on (matches
+  /// the toggle's default UI state) so this is opt-out, not opt-in.
+  bool get analyticsEnabled => _prefs.getBool(_analyticsEnabledKey) ?? true;
+  Future<void> setAnalyticsEnabled(bool value) =>
+      _prefs.setBool(_analyticsEnabledKey, value);
 }
 
 /// Overridden in [main] with the resolved [SharedPreferences] instance

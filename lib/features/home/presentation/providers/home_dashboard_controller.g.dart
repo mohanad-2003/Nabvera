@@ -44,7 +44,7 @@ final class HomeFeaturedWorkoutControllerProvider
 }
 
 String _$homeFeaturedWorkoutControllerHash() =>
-    r'57ba5da29164a6bcf3ad0881587afcf5bb30053c';
+    r'e7e66c21652ef25221de4407f4b15d20572e6bd3';
 
 abstract class _$HomeFeaturedWorkoutController
     extends $Notifier<HomeFeaturedWorkout?> {
@@ -112,7 +112,7 @@ final class RecoveryMapControllerProvider
 }
 
 String _$recoveryMapControllerHash() =>
-    r'9ed84fd8be38ac7462e89d01b946da6b915a4817';
+    r'057fb4cbf06a4d2402427e07cbfcebb54adbcf96';
 
 /// Standalone recovery-map fetch for the Home page's compact recovery row
 /// — independent of [HomeFeaturedWorkoutController] so it still renders
@@ -179,7 +179,7 @@ final class WeeklyActivityControllerProvider
 }
 
 String _$weeklyActivityControllerHash() =>
-    r'a34e037f2deb49c57d552236e8292594aa7edf60';
+    r'7679dc1d70fca3ec4ba0cd6ef1068032543c2564';
 
 /// This week's per-day trained minutes, built from `/api/workout-logs`, for
 /// the weekly progress bar chart. Index 0 = Monday.
@@ -195,6 +195,92 @@ abstract class _$WeeklyActivityController extends $Notifier<List<int>> {
             as $ClassProviderElement<
               AnyNotifier<List<int>, List<int>>,
               List<int>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// The richer weekly-progress numbers (total minutes, week-over-week
+/// comparison, longest streak, "any logs at all" for the empty state) —
+/// kept as its own provider rather than folded into
+/// [WeeklyActivityController] so that widget's existing, already-shipped
+/// consumers (hero card, metrics grid) are untouched by this addition.
+/// Costs one extra `fetchWorkoutLogs()` call, which is an accepted,
+/// existing pattern in this codebase for independent per-feature fetches.
+
+@ProviderFor(WeeklyProgressStatsController)
+final weeklyProgressStatsControllerProvider =
+    WeeklyProgressStatsControllerProvider._();
+
+/// The richer weekly-progress numbers (total minutes, week-over-week
+/// comparison, longest streak, "any logs at all" for the empty state) —
+/// kept as its own provider rather than folded into
+/// [WeeklyActivityController] so that widget's existing, already-shipped
+/// consumers (hero card, metrics grid) are untouched by this addition.
+/// Costs one extra `fetchWorkoutLogs()` call, which is an accepted,
+/// existing pattern in this codebase for independent per-feature fetches.
+final class WeeklyProgressStatsControllerProvider
+    extends
+        $NotifierProvider<WeeklyProgressStatsController, WeeklyProgressStats> {
+  /// The richer weekly-progress numbers (total minutes, week-over-week
+  /// comparison, longest streak, "any logs at all" for the empty state) —
+  /// kept as its own provider rather than folded into
+  /// [WeeklyActivityController] so that widget's existing, already-shipped
+  /// consumers (hero card, metrics grid) are untouched by this addition.
+  /// Costs one extra `fetchWorkoutLogs()` call, which is an accepted,
+  /// existing pattern in this codebase for independent per-feature fetches.
+  WeeklyProgressStatsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'weeklyProgressStatsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$weeklyProgressStatsControllerHash();
+
+  @$internal
+  @override
+  WeeklyProgressStatsController create() => WeeklyProgressStatsController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(WeeklyProgressStats value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<WeeklyProgressStats>(value),
+    );
+  }
+}
+
+String _$weeklyProgressStatsControllerHash() =>
+    r'1b9233c3d6a953f42c2714c9788c3e8fa0f8bd40';
+
+/// The richer weekly-progress numbers (total minutes, week-over-week
+/// comparison, longest streak, "any logs at all" for the empty state) —
+/// kept as its own provider rather than folded into
+/// [WeeklyActivityController] so that widget's existing, already-shipped
+/// consumers (hero card, metrics grid) are untouched by this addition.
+/// Costs one extra `fetchWorkoutLogs()` call, which is an accepted,
+/// existing pattern in this codebase for independent per-feature fetches.
+
+abstract class _$WeeklyProgressStatsController
+    extends $Notifier<WeeklyProgressStats> {
+  WeeklyProgressStats build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<WeeklyProgressStats, WeeklyProgressStats>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<WeeklyProgressStats, WeeklyProgressStats>,
+              WeeklyProgressStats,
               Object?,
               Object?
             >;

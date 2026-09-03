@@ -794,6 +794,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeWeeklyRestDay => 'يوم راحة';
 
   @override
+  String homeWeeklyTotalMinutes(int minutes) {
+    return '$minutes دقيقة هذا الأسبوع';
+  }
+
+  @override
+  String homeWeeklyMoreThanLastWeek(int minutes) {
+    return 'أكثر بـ $minutes دقيقة من الأسبوع الماضي';
+  }
+
+  @override
+  String homeWeeklyLessThanLastWeek(int minutes) {
+    return 'أقل بـ $minutes دقيقة من الأسبوع الماضي';
+  }
+
+  @override
+  String get homeWeeklySameAsLastWeek => 'مثل الأسبوع الماضي';
+
+  @override
+  String get homeWeeklyNoLastWeekData => 'لا توجد بيانات من الأسبوع الماضي بعد';
+
+  @override
+  String homeWeeklyLongestStreak(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'تتابع $days أيام',
+      one: 'تتابع يوم واحد',
+      zero: 'لا يوجد تتابع بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWeeklyEmptyStateTitle => 'لا توجد تمارين مسجّلة بعد';
+
+  @override
+  String get homeWeeklyEmptyStateBody =>
+      'أنهِ تمرينك الأول لتبدأ برؤية تقدمك الأسبوعي هنا.';
+
+  @override
   String get homeDayMon => 'إثن';
 
   @override
@@ -1125,6 +1165,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get progressNoSessionsYet => 'لا توجد جلسات هذا الأسبوع';
 
   @override
+  String get notificationActionStart => 'ابدأ';
+
+  @override
+  String get notificationActionView => 'عرض';
+
+  @override
+  String get notificationWorkoutCompletedTitle => 'تم إنهاء التمرين!';
+
+  @override
+  String notificationWorkoutCompletedBody(int calories) {
+    return 'تم حرق $calories سعرة حرارية. عمل رائع!';
+  }
+
+  @override
+  String notificationStreakTitle(int days) {
+    return 'سلسلة $days يوم متتالية!';
+  }
+
+  @override
+  String notificationStreakBody(int days) {
+    return 'لقد تمرّنت $days يومًا متتاليًا. استمر!';
+  }
+
+  @override
+  String get notificationWorkoutReminderTitle => 'لم تتمرّن اليوم بعد';
+
+  @override
+  String get notificationWorkoutReminderBody =>
+      'بضع دقائق الآن لا تزال مهمة — أكمل من حيث توقفت.';
+
+  @override
   String get notificationsTitle => 'الإشعارات';
 
   @override
@@ -1376,6 +1447,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileSuccessMessage => 'تم تحديث الملف الشخصي بنجاح!';
+
+  @override
+  String get editProfilePreferencesTitle => 'تفضيلات التمرين';
+
+  @override
+  String get editProfilePreferencesSubtitle =>
+      'حدّث هذه الإعدادات في أي وقت للحصول على توصيات تمارين أكثر ملاءمة لك.';
+
+  @override
+  String get editProfilePreferencesGoalLabel => 'الهدف';
+
+  @override
+  String get editProfilePreferencesLevelLabel => 'مستوى النشاط';
+
+  @override
+  String get editProfilePreferencesEquipmentLabel => 'المعدات المتاحة';
+
+  @override
+  String get editProfilePreferencesTimeLabel => 'الوقت المتاح';
+
+  @override
+  String get editProfilePreferencesSave => 'حفظ التفضيلات';
 
   @override
   String get privacyTitle => 'الخصوصية';
@@ -1962,4 +2055,230 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get communityPost5 =>
       'أحببت أداة بناء الروتين الجديدة — أنشأت تمرينًا كاملاً للجزء العلوي في أقل من دقيقتين.';
+
+  @override
+  String get profileMenuAdminConsole => 'لوحة تحكم الأدمن';
+
+  @override
+  String get profileMenuAdminConsoleSubtitle =>
+      'إدارة التمارين والوصفات والمحتوى';
+
+  @override
+  String get adminNavDashboard => 'لوحة القيادة';
+
+  @override
+  String get adminNavWorkouts => 'التمارين';
+
+  @override
+  String get adminNavExercises => 'الحركات';
+
+  @override
+  String get adminNavRecipes => 'الوصفات';
+
+  @override
+  String get adminNavArticles => 'المقالات';
+
+  @override
+  String get adminNavChallenges => 'التحديات';
+
+  @override
+  String get adminNavProfile => 'الملف الشخصي';
+
+  @override
+  String get adminNavMore => 'المزيد';
+
+  @override
+  String get adminActionEdit => 'تعديل';
+
+  @override
+  String get adminActionDelete => 'حذف';
+
+  @override
+  String get adminActionRetry => 'إعادة المحاولة';
+
+  @override
+  String get adminSearchHint => 'بحث…';
+
+  @override
+  String get adminNoResultsTitle => 'لا توجد نتائج';
+
+  @override
+  String get adminNoResultsMessage => 'جرّب كلمة بحث أو فلترًا مختلفًا.';
+
+  @override
+  String get adminFilterAll => 'الكل';
+
+  @override
+  String get adminUnauthorizedTitle => 'للمشرفين فقط';
+
+  @override
+  String get adminUnauthorizedBody =>
+      'حسابك لا يملك صلاحية الوصول إلى لوحة تحكم الأدمن.';
+
+  @override
+  String get adminUnauthorizedAction => 'العودة إلى الرئيسية';
+
+  @override
+  String get adminDashboardTitle => 'لوحة تحكم الأدمن';
+
+  @override
+  String get adminDashboardSubtitle => 'نظرة سريعة على مكتبة المحتوى لديك.';
+
+  @override
+  String get adminStatUnavailable => 'غير متاح';
+
+  @override
+  String get adminRoleBadge => 'مشرف';
+
+  @override
+  String get adminBackToApp => 'العودة إلى التطبيق';
+
+  @override
+  String get adminLoadErrorTitle => 'تعذّر تحميل هذه القائمة';
+
+  @override
+  String get adminSaveFailed => 'تعذّر الحفظ — تحقق من اتصالك وحاول مجددًا.';
+
+  @override
+  String get adminSave => 'حفظ';
+
+  @override
+  String get adminDeleteConfirmTitle => 'حذف هذا العنصر؟';
+
+  @override
+  String adminDeleteConfirmBody(String name) {
+    return 'سيتم حذف \"$name\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get adminFeaturedBadge => 'مميّز';
+
+  @override
+  String get adminWorkoutsEmptyTitle => 'لا توجد تمارين بعد';
+
+  @override
+  String get adminWorkoutsEmptyMessage => 'أضف أول تمرين للبدء.';
+
+  @override
+  String get adminExercisesEmptyTitle => 'لا توجد حركات بعد';
+
+  @override
+  String get adminExercisesEmptyMessage => 'أضف أول حركة للبدء.';
+
+  @override
+  String get adminRecipesEmptyTitle => 'لا توجد وصفات بعد';
+
+  @override
+  String get adminRecipesEmptyMessage => 'أضف أول وصفة للبدء.';
+
+  @override
+  String get adminArticlesEmptyTitle => 'لا توجد مقالات بعد';
+
+  @override
+  String get adminArticlesEmptyMessage => 'أضف أول مقالة للبدء.';
+
+  @override
+  String get adminChallengesEmptyTitle => 'لا توجد تحديات بعد';
+
+  @override
+  String get adminChallengesEmptyMessage => 'أضف أول تحدٍ للبدء.';
+
+  @override
+  String get adminEditWorkoutTitle => 'تعديل التمرين';
+
+  @override
+  String get adminAddWorkoutTitle => 'إضافة تمرين';
+
+  @override
+  String get adminEditExerciseTitle => 'تعديل الحركة';
+
+  @override
+  String get adminAddExerciseTitle => 'إضافة حركة';
+
+  @override
+  String get adminEditRecipeTitle => 'تعديل الوصفة';
+
+  @override
+  String get adminAddRecipeTitle => 'إضافة وصفة';
+
+  @override
+  String get adminAddArticleTitle => 'إضافة مقالة';
+
+  @override
+  String get adminAddChallengeTitle => 'إضافة تحدٍ';
+
+  @override
+  String get adminFieldTitle => 'العنوان';
+
+  @override
+  String get adminFieldName => 'الاسم';
+
+  @override
+  String get adminFieldDescription => 'الوصف';
+
+  @override
+  String get adminFieldImageUrl => 'رابط الصورة';
+
+  @override
+  String get adminFieldVideoUrl => 'رابط الفيديو';
+
+  @override
+  String get adminFieldDurationMinutes => 'المدة (دقائق)';
+
+  @override
+  String get adminFieldCalories => 'السعرات الحرارية';
+
+  @override
+  String get adminFieldCategory => 'الفئة';
+
+  @override
+  String get adminFieldDifficulty => 'الصعوبة';
+
+  @override
+  String get adminFieldMuscleGroup => 'المجموعة العضلية';
+
+  @override
+  String get adminFieldEquipment => 'المعدات';
+
+  @override
+  String get adminFieldFeatured => 'مميّز';
+
+  @override
+  String get adminFieldPopular => 'شائع';
+
+  @override
+  String get adminFieldPrepTimeMinutes => 'وقت التحضير (دقائق)';
+
+  @override
+  String get adminFieldNutrition => 'القيمة الغذائية';
+
+  @override
+  String get adminFieldProtein => 'البروتين (غ)';
+
+  @override
+  String get adminFieldCarbs => 'الكربوهيدرات (غ)';
+
+  @override
+  String get adminFieldFat => 'الدهون (غ)';
+
+  @override
+  String get adminFieldIngredients => 'المكونات';
+
+  @override
+  String get adminFieldSteps => 'الخطوات';
+
+  @override
+  String get adminFieldOnePerLine => 'عنصر واحد في كل سطر';
+
+  @override
+  String get adminFieldContent => 'المحتوى (فقرات)';
+
+  @override
+  String get adminFieldReadTimeMinutes => 'وقت القراءة (دقائق)';
+
+  @override
+  String get adminFieldGoal => 'الهدف';
+
+  @override
+  String get adminFieldDuration => 'المدة';
 }

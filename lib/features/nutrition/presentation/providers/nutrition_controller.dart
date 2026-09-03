@@ -22,10 +22,12 @@ class NutritionRecommended extends _$NutritionRecommended {
   @override
   List<MealItem> build() {
     ref.watch(_recipesProvider);
-    return ref.watch(_recipesProvider).maybeWhen(
-      data: (recipes) => recipes.take(2).map(MealItem.fromJson).toList(),
-      orElse: () => const [],
-    );
+    return ref
+        .watch(_recipesProvider)
+        .maybeWhen(
+          data: (recipes) => recipes.take(2).map(MealItem.fromJson).toList(),
+          orElse: () => const [],
+        );
   }
 }
 
@@ -33,26 +35,33 @@ class NutritionRecommended extends _$NutritionRecommended {
 class NutritionRecipes extends _$NutritionRecipes {
   @override
   List<MealItem> build() {
-    return ref.watch(_recipesProvider).maybeWhen(
-      data: (recipes) => recipes.skip(2).map(MealItem.fromJson).toList(),
-      orElse: () => const [],
-    );
+    return ref
+        .watch(_recipesProvider)
+        .maybeWhen(
+          data: (recipes) => recipes.skip(2).map(MealItem.fromJson).toList(),
+          orElse: () => const [],
+        );
   }
 }
 
 @riverpod
 Future<List<Map<String, dynamic>>> _recipes(Ref ref) {
-  final recipes =
-      ref.watch(nutritionRepositoryProvider).fetchRecipes();
-  return recipes.then((list) => list..sort(
-    (a, b) => ((b['rating'] as num?) ?? 0).compareTo((a['rating'] as num?) ?? 0),
-  ));
+  final recipes = ref.watch(nutritionRepositoryProvider).fetchRecipes();
+  return recipes.then(
+    (list) =>
+        list..sort(
+          (a, b) => ((b['rating'] as num?) ?? 0).compareTo(
+            (a['rating'] as num?) ?? 0,
+          ),
+        ),
+  );
 }
 
 /// Loads the real `/api/nutrition/today` document and converts it into
 /// display fractions/strings.
 @riverpod
-class DailyNutritionSummaryController extends _$DailyNutritionSummaryController {
+class DailyNutritionSummaryController
+    extends _$DailyNutritionSummaryController {
   @override
   DailyNutritionSummary build() {
     Future.microtask(_load);
@@ -81,9 +90,18 @@ class DailyNutritionSummaryController extends _$DailyNutritionSummaryController 
       state = DailyNutritionSummary(
         consumedCalories: ((entry['caloriesConsumed'] as num?) ?? 0).round(),
         goalCalories: calorieGoal.round(),
-        proteinFraction: (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal).clamp(0, 1).toDouble(),
-        carbsFraction: (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal).clamp(0, 1).toDouble(),
-        fatFraction: (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal).clamp(0, 1).toDouble(),
+        proteinFraction:
+            (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal)
+                .clamp(0, 1)
+                .toDouble(),
+        carbsFraction:
+            (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal)
+                .clamp(0, 1)
+                .toDouble(),
+        fatFraction:
+            (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal)
+                .clamp(0, 1)
+                .toDouble(),
         waterIntake:
             '${(waterConsumedMl / mlPerCup).round()} / ${(waterGoalMl / mlPerCup).round()} cups',
       );
@@ -92,4 +110,8 @@ class DailyNutritionSummaryController extends _$DailyNutritionSummaryController 
       // same pattern.
     }
   }
+
+  /// Used by Home's `refreshHomeProviders` — the "next step" card reads
+  /// today's water/calorie progress from this controller too.
+  Future<void> refresh() => _load();
 }

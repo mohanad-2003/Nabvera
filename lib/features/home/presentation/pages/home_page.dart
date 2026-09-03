@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/analytics/analytics_service.dart';
 import 'package:fitness_app/core/localization/generated/app_localizations.dart';
 import 'package:fitness_app/core/routing/app_routes.dart';
 import 'package:fitness_app/core/theme/app_colors.dart';
@@ -47,94 +48,118 @@ class HomePage extends ConsumerWidget {
         decoration: BoxDecoration(gradient: ext.backgroundGradient),
         child: SafeArea(
           bottom: false,
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(20, 18, 20, navClearance),
-            children: [
-              FadeSlideIn(
-                child: _HomeHeader(
-                  firstName: _firstName(profile.name),
-                  avatarUrl: profile.avatarUrl,
-                  streak: profile.currentStreak,
-                  onNotificationTap:
-                      () => context.push(AppRoutes.notifications),
+          child: RefreshIndicator(
+            color: ext.accentGlow,
+            backgroundColor: ext.cardColor,
+            onRefresh: () => _pullToRefresh(ref),
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(20, 18, 20, navClearance),
+              children: [
+                FadeSlideIn(
+                  child: _HomeHeader(
+                    firstName: _firstName(profile.name),
+                    avatarUrl: profile.avatarUrl,
+                    streak: profile.currentStreak,
+                    onNotificationTap:
+                        () => context.push(AppRoutes.notifications),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 22),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 60),
-                child: _TodayHeroCard(
-                  onOpen: () => _openTodayWorkout(context, ref),
-                  onSwitchTo: (id) => _openWorkout(context, ref, id),
+                const SizedBox(height: 22),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: _TodayHeroCard(
+                    onOpen: () => _openTodayWorkout(context, ref),
+                    onSwitchTo: (id) => _switchToAlternative(context, ref, id),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 18),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 100),
-                child: const _MetricGrid(),
-              ),
-              const SizedBox(height: 22),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 115),
-                child: const _RecoveryMapRow(),
-              ),
-              const SizedBox(height: 22),
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 130),
-                child: _NextStepCard(
-                  onOpen: (route) => _openNextStep(context, ref, route),
+                const SizedBox(height: 18),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 100),
+                  child: const _MetricGrid(),
                 ),
-              ),
-              const SizedBox(height: 26),
-              _SectionHeader(
-                title: l10n.homeWorkoutCategories,
-                action: l10n.actionExplore,
-                onActionTap: () => context.go(AppRoutes.workout),
-              ),
-              const SizedBox(height: 14),
-              _CategoryRail(
-                categories: categories,
-                onTap: (index) => _openCategory(context, index),
-              ),
-              const SizedBox(height: 26),
-              _SectionHeader(
-                title: l10n.homeRecommended,
-                action: l10n.actionSeeAll,
-                onActionTap: () => context.push(AppRoutes.workoutRecommended),
-              ),
-              const SizedBox(height: 14),
-              SizedBox(
-                height: 216,
-                child: _RecommendedRow(
-                  section: recommendations,
-                  onTap: (workout) => _openWorkout(context, ref, workout.id),
-                  onRetry:
-                      () =>
-                          ref
-                              .read(homeRecommendationsProvider.notifier)
-                              .reload(),
+                const SizedBox(height: 22),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 115),
+                  child: const _RecoveryMapRow(),
                 ),
-              ),
-              const SizedBox(height: 26),
-              const _WeeklyProgressCard(),
-              const SizedBox(height: 26),
-              _SectionHeader(title: l10n.homeArticlesAndTips),
-              const SizedBox(height: 14),
-              SizedBox(
-                height: 160,
-                child: _ArticlesRow(
-                  section: articles,
-                  onTap:
-                      (article) =>
-                          context.push(AppRoutes.articleDetail, extra: article),
-                  onRetry:
-                      () => ref.read(homeArticlesProvider.notifier).reload(),
+                const SizedBox(height: 22),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 130),
+                  child: _NextStepCard(
+                    onOpen: (route) => _openNextStep(context, ref, route),
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 26),
+                _SectionHeader(
+                  title: l10n.homeWorkoutCategories,
+                  action: l10n.actionExplore,
+                  onActionTap: () => context.go(AppRoutes.workout),
+                ),
+                const SizedBox(height: 14),
+                _CategoryRail(
+                  categories: categories,
+                  onTap: (index) => _openCategory(context, index),
+                ),
+                const SizedBox(height: 26),
+                _SectionHeader(
+                  title: l10n.homeRecommended,
+                  action: l10n.actionSeeAll,
+                  onActionTap: () => context.push(AppRoutes.workoutRecommended),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  height: 216,
+                  child: _RecommendedRow(
+                    section: recommendations,
+                    onTap: (workout) => _openWorkout(context, ref, workout.id),
+                    onRetry:
+                        () =>
+                            ref
+                                .read(homeRecommendationsProvider.notifier)
+                                .reload(),
+                  ),
+                ),
+                const SizedBox(height: 26),
+                const _WeeklyProgressCard(),
+                const SizedBox(height: 26),
+                _SectionHeader(title: l10n.homeArticlesAndTips),
+                const SizedBox(height: 14),
+                SizedBox(
+                  height: 160,
+                  child: _ArticlesRow(
+                    section: articles,
+                    onTap:
+                        (article) => context.push(
+                          AppRoutes.articleDetail,
+                          extra: article,
+                        ),
+                    onRetry:
+                        () => ref.read(homeArticlesProvider.notifier).reload(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  /// Awaits a real reload of every provider this page's cards read from,
+  /// so the [RefreshIndicator] spinner stays up until fresh data has
+  /// actually arrived — not just an optimistic instant dismiss. Calls each
+  /// controller's own `refresh()` directly (rather than `refreshHomeProviders`'s
+  /// invalidate) since Home already keeps all of these alive via its own
+  /// `watch`es, so there's no risk of a provider being torn down mid-reload.
+  Future<void> _pullToRefresh(WidgetRef ref) {
+    return Future.wait([
+      ref.read(homeFeaturedWorkoutControllerProvider.notifier).refresh(),
+      ref.read(recoveryMapControllerProvider.notifier).refresh(),
+      ref.read(weeklyActivityControllerProvider.notifier).refresh(),
+      ref.read(weeklyProgressStatsControllerProvider.notifier).refresh(),
+      ref.read(currentUserProfileProvider.notifier).refresh(),
+      ref.read(dailyNutritionSummaryControllerProvider.notifier).refresh(),
+    ]);
   }
 
   static String _firstName(String fullName) {
@@ -203,6 +228,20 @@ class HomePage extends ConsumerWidget {
     } catch (_) {
       // Backend unreachable / workout deleted — silently do nothing.
     }
+  }
+
+  /// The recovery-aware "switch to this instead" action — logs which
+  /// alternative was picked, then opens it exactly like any other workout.
+  Future<void> _switchToAlternative(
+    BuildContext context,
+    WidgetRef ref,
+    String workoutId,
+  ) async {
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvent.alternativeWorkoutSelected,
+      {'alternativeWorkoutId': workoutId},
+    );
+    await _openWorkout(context, ref, workoutId);
   }
 }
 
@@ -480,9 +519,14 @@ class _TodayHeroCard extends ConsumerWidget {
                   const SizedBox(height: 18),
                   if (!isCompleted) ...[
                     TextButton.icon(
-                      onPressed: () => ref
-                          .read(homeFeaturedWorkoutControllerProvider.notifier)
-                          .chooseEasierWorkout(),
+                      onPressed:
+                          () =>
+                              ref
+                                  .read(
+                                    homeFeaturedWorkoutControllerProvider
+                                        .notifier,
+                                  )
+                                  .chooseEasierWorkout(),
                       icon: const Icon(Icons.tune_rounded, size: 17),
                       label: Text(l10n.homeHeroTooHard),
                       style: TextButton.styleFrom(
@@ -1443,110 +1487,288 @@ class _WeeklyProgressCard extends ConsumerWidget {
     final minutesByDay = ref.watch(weeklyActivityControllerProvider);
     final todayIndex = DateTime.now().weekday - 1;
     final workoutsThisWeek = minutesByDay.where((m) => m > 0).length;
+    final goalProgress = (workoutsThisWeek / _kWeeklyWorkoutGoal).clamp(
+      0.0,
+      1.0,
+    );
     final maxMinutes = minutesByDay.fold(0, (max, m) => m > max ? m : max);
-    final bars = [
-      for (final m in minutesByDay) maxMinutes == 0 ? 0.0 : m / maxMinutes,
-    ];
-    // A day with no logged minutes still gets a faint sliver so the chart
-    // never renders a row of literal zero-height bars.
-    final barHeights = [for (final b in bars) b == 0 ? 0.04 : b];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: ext.glassFill,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: ext.glassBorder),
+        boxShadow: ext.cardShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.homeWeeklyProgress,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.homeWeeklyGoalSummary(
+                        workoutsThisWeek,
+                        _kWeeklyWorkoutGoal,
+                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 68,
+                height: 68,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CircularProgressIndicator(
+                      value: goalProgress,
+                      strokeWidth: 7,
+                      strokeCap: StrokeCap.round,
+                      backgroundColor: ext.glassBorder,
+                      valueColor: AlwaysStoppedAnimation(ext.accentGlow),
+                    ),
+                    Center(
+                      child: Text(
+                        '$workoutsThisWeek/$_kWeeklyWorkoutGoal',
+                        style: TextStyle(
+                          color: ext.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          Container(
+            height: 88,
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
+            decoration: BoxDecoration(
+              color: ext.cardColor.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: ext.glassBorder),
+            ),
+            child: Row(
+              children: [
+                for (var i = 0; i < minutesByDay.length; i++)
+                  Expanded(
+                    child: _WeeklyDayTile(
+                      label: days[i],
+                      minutes: minutesByDay[i],
+                      maxMinutes: maxMinutes,
+                      isToday: i == todayIndex,
+                      ext: ext,
+                      minuteLabel: l10n.homeUnitMin,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const _WeeklyProgressStatsSection(),
+        ],
+      ),
+    );
+  }
+}
+
+/// Total minutes, week-over-week comparison, and longest streak — built
+/// from real workout logs only ([WeeklyProgressStats], not client-side
+/// heuristics). Shows a plain empty state for a brand-new account instead
+/// of a misleading "0% vs last week".
+class _WeeklyProgressStatsSection extends ConsumerWidget {
+  const _WeeklyProgressStatsSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    final stats = ref.watch(weeklyProgressStatsControllerProvider);
+
+    if (!stats.hasAnyLogs) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n.homeWeeklyProgress,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              l10n.homeWeeklyEmptyStateTitle,
+              style: TextStyle(
                 color: ext.textPrimary,
                 fontWeight: FontWeight.w800,
+                fontSize: 13,
               ),
             ),
-            const Spacer(),
-            _StatusPill(
-              label: '$workoutsThisWeek/$_kWeeklyWorkoutGoal',
-              icon: Icons.trending_up_rounded,
-              color: Theme.of(context).colorScheme.primary,
+            const SizedBox(height: 4),
+            Text(
+              l10n.homeWeeklyEmptyStateBody,
+              style: TextStyle(color: ext.textMuted, fontSize: 12),
             ),
           ],
         ),
-        const SizedBox(height: 6),
+      );
+    }
+
+    final delta = stats.minutesDelta;
+    final comparisonText =
+        stats.totalMinutesLastWeek <= 0
+            ? l10n.homeWeeklyNoLastWeekData
+            : delta > 0
+            ? l10n.homeWeeklyMoreThanLastWeek(delta)
+            : delta < 0
+            ? l10n.homeWeeklyLessThanLastWeek(-delta)
+            : l10n.homeWeeklySameAsLastWeek;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Wrap(
+        spacing: 16,
+        runSpacing: 8,
+        children: [
+          _WeeklyStatChip(
+            icon: Icons.timer_outlined,
+            label: l10n.homeWeeklyTotalMinutes(stats.totalMinutesThisWeek),
+            ext: ext,
+          ),
+          _WeeklyStatChip(
+            icon:
+                delta >= 0
+                    ? Icons.trending_up_rounded
+                    : Icons.trending_down_rounded,
+            label: comparisonText,
+            ext: ext,
+          ),
+          _WeeklyStatChip(
+            icon: Icons.local_fire_department_outlined,
+            label: l10n.homeWeeklyLongestStreak(stats.longestStreakDays),
+            ext: ext,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklyStatChip extends StatelessWidget {
+  const _WeeklyStatChip({
+    required this.icon,
+    required this.label,
+    required this.ext,
+  });
+
+  final IconData icon;
+  final String label;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: ext.textMuted),
+        const SizedBox(width: 5),
         Text(
-          l10n.homeWeeklyGoalSummary(workoutsThisWeek, _kWeeklyWorkoutGoal),
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+          label,
+          style: TextStyle(
+            color: ext.textMuted,
+            fontSize: 11.5,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        const SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
+class _WeeklyDayTile extends StatelessWidget {
+  const _WeeklyDayTile({
+    required this.label,
+    required this.minutes,
+    required this.maxMinutes,
+    required this.isToday,
+    required this.ext,
+    required this.minuteLabel,
+  });
+
+  final String label;
+  final int minutes;
+  final int maxMinutes;
+  final bool isToday;
+  final AppThemeExtension ext;
+  final String minuteLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCompleted = minutes > 0;
+    final height =
+        maxMinutes == 0 ? 0.12 : (minutes / maxMinutes).clamp(0.12, 1.0);
+    final activeColor = isToday ? ext.accentGlow : ext.success;
+
+    return Column(
+      children: [
         SizedBox(
-          height: 138,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              for (var i = 0; i < barHeights.length; i++)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (i == todayIndex && minutesByDay[i] == 0)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              l10n.homeWeeklyRestDay,
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: ext.accentGlow,
-                              ),
-                            ),
-                          ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: FractionallySizedBox(
-                              heightFactor: barHeights[i],
-                              widthFactor: 0.58,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(999),
-                                  gradient:
-                                      i == todayIndex
-                                          ? ext.accentGradient
-                                          : LinearGradient(
-                                            colors: [
-                                              ext.glassBorder,
-                                              ext.glassFill,
-                                            ],
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                          ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          days[i],
-                          style: TextStyle(
-                            color:
-                                i == todayIndex
-                                    ? ext.accentGlow
-                                    : ext.textMuted,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
+          height: 28,
+          child:
+              isCompleted
+                  ? Text(
+                    '$minutes$minuteLabel',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: activeColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
                     ),
-                  ),
+                  )
+                  : null,
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: FractionallySizedBox(
+              widthFactor: 0.45,
+              heightFactor: height,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: isCompleted ? activeColor : ext.glassBorder,
                 ),
-            ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 7),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+          decoration: BoxDecoration(
+            color: isToday ? ext.accentGlow.withValues(alpha: 0.16) : null,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isToday ? ext.accentGlow : ext.textMuted,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ],
@@ -1617,15 +1839,14 @@ class _ArticleCard extends StatelessWidget {
 /// theme-aware surface like the glass progress card, so it stays readable
 /// in light mode too.
 class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.label, required this.icon, this.color});
+  const _StatusPill({required this.label, required this.icon});
 
   final String label;
   final IconData icon;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    final pillColor = color ?? AppColors.seedLime;
+    const pillColor = AppColors.seedLime;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
       decoration: BoxDecoration(

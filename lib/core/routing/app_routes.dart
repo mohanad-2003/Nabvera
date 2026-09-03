@@ -52,4 +52,33 @@ abstract final class AppRoutes {
   static const document = '/profile/document';
   static const favorite = '/favorite';
   static const articleDetail = '/home/article';
+
+  // --- Admin console ----------------------------------------------------
+  //
+  // Every path below is guarded in app_router.dart by adminRouteGuard: a
+  // signed-in user whose role isn't 'admin' is redirected away before any
+  // of these pages ever build, not just hidden from the nav. `unauthorized`
+  // is deliberately outside the '/admin' prefix so the guard doesn't also
+  // block the page it redirects to.
+  static const unauthorized = '/unauthorized';
+  static const adminDashboard = '/admin';
+  static const adminWorkouts = '/admin/workouts';
+  static const adminWorkoutEditor = '/admin/workouts/editor';
+  static const adminExercises = '/admin/exercises';
+  static const adminExerciseEditor = '/admin/exercises/editor';
+  static const adminRecipes = '/admin/recipes';
+  static const adminRecipeEditor = '/admin/recipes/editor';
+  static const adminArticles = '/admin/articles';
+  static const adminArticleEditor = '/admin/articles/editor';
+  static const adminChallenges = '/admin/challenges';
+  static const adminChallengeEditor = '/admin/challenges/editor';
+  static const adminProfile = '/admin/profile';
+
+  /// Mobile-only hub listing Exercises/Recipes/Articles/Challenges — kept
+  /// off the condensed bottom nav itself (see `AdminScaffold`'s "More" tab).
+  static const adminMore = '/admin/more';
+
+  /// Every route under the Admin console, used by the role guard to decide
+  /// which navigations to check. Keep in sync with the constants above.
+  static const adminPrefix = '/admin';
 }
