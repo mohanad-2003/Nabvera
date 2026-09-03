@@ -2046,4 +2046,236 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityPost5 =>
       'Loving the new routine builder — put together a full upper-body session in under two minutes.';
+
+  @override
+  String get profileMenuAdminConsole => 'Admin Console';
+
+  @override
+  String get profileMenuAdminConsoleSubtitle =>
+      'Manage workouts, recipes, and content';
+
+  @override
+  String get adminNavDashboard => 'Dashboard';
+
+  @override
+  String get adminNavWorkouts => 'Workouts';
+
+  @override
+  String get adminNavExercises => 'Exercises';
+
+  @override
+  String get adminNavRecipes => 'Recipes';
+
+  @override
+  String get adminNavArticles => 'Articles';
+
+  @override
+  String get adminNavChallenges => 'Challenges';
+
+  @override
+  String get adminNavProfile => 'Profile';
+
+  @override
+  String get adminNavMore => 'More';
+
+  @override
+  String get adminActionEdit => 'Edit';
+
+  @override
+  String get adminActionDelete => 'Delete';
+
+  @override
+  String get adminActionRetry => 'Retry';
+
+  @override
+  String get adminSearchHint => 'Search…';
+
+  @override
+  String get adminNoResultsTitle => 'No matches';
+
+  @override
+  String get adminNoResultsMessage => 'Try a different search term or filter.';
+
+  @override
+  String get adminFilterAll => 'All';
+
+  @override
+  String get adminUnauthorizedTitle => 'Admins only';
+
+  @override
+  String get adminUnauthorizedBody =>
+      'Your account doesn\'t have access to the Admin console.';
+
+  @override
+  String get adminUnauthorizedAction => 'Back to Home';
+
+  @override
+  String get adminDashboardTitle => 'Admin Dashboard';
+
+  @override
+  String get adminDashboardSubtitle => 'A quick look at your content library.';
+
+  @override
+  String get adminStatUnavailable => 'Unavailable';
+
+  @override
+  String get adminRoleBadge => 'Administrator';
+
+  @override
+  String get adminBackToApp => 'Back to the app';
+
+  @override
+  String get adminLoadErrorTitle => 'Couldn\'t load this list';
+
+  @override
+  String get adminSaveFailed =>
+      'Couldn\'t save — check your connection and try again.';
+
+  @override
+  String get adminSave => 'Save';
+
+  @override
+  String get adminDeleteConfirmTitle => 'Delete this item?';
+
+  @override
+  String adminDeleteConfirmBody(String name) {
+    return '\"$name\" will be permanently removed. This can\'t be undone.';
+  }
+
+  @override
+  String get adminFeaturedBadge => 'Featured';
+
+  @override
+  String get adminWorkoutsEmptyTitle => 'No workouts yet';
+
+  @override
+  String get adminWorkoutsEmptyMessage =>
+      'Add your first workout to get started.';
+
+  @override
+  String get adminExercisesEmptyTitle => 'No exercises yet';
+
+  @override
+  String get adminExercisesEmptyMessage =>
+      'Add your first exercise to get started.';
+
+  @override
+  String get adminRecipesEmptyTitle => 'No recipes yet';
+
+  @override
+  String get adminRecipesEmptyMessage =>
+      'Add your first recipe to get started.';
+
+  @override
+  String get adminArticlesEmptyTitle => 'No articles yet';
+
+  @override
+  String get adminArticlesEmptyMessage =>
+      'Add your first article to get started.';
+
+  @override
+  String get adminChallengesEmptyTitle => 'No challenges yet';
+
+  @override
+  String get adminChallengesEmptyMessage =>
+      'Add your first challenge to get started.';
+
+  @override
+  String get adminEditWorkoutTitle => 'Edit Workout';
+
+  @override
+  String get adminAddWorkoutTitle => 'Add Workout';
+
+  @override
+  String get adminEditExerciseTitle => 'Edit Exercise';
+
+  @override
+  String get adminAddExerciseTitle => 'Add Exercise';
+
+  @override
+  String get adminEditRecipeTitle => 'Edit Recipe';
+
+  @override
+  String get adminAddRecipeTitle => 'Add Recipe';
+
+  @override
+  String get adminAddArticleTitle => 'Add Article';
+
+  @override
+  String get adminAddChallengeTitle => 'Add Challenge';
+
+  @override
+  String get adminFieldTitle => 'Title';
+
+  @override
+  String get adminFieldName => 'Name';
+
+  @override
+  String get adminFieldDescription => 'Description';
+
+  @override
+  String get adminFieldImageUrl => 'Image URL';
+
+  @override
+  String get adminFieldVideoUrl => 'Video URL';
+
+  @override
+  String get adminFieldDurationMinutes => 'Duration (minutes)';
+
+  @override
+  String get adminFieldCalories => 'Calories';
+
+  @override
+  String get adminFieldCategory => 'Category';
+
+  @override
+  String get adminFieldDifficulty => 'Difficulty';
+
+  @override
+  String get adminFieldMuscleGroup => 'Muscle Group';
+
+  @override
+  String get adminFieldEquipment => 'Equipment';
+
+  @override
+  String get adminFieldFeatured => 'Featured';
+
+  @override
+  String get adminFieldPopular => 'Popular';
+
+  @override
+  String get adminFieldPrepTimeMinutes => 'Prep Time (minutes)';
+
+  @override
+  String get adminFieldNutrition => 'Nutrition';
+
+  @override
+  String get adminFieldProtein => 'Protein (g)';
+
+  @override
+  String get adminFieldCarbs => 'Carbs (g)';
+
+  @override
+  String get adminFieldFat => 'Fat (g)';
+
+  @override
+  String get adminFieldIngredients => 'Ingredients';
+
+  @override
+  String get adminFieldSteps => 'Steps';
+
+  @override
+  String get adminFieldOnePerLine => 'One per line';
+
+  @override
+  String get adminFieldContent => 'Content (paragraphs)';
+
+  @override
+  String get adminFieldReadTimeMinutes => 'Read Time (minutes)';
+
+  @override
+  String get adminFieldGoal => 'Goal';
+
+  @override
+  String get adminFieldDuration => 'Duration';
 }

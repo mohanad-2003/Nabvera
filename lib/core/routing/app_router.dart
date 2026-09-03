@@ -1,4 +1,19 @@
+import 'package:fitness_app/core/routing/admin_route_guard.dart';
 import 'package:fitness_app/core/widgets/app_bottom_nav.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_article_editor_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_articles_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_challenge_editor_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_challenges_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_dashboard_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_exercise_editor_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_exercises_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_more_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_profile_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_recipe_editor_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_recipes_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_unauthorized_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_workout_editor_page.dart';
+import 'package:fitness_app/features/admin/presentation/pages/admin_workouts_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/biometric_unlock_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/finger_print_page.dart';
 import 'package:fitness_app/features/authentication/presentation/pages/forgot_password_page.dart';
@@ -34,6 +49,7 @@ import 'package:fitness_app/features/onboarding/presentation/pages/setup_intro_p
 import 'package:fitness_app/features/onboarding/presentation/pages/time_availability_page.dart';
 import 'package:fitness_app/features/onboarding/presentation/pages/weight_page.dart';
 import 'package:fitness_app/features/profile/presentation/pages/document_page.dart';
+import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
 import 'package:fitness_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:fitness_app/features/profile/presentation/pages/help_page.dart';
 import 'package:fitness_app/features/profile/presentation/pages/legal_document_page.dart';
@@ -66,7 +82,82 @@ part 'app_router.g.dart';
 GoRouter appRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
+    // The Admin console's structural role guard: evaluated on every
+    // navigation (not just once at app start), so a direct/typed
+    // navigation into an admin path is blocked here regardless of what
+    // the Profile page's "Admin Console" entry point shows. See
+    // `admin_route_guard.dart` for the pure decision logic this wraps.
+    redirect:
+        (context, state) => adminRouteGuard(
+          location: state.matchedLocation,
+          isAdmin: ref.read(currentUserProfileProvider).isAdmin,
+        ),
     routes: [
+      GoRoute(
+        path: AppRoutes.unauthorized,
+        builder: (context, state) => const AdminUnauthorizedPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminDashboard,
+        builder: (context, state) => const AdminDashboardPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminMore,
+        builder: (context, state) => const AdminMorePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminWorkouts,
+        builder: (context, state) => const AdminWorkoutsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminWorkoutEditor,
+        builder:
+            (context, state) => AdminWorkoutEditorPage(
+              existing: state.extra as Map<String, dynamic>?,
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminExercises,
+        builder: (context, state) => const AdminExercisesPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminExerciseEditor,
+        builder:
+            (context, state) => AdminExerciseEditorPage(
+              existing: state.extra as Map<String, dynamic>?,
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminRecipes,
+        builder: (context, state) => const AdminRecipesPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminRecipeEditor,
+        builder:
+            (context, state) => AdminRecipeEditorPage(
+              existing: state.extra as Map<String, dynamic>?,
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminArticles,
+        builder: (context, state) => const AdminArticlesPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminArticleEditor,
+        builder: (context, state) => const AdminArticleEditorPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminChallenges,
+        builder: (context, state) => const AdminChallengesPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminChallengeEditor,
+        builder: (context, state) => const AdminChallengeEditorPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminProfile,
+        builder: (context, state) => const AdminProfilePage(),
+      ),
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashPage(),

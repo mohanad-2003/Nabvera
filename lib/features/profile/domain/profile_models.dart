@@ -23,6 +23,7 @@ class UserProfile {
     this.avatarUrl,
     this.favoriteWorkoutIds = const [],
     this.favoriteRecipeIds = const [],
+    this.role = 'user',
   });
 
   /// Backend `User._id` — empty for [UserProfile.empty].
@@ -58,6 +59,13 @@ class UserProfile {
   final List<String> favoriteWorkoutIds;
   final List<String> favoriteRecipeIds;
 
+  /// Backend `User.role` — `'user'` or `'admin'` (see `backend/src/models/
+  /// User.js`). Drives both the Admin Console entry point on Profile and
+  /// the structural route guard in `app_router.dart`; never used to hide
+  /// UI as the *only* protection — the guard blocks the route itself.
+  final String role;
+  bool get isAdmin => role == 'admin';
+
   static const empty = UserProfile(
     name: '',
     email: '',
@@ -88,7 +96,8 @@ class UserProfile {
       birthday: dateOfBirth == null ? '—' : _formatBirthday(dateOfBirth),
       weightKg: weightKg == null ? '—' : '${weightKg.round()} Kg',
       ageYears: dateOfBirth == null ? '—' : '${_ageFrom(dateOfBirth)}',
-      heightM: heightCm == null ? '—' : '${(heightCm / 100).toStringAsFixed(2)} m',
+      heightM:
+          heightCm == null ? '—' : '${(heightCm / 100).toStringAsFixed(2)} m',
       fitnessLevel: _fitnessLevelFor(stats['workoutsCompleted'] as int? ?? 0),
       completedWorkouts: stats['workoutsCompleted'] as int? ?? 0,
       caloriesBurned: stats['caloriesBurned'] as int? ?? 0,
@@ -105,6 +114,7 @@ class UserProfile {
       avatarUrl: json['avatarUrl'] as String?,
       favoriteWorkoutIds: _idList(json['favoriteWorkouts']),
       favoriteRecipeIds: _idList(json['favoriteRecipes']),
+      role: (json['role'] as String?) ?? 'user',
     );
   }
 
@@ -130,8 +140,18 @@ class UserProfile {
 
   static String _formatBirthday(DateTime date) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }
