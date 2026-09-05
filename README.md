@@ -17,16 +17,15 @@ A full-stack fitness application — Flutter client + a real Node.js/Express/Mon
 
 <p align="center">
   <img src="docs/screenshots/splash.png" width="180" alt="Splash" />
+    <img src="docs/screenshots/onboarding.png" width="180" alt="Onboarding" />
   <img src="docs/screenshots/login.png" width="180" alt="Login" />
   <img src="docs/screenshots/home.png" width="180" alt="Home Dashboard" />
   <img src="docs/screenshots/workout.png" width="180" alt="Workout" />
-  <img src="docs/screenshots/your_routine.png" width="180" alt="Your Routine" />
 </p>
 <p align="center">
   <img src="docs/screenshots/nutrition.png" width="180" alt="Nutrition" />
   <img src="docs/screenshots/community.png" width="180" alt="Community & Challenges" />
   <img src="docs/screenshots/profile.png" width="180" alt="Profile" />
-  <img src="docs/screenshots/onboarding.png" width="180" alt="Onboarding" />
 </p>
 
 ---
