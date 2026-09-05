@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nabvera/features/community/data/community_repository.dart';
+import 'package:nabvera/features/community/domain/community_models.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../profile/presentation/providers/profile_controller.dart';
-import '../../data/community_repository.dart';
-import '../../domain/community_models.dart';
 
 part 'community_controller.g.dart';
 
@@ -15,11 +14,10 @@ enum CommunityTab { forum, challenges }
 class CommunityTabController extends _$CommunityTabController {
   @override
   CommunityTab build() => CommunityTab.forum;
-
   void select(CommunityTab tab) => state = tab;
 }
 
-/// Loads `/api/challenges` for the Community "Challenges" tab.
+/// Lolads `/api/challenges` for the Community "Challenges" tab.
 @riverpod
 class CommunityChallenges extends _$CommunityChallenges {
   @override
@@ -30,7 +28,8 @@ class CommunityChallenges extends _$CommunityChallenges {
 
   Future<void> _load() async {
     try {
-      final docs = await ref.read(communityRepositoryProvider).fetchChallenges();
+      final docs =
+          await ref.read(communityRepositoryProvider).fetchChallenges();
       state = docs.map(ChallengeItem.fromJson).toList();
     } catch (_) {
       // Left empty — see WorkoutListByLevel for the same pattern.
@@ -68,14 +67,24 @@ class CommunityForums extends _$CommunityForums {
       liked: !thread.liked,
       likesCount: thread.liked ? thread.likesCount - 1 : thread.likesCount + 1,
     );
-    state = [for (var i = 0; i < state.length; i++) if (i == index) optimistic else state[i]];
+    state = [
+      for (var i = 0; i < state.length; i++)
+        if (i == index) optimistic else state[i],
+    ];
     try {
-      final (likesCount, liked) =
-          await ref.read(communityRepositoryProvider).toggleLike(postId);
+      final (likesCount, liked) = await ref
+          .read(communityRepositoryProvider)
+          .toggleLike(postId);
       final confirmed = thread.copyWith(likesCount: likesCount, liked: liked);
-      state = [for (var i = 0; i < state.length; i++) if (i == index) confirmed else state[i]];
+      state = [
+        for (var i = 0; i < state.length; i++)
+          if (i == index) confirmed else state[i],
+      ];
     } catch (_) {
-      state = [for (var i = 0; i < state.length; i++) if (i == index) thread else state[i]];
+      state = [
+        for (var i = 0; i < state.length; i++)
+          if (i == index) thread else state[i],
+      ];
     }
   }
 }
@@ -93,7 +102,9 @@ class SuggestedChallenges extends _$SuggestedChallenges {
   Future<void> _load() async {
     try {
       final docs =
-          await ref.read(communityRepositoryProvider).fetchSuggestedChallenges();
+          await ref
+              .read(communityRepositoryProvider)
+              .fetchSuggestedChallenges();
       state = docs.map(ChallengeSuggestion.fromJson).toList();
     } catch (_) {
       // Left empty — see WorkoutListByLevel for the same pattern.
@@ -118,7 +129,8 @@ class MyChallenges extends _$MyChallenges {
 
   Future<void> _load() async {
     try {
-      final docs = await ref.read(communityRepositoryProvider).fetchMyChallenges();
+      final docs =
+          await ref.read(communityRepositoryProvider).fetchMyChallenges();
       state = docs.map(ChallengeProgressItem.fromJson).toList();
     } catch (_) {
       // Left empty — see WorkoutListByLevel for the same pattern.
@@ -160,7 +172,9 @@ class ForumComments extends _$ForumComments {
 
   Future<void> _load() async {
     try {
-      final docs = await ref.read(communityRepositoryProvider).fetchComments(postId);
+      final docs = await ref
+          .read(communityRepositoryProvider)
+          .fetchComments(postId);
       state = [for (final doc in docs) ForumComment.fromJson(doc)];
     } catch (_) {
       // Left empty — see WorkoutListByLevel for the same pattern.

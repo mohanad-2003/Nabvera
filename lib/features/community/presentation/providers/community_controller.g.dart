@@ -62,15 +62,15 @@ abstract class _$CommunityTabController extends $Notifier<CommunityTab> {
   }
 }
 
-/// Loads `/api/challenges` for the Community "Challenges" tab.
+/// Lolads `/api/challenges` for the Community "Challenges" tab.
 
 @ProviderFor(CommunityChallenges)
 final communityChallengesProvider = CommunityChallengesProvider._();
 
-/// Loads `/api/challenges` for the Community "Challenges" tab.
+/// Lolads `/api/challenges` for the Community "Challenges" tab.
 final class CommunityChallengesProvider
     extends $NotifierProvider<CommunityChallenges, List<ChallengeItem>> {
-  /// Loads `/api/challenges` for the Community "Challenges" tab.
+  /// Lolads `/api/challenges` for the Community "Challenges" tab.
   CommunityChallengesProvider._()
     : super(
         from: null,
@@ -101,7 +101,7 @@ final class CommunityChallengesProvider
 String _$communityChallengesHash() =>
     r'aa86f6f2d411f58780b2c3e29a8dcfbd7abe3e48';
 
-/// Loads `/api/challenges` for the Community "Challenges" tab.
+/// Lolads `/api/challenges` for the Community "Challenges" tab.
 
 abstract class _$CommunityChallenges extends $Notifier<List<ChallengeItem>> {
   List<ChallengeItem> build();

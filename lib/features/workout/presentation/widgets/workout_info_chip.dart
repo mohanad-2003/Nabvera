@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// Small icon+label pill used across workout cards (duration, calories,
 /// difficulty). Replaces the ad-hoc `Image.asset` + `Text` rows that used

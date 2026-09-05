@@ -1,10 +1,9 @@
+import 'package:nabvera/features/favorite/domain/favorite_models.dart';
 import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
 import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../domain/favorite_models.dart';
 
 part 'favorite_controller.g.dart';
 
@@ -43,14 +42,18 @@ class FilteredFavorites extends _$FilteredFavorites {
     final items = <FavoriteItem>[];
     for (final id in profile.favoriteWorkoutIds) {
       try {
-        items.add(FavoriteItem.fromWorkoutJson(await workoutRepo.fetchWorkoutById(id)));
+        items.add(
+          FavoriteItem.fromWorkoutJson(await workoutRepo.fetchWorkoutById(id)),
+        );
       } catch (_) {
         // Skip a favorite that no longer resolves (deleted workout, etc.).
       }
     }
     for (final id in profile.favoriteRecipeIds) {
       try {
-        items.add(FavoriteItem.fromRecipeJson(await recipeRepo.fetchRecipeById(id)));
+        items.add(
+          FavoriteItem.fromRecipeJson(await recipeRepo.fetchRecipeById(id)),
+        );
       } catch (_) {
         // Skip a favorite that no longer resolves.
       }
@@ -75,10 +78,7 @@ class FilteredFavorites extends _$FilteredFavorites {
   /// Unfavorites an item and removes it from the list immediately.
   Future<void> remove(FavoriteItem item) async {
     _cache = _cache.where((i) => i.id != item.id).toList();
-    state = _applyFilter(
-      _cache,
-      ref.read(favoriteFilterControllerProvider),
-    );
+    state = _applyFilter(_cache, ref.read(favoriteFilterControllerProvider));
     final repo = ref.read(userRepositoryProvider);
     try {
       if (item.type == FavoriteType.video) {

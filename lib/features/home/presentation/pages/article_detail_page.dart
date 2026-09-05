@@ -1,9 +1,21 @@
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/home/domain/home_models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+/// Localized label for an `Article.category` value — a fixed backend enum
+/// (`nutrition`/`workout`/`recovery`/`mindset`), never rendered as its raw
+/// English key.
+String _categoryLabel(AppLocalizations l10n, String category) => switch (category) {
+  'nutrition' => l10n.articleCategoryNutrition,
+  'workout' => l10n.articleCategoryWorkout,
+  'recovery' => l10n.articleCategoryRecovery,
+  'mindset' => l10n.articleCategoryMindset,
+  _ => category,
+};
 
 /// Full-content view for a Home "Articles & Tips" card — a `/api/articles`
 /// document, shown in full: hero photo, category/read-time, every
@@ -17,6 +29,7 @@ class ArticleDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Stack(
@@ -75,7 +88,7 @@ class ArticleDetailPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
-                                  article.category.toUpperCase(),
+                                  _categoryLabel(l10n, article.category).toUpperCase(),
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w800,
@@ -93,7 +106,7 @@ class ArticleDetailPage extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              '${article.readTimeMinutes} min read',
+                              l10n.articleReadTimeMinutes(article.readTimeMinutes),
                               style: TextStyle(
                                 color: ext.textMuted,
                                 fontSize: 12.5,
@@ -104,7 +117,7 @@ class ArticleDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 14),
                         Text(
-                          article.title,
+                          article.localizedTitle(context),
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: ext.textPrimary,
                             fontWeight: FontWeight.w900,
@@ -112,7 +125,7 @@ class ArticleDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          article.body,
+                          article.localizedBody(context),
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w600,
@@ -120,7 +133,7 @@ class ArticleDetailPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        for (final paragraph in article.paragraphs) ...[
+                        for (final paragraph in article.localizedParagraphs(context)) ...[
                           Text(
                             paragraph,
                             style: theme.textTheme.bodyLarge?.copyWith(

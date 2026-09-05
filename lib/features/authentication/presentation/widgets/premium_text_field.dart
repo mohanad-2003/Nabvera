@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// Auth-flow text field: rounded 20px filled background, an animated
 /// glow/border on focus, and a colored prefix icon that lights up while
@@ -113,7 +112,9 @@ class _PremiumTextFieldState extends State<PremiumTextField> {
           fillColor:
               widget.transparent
                   ? null
-                  : (isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white),
+                  : (isDark
+                      ? Colors.white.withValues(alpha: 0.06)
+                      : Colors.white),
           prefixIcon:
               widget.prefixIcon != null
                   ? Icon(

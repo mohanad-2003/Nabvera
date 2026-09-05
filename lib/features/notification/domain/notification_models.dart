@@ -58,7 +58,7 @@ NotificationCategory notificationCategoryFromApi(String? type) =>
     switch (type) {
       'workout_reminder' || 'workout_completed' => NotificationCategory.workout,
       'streak' => NotificationCategory.achievement,
-      'challenge' => NotificationCategory.challenge,
+      'challenge' || 'challenge_expiring' => NotificationCategory.challenge,
       'like' || 'comment' => NotificationCategory.community,
       'meal_plan' => NotificationCategory.nutrition,
       _ => NotificationCategory.reminder,
@@ -123,6 +123,7 @@ class NotificationItem {
     'workout_completed' => l10n.notificationWorkoutCompletedTitle,
     'streak' when _streak != null => l10n.notificationStreakTitle(_streak!),
     'workout_reminder' => l10n.notificationWorkoutReminderTitle,
+    'challenge_expiring' => l10n.notificationChallengeExpiringTitle,
     _ => title,
   };
 
@@ -131,6 +132,7 @@ class NotificationItem {
         .notificationWorkoutCompletedBody(_calories!),
     'streak' when _streak != null => l10n.notificationStreakBody(_streak!),
     'workout_reminder' => l10n.notificationWorkoutReminderBody,
+    'challenge_expiring' => l10n.notificationChallengeExpiringBody,
     _ => body,
   };
 

@@ -1,6 +1,5 @@
+import 'package:nabvera/core/network/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../core/network/api_client.dart';
 
 part 'community_repository.g.dart';
 
@@ -54,7 +53,9 @@ class CommunityRepository {
   }
 
   /// The user's progress on a single challenge (`/challenges/:id/progress`).
-  Future<Map<String, dynamic>> fetchChallengeProgress(String challengeId) async {
+  Future<Map<String, dynamic>> fetchChallengeProgress(
+    String challengeId,
+  ) async {
     final response = await _client.get('/challenges/$challengeId/progress');
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;

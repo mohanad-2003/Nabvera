@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/theme/app_theme_extension.dart';
 
 /// Replaces the legacy `HeaderWidget`/`HeaderBack` (lib/view/headerApge.dart,
 /// lib/view/header_back.dart) — back arrow now pops via GoRouter instead of

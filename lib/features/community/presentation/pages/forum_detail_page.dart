@@ -1,13 +1,12 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../../core/widgets/user_avatar.dart';
-import '../../domain/community_models.dart';
-import '../providers/community_controller.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/user_avatar.dart';
+import 'package:nabvera/features/community/domain/community_models.dart';
+import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 
 class ForumDetailPage extends ConsumerStatefulWidget {
   const ForumDetailPage({super.key, required this.thread});

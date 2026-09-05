@@ -31,6 +31,9 @@ class _AdminArticleEditorPageState
   final _description = TextEditingController();
   final _imageUrl = TextEditingController();
   final _content = TextEditingController();
+  final _titleAr = TextEditingController();
+  final _descriptionAr = TextEditingController();
+  final _contentAr = TextEditingController();
   final _readTime = TextEditingController(text: '3');
   String _category = _kCategories.first;
   bool _saving = false;
@@ -41,26 +44,35 @@ class _AdminArticleEditorPageState
     _description.dispose();
     _imageUrl.dispose();
     _content.dispose();
+    _titleAr.dispose();
+    _descriptionAr.dispose();
+    _contentAr.dispose();
     _readTime.dispose();
     super.dispose();
   }
 
+  static List<String> _paragraphsOf(String text) => text
+      .split('\n')
+      .map((line) => line.trim())
+      .where((line) => line.isNotEmpty)
+      .toList();
+
   Future<void> _save(AppLocalizations l10n) async {
     if (_title.text.trim().isEmpty) return;
     setState(() => _saving = true);
-    final contentParagraphs =
-        _content.text
-            .split('\n')
-            .map((line) => line.trim())
-            .where((line) => line.isNotEmpty)
-            .toList();
     final payload = <String, dynamic>{
       'title': _title.text.trim(),
       'description': _description.text.trim(),
       'imageUrl': _imageUrl.text.trim(),
-      'content': contentParagraphs,
+      'content': _paragraphsOf(_content.text),
       'readTimeMinutes': int.tryParse(_readTime.text.trim()) ?? 3,
       'category': _category,
+      // Optional Arabic translation — left as '' / [] when not filled in,
+      // which the Flutter app treats as "not translated yet" and falls
+      // back to the English fields above (see `ArticleTip.localizedTitle`).
+      'titleAr': _titleAr.text.trim(),
+      'descriptionAr': _descriptionAr.text.trim(),
+      'contentAr': _paragraphsOf(_contentAr.text),
     };
     try {
       await ref
@@ -124,6 +136,44 @@ class _AdminArticleEditorPageState
                   hint: l10n.adminFieldOnePerLine,
                   flat: true,
                   maxLines: 6,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.adminArabicTranslationHeading,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.adminArabicTranslationSubtitle,
+                  style: TextStyle(color: ext.textMuted, fontSize: 12),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _titleAr,
+                  label: l10n.adminFieldTitleAr,
+                  flat: true,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _descriptionAr,
+                  label: l10n.adminFieldDescriptionAr,
+                  flat: true,
+                  maxLines: 2,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _contentAr,
+                  label: l10n.adminFieldContentAr,
+                  hint: l10n.adminFieldOnePerLine,
+                  flat: true,
+                  maxLines: 6,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(

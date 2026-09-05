@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// "Don't have an account? Create account" footer link, shared by login and
 /// signup (previously duplicated in each page).
