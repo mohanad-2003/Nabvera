@@ -1,7 +1,7 @@
-import 'package:fitness_app/core/network/app_icons.dart';
-import 'package:fitness_app/features/home/data/home_repository.dart';
-import 'package:fitness_app/features/home/domain/home_models.dart';
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
+import 'package:nabvera/core/network/app_icons.dart';
+import 'package:nabvera/features/home/data/home_repository.dart';
+import 'package:nabvera/features/home/domain/home_models.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_controller.g.dart';

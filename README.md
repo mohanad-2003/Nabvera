@@ -201,7 +201,7 @@ feature/
 
 ```bash
 git clone YOUR_REPOSITORY_URL
-cd fitness_app
+cd nabvera
 ```
 
 **2. Install dependencies**

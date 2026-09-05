@@ -1,8 +1,8 @@
-import 'package:fitness_app/core/network/app_icons.dart';
-import 'package:fitness_app/core/widgets/pressable_scale.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/core/network/app_icons.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
 
 /// A single exercise row within a category's round list. No card container

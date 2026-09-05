@@ -1,4 +1,4 @@
-import 'package:fitness_app/core/notifications/push_notification_service.dart';
+import 'package:nabvera/core/notifications/push_notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,9 +9,8 @@ part 'firebase_auth_service.g.dart';
 /// app never touches the plugins directly — swapping providers later only
 /// means editing this file.
 class FirebaseAuthService {
-  FirebaseAuthService(this._ref, this._auth, this._googleSignIn);
+  FirebaseAuthService(this._auth, this._googleSignIn);
 
-  final Ref _ref;
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
@@ -57,10 +56,6 @@ class FirebaseAuthService {
   }
 
   Future<void> signOut() async {
-    // Must happen before the actual sign-out: unregistering needs an
-    // Authorization header, which requires `_auth.currentUser` to still
-    // exist (see ApiClient._headers).
-    await _ref.read(pushNotificationServiceProvider).unregisterCurrentDevice();
     await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
   }
 
@@ -73,7 +68,7 @@ class FirebaseAuthService {
 
 @Riverpod(keepAlive: true)
 FirebaseAuthService firebaseAuthService(Ref ref) {
-  return FirebaseAuthService(ref, FirebaseAuth.instance, GoogleSignIn());
+  return FirebaseAuthService(FirebaseAuth.instance, GoogleSignIn());
 }
 
 /// Live auth state — a page can `ref.watch` this to react to sign-in /
@@ -81,4 +76,26 @@ FirebaseAuthService firebaseAuthService(Ref ref) {
 @Riverpod(keepAlive: true)
 Stream<User?> authState(Ref ref) {
   return ref.watch(firebaseAuthServiceProvider).authStateChanges;
+}
+
+/// Signs the current user out, orchestrated from outside the provider
+/// graph (a plain widget-triggered call, not a provider depending on
+/// another provider) so this doesn't reintroduce the cycle that used to
+/// exist when [FirebaseAuthService] itself read
+/// `pushNotificationServiceProvider`: that provider is built from
+/// `userRepositoryProvider` → `apiClientProvider` → `firebaseAuthServiceProvider`,
+/// so `FirebaseAuthService` reading it back formed a circular dependency.
+///
+/// Unregistering must happen before the actual sign-out: it needs an
+/// Authorization header, which requires `_auth.currentUser` to still exist
+/// (see `ApiClient._headers`).
+///
+/// Takes a plain `read` function rather than a [Ref] so it works from both
+/// a provider's `Ref` and a widget's `WidgetRef` (the two no longer share a
+/// common base type as of Riverpod 3) — pass `ref.read` from either.
+Future<void> signOutCurrentUser(
+  T Function<T>(ProviderListenable<T> provider) read,
+) async {
+  await read(pushNotificationServiceProvider).unregisterCurrentDevice();
+  await read(firebaseAuthServiceProvider).signOut();
 }

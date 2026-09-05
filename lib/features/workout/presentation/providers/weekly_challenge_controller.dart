@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'weekly_challenge_controller.g.dart';

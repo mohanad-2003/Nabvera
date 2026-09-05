@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/routing/admin_route_guard.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:nabvera/core/routing/admin_route_guard.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

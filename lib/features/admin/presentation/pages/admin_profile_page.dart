@@ -1,12 +1,12 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/user_avatar.dart';
-import 'package:fitness_app/features/admin/presentation/widgets/admin_page_header.dart';
-import 'package:fitness_app/features/admin/presentation/widgets/admin_scaffold.dart';
-import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
-import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/user_avatar.dart';
+import 'package:nabvera/features/admin/presentation/widgets/admin_page_header.dart';
+import 'package:nabvera/features/admin/presentation/widgets/admin_scaffold.dart';
+import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +87,7 @@ class AdminProfilePage extends ConsumerWidget {
                   label: l10n.profileMenuLogout,
                   iconColor: ext.danger,
                   onTap: () async {
-                    await ref.read(firebaseAuthServiceProvider).signOut();
+                    await signOutCurrentUser(ref.read);
                     ref.invalidate(currentUserProfileProvider);
                     if (context.mounted) context.go(AppRoutes.login);
                   },

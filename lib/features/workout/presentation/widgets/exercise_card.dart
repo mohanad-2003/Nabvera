@@ -1,9 +1,9 @@
-import 'package:fitness_app/core/responsive/app_responsive.dart';
-import 'package:fitness_app/core/theme/app_colors.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/pressable_scale.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
+import 'package:nabvera/core/responsive/app_responsive.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
 /// Premium row card for the "Choose Exercises" library: thumbnail, name,

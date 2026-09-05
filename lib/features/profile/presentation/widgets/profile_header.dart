@@ -1,7 +1,7 @@
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/core/widgets/user_avatar.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 
 /// Premium profile header: back/edit actions, gradient-ringed avatar with a

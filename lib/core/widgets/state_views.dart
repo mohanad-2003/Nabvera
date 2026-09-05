@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 import 'primary_button.dart';

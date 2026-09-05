@@ -1,9 +1,9 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/settings_card.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/settings_toggle_row.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/profile/presentation/widgets/settings_card.dart';
+import 'package:nabvera/features/profile/presentation/widgets/settings_toggle_row.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

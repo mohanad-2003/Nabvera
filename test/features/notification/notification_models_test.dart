@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/localization/generated/app_localizations_en.dart';
-import 'package:fitness_app/features/notification/domain/notification_models.dart';
+import 'package:nabvera/core/localization/generated/app_localizations_en.dart';
+import 'package:nabvera/features/notification/domain/notification_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

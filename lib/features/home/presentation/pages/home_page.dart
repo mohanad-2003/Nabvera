@@ -1,19 +1,19 @@
-import 'package:fitness_app/core/analytics/analytics_service.dart';
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_colors.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/pressable_scale.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
-import 'package:fitness_app/core/widgets/user_avatar.dart';
-import 'package:fitness_app/features/home/domain/home_models.dart';
-import 'package:fitness_app/features/home/presentation/providers/home_controller.dart';
-import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart';
-import 'package:fitness_app/features/nutrition/presentation/providers/nutrition_controller.dart';
-import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
-import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/core/widgets/user_avatar.dart';
+import 'package:nabvera/features/home/domain/home_models.dart';
+import 'package:nabvera/features/home/presentation/providers/home_controller.dart';
+import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -535,18 +535,18 @@ class _TodayHeroCard extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                   ],
-                  Row(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 8,
                     children: [
                       _HeroChip(
                         icon: Icons.timer_outlined,
                         label: l10n.homeHeroDuration(duration),
                       ),
-                      const SizedBox(width: 10),
                       _HeroChip(
                         icon: Icons.local_fire_department_outlined,
                         label: l10n.homeHeroCalories(calories),
                       ),
-                      const SizedBox(width: 10),
                       _HeroChip(
                         icon: Icons.checklist_rounded,
                         label: l10n.homeHeroExercises(moves),
@@ -721,12 +721,16 @@ class _HeroChip extends StatelessWidget {
         children: [
           Icon(icon, size: 15, color: Colors.white.withValues(alpha: 0.85)),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.85),
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

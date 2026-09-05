@@ -1,4 +1,4 @@
-import 'package:fitness_app/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Vertical fill-bar chart primitive. Renamed from the legacy `Bar` widget

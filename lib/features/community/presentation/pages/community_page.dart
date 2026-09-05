@@ -1,4 +1,7 @@
-import 'package:fitness_app/core/network/app_icons.dart';
+import 'dart:async';
+
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/core/network/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,9 +13,10 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/featured_card.dart';
 import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../../core/widgets/smart_image.dart';
+import '../../domain/challenge_badges.dart';
 import '../../domain/community_models.dart';
 import '../providers/community_controller.dart';
+import '../widgets/challenge_progress_card.dart';
 import 'forum_detail_page.dart';
 
 class CommunityPage extends ConsumerWidget {
@@ -81,7 +85,7 @@ class CommunityPage extends ConsumerWidget {
                                   .read(communityForumsProvider.notifier)
                                   .toggleLike(id),
                         )
-                        : _ChallengesTab(challenges: challenges),
+                        : const _ChallengesTab(),
               ),
             ),
           ),
@@ -288,104 +292,227 @@ class _ForumThreadCard extends StatelessWidget {
   }
 }
 
-class _ChallengesTab extends StatelessWidget {
-  const _ChallengesTab({required this.challenges});
-
-  final List<ChallengeItem> challenges;
+/// The "Challenges" tab body: suggested-for-you, the user's own active
+/// challenges, and completed ones — each section reading its own provider
+/// (see `community_controller.dart`) rather than one flat admin-content
+/// list, since these are now real per-user state, not just browsable cards.
+class _ChallengesTab extends ConsumerWidget {
+  const _ChallengesTab();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final suggestions = ref.watch(suggestedChallengesProvider);
+    final myChallenges = ref.watch(myChallengesProvider);
+
+    final active =
+        myChallenges.where((c) => c.status == ChallengeStatus.active).toList();
+    final completed = myChallenges.where((c) => c.isCompleted).toList();
+    final badges = computeEarnedBadges(myChallenges);
+
+    Future<void> handleJoin(ChallengeItem challenge) async {
+      try {
+        await ref.read(myChallengesProvider.notifier).join(challenge.id);
+        unawaited(
+          ref
+              .read(analyticsServiceProvider)
+              .logEvent(AnalyticsEvent.challengeJoined, {
+                'challengeId': challenge.id,
+              }),
+        );
+      } catch (_) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.communityChallengeJoinFailed)),
+        );
+      }
+    }
+
+    Future<void> handleLeave(ChallengeItem challenge) async {
+      try {
+        await ref.read(myChallengesProvider.notifier).leave(challenge.id);
+        unawaited(
+          ref
+              .read(analyticsServiceProvider)
+              .logEvent(AnalyticsEvent.challengeLeft, {
+                'challengeId': challenge.id,
+              }),
+        );
+      } catch (_) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.communityChallengeLeaveFailed)),
+        );
+      }
+    }
 
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PremiumSectionHeader(
-                title: l10n.communityChallengesAndCompetitions,
-              ),
-              const SizedBox(height: 12),
-            ],
+        if (badges.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _BadgesRow(badges: badges),
+            ),
           ),
+        SliverToBoxAdapter(
+          child: PremiumSectionHeader(title: l10n.communitySuggestedForYou),
         ),
-        SliverList.separated(
-          itemCount: challenges.length,
-          separatorBuilder:
-              (context, _) => Divider(
-                height: 1,
-                color:
-                    Theme.of(
-                      context,
-                    ).extension<AppThemeExtension>()!.glassBorder,
-              ),
-          itemBuilder:
-              (context, index) => _ChallengeCard(challenge: challenges[index]),
+        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+        if (suggestions.isEmpty)
+          SliverToBoxAdapter(
+            child: _EmptySectionText(text: l10n.communityNoSuggestions),
+          )
+        else
+          SliverList.separated(
+            itemCount: suggestions.length,
+            separatorBuilder: (context, _) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              final suggestion = suggestions[index];
+              return SuggestedChallengeCard(
+                suggestion: suggestion,
+                isJoining: false,
+                onJoin: () => handleJoin(suggestion.challenge),
+                onTap:
+                    () => context.push(
+                      AppRoutes.communityChallenge,
+                      extra: suggestion.challenge,
+                    ),
+              );
+            },
+          ),
+        const SliverToBoxAdapter(child: SizedBox(height: 22)),
+        SliverToBoxAdapter(
+          child: PremiumSectionHeader(title: l10n.communityMyActiveChallenges),
         ),
+        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+        if (active.isEmpty)
+          SliverToBoxAdapter(
+            child: _EmptySectionText(text: l10n.communityNoActiveChallenges),
+          )
+        else
+          SliverList.separated(
+            itemCount: active.length,
+            separatorBuilder: (context, _) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              final progress = active[index];
+              return MyChallengeCard(
+                progress: progress,
+                onLeave: () => handleLeave(progress.challenge),
+                onTap:
+                    () => context.push(
+                      AppRoutes.communityChallenge,
+                      extra: progress.challenge,
+                    ),
+              );
+            },
+          ),
+        const SliverToBoxAdapter(child: SizedBox(height: 22)),
+        SliverToBoxAdapter(
+          child: PremiumSectionHeader(title: l10n.communityCompletedChallenges),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+        if (completed.isEmpty)
+          SliverToBoxAdapter(
+            child: _EmptySectionText(text: l10n.communityNoCompletedChallenges),
+          )
+        else
+          SliverList.separated(
+            itemCount: completed.length,
+            separatorBuilder: (context, _) => const SizedBox(height: 10),
+            itemBuilder:
+                (context, index) => MyChallengeCard(
+                  progress: completed[index],
+                  onTap:
+                      () => context.push(
+                        AppRoutes.communityChallenge,
+                        extra: completed[index].challenge,
+                      ),
+                ),
+          ),
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
       ],
     );
   }
 }
 
-class _ChallengeCard extends StatelessWidget {
-  const _ChallengeCard({required this.challenge});
+class _EmptySectionText extends StatelessWidget {
+  const _EmptySectionText({required this.text});
 
-  final ChallengeItem challenge;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final imageWidth = MediaQuery.sizeOf(context).width < 380 ? 92.0 : 112.0;
+    return Text(text, style: TextStyle(color: ext.textMuted));
+  }
+}
 
-    // No card container — the list separates challenges with a divider
-    // instead (see _ChallengesTab's SliverList).
-    return InkWell(
-      onTap: () => context.push(AppRoutes.communityChallenge, extra: challenge),
-      borderRadius: BorderRadius.circular(AppRadius.card),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
+class _BadgesRow extends StatelessWidget {
+  const _BadgesRow({required this.badges});
+
+  final Set<ChallengeBadge> badges;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+
+    String labelFor(ChallengeBadge badge) => switch (badge) {
+      ChallengeBadge.firstChallenge => l10n.communityBadgeFirstChallenge,
+      ChallengeBadge.consistencyBuilder =>
+        l10n.communityBadgeConsistencyBuilder,
+      ChallengeBadge.weeklyWinner => l10n.communityBadgeWeeklyWinner,
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.communityYourBadges,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(22),
-              child: SmartImage(
-                challenge.image,
-                width: imageWidth,
-                height: imageWidth,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    challenge.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w900,
+            for (final badge in badges)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  gradient: ext.accentGradient,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.emoji_events_rounded,
+                      size: 14,
+                      color: ext.onAccent,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    challenge.details,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    Text(
+                      labelFor(badge),
+                      style: TextStyle(
+                        color: ext.onAccent,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: ext.textMuted),
           ],
         ),
-      ),
+      ],
     );
   }
 }

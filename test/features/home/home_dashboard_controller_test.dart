@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

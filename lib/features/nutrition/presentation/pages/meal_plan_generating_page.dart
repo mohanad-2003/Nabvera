@@ -1,14 +1,13 @@
-import 'package:fitness_app/features/onboarding/presentation/widgets/wizard_scaffold.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/nutrition/presentation/providers/meal_plan_wizard_controller.dart';
+import 'package:nabvera/features/onboarding/presentation/widgets/wizard_scaffold.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../workout/presentation/widgets/workout_header.dart';
-import '../providers/meal_plan_wizard_controller.dart';
 
 class MealPlanGeneratingPage extends ConsumerStatefulWidget {
   const MealPlanGeneratingPage({super.key});

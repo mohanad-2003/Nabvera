@@ -3896,6 +3896,180 @@ abstract class AppLocalizations {
   /// **'Loving the new routine builder — put together a full upper-body session in under two minutes.'**
   String get communityPost5;
 
+  /// No description provided for @communitySuggestedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested for you'**
+  String get communitySuggestedForYou;
+
+  /// No description provided for @communityMyActiveChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'My active challenges'**
+  String get communityMyActiveChallenges;
+
+  /// No description provided for @communityCompletedChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed challenges'**
+  String get communityCompletedChallenges;
+
+  /// No description provided for @communityNoSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions right now — check back after your next workout.'**
+  String get communityNoSuggestions;
+
+  /// No description provided for @communityNoActiveChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t joined any challenges yet.'**
+  String get communityNoActiveChallenges;
+
+  /// No description provided for @communityNoCompletedChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed challenges yet.'**
+  String get communityNoCompletedChallenges;
+
+  /// No description provided for @communityJoinChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get communityJoinChallenge;
+
+  /// No description provided for @communityLeaveChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get communityLeaveChallenge;
+
+  /// No description provided for @communityChallengeCompletedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get communityChallengeCompletedBadge;
+
+  /// No description provided for @communityChallengeProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} / {target}'**
+  String communityChallengeProgressLabel(int value, int target);
+
+  /// No description provided for @communityChallengeGoalWorkoutsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete {count} workouts'**
+  String communityChallengeGoalWorkoutsCount(int count);
+
+  /// No description provided for @communityChallengeGoalActiveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach {minutes} active minutes'**
+  String communityChallengeGoalActiveMinutes(int minutes);
+
+  /// No description provided for @communityChallengeGoalWorkoutStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Train {days} days in a row'**
+  String communityChallengeGoalWorkoutStreak(int days);
+
+  /// No description provided for @communityChallengeGoalWeeklyConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete {count} workouts this week'**
+  String communityChallengeGoalWeeklyConsistency(int count);
+
+  /// No description provided for @communityChallengeGoalHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Your goal'**
+  String get communityChallengeGoalHeading;
+
+  /// No description provided for @communityChallengeTimeLeftDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String communityChallengeTimeLeftDays(int days);
+
+  /// No description provided for @communityChallengeTimeLeftHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h left'**
+  String communityChallengeTimeLeftHours(int hours);
+
+  /// No description provided for @communityChallengeExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Window expired'**
+  String get communityChallengeExpired;
+
+  /// No description provided for @communityChallengeReasonWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this challenge?'**
+  String get communityChallengeReasonWhy;
+
+  /// No description provided for @communityChallengeReasonGoodStartingChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'A great first challenge to build momentum'**
+  String get communityChallengeReasonGoodStartingChallenge;
+
+  /// No description provided for @communityChallengeReasonBuildsOnCurrentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Builds on your current streak'**
+  String get communityChallengeReasonBuildsOnCurrentStreak;
+
+  /// No description provided for @communityChallengeReasonConsistentRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches how consistently you\'ve been training'**
+  String get communityChallengeReasonConsistentRecentActivity;
+
+  /// No description provided for @communityChallengeReasonMatchesActivityLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your current activity level'**
+  String get communityChallengeReasonMatchesActivityLevel;
+
+  /// No description provided for @communityYourBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Your badges'**
+  String get communityYourBadges;
+
+  /// No description provided for @communityBadgeFirstChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'First Challenge'**
+  String get communityBadgeFirstChallenge;
+
+  /// No description provided for @communityBadgeConsistencyBuilder.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency Builder'**
+  String get communityBadgeConsistencyBuilder;
+
+  /// No description provided for @communityBadgeWeeklyWinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Winner'**
+  String get communityBadgeWeeklyWinner;
+
+  /// No description provided for @communityChallengeJoinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join this challenge. Try again.'**
+  String get communityChallengeJoinFailed;
+
+  /// No description provided for @communityChallengeLeaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t leave this challenge. Try again.'**
+  String get communityChallengeLeaveFailed;
+
   /// No description provided for @profileMenuAdminConsole.
   ///
   /// In en, this message translates to:
@@ -4339,6 +4513,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duration'**
   String get adminFieldDuration;
+
+  /// No description provided for @adminFieldChallengeType.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge type'**
+  String get adminFieldChallengeType;
+
+  /// No description provided for @adminFieldTargetValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Target value'**
+  String get adminFieldTargetValue;
+
+  /// No description provided for @adminChallengeTypeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tracked (view-only)'**
+  String get adminChallengeTypeNone;
+
+  /// No description provided for @adminChallengeTypeWorkoutsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts completed'**
+  String get adminChallengeTypeWorkoutsCount;
+
+  /// No description provided for @adminChallengeTypeActiveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Active minutes'**
+  String get adminChallengeTypeActiveMinutes;
+
+  /// No description provided for @adminChallengeTypeWorkoutStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout streak (days)'**
+  String get adminChallengeTypeWorkoutStreak;
+
+  /// No description provided for @adminChallengeTypeWeeklyConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly consistency'**
+  String get adminChallengeTypeWeeklyConsistency;
 }
 
 class _AppLocalizationsDelegate

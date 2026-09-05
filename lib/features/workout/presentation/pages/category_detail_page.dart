@@ -1,20 +1,21 @@
 import 'dart:async';
 
-import 'package:fitness_app/core/analytics/analytics_service.dart';
-import 'package:fitness_app/core/network/app_icons.dart';
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/featured_card.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/core/widgets/primary_button.dart';
-import 'package:fitness_app/features/home/presentation/providers/home_dashboard_controller.dart';
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
-import 'package:fitness_app/features/workout/domain/difficulty_rating.dart';
-import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
-import 'package:fitness_app/features/workout/presentation/widgets/round_item_tile.dart';
-import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
-import 'package:fitness_app/features/workout/presentation/widgets/workout_rating_sheet.dart';
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/core/network/app_icons.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/featured_card.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
+import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/presentation/widgets/round_item_tile.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_rating_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -126,6 +127,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       // Home so it's current the moment the user navigates back, with no
       // restart or manual pull needed.
       refreshHomeProviders(ref);
+      // The backend may have just advanced (or completed) one of the
+      // user's active challenges from this same log — refresh those too.
+      refreshChallengeProviders(ref);
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,

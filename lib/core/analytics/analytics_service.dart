@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/analytics/event_dedupe_tracker.dart';
-import 'package:fitness_app/core/network/api_client.dart';
-import 'package:fitness_app/core/storage/preferences_service.dart';
+import 'package:nabvera/core/analytics/event_dedupe_tracker.dart';
+import 'package:nabvera/core/network/api_client.dart';
+import 'package:nabvera/core/storage/preferences_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,7 +16,11 @@ enum AnalyticsEvent {
   workoutRated('workout_rated'),
   easierWorkoutRequested('easier_workout_requested'),
   alternativeWorkoutSelected('alternative_workout_selected'),
-  workoutPreferencesUpdated('workout_preferences_updated');
+  workoutPreferencesUpdated('workout_preferences_updated'),
+  challengeViewed('challenge_viewed'),
+  challengeJoined('challenge_joined'),
+  challengeLeft('challenge_left'),
+  challengeCompleted('challenge_completed');
 
   const AnalyticsEvent(this.apiValue);
   final String apiValue;

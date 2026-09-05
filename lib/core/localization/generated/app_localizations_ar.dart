@@ -2057,6 +2057,114 @@ class AppLocalizationsAr extends AppLocalizations {
       'أحببت أداة بناء الروتين الجديدة — أنشأت تمرينًا كاملاً للجزء العلوي في أقل من دقيقتين.';
 
   @override
+  String get communitySuggestedForYou => 'مقترحة لك';
+
+  @override
+  String get communityMyActiveChallenges => 'تحدياتي النشطة';
+
+  @override
+  String get communityCompletedChallenges => 'التحديات المكتملة';
+
+  @override
+  String get communityNoSuggestions =>
+      'لا توجد اقتراحات الآن — تحقق مرة أخرى بعد تمرينك القادم.';
+
+  @override
+  String get communityNoActiveChallenges => 'لم تنضم إلى أي تحدٍ بعد.';
+
+  @override
+  String get communityNoCompletedChallenges => 'لا توجد تحديات مكتملة بعد.';
+
+  @override
+  String get communityJoinChallenge => 'انضمام';
+
+  @override
+  String get communityLeaveChallenge => 'مغادرة';
+
+  @override
+  String get communityChallengeCompletedBadge => 'مكتمل';
+
+  @override
+  String communityChallengeProgressLabel(int value, int target) {
+    return '$value / $target';
+  }
+
+  @override
+  String communityChallengeGoalWorkoutsCount(int count) {
+    return 'أكمل $count تمارين';
+  }
+
+  @override
+  String communityChallengeGoalActiveMinutes(int minutes) {
+    return 'اوصل إلى $minutes دقيقة نشاط';
+  }
+
+  @override
+  String communityChallengeGoalWorkoutStreak(int days) {
+    return 'تمرّن $days أيام متتالية';
+  }
+
+  @override
+  String communityChallengeGoalWeeklyConsistency(int count) {
+    return 'أكمل $count تمارين هذا الأسبوع';
+  }
+
+  @override
+  String get communityChallengeGoalHeading => 'هدفك';
+
+  @override
+  String communityChallengeTimeLeftDays(int days) {
+    return 'متبقٍ $days أيام';
+  }
+
+  @override
+  String communityChallengeTimeLeftHours(int hours) {
+    return 'متبقٍ $hours ساعة';
+  }
+
+  @override
+  String get communityChallengeExpired => 'انتهت مهلة التحدي';
+
+  @override
+  String get communityChallengeReasonWhy => 'لماذا هذا التحدي؟';
+
+  @override
+  String get communityChallengeReasonGoodStartingChallenge =>
+      'تحدٍ رائع للبدء وبناء الزخم';
+
+  @override
+  String get communityChallengeReasonBuildsOnCurrentStreak =>
+      'يبني على سلسلة أيامك الحالية';
+
+  @override
+  String get communityChallengeReasonConsistentRecentActivity =>
+      'يناسب مدى انتظامك في التمرين مؤخرًا';
+
+  @override
+  String get communityChallengeReasonMatchesActivityLevel =>
+      'يناسب مستوى نشاطك الحالي';
+
+  @override
+  String get communityYourBadges => 'شاراتك';
+
+  @override
+  String get communityBadgeFirstChallenge => 'أول تحدٍ';
+
+  @override
+  String get communityBadgeConsistencyBuilder => 'بانِي الاستمرارية';
+
+  @override
+  String get communityBadgeWeeklyWinner => 'بطل الأسبوع';
+
+  @override
+  String get communityChallengeJoinFailed =>
+      'تعذّر الانضمام لهذا التحدي. حاول مرة أخرى.';
+
+  @override
+  String get communityChallengeLeaveFailed =>
+      'تعذّرت مغادرة هذا التحدي. حاول مرة أخرى.';
+
+  @override
   String get profileMenuAdminConsole => 'لوحة تحكم الأدمن';
 
   @override
@@ -2281,4 +2389,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminFieldDuration => 'المدة';
+
+  @override
+  String get adminFieldChallengeType => 'نوع التحدي';
+
+  @override
+  String get adminFieldTargetValue => 'القيمة المستهدفة';
+
+  @override
+  String get adminChallengeTypeNone => 'غير متتبَّع (عرض فقط)';
+
+  @override
+  String get adminChallengeTypeWorkoutsCount => 'عدد التمارين المكتملة';
+
+  @override
+  String get adminChallengeTypeActiveMinutes => 'دقائق النشاط';
+
+  @override
+  String get adminChallengeTypeWorkoutStreak => 'أيام متتالية من التمرين';
+
+  @override
+  String get adminChallengeTypeWeeklyConsistency => 'الانتظام الأسبوعي';
 }

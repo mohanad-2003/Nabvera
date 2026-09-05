@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/features/workout/presentation/providers/workout_progress_controller.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/features/workout/presentation/providers/workout_progress_controller.dart';
 import 'package:flutter/material.dart';
 
 /// The Workout Log / Charts tab switcher shared by [WorkoutLogsPage] and

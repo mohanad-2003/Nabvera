@@ -55,7 +55,7 @@ final class FirebaseAuthServiceProvider
 }
 
 String _$firebaseAuthServiceHash() =>
-    r'1c8c06ccebe9a860ace4965c85629225670f62f0';
+    r'058746855bbd568aa60c34153e1ea91e5aa105d7';
 
 /// Live auth state — a page can `ref.watch` this to react to sign-in /
 /// sign-out instead of polling `currentUser`.

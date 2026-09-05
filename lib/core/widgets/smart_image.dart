@@ -59,8 +59,13 @@ class SmartImage extends StatelessWidget {
         color: color,
         colorBlendMode: colorBlendMode,
         errorBuilder: (context, error, stackTrace) => _fallbackImage(),
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
+        // `progress` is non-null on every in-flight frame and only turns
+        // null once the image has fully decoded — returning the fallback
+        // asset while it's non-null showed the placeholder for the whole
+        // download instead of a brief loading state, then a same-frame
+        // swap to `child` once the file lands.
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded || frame != null) return child;
           return _fallbackImage();
         },
       );

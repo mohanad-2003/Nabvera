@@ -1,5 +1,5 @@
-import 'package:fitness_app/features/notification/presentation/providers/notification_controller.dart';
-import 'package:fitness_app/features/profile/data/user_repository.dart';
+import 'package:nabvera/features/notification/presentation/providers/notification_controller.dart';
+import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

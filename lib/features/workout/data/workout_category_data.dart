@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/theme/app_colors.dart';
-import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 
 /// Static category/round content mirroring the legacy hardcoded values from
 /// AdvanceCategory, IntermediateCategory, and FunctionalPage. Kept as a

@@ -1,11 +1,11 @@
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
-import '../../../../core/widgets/smart_image.dart';
-import '../../domain/nutrition_models.dart';
 import 'premium_recipe_card.dart';
 
 /// Renders a meal-idea section (hero banner + Recommended row + Recipes
@@ -41,7 +41,8 @@ class MealIdeaSectionView extends StatelessWidget {
             badge: l10n.nutritionRecipeOfTheDay,
             isFavorite: isFavorite(section.top.favoriteKey),
             onFavoriteTap: () => onToggleFavorite(section.top.favoriteKey),
-            onTap: () => onOpenDetail(section.top, l10n.nutritionRecipeOfTheDay),
+            onTap:
+                () => onOpenDetail(section.top, l10n.nutritionRecipeOfTheDay),
           ),
         ),
         const SizedBox(height: 22),
@@ -97,10 +98,8 @@ class MealIdeaSectionView extends StatelessWidget {
                           onFavoriteTap:
                               () => onToggleFavorite(item.favoriteKey),
                           onTap:
-                              () => onOpenDetail(
-                                item,
-                                l10n.nutritionRecommended,
-                              ),
+                              () =>
+                                  onOpenDetail(item, l10n.nutritionRecommended),
                           imageHeight: 140,
                         ),
                       );
@@ -150,8 +149,7 @@ class MealIdeaSectionView extends StatelessWidget {
                       isFavorite: isFavorite(item.favoriteKey),
                       onFavoriteTap: () => onToggleFavorite(item.favoriteKey),
                       onTap:
-                          () =>
-                              onOpenDetail(item, l10n.nutritionRecipesForYou),
+                          () => onOpenDetail(item, l10n.nutritionRecipesForYou),
                     );
                   },
                 ),
@@ -255,7 +253,9 @@ class _TopRecipeHero extends StatelessWidget {
                         ),
                       ),
                       child: Icon(
-                        isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                        isFavorite
+                            ? Icons.star_rounded
+                            : Icons.star_border_rounded,
                         color: isFavorite ? ext.accentGlow : Colors.white,
                         size: 20,
                       ),

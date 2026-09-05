@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

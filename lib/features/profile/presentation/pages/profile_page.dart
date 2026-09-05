@@ -1,14 +1,14 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
-import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/delete_account_sheet.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/profile_menu_tile.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/profile_header.dart';
-import 'package:fitness_app/features/profile/presentation/widgets/profile_stat_row.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/profile/presentation/widgets/delete_account_sheet.dart';
+import 'package:nabvera/features/profile/presentation/widgets/profile_menu_tile.dart';
+import 'package:nabvera/features/profile/presentation/widgets/profile_header.dart';
+import 'package:nabvera/features/profile/presentation/widgets/profile_stat_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -276,7 +276,7 @@ class ProfilePage extends ConsumerWidget {
                         isPrimary: true,
                         onTap: () async {
                           dialogContext.pop();
-                          await ref.read(firebaseAuthServiceProvider).signOut();
+                          await signOutCurrentUser(ref.read);
                           ref.invalidate(currentUserProfileProvider);
                           if (context.mounted) context.go(AppRoutes.login);
                         },

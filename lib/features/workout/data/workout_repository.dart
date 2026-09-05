@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/network/api_client.dart';
-import 'package:fitness_app/features/workout/domain/difficulty_rating.dart';
+import 'package:nabvera/core/network/api_client.dart';
+import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'workout_repository.g.dart';

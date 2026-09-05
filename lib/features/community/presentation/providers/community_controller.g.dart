@@ -179,6 +179,150 @@ abstract class _$CommunityForums extends $Notifier<List<ForumThread>> {
   }
 }
 
+/// Loads `/api/challenges/suggested` — up to two rule-based suggestions for
+/// the current user's "Suggested for you" section.
+
+@ProviderFor(SuggestedChallenges)
+final suggestedChallengesProvider = SuggestedChallengesProvider._();
+
+/// Loads `/api/challenges/suggested` — up to two rule-based suggestions for
+/// the current user's "Suggested for you" section.
+final class SuggestedChallengesProvider
+    extends $NotifierProvider<SuggestedChallenges, List<ChallengeSuggestion>> {
+  /// Loads `/api/challenges/suggested` — up to two rule-based suggestions for
+  /// the current user's "Suggested for you" section.
+  SuggestedChallengesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'suggestedChallengesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$suggestedChallengesHash();
+
+  @$internal
+  @override
+  SuggestedChallenges create() => SuggestedChallenges();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<ChallengeSuggestion> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<ChallengeSuggestion>>(value),
+    );
+  }
+}
+
+String _$suggestedChallengesHash() =>
+    r'f1b87922ac6fe55562a21fd064e69d411e17e357';
+
+/// Loads `/api/challenges/suggested` — up to two rule-based suggestions for
+/// the current user's "Suggested for you" section.
+
+abstract class _$SuggestedChallenges
+    extends $Notifier<List<ChallengeSuggestion>> {
+  List<ChallengeSuggestion> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<List<ChallengeSuggestion>, List<ChallengeSuggestion>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<ChallengeSuggestion>, List<ChallengeSuggestion>>,
+              List<ChallengeSuggestion>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Loads `/api/challenges/my` — the current user's own challenge progress
+/// (active, completed, abandoned, expired) — and owns join/leave, which
+/// always re-syncs both this and [SuggestedChallenges] afterward so a
+/// just-joined challenge disappears from "Suggested" and appears under
+/// "My active challenges" without a manual refresh.
+
+@ProviderFor(MyChallenges)
+final myChallengesProvider = MyChallengesProvider._();
+
+/// Loads `/api/challenges/my` — the current user's own challenge progress
+/// (active, completed, abandoned, expired) — and owns join/leave, which
+/// always re-syncs both this and [SuggestedChallenges] afterward so a
+/// just-joined challenge disappears from "Suggested" and appears under
+/// "My active challenges" without a manual refresh.
+final class MyChallengesProvider
+    extends $NotifierProvider<MyChallenges, List<ChallengeProgressItem>> {
+  /// Loads `/api/challenges/my` — the current user's own challenge progress
+  /// (active, completed, abandoned, expired) — and owns join/leave, which
+  /// always re-syncs both this and [SuggestedChallenges] afterward so a
+  /// just-joined challenge disappears from "Suggested" and appears under
+  /// "My active challenges" without a manual refresh.
+  MyChallengesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'myChallengesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$myChallengesHash();
+
+  @$internal
+  @override
+  MyChallenges create() => MyChallenges();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<ChallengeProgressItem> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<ChallengeProgressItem>>(value),
+    );
+  }
+}
+
+String _$myChallengesHash() => r'2f96a7a00a779051cb31893589424dacde77368e';
+
+/// Loads `/api/challenges/my` — the current user's own challenge progress
+/// (active, completed, abandoned, expired) — and owns join/leave, which
+/// always re-syncs both this and [SuggestedChallenges] afterward so a
+/// just-joined challenge disappears from "Suggested" and appears under
+/// "My active challenges" without a manual refresh.
+
+abstract class _$MyChallenges extends $Notifier<List<ChallengeProgressItem>> {
+  List<ChallengeProgressItem> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<List<ChallengeProgressItem>, List<ChallengeProgressItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                List<ChallengeProgressItem>,
+                List<ChallengeProgressItem>
+              >,
+              List<ChallengeProgressItem>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// Loads `/api/posts/:id/comments` for one thread.
 
 @ProviderFor(ForumComments)

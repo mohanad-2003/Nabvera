@@ -1,11 +1,11 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/core/widgets/primary_button.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
-import 'package:fitness_app/features/workout/domain/exercise_detail_models.dart';
-import 'package:fitness_app/features/workout/presentation/widgets/exercise_video_player.dart';
-import 'package:fitness_app/features/workout/presentation/widgets/workout_header.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/presentation/widgets/exercise_video_player.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 
 /// Generic exercise video/detail screen — replaces the legacy squat_page,

@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/theme/app_colors.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
 
 /// Weekly day picker: 7 circular chips (Mon–Sun), neon-filled when selected.
