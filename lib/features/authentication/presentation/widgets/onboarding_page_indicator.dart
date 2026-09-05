@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// Premium capsule page indicator: the active dot stretches into a
 /// gradient-filled pill while inactive dots stay small, neutral circles.

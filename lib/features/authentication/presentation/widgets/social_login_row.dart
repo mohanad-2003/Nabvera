@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/network/app_icons.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/smart_image.dart';
@@ -38,7 +37,7 @@ class SocialLoginRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SmartImage(AppIcons.gmail, width: 22, height: 22),
+              SmartImage('assets/png/google.png', width: 22, height: 22),
               const SizedBox(width: 10),
               Text(
                 l10n.authContinueWithGoogle,

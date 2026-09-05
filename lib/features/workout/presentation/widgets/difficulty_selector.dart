@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
 
 /// Row of selectable difficulty pills (Beginner / Intermediate / Advanced)

@@ -1,4 +1,4 @@
-import 'package:fitness_app/core/routing/app_routes.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
 
 /// Pure decision function behind the Admin console's structural route
 /// guard — kept free of `GoRouterState`/`BuildContext` so it's directly

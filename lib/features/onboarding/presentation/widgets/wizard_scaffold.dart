@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_background.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_header.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_background.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_header.dart';
 import 'package:flutter/material.dart';
 
 /// Common layout for every profile-setup wizard step: gradient background,

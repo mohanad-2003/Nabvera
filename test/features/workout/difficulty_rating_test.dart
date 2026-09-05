@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/workout/domain/difficulty_rating.dart';
+import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

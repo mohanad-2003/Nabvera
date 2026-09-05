@@ -1,7 +1,7 @@
-import 'package:fitness_app/features/profile/data/user_repository.dart';
-import 'package:fitness_app/features/profile/presentation/providers/profile_controller.dart';
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/features/profile/data/user_repository.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'workout_controller.g.dart';

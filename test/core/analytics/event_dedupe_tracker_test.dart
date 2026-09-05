@@ -1,4 +1,4 @@
-import 'package:fitness_app/core/analytics/event_dedupe_tracker.dart';
+import 'package:nabvera/core/analytics/event_dedupe_tracker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

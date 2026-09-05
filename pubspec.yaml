@@ -1,4 +1,4 @@
-name: fitness_app
+name: nabvera
 description: "A new Flutter project."
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -51,6 +51,7 @@ flutter:
   assets:
       - assets/
       - assets/onboarding/
+      - assets/png/
       - assets/bottom/home.png
       - assets/bottom/workout.png
       - assets/bottom/nutrition.png

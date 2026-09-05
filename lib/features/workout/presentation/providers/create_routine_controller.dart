@@ -1,5 +1,5 @@
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
-import 'package:fitness_app/features/workout/domain/workout_models.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'create_routine_controller.g.dart';

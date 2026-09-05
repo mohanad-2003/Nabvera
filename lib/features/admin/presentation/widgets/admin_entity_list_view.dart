@@ -1,9 +1,9 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/app_text_field.dart';
-import 'package:fitness_app/features/admin/presentation/widgets/admin_content_card.dart';
-import 'package:fitness_app/features/admin/presentation/widgets/admin_empty_state.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/app_text_field.dart';
+import 'package:nabvera/features/admin/presentation/widgets/admin_content_card.dart';
+import 'package:nabvera/features/admin/presentation/widgets/admin_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,10 +1,10 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/glow_orb.dart';
-import 'package:fitness_app/core/widgets/primary_button.dart';
-import 'package:fitness_app/core/widgets/top_icon_actions.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/glow_orb.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/core/widgets/top_icon_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

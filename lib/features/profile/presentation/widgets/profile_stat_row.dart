@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/features/profile/domain/profile_models.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme_extension.dart';

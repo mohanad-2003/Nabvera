@@ -2079,6 +2079,115 @@ class AppLocalizationsEn extends AppLocalizations {
       'Loving the new routine builder — put together a full upper-body session in under two minutes.';
 
   @override
+  String get communitySuggestedForYou => 'Suggested for you';
+
+  @override
+  String get communityMyActiveChallenges => 'My active challenges';
+
+  @override
+  String get communityCompletedChallenges => 'Completed challenges';
+
+  @override
+  String get communityNoSuggestions =>
+      'No suggestions right now — check back after your next workout.';
+
+  @override
+  String get communityNoActiveChallenges =>
+      'You haven\'t joined any challenges yet.';
+
+  @override
+  String get communityNoCompletedChallenges => 'No completed challenges yet.';
+
+  @override
+  String get communityJoinChallenge => 'Join';
+
+  @override
+  String get communityLeaveChallenge => 'Leave';
+
+  @override
+  String get communityChallengeCompletedBadge => 'Completed';
+
+  @override
+  String communityChallengeProgressLabel(int value, int target) {
+    return '$value / $target';
+  }
+
+  @override
+  String communityChallengeGoalWorkoutsCount(int count) {
+    return 'Complete $count workouts';
+  }
+
+  @override
+  String communityChallengeGoalActiveMinutes(int minutes) {
+    return 'Reach $minutes active minutes';
+  }
+
+  @override
+  String communityChallengeGoalWorkoutStreak(int days) {
+    return 'Train $days days in a row';
+  }
+
+  @override
+  String communityChallengeGoalWeeklyConsistency(int count) {
+    return 'Complete $count workouts this week';
+  }
+
+  @override
+  String get communityChallengeGoalHeading => 'Your goal';
+
+  @override
+  String communityChallengeTimeLeftDays(int days) {
+    return '$days days left';
+  }
+
+  @override
+  String communityChallengeTimeLeftHours(int hours) {
+    return '${hours}h left';
+  }
+
+  @override
+  String get communityChallengeExpired => 'Window expired';
+
+  @override
+  String get communityChallengeReasonWhy => 'Why this challenge?';
+
+  @override
+  String get communityChallengeReasonGoodStartingChallenge =>
+      'A great first challenge to build momentum';
+
+  @override
+  String get communityChallengeReasonBuildsOnCurrentStreak =>
+      'Builds on your current streak';
+
+  @override
+  String get communityChallengeReasonConsistentRecentActivity =>
+      'Matches how consistently you\'ve been training';
+
+  @override
+  String get communityChallengeReasonMatchesActivityLevel =>
+      'Matches your current activity level';
+
+  @override
+  String get communityYourBadges => 'Your badges';
+
+  @override
+  String get communityBadgeFirstChallenge => 'First Challenge';
+
+  @override
+  String get communityBadgeConsistencyBuilder => 'Consistency Builder';
+
+  @override
+  String get communityBadgeWeeklyWinner => 'Weekly Winner';
+
+  @override
+  String get communityChallengeJoinFailed =>
+      'Couldn\'t join this challenge. Try again.';
+
+  @override
+  String get communityChallengeLeaveFailed =>
+      'Couldn\'t leave this challenge. Try again.';
+
+  @override
   String get profileMenuAdminConsole => 'Admin Console';
 
   @override
@@ -2309,4 +2418,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminFieldDuration => 'Duration';
+
+  @override
+  String get adminFieldChallengeType => 'Challenge type';
+
+  @override
+  String get adminFieldTargetValue => 'Target value';
+
+  @override
+  String get adminChallengeTypeNone => 'Not tracked (view-only)';
+
+  @override
+  String get adminChallengeTypeWorkoutsCount => 'Workouts completed';
+
+  @override
+  String get adminChallengeTypeActiveMinutes => 'Active minutes';
+
+  @override
+  String get adminChallengeTypeWorkoutStreak => 'Workout streak (days)';
+
+  @override
+  String get adminChallengeTypeWeeklyConsistency => 'Weekly consistency';
 }

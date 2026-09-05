@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/profile/domain/profile_models.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

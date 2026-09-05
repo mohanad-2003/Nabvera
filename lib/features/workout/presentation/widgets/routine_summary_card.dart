@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
 class _StatData {

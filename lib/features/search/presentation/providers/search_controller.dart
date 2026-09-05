@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:fitness_app/features/nutrition/data/nutrition_repository.dart';
-import 'package:fitness_app/features/search/domain/search_models.dart';
-import 'package:fitness_app/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
+import 'package:nabvera/features/search/domain/search_models.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_controller.g.dart';

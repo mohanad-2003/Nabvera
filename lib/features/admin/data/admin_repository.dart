@@ -1,4 +1,4 @@
-import 'package:fitness_app/core/network/api_client.dart';
+import 'package:nabvera/core/network/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'admin_repository.g.dart';

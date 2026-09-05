@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:fitness_app/features/authentication/data/firebase_auth_service.dart';
+import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

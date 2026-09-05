@@ -1,12 +1,12 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/app_text_field.dart';
-import 'package:fitness_app/core/widgets/premium_scaffold.dart';
-import 'package:fitness_app/core/widgets/primary_button.dart';
-import 'package:fitness_app/features/admin/data/admin_repository.dart';
-import 'package:fitness_app/features/admin/presentation/providers/admin_content_controllers.dart';
-import 'package:fitness_app/features/admin/presentation/widgets/admin_page_header.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/app_text_field.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/features/admin/data/admin_repository.dart';
+import 'package:nabvera/features/admin/presentation/providers/admin_content_controllers.dart';
+import 'package:nabvera/features/admin/presentation/widgets/admin_page_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +23,17 @@ class AdminChallengeEditorPage extends ConsumerStatefulWidget {
       _AdminChallengeEditorPageState();
 }
 
+/// Challenge types the app can actually track progress for — see
+/// `backend/src/utils/challengeProgressHelpers.js`'s `CHALLENGE_TYPES`.
+/// Kept in sync manually since this is the only Flutter call site that
+/// needs the raw list (everywhere else reads `type` from the backend).
+const _kChallengeTypes = [
+  'workouts_count',
+  'active_minutes',
+  'workout_streak',
+  'weekly_consistency',
+];
+
 class _AdminChallengeEditorPageState
     extends ConsumerState<AdminChallengeEditorPage> {
   final _name = TextEditingController();
@@ -30,8 +41,13 @@ class _AdminChallengeEditorPageState
   final _imageUrl = TextEditingController();
   final _durationLabel = TextEditingController();
   final _caloriesLabel = TextEditingController();
+  final _targetValue = TextEditingController();
   bool _isFeatured = false;
   bool _saving = false;
+
+  // `null` keeps the challenge untrackable (view-only, no join) — an admin
+  // opts in to progress tracking explicitly by picking a type.
+  String? _type;
 
   @override
   void dispose() {
@@ -40,12 +56,14 @@ class _AdminChallengeEditorPageState
     _imageUrl.dispose();
     _durationLabel.dispose();
     _caloriesLabel.dispose();
+    _targetValue.dispose();
     super.dispose();
   }
 
   Future<void> _save(AppLocalizations l10n) async {
     if (_name.text.trim().isEmpty) return;
     setState(() => _saving = true);
+    final targetValue = int.tryParse(_targetValue.text.trim());
     final payload = <String, dynamic>{
       'name': _name.text.trim(),
       'details': _details.text.trim(),
@@ -53,6 +71,8 @@ class _AdminChallengeEditorPageState
       'durationLabel': _durationLabel.text.trim(),
       'caloriesLabel': _caloriesLabel.text.trim(),
       'isFeatured': _isFeatured,
+      if (_type != null) 'type': _type,
+      if (_type != null && targetValue != null) 'targetValue': targetValue,
     };
     try {
       await ref
@@ -68,6 +88,21 @@ class _AdminChallengeEditorPageState
       ).showSnackBar(SnackBar(content: Text(l10n.adminSaveFailed)));
     } finally {
       if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  String _challengeTypeLabel(AppLocalizations l10n, String type) {
+    switch (type) {
+      case 'workouts_count':
+        return l10n.adminChallengeTypeWorkoutsCount;
+      case 'active_minutes':
+        return l10n.adminChallengeTypeActiveMinutes;
+      case 'workout_streak':
+        return l10n.adminChallengeTypeWorkoutStreak;
+      case 'weekly_consistency':
+        return l10n.adminChallengeTypeWeeklyConsistency;
+      default:
+        return type;
     }
   }
 
@@ -138,6 +173,38 @@ class _AdminChallengeEditorPageState
                   value: _isFeatured,
                   onChanged: (value) => setState(() => _isFeatured = value),
                 ),
+                const SizedBox(height: AppSpacing.md),
+                // Optional: a challenge stays view-only until both a type
+                // and a target are set — see `Challenge.type`'s doc
+                // comment on the backend for why this can't be required.
+                DropdownButtonFormField<String?>(
+                  initialValue: _type,
+                  decoration: InputDecoration(
+                    labelText: l10n.adminFieldChallengeType,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(l10n.adminChallengeTypeNone),
+                    ),
+                    for (final type in _kChallengeTypes)
+                      DropdownMenuItem(
+                        value: type,
+                        child: Text(_challengeTypeLabel(l10n, type)),
+                      ),
+                  ],
+                  onChanged: (value) => setState(() => _type = value),
+                ),
+                if (_type != null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: _targetValue,
+                    label: l10n.adminFieldTargetValue,
+                    flat: true,
+                    keyboardType: TextInputType.number,
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   label: l10n.adminSave,

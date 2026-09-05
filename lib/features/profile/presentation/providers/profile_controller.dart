@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:fitness_app/core/notifications/push_notification_service.dart';
-import 'package:fitness_app/features/profile/data/user_repository.dart';
-import 'package:fitness_app/features/profile/domain/profile_models.dart';
+import 'package:nabvera/core/notifications/push_notification_service.dart';
+import 'package:nabvera/features/profile/data/user_repository.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_controller.g.dart';

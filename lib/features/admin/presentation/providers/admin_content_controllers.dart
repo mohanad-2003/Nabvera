@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/admin/data/admin_repository.dart';
+import 'package:nabvera/features/admin/data/admin_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'admin_content_controllers.g.dart';
@@ -37,7 +37,12 @@ class AdminWorkoutsController extends _$AdminWorkoutsController {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await _fetchEntityList(ref, _entity);
+    final result = await _fetchEntityList(ref, _entity);
+    // Navigating away from the Admin list while this fetch is in flight
+    // disposes this autoDispose provider before `await` resumes here —
+    // writing to `state` after that throws UnmountedRefException.
+    if (!ref.mounted) return;
+    state = result;
   }
 
   Future<void> deleteItem(String id) async {
@@ -58,7 +63,12 @@ class AdminExercisesController extends _$AdminExercisesController {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await _fetchEntityList(ref, _entity);
+    final result = await _fetchEntityList(ref, _entity);
+    // Navigating away from the Admin list while this fetch is in flight
+    // disposes this autoDispose provider before `await` resumes here —
+    // writing to `state` after that throws UnmountedRefException.
+    if (!ref.mounted) return;
+    state = result;
   }
 
   Future<void> deleteItem(String id) async {
@@ -79,7 +89,12 @@ class AdminRecipesController extends _$AdminRecipesController {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await _fetchEntityList(ref, _entity);
+    final result = await _fetchEntityList(ref, _entity);
+    // Navigating away from the Admin list while this fetch is in flight
+    // disposes this autoDispose provider before `await` resumes here —
+    // writing to `state` after that throws UnmountedRefException.
+    if (!ref.mounted) return;
+    state = result;
   }
 
   Future<void> deleteItem(String id) async {
@@ -100,7 +115,12 @@ class AdminArticlesController extends _$AdminArticlesController {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await _fetchEntityList(ref, _entity);
+    final result = await _fetchEntityList(ref, _entity);
+    // Navigating away from the Admin list while this fetch is in flight
+    // disposes this autoDispose provider before `await` resumes here —
+    // writing to `state` after that throws UnmountedRefException.
+    if (!ref.mounted) return;
+    state = result;
   }
 
   Future<void> deleteItem(String id) async {
@@ -121,7 +141,12 @@ class AdminChallengesController extends _$AdminChallengesController {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await _fetchEntityList(ref, _entity);
+    final result = await _fetchEntityList(ref, _entity);
+    // Navigating away from the Admin list while this fetch is in flight
+    // disposes this autoDispose provider before `await` resumes here —
+    // writing to `state` after that throws UnmountedRefException.
+    if (!ref.mounted) return;
+    state = result;
   }
 
   Future<void> deleteItem(String id) async {
@@ -182,6 +207,12 @@ class AdminDashboardController extends _$AdminDashboardController {
       count(AdminEntity.article),
       count(AdminEntity.challenge),
     ]);
+    // The user may have navigated away from the Admin Dashboard while these
+    // requests were in flight — this provider is autoDispose, so it can
+    // already be torn down by the time `await` resumes here. Writing to
+    // `state` after that throws UnmountedRefException instead of silently
+    // no-op'ing, so this guard is required, not just defensive.
+    if (!ref.mounted) return;
     state = AdminDashboardStats(
       workoutCount: counts[0],
       exerciseCount: counts[1],

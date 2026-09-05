@@ -1,20 +1,20 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/routing/app_routes.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/utils/validators.dart';
-import 'package:fitness_app/core/widgets/fade_slide_in.dart';
-import 'package:fitness_app/core/widgets/primary_button.dart';
-import 'package:fitness_app/features/authentication/data/biometric_service.dart';
-import 'package:fitness_app/features/authentication/domain/auth_error_translator.dart';
-import 'package:fitness_app/features/authentication/presentation/providers/signup_controller.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_background.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_divider_label.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_header.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_logo_hero.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/auth_switch_link.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/password_strength_meter.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/premium_text_field.dart';
-import 'package:fitness_app/features/authentication/presentation/widgets/social_login_row.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/utils/validators.dart';
+import 'package:nabvera/core/widgets/fade_slide_in.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/features/authentication/data/biometric_service.dart';
+import 'package:nabvera/features/authentication/domain/auth_error_translator.dart';
+import 'package:nabvera/features/authentication/presentation/providers/signup_controller.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_background.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_divider_label.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_header.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_logo_hero.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/auth_switch_link.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/password_strength_meter.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/premium_text_field.dart';
+import 'package:nabvera/features/authentication/presentation/widgets/social_login_row.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +56,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 padding: const EdgeInsets.fromLTRB(24, 4, 24, 0),
                 child: Column(
                   children: [
-                    const FadeSlideIn(child: AuthLogoHero(logoSize: 88)),
+                    const FadeSlideIn(child: AuthLogoHero(logoSize: 120)),
                     const SizedBox(height: 18),
                     FadeSlideIn(
                       delay: const Duration(milliseconds: 60),

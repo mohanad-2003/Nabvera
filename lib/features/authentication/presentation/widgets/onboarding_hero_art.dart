@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fitness_app/core/widgets/glow_orb.dart';
+import 'package:nabvera/core/widgets/glow_orb.dart';
 
 /// Abstract, fully vector hero visual for an onboarding slide: a gradient
 /// medallion holding the slide's icon, floating inside a slowly rotating

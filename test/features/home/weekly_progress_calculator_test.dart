@@ -1,4 +1,4 @@
-import 'package:fitness_app/features/home/domain/weekly_progress_calculator.dart';
+import 'package:nabvera/features/home/domain/weekly_progress_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

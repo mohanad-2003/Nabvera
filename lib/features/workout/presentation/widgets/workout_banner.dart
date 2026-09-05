@@ -1,6 +1,6 @@
-import 'package:fitness_app/core/theme/app_colors.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
 /// Motivational banner: fitness photo background, dark scrim, kicker title +
@@ -27,8 +27,12 @@ class WorkoutBanner extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: radius,
+        // `assets/workout.png` is the tiny generic "no image" placeholder
+        // icon (see `SmartImage`'s fallback) — stretched full-bleed here it
+        // read as a missing photo rather than the motivational banner this
+        // is meant to be, so use an actual gym photo instead.
         image: const DecorationImage(
-          image: AssetImage('assets/workout.png'),
+          image: AssetImage('assets/cardio.png'),
           fit: BoxFit.cover,
         ),
         border: Border.all(color: ext.glassBorder),

@@ -1,9 +1,9 @@
-import 'package:fitness_app/core/localization/generated/app_localizations.dart';
-import 'package:fitness_app/core/responsive/app_responsive.dart';
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
-import 'package:fitness_app/features/nutrition/domain/nutrition_models.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/responsive/app_responsive.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

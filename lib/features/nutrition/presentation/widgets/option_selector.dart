@@ -1,5 +1,5 @@
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/selectable_option_card.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/selectable_option_card.dart';
 import 'package:flutter/material.dart';
 
 /// Redesigned radio-style option list, previously duplicated six times

@@ -1,7 +1,7 @@
-import 'package:fitness_app/core/theme/app_spacing.dart';
-import 'package:fitness_app/core/theme/app_theme_extension.dart';
-import 'package:fitness_app/core/widgets/pressable_scale.dart';
-import 'package:fitness_app/core/widgets/smart_image.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
 /// Premium vertical recipe card: large image with a glass gradient overlay,
