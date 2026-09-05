@@ -3,6 +3,19 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Required for the biometric-unlock option (local_auth). -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <!-- Required on Android 13+ (API 33) to actually show local workout-
+         reminder notifications (flutter_local_notifications); requested at
+         runtime, not just declared — see workout_reminder_scheduler.dart. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Lets a scheduled reminder survive a device reboot. Only useful
+         alongside the boot receiver below — without it, reminders are
+         still re-synced every time the app is opened (see
+         `syncWorkoutReminders`), just not while the phone stays off. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Deliberately NOT requesting SCHEDULE_EXACT_ALARM/USE_EXACT_ALARM:
+         reminders are scheduled inexact (see AndroidScheduleMode in
+         workout_reminder_scheduler.dart) so no extra "Alarms & reminders"
+         permission screen is ever shown to the user for a fitness reminder. -->
     <application
         android:label="Nabvera"
         android:name="${applicationName}"
@@ -34,6 +47,18 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- flutter_local_notifications: fires a scheduled reminder and
+             re-schedules any still-pending ones after a reboot. Both
+             exported="false" — nothing outside this app ever triggers them
+             directly. -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

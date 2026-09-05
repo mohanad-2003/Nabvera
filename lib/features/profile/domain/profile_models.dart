@@ -24,6 +24,13 @@ class UserProfile {
     this.favoriteWorkoutIds = const [],
     this.favoriteRecipeIds = const [],
     this.role = 'user',
+    this.workoutDays = const [],
+    this.workoutReminderTime,
+    this.reminderEnabled = true,
+    this.quietHoursEnabled = false,
+    this.quietHoursStart,
+    this.quietHoursEnd,
+    this.challengeRemindersEnabled = true,
   });
 
   /// Backend `User._id` — empty for [UserProfile.empty].
@@ -65,6 +72,23 @@ class UserProfile {
   /// UI as the *only* protection — the guard blocks the route itself.
   final String role;
   bool get isAdmin => role == 'admin';
+
+  // --- Workout schedule & reminders (Phase 5) ---------------------------
+  //
+  // Backend day codes ('mon'..'sun', same convention as a Routine's own
+  // days — see `create_routine_controller.dart`), kept as raw strings here
+  // (not `Set<Weekday>`) so this model has no dependency on the workout
+  // feature; `workout_schedule.dart`'s `workoutDaysFromApi`/`workoutDaysToApi`
+  // do the conversion at the edges (profile controller / edit form).
+  final List<String> workoutDays;
+
+  /// `"HH:mm"` 24-hour, or `null` if the user hasn't picked a time yet.
+  final String? workoutReminderTime;
+  final bool reminderEnabled;
+  final bool quietHoursEnabled;
+  final String? quietHoursStart;
+  final String? quietHoursEnd;
+  final bool challengeRemindersEnabled;
 
   static const empty = UserProfile(
     name: '',
@@ -115,6 +139,14 @@ class UserProfile {
       favoriteWorkoutIds: _idList(json['favoriteWorkouts']),
       favoriteRecipeIds: _idList(json['favoriteRecipes']),
       role: (json['role'] as String?) ?? 'user',
+      workoutDays: _stringList(json['workoutDays']),
+      workoutReminderTime: json['workoutReminderTime'] as String?,
+      reminderEnabled: (json['reminderEnabled'] as bool?) ?? true,
+      quietHoursEnabled: (json['quietHoursEnabled'] as bool?) ?? false,
+      quietHoursStart: json['quietHoursStart'] as String?,
+      quietHoursEnd: json['quietHoursEnd'] as String?,
+      challengeRemindersEnabled:
+          (json['challengeRemindersEnabled'] as bool?) ?? true,
     );
   }
 

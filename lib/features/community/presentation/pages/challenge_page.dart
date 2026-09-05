@@ -1,32 +1,28 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/analytics/analytics_service.dart';
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../../core/widgets/smart_image.dart';
-import '../../../../core/widgets/top_icon_actions.dart';
-import '../../domain/community_models.dart';
-import '../providers/community_controller.dart';
-import '../widgets/challenge_progress_card.dart';
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/core/widgets/top_icon_actions.dart';
+import 'package:nabvera/features/community/domain/community_models.dart';
+import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
+import 'package:nabvera/features/community/presentation/widgets/challenge_progress_card.dart';
 
 class ChallengePage extends ConsumerStatefulWidget {
   const ChallengePage({super.key, required this.challenge});
 
   final ChallengeItem challenge;
-
   @override
   ConsumerState<ChallengePage> createState() => _ChallengePageState();
 }
 
 class _ChallengePageState extends ConsumerState<ChallengePage> {
   bool _busy = false;
-
   @override
   void initState() {
     super.initState();
@@ -34,11 +30,11 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
     // additionally protects against rebuild-triggered re-firing this
     // session, matching the pattern used for recommendation_viewed.
     unawaited(
-      ref
-          .read(analyticsServiceProvider)
-          .logEvent(AnalyticsEvent.challengeViewed, {
-            'challengeId': widget.challenge.id,
-          }, widget.challenge.id),
+      ref.read(analyticsServiceProvider).logEvent(
+        AnalyticsEvent.challengeViewed,
+        {'challengeId': widget.challenge.id},
+        widget.challenge.id,
+      ),
     );
   }
 
@@ -47,18 +43,17 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
     try {
       await ref.read(myChallengesProvider.notifier).join(widget.challenge.id);
       unawaited(
-        ref
-            .read(analyticsServiceProvider)
-            .logEvent(AnalyticsEvent.challengeJoined, {
-              'challengeId': widget.challenge.id,
-            }),
+        ref.read(analyticsServiceProvider).logEvent(
+          AnalyticsEvent.challengeJoined,
+          {'challengeId': widget.challenge.id},
+        ),
       );
     } catch (_) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.communityChallengeJoinFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.communityChallengeJoinFailed)),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -69,11 +64,10 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
     try {
       await ref.read(myChallengesProvider.notifier).leave(widget.challenge.id);
       unawaited(
-        ref
-            .read(analyticsServiceProvider)
-            .logEvent(AnalyticsEvent.challengeLeft, {
-              'challengeId': widget.challenge.id,
-            }),
+        ref.read(analyticsServiceProvider).logEvent(
+          AnalyticsEvent.challengeLeft,
+          {'challengeId': widget.challenge.id},
+        ),
       );
     } catch (_) {
       if (!mounted) return;
@@ -297,10 +291,11 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                                               ? const SizedBox(
                                                 width: 20,
                                                 height: 20,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: AppColors.seedInk,
-                                                ),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: AppColors.seedInk,
+                                                    ),
                                               )
                                               : Text(
                                                 isCompleted

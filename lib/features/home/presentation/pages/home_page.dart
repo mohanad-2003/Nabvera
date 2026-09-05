@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:nabvera/core/analytics/analytics_service.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
@@ -10,8 +12,11 @@ import 'package:nabvera/core/widgets/user_avatar.dart';
 import 'package:nabvera/features/home/domain/home_models.dart';
 import 'package:nabvera/features/home/presentation/providers/home_controller.dart';
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/home/presentation/widgets/workout_schedule_card.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +43,15 @@ class HomePage extends ConsumerWidget {
     final profile = ref.watch(currentUserProfileProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+    // Fires once per sign-in (empty -> loaded), re-syncing local workout
+    // reminders against whatever schedule is on the freshly-loaded
+    // profile — the "app just opened" trigger alongside the explicit ones
+    // in `edit_profile_page.dart`/`category_detail_page.dart`.
+    ref.listen<UserProfile>(currentUserProfileProvider, (previous, next) {
+      if ((previous == null || previous.id.isEmpty) && next.id.isNotEmpty) {
+        unawaited(syncWorkoutReminders(ref));
+      }
+    });
     // AppBottomNav floats over the body (Scaffold.extendBody) at ~66dp tall
     // plus its own bottom safe-area margin — pad the list an extra amount
     // beyond that so the last section never sits under the glass pill.
@@ -71,6 +85,11 @@ class HomePage extends ConsumerWidget {
                     onOpen: () => _openTodayWorkout(context, ref),
                     onSwitchTo: (id) => _switchToAlternative(context, ref, id),
                   ),
+                ),
+                const SizedBox(height: 18),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 90),
+                  child: const WorkoutScheduleCard(),
                 ),
                 const SizedBox(height: 18),
                 FadeSlideIn(
@@ -398,7 +417,6 @@ class _TodayHeroCard extends ConsumerWidget {
     final title = featured?.title ?? l10n.homeHeroTitle;
     final duration = featured?.durationMinutes ?? 42;
     final calories = featured?.estimatedCalories ?? 380;
-    final moves = featured?.exerciseCount ?? 8;
     final profile = ref.watch(currentUserProfileProvider);
     final level = switch (featured?.difficulty) {
       'intermediate' => l10n.workoutLevelIntermediate,
@@ -423,11 +441,11 @@ class _TodayHeroCard extends ConsumerWidget {
     return PressableScale(
       child: InkWell(
         onTap: onOpen,
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(28),
         child: Container(
-          padding: const EdgeInsets.all(22),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(34),
+            borderRadius: BorderRadius.circular(28),
             gradient: const LinearGradient(
               colors: [AppColors.seedViolet, AppColors.seedInk],
               begin: Alignment.topLeft,
@@ -449,7 +467,7 @@ class _TodayHeroCard extends ConsumerWidget {
                 right: -30,
                 child: Icon(
                   Icons.fitness_center_rounded,
-                  size: 160,
+                  size: 132,
                   color: Colors.white.withValues(alpha: 0.06),
                 ),
               ),
@@ -458,30 +476,19 @@ class _TodayHeroCard extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: _StatusPill(
-                          label:
-                              isCompleted
-                                  ? l10n.homeHeroCompletionPercent(100)
-                                  : l10n.homeTodayPlanLabel,
-                          icon:
-                              isCompleted
-                                  ? Icons.check_circle_rounded
-                                  : Icons.bolt_rounded,
-                        ),
-                      ),
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: ext.accentGradient,
-                        ),
-                        child: Icon(ctaIcon, color: ext.onAccent),
+                      _StatusPill(
+                        label:
+                            isCompleted
+                                ? l10n.homeHeroCompletionPercent(100)
+                                : l10n.homeTodayPlanLabel,
+                        icon:
+                            isCompleted
+                                ? Icons.check_circle_rounded
+                                : Icons.bolt_rounded,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 14),
                   Text(
                     title,
                     maxLines: 2,
@@ -491,70 +498,67 @@ class _TodayHeroCard extends ConsumerWidget {
                       height: 1.02,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.homeHeroSubtitle(duration, moves, level),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.72),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     _recommendationReason(
                       l10n,
                       featured?.reasonCode,
                       profile.availableMinutes,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.68),
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 11,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.09),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.10),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _HeroChip(
+                            icon: Icons.timer_outlined,
+                            label: l10n.homeHeroDuration(duration),
+                          ),
+                        ),
+                        const _HeroMetricDivider(),
+                        Expanded(
+                          child: _HeroChip(
+                            icon: Icons.local_fire_department_outlined,
+                            label: l10n.homeHeroCalories(calories),
+                          ),
+                        ),
+                        const _HeroMetricDivider(),
+                        Expanded(
+                          child: _HeroChip(
+                            icon: Icons.signal_cellular_alt_rounded,
+                            label: level,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   if (featured?.alternative != null) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     _AlternativeSuggestion(
                       alternative: featured!.alternative!,
                       onSwitchTo: onSwitchTo,
                     ),
                   ],
-                  const SizedBox(height: 18),
-                  if (!isCompleted) ...[
-                    TextButton.icon(
-                      onPressed:
-                          () =>
-                              ref
-                                  .read(
-                                    homeFeaturedWorkoutControllerProvider
-                                        .notifier,
-                                  )
-                                  .chooseEasierWorkout(),
-                      icon: const Icon(Icons.tune_rounded, size: 17),
-                      label: Text(l10n.homeHeroTooHard),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white.withValues(alpha: 0.86),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                  ],
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 8,
-                    children: [
-                      _HeroChip(
-                        icon: Icons.timer_outlined,
-                        label: l10n.homeHeroDuration(duration),
-                      ),
-                      _HeroChip(
-                        icon: Icons.local_fire_department_outlined,
-                        label: l10n.homeHeroCalories(calories),
-                      ),
-                      _HeroChip(
-                        icon: Icons.checklist_rounded,
-                        label: l10n.homeHeroExercises(moves),
-                      ),
-                    ],
-                  ),
                   if (hasStarted && !isCompleted) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(999),
                       child: LinearProgressIndicator(
@@ -564,34 +568,73 @@ class _TodayHeroCard extends ConsumerWidget {
                         valueColor: AlwaysStoppedAnimation(ext.accentGlow),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.homeHeroCompletionPercent((progress * 100).round()),
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
                   ],
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 14),
                   Row(
                     children: [
+                      if (!isCompleted) ...[
+                        Tooltip(
+                          message: l10n.homeHeroTooHard,
+                          child: Semantics(
+                            button: true,
+                            label: l10n.homeHeroTooHard,
+                            child: InkWell(
+                              onTap:
+                                  () =>
+                                      ref
+                                          .read(
+                                            homeFeaturedWorkoutControllerProvider
+                                                .notifier,
+                                          )
+                                          .chooseEasierWorkout(),
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.10),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.16),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.tune_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          height: 48,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             gradient: ext.accentGradient,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Text(
-                            ctaLabel,
-                            style: TextStyle(
-                              color: ext.onAccent,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 15,
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(ctaIcon, color: ext.onAccent, size: 20),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  ctaLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: ext.onAccent,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -710,31 +753,38 @@ class _HeroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: Colors.white.withValues(alpha: 0.85)),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 15, color: Colors.white.withValues(alpha: 0.78)),
+        const SizedBox(width: 5),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.86),
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeroMetricDivider extends StatelessWidget {
+  const _HeroMetricDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: 22,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      color: Colors.white.withValues(alpha: 0.14),
     );
   }
 }
@@ -1497,99 +1547,89 @@ class _WeeklyProgressCard extends ConsumerWidget {
     );
     final maxMinutes = minutesByDay.fold(0, (max, m) => m > max ? m : max);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: ext.glassBorder),
-        boxShadow: ext.cardShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.homeWeeklyProgress,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+    // Flat, on-page section — no boxed card — matching `_MetricGrid`/
+    // `_RecoveryMapRow` just above it. A thin top divider is enough to
+    // separate it from the recommendations row before it.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(color: ext.glassBorder, height: 1),
+        const SizedBox(height: 22),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.homeWeeklyProgress,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.homeWeeklyGoalSummary(
+                      workoutsThisWeek,
+                      _kWeeklyWorkoutGoal,
+                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 68,
+              height: 68,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                    value: goalProgress,
+                    strokeWidth: 7,
+                    strokeCap: StrokeCap.round,
+                    backgroundColor: ext.glassBorder,
+                    valueColor: AlwaysStoppedAnimation(ext.accentGlow),
+                  ),
+                  Center(
+                    child: Text(
+                      '$workoutsThisWeek/$_kWeeklyWorkoutGoal',
+                      style: TextStyle(
                         color: ext.textPrimary,
+                        fontSize: 14,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.homeWeeklyGoalSummary(
-                        workoutsThisWeek,
-                        _kWeeklyWorkoutGoal,
-                      ),
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 68,
-                height: 68,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CircularProgressIndicator(
-                      value: goalProgress,
-                      strokeWidth: 7,
-                      strokeCap: StrokeCap.round,
-                      backgroundColor: ext.glassBorder,
-                      valueColor: AlwaysStoppedAnimation(ext.accentGlow),
-                    ),
-                    Center(
-                      child: Text(
-                        '$workoutsThisWeek/$_kWeeklyWorkoutGoal',
-                        style: TextStyle(
-                          color: ext.textPrimary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                  ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 78,
+          child: Row(
+            children: [
+              for (var i = 0; i < minutesByDay.length; i++)
+                Expanded(
+                  child: _WeeklyDayTile(
+                    label: days[i],
+                    minutes: minutesByDay[i],
+                    maxMinutes: maxMinutes,
+                    isToday: i == todayIndex,
+                    ext: ext,
+                    minuteLabel: l10n.homeUnitMin,
+                  ),
                 ),
-              ),
             ],
           ),
-          const SizedBox(height: 22),
-          Container(
-            height: 88,
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-            decoration: BoxDecoration(
-              color: ext.cardColor.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: ext.glassBorder),
-            ),
-            child: Row(
-              children: [
-                for (var i = 0; i < minutesByDay.length; i++)
-                  Expanded(
-                    child: _WeeklyDayTile(
-                      label: days[i],
-                      minutes: minutesByDay[i],
-                      maxMinutes: maxMinutes,
-                      isToday: i == todayIndex,
-                      ext: ext,
-                      minuteLabel: l10n.homeUnitMin,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const _WeeklyProgressStatsSection(),
-        ],
-      ),
+        ),
+        const _WeeklyProgressStatsSection(),
+      ],
     );
   }
 }
@@ -1822,7 +1862,7 @@ class _ArticleCard extends StatelessWidget {
             ),
             alignment: Alignment.bottomLeft,
             child: Text(
-              article.description,
+              article.localizedTitle(context),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(

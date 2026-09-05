@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/widgets/app_text_field.dart';
+import 'package:nabvera/core/widgets/app_text_field.dart';
 
 class AuthPasswordField extends StatefulWidget {
   const AuthPasswordField({

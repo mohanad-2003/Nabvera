@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/localization/locale_controller.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/theme/theme_controller.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/localization/locale_controller.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/theme_controller.dart';
 
 /// Shared gradient backdrop for the auth/onboarding flow with theme-aware
 /// surfaces and locale-aware preference controls.

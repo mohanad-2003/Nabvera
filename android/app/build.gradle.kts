@@ -16,6 +16,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // Required by flutter_local_notifications (v10+) for its scheduled
+        // -notification backward compatibility — see its README's
+        // "desugaring" section. Needed even though we schedule inexact
+        // reminders, not just exact ones.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -27,8 +32,9 @@ android {
         applicationId = "com.example.nabvera"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        // local_auth's BiometricPrompt integration requires API 23+.
-        minSdk = maxOf(flutter.minSdkVersion, 23)
+        // local_auth's BiometricPrompt integration requires API 23+;
+        // flutter_local_notifications (workout reminders) requires 24+.
+        minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -45,4 +51,10 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Required alongside isCoreLibraryDesugaringEnabled above — see the
+    // matching comment on that line.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

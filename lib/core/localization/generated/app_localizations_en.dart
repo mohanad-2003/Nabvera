@@ -617,6 +617,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeArticlesAndTips => 'Articles & Tips';
 
   @override
+  String get articleCategoryNutrition => 'Nutrition';
+
+  @override
+  String get articleCategoryWorkout => 'Workout';
+
+  @override
+  String get articleCategoryRecovery => 'Recovery';
+
+  @override
+  String get articleCategoryMindset => 'Mindset';
+
+  @override
+  String articleReadTimeMinutes(int minutes) {
+    return '$minutes min read';
+  }
+
+  @override
   String get homeHeroTitle => 'Upper Body Strength';
 
   @override
@@ -1208,6 +1225,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'A few minutes now still counts — pick up where you left off.';
 
   @override
+  String get notificationChallengeExpiringTitle => 'Challenge ending soon';
+
+  @override
+  String get notificationChallengeExpiringBody =>
+      'One of your challenges ends within 24 hours — finish strong!';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override
@@ -1481,6 +1505,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfilePreferencesSave => 'Save Preferences';
+
+  @override
+  String get workoutScheduleTitle => 'Workout Schedule';
+
+  @override
+  String get workoutScheduleSubtitle =>
+      'Pick your workout days and a reminder time — we\'ll nudge you locally, right on your device.';
+
+  @override
+  String get workoutScheduleDaysLabel => 'Workout days';
+
+  @override
+  String get workoutScheduleTimeLabel => 'Reminder time';
+
+  @override
+  String get workoutScheduleTimeNotSet => 'Not set';
+
+  @override
+  String get workoutScheduleReminderToggleTitle => 'Workout reminders';
+
+  @override
+  String get workoutScheduleReminderToggleSubtitle =>
+      'A local reminder on your chosen days and time';
+
+  @override
+  String get workoutScheduleQuietHoursToggleTitle => 'Quiet hours';
+
+  @override
+  String get workoutScheduleQuietHoursToggleSubtitle =>
+      'Never remind you during this window';
+
+  @override
+  String get workoutScheduleQuietStartLabel => 'Starts';
+
+  @override
+  String get workoutScheduleQuietEndLabel => 'Ends';
+
+  @override
+  String get workoutScheduleChallengeToggleTitle => 'Challenge reminders';
+
+  @override
+  String get workoutScheduleChallengeToggleSubtitle =>
+      'Completion and ending-soon alerts';
+
+  @override
+  String get workoutScheduleSave => 'Save Schedule';
+
+  @override
+  String get workoutScheduleSaveFailed =>
+      'Couldn\'t save your schedule. Try again.';
+
+  @override
+  String get workoutScheduleQuietHoursAllDayWarning =>
+      'Same start and end time means quiet hours all day — no reminder will ever fire.';
+
+  @override
+  String get homeScheduleCardTitle => 'Your Schedule';
+
+  @override
+  String get homeScheduleTodayWorkout => 'Today\'s a workout day';
+
+  @override
+  String get homeScheduleTodayRest => 'Today\'s a rest day';
+
+  @override
+  String get homeScheduleTodayCompleted => 'Workout completed today 🎉';
+
+  @override
+  String get homeScheduleEmptyTitle => 'No schedule set yet';
+
+  @override
+  String get homeScheduleEmptyBody =>
+      'Pick your workout days to get local reminders.';
+
+  @override
+  String get homeScheduleSetUp => 'Set up';
+
+  @override
+  String get homeScheduleEdit => 'Edit';
+
+  @override
+  String get workoutScheduleSheetTitle => 'Edit Your Schedule';
 
   @override
   String get privacyTitle => 'Privacy';
@@ -2418,6 +2524,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminFieldDuration => 'Duration';
+
+  @override
+  String get adminArabicTranslationHeading => 'Arabic translation (optional)';
+
+  @override
+  String get adminArabicTranslationSubtitle =>
+      'Shown when the app is in Arabic; falls back to English above if left blank.';
+
+  @override
+  String get adminFieldTitleAr => 'Title (Arabic)';
+
+  @override
+  String get adminFieldDescriptionAr => 'Description (Arabic)';
+
+  @override
+  String get adminFieldContentAr => 'Content (Arabic)';
 
   @override
   String get adminFieldChallengeType => 'Challenge type';

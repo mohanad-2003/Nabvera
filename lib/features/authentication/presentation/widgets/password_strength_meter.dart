@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 enum _Strength { empty, weak, medium, strong }
 
@@ -43,11 +42,7 @@ class PasswordStrengthMeter extends StatelessWidget {
         final (label, color, factor) = switch (strength) {
           _Strength.empty => ('', ext.textMuted, 0.0),
           _Strength.weak => (l10n.passwordStrengthWeak, ext.danger, 1 / 3),
-          _Strength.medium => (
-            l10n.passwordStrengthMedium,
-            ext.warning,
-            2 / 3,
-          ),
+          _Strength.medium => (l10n.passwordStrengthMedium, ext.warning, 2 / 3),
           _Strength.strong => (l10n.passwordStrengthStrong, ext.success, 1.0),
         };
 

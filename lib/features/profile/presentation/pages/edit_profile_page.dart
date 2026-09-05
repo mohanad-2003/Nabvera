@@ -13,7 +13,9 @@ import 'package:nabvera/features/home/presentation/providers/home_dashboard_cont
     show refreshHomeProviders;
 import 'package:nabvera/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
 import 'package:nabvera/features/profile/presentation/widgets/profile_stat_row.dart';
+import 'package:nabvera/features/profile/presentation/widgets/workout_schedule_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -559,6 +561,59 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     label: l10n.editProfilePreferencesSave,
                     isLoading: _savingPreferences,
                     onPressed: () => _handleSavePreferences(l10n),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            Divider(color: ext.glassBorder),
+            const SizedBox(height: 22),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 260),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.workoutScheduleTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.workoutScheduleSubtitle,
+                    style: TextStyle(color: ext.textMuted, fontSize: 12.5),
+                  ),
+                  const SizedBox(height: 18),
+                  WorkoutScheduleForm(
+                    // Rebuilds the form (and its internal state) fresh
+                    // whenever a save below completes and the profile
+                    // refreshes — otherwise its `initState` snapshot would
+                    // go stale after the very first successful save.
+                    key: ValueKey(
+                      '${profile.workoutDays.join(',')}|'
+                      '${profile.workoutReminderTime}|${profile.reminderEnabled}',
+                    ),
+                    profile: profile,
+                    onSave: (patch, previousReminderEnabled) async {
+                      try {
+                        await saveWorkoutSchedule(
+                          ref,
+                          patch: patch,
+                          previousReminderEnabled: previousReminderEnabled,
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.editProfileSuccessMessage)),
+                        );
+                      } catch (_) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.workoutScheduleSaveFailed)),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

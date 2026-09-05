@@ -16,6 +16,7 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.flat = false,
     this.maxLines = 1,
+    this.textDirection,
   });
 
   final TextEditingController? controller;
@@ -28,6 +29,11 @@ class AppTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final Widget? suffixIcon;
   final bool flat;
+
+  /// Forces the typed text's direction regardless of the app's current
+  /// locale — e.g. an Arabic-content field on an otherwise LTR (English)
+  /// admin screen, so typed Arabic still flows right-to-left.
+  final TextDirection? textDirection;
 
   /// Defaults to a single line, matching every prior call site. Pass a
   /// larger value (or `null` for unbounded) for multi-line fields like an
@@ -48,6 +54,7 @@ class AppTextField extends StatelessWidget {
       validator: validator,
       onChanged: onChanged,
       maxLines: maxLines,
+      textDirection: textDirection,
       style: Theme.of(context).textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// Static app-logo hero for the auth screens — replaces the rotating
 /// [OnboardingHeroArt] medallion (kept for onboarding/welcome, where a bit

@@ -65,7 +65,7 @@ final class AdminWorkoutsControllerProvider
 }
 
 String _$adminWorkoutsControllerHash() =>
-    r'f4c8ca20a92d332209f86024fa65a365d0495c74';
+    r'04ab6f68c1c222497ea3f7682da58fcae945e001';
 
 /// One list controller per Admin content type. All five have the exact
 /// same shape (`AsyncValue` of raw documents, a `refresh`, and a
@@ -139,7 +139,7 @@ final class AdminExercisesControllerProvider
 }
 
 String _$adminExercisesControllerHash() =>
-    r'ffabde1a3cc992adf0ff3c4ed89b7b778eb1995c';
+    r'a77637f9a90c6b2492d941994118bcee0a0dada9';
 
 abstract class _$AdminExercisesController
     extends $Notifier<AsyncValue<List<Map<String, dynamic>>>> {
@@ -206,7 +206,7 @@ final class AdminRecipesControllerProvider
 }
 
 String _$adminRecipesControllerHash() =>
-    r'1d6001aee3dae0fc8f40f1f817d8b95cb4104ddc';
+    r'1fa789ed9cf51873f356c1b2f65f74cb2f12dfe6';
 
 abstract class _$AdminRecipesController
     extends $Notifier<AsyncValue<List<Map<String, dynamic>>>> {
@@ -273,7 +273,7 @@ final class AdminArticlesControllerProvider
 }
 
 String _$adminArticlesControllerHash() =>
-    r'589a114537248a14cde414bf5b10328ab9280a68';
+    r'802d71a9ad144f868fc857428e505eca979737ad';
 
 abstract class _$AdminArticlesController
     extends $Notifier<AsyncValue<List<Map<String, dynamic>>>> {
@@ -340,7 +340,7 @@ final class AdminChallengesControllerProvider
 }
 
 String _$adminChallengesControllerHash() =>
-    r'ae6c7c05a4c0949a06aff6a02256c8313df6577f';
+    r'3f30eb1ab8c8c5ae106ccf0ed56ea4649787b4fa';
 
 abstract class _$AdminChallengesController
     extends $Notifier<AsyncValue<List<Map<String, dynamic>>>> {
@@ -402,7 +402,7 @@ final class AdminDashboardControllerProvider
 }
 
 String _$adminDashboardControllerHash() =>
-    r'2e281cea7b5f862a0c08114c3513faa136050f10';
+    r'b859e17d00352e444bd10ff58c235ec323162c20';
 
 abstract class _$AdminDashboardController
     extends $Notifier<AdminDashboardStats> {

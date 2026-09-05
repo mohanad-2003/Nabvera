@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
-import '../../../../core/widgets/smart_image.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 
 /// The secondary sign-in action — Google only. Facebook/Apple were never
 /// wired to a real provider, and the third icon was actually a mislabeled

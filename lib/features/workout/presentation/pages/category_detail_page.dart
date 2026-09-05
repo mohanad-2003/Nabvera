@@ -10,6 +10,7 @@ import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
@@ -130,6 +131,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       // The backend may have just advanced (or completed) one of the
       // user's active challenges from this same log — refresh those too.
       refreshChallengeProviders(ref);
+      // A workout is now logged for today — cancel/skip today's local
+      // reminder instead of nagging someone who already showed up.
+      unawaited(syncWorkoutReminders(ref, hasWorkoutTodayOverride: true));
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
 
 /// Premium glass-row menu item used throughout the Profile screen —
 /// replaces the plain [ListTile]-based `_ProfileTile` (flat violet circle,
@@ -38,13 +37,14 @@ class ProfileMenuTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(flat ? 12 : 20),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: flat
-              ? null
-              : BoxDecoration(
-                  color: ext.glassFill,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: ext.glassBorder),
-                ),
+          decoration:
+              flat
+                  ? null
+                  : BoxDecoration(
+                    color: ext.glassFill,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: ext.glassBorder),
+                  ),
           child: Row(
             children: [
               Container(

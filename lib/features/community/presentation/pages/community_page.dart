@@ -1,22 +1,22 @@
 import 'dart:async';
 
 import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/network/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/featured_card.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/community/domain/challenge_badges.dart';
+import 'package:nabvera/features/community/domain/community_models.dart';
+import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
+import 'package:nabvera/features/community/presentation/widgets/challenge_progress_card.dart';
 
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/featured_card.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../domain/challenge_badges.dart';
-import '../../domain/community_models.dart';
-import '../providers/community_controller.dart';
-import '../widgets/challenge_progress_card.dart';
 import 'forum_detail_page.dart';
 
 class CommunityPage extends ConsumerWidget {
@@ -314,11 +314,10 @@ class _ChallengesTab extends ConsumerWidget {
       try {
         await ref.read(myChallengesProvider.notifier).join(challenge.id);
         unawaited(
-          ref
-              .read(analyticsServiceProvider)
-              .logEvent(AnalyticsEvent.challengeJoined, {
-                'challengeId': challenge.id,
-              }),
+          ref.read(analyticsServiceProvider).logEvent(
+            AnalyticsEvent.challengeJoined,
+            {'challengeId': challenge.id},
+          ),
         );
       } catch (_) {
         if (!context.mounted) return;
@@ -332,11 +331,10 @@ class _ChallengesTab extends ConsumerWidget {
       try {
         await ref.read(myChallengesProvider.notifier).leave(challenge.id);
         unawaited(
-          ref
-              .read(analyticsServiceProvider)
-              .logEvent(AnalyticsEvent.challengeLeft, {
-                'challengeId': challenge.id,
-              }),
+          ref.read(analyticsServiceProvider).logEvent(
+            AnalyticsEvent.challengeLeft,
+            {'challengeId': challenge.id},
+          ),
         );
       } catch (_) {
         if (!context.mounted) return;

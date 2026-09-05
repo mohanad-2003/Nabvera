@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
-import '../../../../core/theme/app_theme_extension.dart';
 
 /// Shared frosted-glass card surface for auth form panels — replaces the
 /// decoration block that used to be duplicated in every auth page.

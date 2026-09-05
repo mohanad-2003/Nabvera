@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
-import '../../../../core/theme/app_theme_extension.dart';
 import 'onboarding_hero_art.dart';
 
 /// Premium hero banner shared by every auth screen: the same abstract

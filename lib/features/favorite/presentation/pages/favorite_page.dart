@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/localization/generated/app_localizations.dart';
-import '../../../../core/routing/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme_extension.dart';
-import '../../../../core/widgets/premium_scaffold.dart';
-import '../../../../core/widgets/smart_image.dart';
-import '../../../nutrition/data/nutrition_repository.dart';
-import '../../../nutrition/domain/nutrition_models.dart';
-import '../../../workout/data/workout_repository.dart';
-import '../../../workout/domain/exercise_detail_models.dart';
-import '../../domain/favorite_models.dart';
-import '../providers/favorite_controller.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
+import 'package:nabvera/features/favorite/domain/favorite_models.dart';
+import 'package:nabvera/features/favorite/presentation/providers/favorite_controller.dart';
+import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 
 class FavoritePage extends ConsumerWidget {
   const FavoritePage({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(favoriteFilterControllerProvider);
@@ -267,137 +265,141 @@ class _FavoriteCardState extends State<_FavoriteCard> {
             border: Border.all(color: ext.glassBorder),
           ),
           child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _CategoryTag(isWorkout: isWorkout),
-                  const SizedBox(height: 8),
-                  Text(
-                    item.title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: ext.textPrimary,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (item.text != null) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      item.text!,
-                      style: TextStyle(fontSize: 12, color: ext.textMuted),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 6,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (item.duration != null)
-                        _MetaChip(
-                          icon: Icons.timer_outlined,
-                          label: item.duration!,
+                      _CategoryTag(isWorkout: isWorkout),
+                      const SizedBox(height: 8),
+                      Text(
+                        item.title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: ext.textPrimary,
                         ),
-                      if (item.calories != null)
-                        _MetaChip(
-                          icon: Icons.local_fire_department_outlined,
-                          label: item.calories!,
-                          color: AppColors.electricOrange,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (item.text != null) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          item.text!,
+                          style: TextStyle(fontSize: 12, color: ext.textMuted),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      if (item.exercises != null)
-                        _MetaChip(
-                          icon: Icons.repeat_rounded,
-                          label: item.exercises!,
+                      ],
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 6,
+                        children: [
+                          if (item.duration != null)
+                            _MetaChip(
+                              icon: Icons.timer_outlined,
+                              label: item.duration!,
+                            ),
+                          if (item.calories != null)
+                            _MetaChip(
+                              icon: Icons.local_fire_department_outlined,
+                              label: item.calories!,
+                              color: AppColors.electricOrange,
+                            ),
+                          if (item.exercises != null)
+                            _MetaChip(
+                              icon: Icons.repeat_rounded,
+                              label: item.exercises!,
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(24),
+                        ),
+                        child: SmartImage(item.image),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _favorited = !_favorited);
+                            if (!_favorited) widget.onUnfavorite();
+                          },
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 220),
+                            transitionBuilder:
+                                (child, animation) => ScaleTransition(
+                                  scale: animation,
+                                  child: child,
+                                ),
+                            child: Container(
+                              key: ValueKey(_favorited),
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withValues(alpha: 0.4),
+                              ),
+                              child: Icon(
+                                _favorited
+                                    ? Icons.star_rounded
+                                    : Icons.star_border_rounded,
+                                color:
+                                    _favorited
+                                        ? AppColors.seedLime
+                                        : Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (isWorkout)
+                        Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.seedLime,
+                                  AppColors.electricOrange,
+                                ],
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.play_arrow_rounded,
+                              color: AppColors.seedInk,
+                              size: 18,
+                            ),
+                          ),
                         ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      right: Radius.circular(24),
-                    ),
-                    child: SmartImage(item.image),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _favorited = !_favorited);
-                        if (!_favorited) widget.onUnfavorite();
-                      },
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 220),
-                        transitionBuilder:
-                            (child, animation) =>
-                                ScaleTransition(scale: animation, child: child),
-                        child: Container(
-                          key: ValueKey(_favorited),
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withValues(alpha: 0.4),
-                          ),
-                          child: Icon(
-                            _favorited
-                                ? Icons.star_rounded
-                                : Icons.star_border_rounded,
-                            color:
-                                _favorited ? AppColors.seedLime : Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (isWorkout)
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.seedLime,
-                              AppColors.electricOrange,
-                            ],
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.play_arrow_rounded,
-                          color: AppColors.seedInk,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
+            ],
           ),
         ),
       ),

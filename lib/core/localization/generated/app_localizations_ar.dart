@@ -611,6 +611,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeArticlesAndTips => 'مقالات ونصائح';
 
   @override
+  String get articleCategoryNutrition => 'تغذية';
+
+  @override
+  String get articleCategoryWorkout => 'تمرين';
+
+  @override
+  String get articleCategoryRecovery => 'تعافي';
+
+  @override
+  String get articleCategoryMindset => 'عقلية';
+
+  @override
+  String articleReadTimeMinutes(int minutes) {
+    return '$minutes دقيقة قراءة';
+  }
+
+  @override
   String get homeHeroTitle => 'قوة الجزء العلوي';
 
   @override
@@ -1196,6 +1213,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'بضع دقائق الآن لا تزال مهمة — أكمل من حيث توقفت.';
 
   @override
+  String get notificationChallengeExpiringTitle => 'التحدي على وشك الانتهاء';
+
+  @override
+  String get notificationChallengeExpiringBody =>
+      'أحد تحدياتك سينتهي خلال 24 ساعة — أكمله بقوة!';
+
+  @override
   String get notificationsTitle => 'الإشعارات';
 
   @override
@@ -1469,6 +1493,87 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfilePreferencesSave => 'حفظ التفضيلات';
+
+  @override
+  String get workoutScheduleTitle => 'جدول التمرين';
+
+  @override
+  String get workoutScheduleSubtitle =>
+      'اختر أيام تمرينك ووقت التذكير — هنذكّرك محليًا على جهازك مباشرة.';
+
+  @override
+  String get workoutScheduleDaysLabel => 'أيام التمرين';
+
+  @override
+  String get workoutScheduleTimeLabel => 'وقت التذكير';
+
+  @override
+  String get workoutScheduleTimeNotSet => 'غير محدد';
+
+  @override
+  String get workoutScheduleReminderToggleTitle => 'تذكيرات التمرين';
+
+  @override
+  String get workoutScheduleReminderToggleSubtitle =>
+      'تذكير محلي في الأيام والوقت اللي اخترتهم';
+
+  @override
+  String get workoutScheduleQuietHoursToggleTitle => 'الوقت الهادئ';
+
+  @override
+  String get workoutScheduleQuietHoursToggleSubtitle =>
+      'بدون أي تذكير خلال هذه الفترة';
+
+  @override
+  String get workoutScheduleQuietStartLabel => 'يبدأ';
+
+  @override
+  String get workoutScheduleQuietEndLabel => 'ينتهي';
+
+  @override
+  String get workoutScheduleChallengeToggleTitle => 'تذكيرات التحديات';
+
+  @override
+  String get workoutScheduleChallengeToggleSubtitle =>
+      'تنبيهات الاكتمال واقتراب الانتهاء';
+
+  @override
+  String get workoutScheduleSave => 'حفظ الجدول';
+
+  @override
+  String get workoutScheduleSaveFailed => 'تعذّر حفظ الجدول. حاول مرة أخرى.';
+
+  @override
+  String get workoutScheduleQuietHoursAllDayWarning =>
+      'نفس وقت البداية والنهاية يعني وقت هادئ طوال اليوم — لن يظهر أي تذكير أبدًا.';
+
+  @override
+  String get homeScheduleCardTitle => 'جدولك';
+
+  @override
+  String get homeScheduleTodayWorkout => 'اليوم يوم تمرين';
+
+  @override
+  String get homeScheduleTodayRest => 'اليوم يوم راحة';
+
+  @override
+  String get homeScheduleTodayCompleted => 'تم إكمال تمرين اليوم 🎉';
+
+  @override
+  String get homeScheduleEmptyTitle => 'لم تحدد جدولًا بعد';
+
+  @override
+  String get homeScheduleEmptyBody =>
+      'اختر أيام تمرينك للحصول على تذكيرات محلية.';
+
+  @override
+  String get homeScheduleSetUp => 'إعداد';
+
+  @override
+  String get homeScheduleEdit => 'تعديل';
+
+  @override
+  String get workoutScheduleSheetTitle => 'تعديل جدولك';
 
   @override
   String get privacyTitle => 'الخصوصية';
@@ -2389,6 +2494,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminFieldDuration => 'المدة';
+
+  @override
+  String get adminArabicTranslationHeading => 'الترجمة العربية (اختياري)';
+
+  @override
+  String get adminArabicTranslationSubtitle =>
+      'بتظهر لما التطبيق يكون بالعربي؛ لو سبتها فاضية هيظهر النص الإنجليزي فوق بدالها.';
+
+  @override
+  String get adminFieldTitleAr => 'العنوان (عربي)';
+
+  @override
+  String get adminFieldDescriptionAr => 'الوصف (عربي)';
+
+  @override
+  String get adminFieldContentAr => 'المحتوى (عربي)';
 
   @override
   String get adminFieldChallengeType => 'نوع التحدي';

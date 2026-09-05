@@ -1,6 +1,5 @@
+import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../profile/data/user_repository.dart';
 
 part 'onboarding_profile_controller.g.dart';
 
@@ -8,7 +7,14 @@ enum Gender { male, female }
 
 enum ActivityLevel { beginner, intermediate, advanced }
 
-enum AvailableEquipment { none, dumbbell, barbell, machine, resistanceBand, kettlebell }
+enum AvailableEquipment {
+  none,
+  dumbbell,
+  barbell,
+  machine,
+  resistanceBand,
+  kettlebell,
+}
 
 enum AvailableTime { minutes15, minutes30, minutes45, minutes60 }
 
@@ -89,7 +95,9 @@ class OnboardingProfileController extends _$OnboardingProfileController {
     }
     state = state.copyWith(availableEquipment: selected);
   }
-  void selectAvailableTime(AvailableTime time) => state = state.copyWith(availableTime: time);
+
+  void selectAvailableTime(AvailableTime time) =>
+      state = state.copyWith(availableTime: time);
 
   /// Persists the wizard's answers to the user's backend profile. Best
   /// effort: onboarding still finishes and lands on Home even if this
@@ -99,7 +107,8 @@ class OnboardingProfileController extends _$OnboardingProfileController {
     final patch = <String, dynamic>{
       'heightCm': s.heightCm,
       'weightKg': s.weightKg,
-      'dateOfBirth': DateTime(DateTime.now().year - s.age, 1, 1).toIso8601String(),
+      'dateOfBirth':
+          DateTime(DateTime.now().year - s.age, 1, 1).toIso8601String(),
       if (s.gender != null)
         'gender': switch (s.gender!) {
           Gender.male => 'male',
@@ -119,7 +128,8 @@ class OnboardingProfileController extends _$OnboardingProfileController {
 
   static String _goalToApi(FitnessGoal goal) => goalToApi(goal);
 
-  static String _equipmentToApi(AvailableEquipment equipment) => equipmentToApi(equipment);
+  static String _equipmentToApi(AvailableEquipment equipment) =>
+      equipmentToApi(equipment);
 
   static int _timeToMinutes(AvailableTime time) => timeToMinutes(time);
 }

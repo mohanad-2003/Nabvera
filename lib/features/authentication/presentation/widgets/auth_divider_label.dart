@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_theme_extension.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 
 /// "— or continue with —" style divider, shared by login and signup
 /// (previously duplicated as private `_DividerLabel` widgets in each page).

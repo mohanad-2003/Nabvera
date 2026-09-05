@@ -20,7 +20,12 @@ enum AnalyticsEvent {
   challengeViewed('challenge_viewed'),
   challengeJoined('challenge_joined'),
   challengeLeft('challenge_left'),
-  challengeCompleted('challenge_completed');
+  challengeCompleted('challenge_completed'),
+  workoutScheduleUpdated('workout_schedule_updated'),
+  workoutReminderEnabled('workout_reminder_enabled'),
+  workoutReminderDisabled('workout_reminder_disabled'),
+  workoutReminderOpened('workout_reminder_opened'),
+  challengeExpiryReminderShown('challenge_expiry_reminder_shown');
 
   const AnalyticsEvent(this.apiValue);
   final String apiValue;

@@ -1220,6 +1220,36 @@ abstract class AppLocalizations {
   /// **'Articles & Tips'**
   String get homeArticlesAndTips;
 
+  /// No description provided for @articleCategoryNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get articleCategoryNutrition;
+
+  /// No description provided for @articleCategoryWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout'**
+  String get articleCategoryWorkout;
+
+  /// No description provided for @articleCategoryRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get articleCategoryRecovery;
+
+  /// No description provided for @articleCategoryMindset.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindset'**
+  String get articleCategoryMindset;
+
+  /// No description provided for @articleReadTimeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min read'**
+  String articleReadTimeMinutes(int minutes);
+
   /// No description provided for @homeHeroTitle.
   ///
   /// In en, this message translates to:
@@ -2276,6 +2306,18 @@ abstract class AppLocalizations {
   /// **'A few minutes now still counts — pick up where you left off.'**
   String get notificationWorkoutReminderBody;
 
+  /// No description provided for @notificationChallengeExpiringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge ending soon'**
+  String get notificationChallengeExpiringTitle;
+
+  /// No description provided for @notificationChallengeExpiringBody.
+  ///
+  /// In en, this message translates to:
+  /// **'One of your challenges ends within 24 hours — finish strong!'**
+  String get notificationChallengeExpiringBody;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:
@@ -2803,6 +2845,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Preferences'**
   String get editProfilePreferencesSave;
+
+  /// No description provided for @workoutScheduleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Schedule'**
+  String get workoutScheduleTitle;
+
+  /// No description provided for @workoutScheduleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your workout days and a reminder time — we\'ll nudge you locally, right on your device.'**
+  String get workoutScheduleSubtitle;
+
+  /// No description provided for @workoutScheduleDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout days'**
+  String get workoutScheduleDaysLabel;
+
+  /// No description provided for @workoutScheduleTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get workoutScheduleTimeLabel;
+
+  /// No description provided for @workoutScheduleTimeNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get workoutScheduleTimeNotSet;
+
+  /// No description provided for @workoutScheduleReminderToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout reminders'**
+  String get workoutScheduleReminderToggleTitle;
+
+  /// No description provided for @workoutScheduleReminderToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A local reminder on your chosen days and time'**
+  String get workoutScheduleReminderToggleSubtitle;
+
+  /// No description provided for @workoutScheduleQuietHoursToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get workoutScheduleQuietHoursToggleTitle;
+
+  /// No description provided for @workoutScheduleQuietHoursToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never remind you during this window'**
+  String get workoutScheduleQuietHoursToggleSubtitle;
+
+  /// No description provided for @workoutScheduleQuietStartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get workoutScheduleQuietStartLabel;
+
+  /// No description provided for @workoutScheduleQuietEndLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get workoutScheduleQuietEndLabel;
+
+  /// No description provided for @workoutScheduleChallengeToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge reminders'**
+  String get workoutScheduleChallengeToggleTitle;
+
+  /// No description provided for @workoutScheduleChallengeToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion and ending-soon alerts'**
+  String get workoutScheduleChallengeToggleSubtitle;
+
+  /// No description provided for @workoutScheduleSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Schedule'**
+  String get workoutScheduleSave;
+
+  /// No description provided for @workoutScheduleSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your schedule. Try again.'**
+  String get workoutScheduleSaveFailed;
+
+  /// No description provided for @workoutScheduleQuietHoursAllDayWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Same start and end time means quiet hours all day — no reminder will ever fire.'**
+  String get workoutScheduleQuietHoursAllDayWarning;
+
+  /// No description provided for @homeScheduleCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Schedule'**
+  String get homeScheduleCardTitle;
+
+  /// No description provided for @homeScheduleTodayWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s a workout day'**
+  String get homeScheduleTodayWorkout;
+
+  /// No description provided for @homeScheduleTodayRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s a rest day'**
+  String get homeScheduleTodayRest;
+
+  /// No description provided for @homeScheduleTodayCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout completed today 🎉'**
+  String get homeScheduleTodayCompleted;
+
+  /// No description provided for @homeScheduleEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No schedule set yet'**
+  String get homeScheduleEmptyTitle;
+
+  /// No description provided for @homeScheduleEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your workout days to get local reminders.'**
+  String get homeScheduleEmptyBody;
+
+  /// No description provided for @homeScheduleSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get homeScheduleSetUp;
+
+  /// No description provided for @homeScheduleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get homeScheduleEdit;
+
+  /// No description provided for @workoutScheduleSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Your Schedule'**
+  String get workoutScheduleSheetTitle;
 
   /// No description provided for @privacyTitle.
   ///
@@ -4513,6 +4705,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duration'**
   String get adminFieldDuration;
+
+  /// No description provided for @adminArabicTranslationHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic translation (optional)'**
+  String get adminArabicTranslationHeading;
+
+  /// No description provided for @adminArabicTranslationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown when the app is in Arabic; falls back to English above if left blank.'**
+  String get adminArabicTranslationSubtitle;
+
+  /// No description provided for @adminFieldTitleAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Arabic)'**
+  String get adminFieldTitleAr;
+
+  /// No description provided for @adminFieldDescriptionAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Arabic)'**
+  String get adminFieldDescriptionAr;
+
+  /// No description provided for @adminFieldContentAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Content (Arabic)'**
+  String get adminFieldContentAr;
 
   /// No description provided for @adminFieldChallengeType.
   ///

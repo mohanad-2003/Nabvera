@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 /// Fixed navigation tiles to the app's four main sections — always exactly
 /// these four, so unlike the rest of Home there's no backend "category"
 /// document behind them; only their icon comes from the API (see
@@ -45,6 +47,9 @@ class ArticleTip {
     this.paragraphs = const [],
     this.readTimeMinutes = 3,
     this.tags = const [],
+    this.titleAr = '',
+    this.descriptionAr = '',
+    this.paragraphsAr = const [],
   });
   final String image;
 
@@ -62,6 +67,42 @@ class ArticleTip {
   final int readTimeMinutes;
   final List<String> tags;
 
+  /// Arabic translations, from `Article.titleAr`/`descriptionAr`/
+  /// `contentAr` — empty for an article an admin hasn't translated yet, in
+  /// which case [localizedTitle] etc. fall back to the English fields
+  /// above rather than showing blank text.
+  final String titleAr;
+  final String descriptionAr;
+  final List<String> paragraphsAr;
+
+  bool get _isArabic => titleAr.isNotEmpty;
+
+  /// The title to display for [context]'s current locale — Arabic when the
+  /// app is in Arabic *and* this article has an Arabic title, English
+  /// otherwise.
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && _isArabic
+          ? titleAr
+          : title;
+
+  String localizedDescription(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              descriptionAr.isNotEmpty
+          ? descriptionAr
+          : description.isEmpty ? body : description;
+
+  String localizedBody(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              descriptionAr.isNotEmpty
+          ? descriptionAr
+          : body;
+
+  List<String> localizedParagraphs(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              paragraphsAr.isNotEmpty
+          ? paragraphsAr
+          : paragraphs;
+
   /// Builds a card from a `/api/articles` JSON document.
   factory ArticleTip.fromJson(Map<String, dynamic> json) {
     final title = (json['title'] as String?) ?? '';
@@ -74,6 +115,9 @@ class ArticleTip {
       paragraphs: (json['content'] as List? ?? const []).cast<String>(),
       readTimeMinutes: (json['readTimeMinutes'] as num?)?.toInt() ?? 3,
       tags: (json['tags'] as List? ?? const []).cast<String>(),
+      titleAr: (json['titleAr'] as String?) ?? '',
+      descriptionAr: (json['descriptionAr'] as String?) ?? '',
+      paragraphsAr: (json['contentAr'] as List? ?? const []).cast<String>(),
     );
   }
 }
