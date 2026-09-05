@@ -17,7 +17,7 @@ A full-stack fitness application — Flutter client + a real Node.js/Express/Mon
 
 <p align="center">
   <img src="docs/screenshots/splash.png" width="180" alt="Splash" />
-    <img src="docs/screenshots/onboarding.png" width="180" alt="Onboarding" />
+  <img src="docs/screenshots/onboarding.png" width="180" alt="Onboarding" />
   <img src="docs/screenshots/login.png" width="180" alt="Login" />
   <img src="docs/screenshots/home.png" width="180" alt="Home Dashboard" />
   <img src="docs/screenshots/workout.png" width="180" alt="Workout" />
