@@ -3866,18 +3866,6 @@ abstract class AppLocalizations {
   /// **'Meal Plan'**
   String get mealPlanTitle;
 
-  /// No description provided for @mealPlanIntroBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Answer a few quick questions about your diet and goals, and we\'ll put together a personalized meal plan for your week.'**
-  String get mealPlanIntroBody;
-
-  /// No description provided for @mealPlanKnowYourPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Know Your Plan'**
-  String get mealPlanKnowYourPlan;
-
   /// No description provided for @mealPlanDietaryPreferences.
   ///
   /// In en, this message translates to:
@@ -3899,32 +3887,32 @@ abstract class AppLocalizations {
   /// No description provided for @mealPlanAllergiesQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Do you have any food allergies we should know about?'**
+  /// **'Any food allergies? Separate with commas.'**
   String get mealPlanAllergiesQuestion;
 
-  /// No description provided for @mealPlanMealTypes.
+  /// No description provided for @mealPlanAllergiesHint.
   ///
   /// In en, this message translates to:
-  /// **'Meal Types'**
-  String get mealPlanMealTypes;
+  /// **'e.g. peanuts, shellfish'**
+  String get mealPlanAllergiesHint;
 
-  /// No description provided for @mealPlanMealTypesQuestion.
+  /// No description provided for @mealPlanDislikedIngredients.
   ///
   /// In en, this message translates to:
-  /// **'Which meals do you want to plan?'**
-  String get mealPlanMealTypesQuestion;
+  /// **'Disliked Ingredients'**
+  String get mealPlanDislikedIngredients;
 
-  /// No description provided for @mealPlanCaloricGoal.
+  /// No description provided for @mealPlanDislikedIngredientsQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Caloric Goal'**
-  String get mealPlanCaloricGoal;
+  /// **'Anything you\'d rather avoid? Separate with commas.'**
+  String get mealPlanDislikedIngredientsQuestion;
 
-  /// No description provided for @mealPlanCaloricGoalQuestion.
+  /// No description provided for @mealPlanDislikedIngredientsHint.
   ///
   /// In en, this message translates to:
-  /// **'What is your daily caloric intake goal?'**
-  String get mealPlanCaloricGoalQuestion;
+  /// **'e.g. mushrooms, olives'**
+  String get mealPlanDislikedIngredientsHint;
 
   /// No description provided for @mealPlanCookingTime.
   ///
@@ -3950,35 +3938,323 @@ abstract class AppLocalizations {
   /// **'How many servings do you need per meal?'**
   String get mealPlanServingsQuestion;
 
-  /// No description provided for @mealPlanCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get mealPlanCreate;
-
   /// No description provided for @mealPlanGeneratingTitle.
   ///
   /// In en, this message translates to:
   /// **'Creating a plan for you'**
   String get mealPlanGeneratingTitle;
 
-  /// No description provided for @mealPlanBreakfastTitle.
+  /// No description provided for @mealPlanGeneratingBody.
   ///
   /// In en, this message translates to:
-  /// **'Breakfast plan for you'**
-  String get mealPlanBreakfastTitle;
-
-  /// No description provided for @mealPlanBreakfastBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Hand-picked breakfast options based on your dietary preferences and caloric goal.'**
-  String get mealPlanBreakfastBody;
+  /// **'Arranging recipes that fit your targets and preferences into a 7-day plan…'**
+  String get mealPlanGeneratingBody;
 
   /// No description provided for @mealPlanSeeRecipe.
   ///
   /// In en, this message translates to:
   /// **'See Recipe'**
   String get mealPlanSeeRecipe;
+
+  /// No description provided for @mealPlanDietVegetarian.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
+  String get mealPlanDietVegetarian;
+
+  /// No description provided for @mealPlanDietVegan.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegan'**
+  String get mealPlanDietVegan;
+
+  /// No description provided for @mealPlanDietHalal.
+  ///
+  /// In en, this message translates to:
+  /// **'Halal'**
+  String get mealPlanDietHalal;
+
+  /// No description provided for @mealPlanDietGlutenFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Gluten-Free'**
+  String get mealPlanDietGlutenFree;
+
+  /// No description provided for @mealPlanDietLactoseFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Lactose-Free'**
+  String get mealPlanDietLactoseFree;
+
+  /// No description provided for @mealPlanCookingQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick (under 15 min)'**
+  String get mealPlanCookingQuick;
+
+  /// No description provided for @mealPlanCookingStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard (15-30 min)'**
+  String get mealPlanCookingStandard;
+
+  /// No description provided for @mealPlanCookingFlexible.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible (30+ min)'**
+  String get mealPlanCookingFlexible;
+
+  /// No description provided for @mealPlanCalorieTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Calorie Target'**
+  String get mealPlanCalorieTarget;
+
+  /// No description provided for @mealPlanProteinTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Protein Target (g)'**
+  String get mealPlanProteinTarget;
+
+  /// No description provided for @mealPlanWeeklyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Food Budget (optional)'**
+  String get mealPlanWeeklyBudget;
+
+  /// No description provided for @mealPlanUseEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Use estimated target'**
+  String get mealPlanUseEstimate;
+
+  /// No description provided for @mealPlanEstimateDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a rough estimate based on your profile, not medical advice. You can always adjust it yourself.'**
+  String get mealPlanEstimateDisclaimer;
+
+  /// No description provided for @mealPlanEstimateUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your age, height, and weight in your profile to get an estimated target.'**
+  String get mealPlanEstimateUnavailable;
+
+  /// No description provided for @mealPlanSavePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Preferences'**
+  String get mealPlanSavePreferences;
+
+  /// No description provided for @mealPlanPreferencesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition preferences saved'**
+  String get mealPlanPreferencesSaved;
+
+  /// No description provided for @mealPlanEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No meal plan yet'**
+  String get mealPlanEmptyTitle;
+
+  /// No description provided for @mealPlanEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your nutrition preferences and generate a personalized weekly meal plan built from our recipes.'**
+  String get mealPlanEmptyBody;
+
+  /// No description provided for @mealPlanSetPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Nutrition Preferences'**
+  String get mealPlanSetPreferences;
+
+  /// No description provided for @mealPlanGenerateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate My Weekly Plan'**
+  String get mealPlanGenerateCta;
+
+  /// No description provided for @mealPlanRegenerateDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate Day'**
+  String get mealPlanRegenerateDay;
+
+  /// No description provided for @mealPlanReplaceMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get mealPlanReplaceMeal;
+
+  /// No description provided for @mealPlanDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {number}'**
+  String mealPlanDayLabel(int number);
+
+  /// No description provided for @mealPlanSectionBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get mealPlanSectionBreakfast;
+
+  /// No description provided for @mealPlanSectionLunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch'**
+  String get mealPlanSectionLunch;
+
+  /// No description provided for @mealPlanSectionDinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Dinner'**
+  String get mealPlanSectionDinner;
+
+  /// No description provided for @mealPlanSectionSnacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Snacks'**
+  String get mealPlanSectionSnacks;
+
+  /// No description provided for @mealPlanSourceFallbackNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI planner wasn\'t available, so this plan was built with our rule-based planner instead.'**
+  String get mealPlanSourceFallbackNote;
+
+  /// No description provided for @mealPlanDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'These suggestions are general and are not a substitute for consulting a nutrition professional.'**
+  String get mealPlanDisclaimer;
+
+  /// No description provided for @mealPlanGenerationFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t generate a plan'**
+  String get mealPlanGenerationFailedTitle;
+
+  /// No description provided for @mealPlanGenerationFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while generating your plan. Please try again.'**
+  String get mealPlanGenerationFailedBody;
+
+  /// No description provided for @mealPlanShoppingListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping List'**
+  String get mealPlanShoppingListTitle;
+
+  /// No description provided for @mealPlanShoppingListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your shopping list will appear here once you generate a plan.'**
+  String get mealPlanShoppingListEmpty;
+
+  /// No description provided for @mealPlanViewShoppingList.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping List'**
+  String get mealPlanViewShoppingList;
+
+  /// No description provided for @mealPlanViewHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Plans'**
+  String get mealPlanViewHistory;
+
+  /// No description provided for @mealPlanHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No past meal plans yet.'**
+  String get mealPlanHistoryEmpty;
+
+  /// No description provided for @mealPlanReasonMatchesCalorieTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Fits your calorie target'**
+  String get mealPlanReasonMatchesCalorieTarget;
+
+  /// No description provided for @mealPlanReasonMatchesProteinTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Fits your protein target'**
+  String get mealPlanReasonMatchesProteinTarget;
+
+  /// No description provided for @mealPlanReasonQuickToCook.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick to cook'**
+  String get mealPlanReasonQuickToCook;
+
+  /// No description provided for @mealPlanReasonFitsDietaryPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your dietary preference'**
+  String get mealPlanReasonFitsDietaryPreference;
+
+  /// No description provided for @mealPlanReasonBudgetFriendly.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget friendly'**
+  String get mealPlanReasonBudgetFriendly;
+
+  /// No description provided for @mealPlanReasonVarietyBoost.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds some variety'**
+  String get mealPlanReasonVarietyBoost;
+
+  /// No description provided for @mealPlanReasonUsesFavoriteIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses ingredients you like'**
+  String get mealPlanReasonUsesFavoriteIngredients;
+
+  /// No description provided for @mealPlanReasonAllergySafeSubstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Swapped to avoid an allergy/dislike'**
+  String get mealPlanReasonAllergySafeSubstitution;
+
+  /// No description provided for @mealPlanReasonFallbackDefaultMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked by the rule-based planner'**
+  String get mealPlanReasonFallbackDefaultMeal;
+
+  /// No description provided for @mealPlanReasonRecipeUnavailablePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching recipe yet — placeholder meal'**
+  String get mealPlanReasonRecipeUnavailablePlaceholder;
+
+  /// No description provided for @mealPlanReasonBalancedAcrossTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced across your targets'**
+  String get mealPlanReasonBalancedAcrossTargets;
+
+  /// No description provided for @mealPlanReasonHigherProteinDay.
+  ///
+  /// In en, this message translates to:
+  /// **'A higher-protein day'**
+  String get mealPlanReasonHigherProteinDay;
+
+  /// No description provided for @mealPlanReasonLighterCalorieDay.
+  ///
+  /// In en, this message translates to:
+  /// **'A lighter-calorie day'**
+  String get mealPlanReasonLighterCalorieDay;
+
+  /// No description provided for @mealPlanReasonFallbackRuleBasedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Built with the rule-based planner'**
+  String get mealPlanReasonFallbackRuleBasedPlan;
 
   /// No description provided for @navCommunityTitle.
   ///

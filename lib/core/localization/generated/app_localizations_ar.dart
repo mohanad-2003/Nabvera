@@ -2039,13 +2039,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mealPlanTitle => 'خطة الوجبات';
 
   @override
-  String get mealPlanIntroBody =>
-      'أجب عن بضعة أسئلة سريعة حول نظامك الغذائي وأهدافك، وسنُعدّ لك خطة وجبات مخصصة لأسبوعك.';
-
-  @override
-  String get mealPlanKnowYourPlan => 'تعرّف على خطتك';
-
-  @override
   String get mealPlanDietaryPreferences => 'التفضيلات الغذائية';
 
   @override
@@ -2056,21 +2049,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mealPlanAllergiesQuestion =>
-      'هل لديك أي حساسية غذائية يجب أن نعرفها؟';
+      'هل لديك أي حساسية غذائية؟ افصل بينها بفواصل.';
 
   @override
-  String get mealPlanMealTypes => 'أنواع الوجبات';
+  String get mealPlanAllergiesHint => 'مثال: الفول السوداني، المحار';
 
   @override
-  String get mealPlanMealTypesQuestion =>
-      'ما هي الوجبات التي تريد التخطيط لها؟';
+  String get mealPlanDislikedIngredients => 'مكونات لا تفضلها';
 
   @override
-  String get mealPlanCaloricGoal => 'هدف السعرات';
+  String get mealPlanDislikedIngredientsQuestion =>
+      'هل هناك ما تفضل تجنبه؟ افصل بينها بفواصل.';
 
   @override
-  String get mealPlanCaloricGoalQuestion =>
-      'ما هو هدفك اليومي من السعرات الحرارية؟';
+  String get mealPlanDislikedIngredientsHint => 'مثال: الفطر، الزيتون';
 
   @override
   String get mealPlanCookingTime => 'وقت الطهي المفضل';
@@ -2086,20 +2078,177 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mealPlanServingsQuestion => 'كم عدد الحصص التي تحتاجها لكل وجبة؟';
 
   @override
-  String get mealPlanCreate => 'إنشاء';
-
-  @override
   String get mealPlanGeneratingTitle => 'جارٍ إنشاء خطة لك';
 
   @override
-  String get mealPlanBreakfastTitle => 'خطة فطور لك';
-
-  @override
-  String get mealPlanBreakfastBody =>
-      'خيارات فطور مختارة بعناية بناءً على تفضيلاتك الغذائية وهدف السعرات الخاص بك.';
+  String get mealPlanGeneratingBody =>
+      'جارٍ ترتيب الوصفات التي تناسب أهدافك وتفضيلاتك في خطة أسبوعية…';
 
   @override
   String get mealPlanSeeRecipe => 'عرض الوصفة';
+
+  @override
+  String get mealPlanDietVegetarian => 'نباتي';
+
+  @override
+  String get mealPlanDietVegan => 'نباتي صرف';
+
+  @override
+  String get mealPlanDietHalal => 'حلال';
+
+  @override
+  String get mealPlanDietGlutenFree => 'خالٍ من الغلوتين';
+
+  @override
+  String get mealPlanDietLactoseFree => 'خالٍ من اللاكتوز';
+
+  @override
+  String get mealPlanCookingQuick => 'سريع (أقل من 15 دقيقة)';
+
+  @override
+  String get mealPlanCookingStandard => 'متوسط (15-30 دقيقة)';
+
+  @override
+  String get mealPlanCookingFlexible => 'مرن (أكثر من 30 دقيقة)';
+
+  @override
+  String get mealPlanCalorieTarget => 'هدف السعرات اليومي';
+
+  @override
+  String get mealPlanProteinTarget => 'هدف البروتين اليومي (جرام)';
+
+  @override
+  String get mealPlanWeeklyBudget => 'الميزانية الأسبوعية للطعام (اختياري)';
+
+  @override
+  String get mealPlanUseEstimate => 'استخدم الهدف التقديري';
+
+  @override
+  String get mealPlanEstimateDisclaimer =>
+      'هذا تقدير تقريبي بناءً على ملفك الشخصي وليس نصيحة طبية. يمكنك دائمًا تعديله بنفسك.';
+
+  @override
+  String get mealPlanEstimateUnavailable =>
+      'أضف عمرك وطولك ووزنك في ملفك الشخصي للحصول على هدف تقديري.';
+
+  @override
+  String get mealPlanSavePreferences => 'حفظ التفضيلات';
+
+  @override
+  String get mealPlanPreferencesSaved => 'تم حفظ تفضيلات التغذية';
+
+  @override
+  String get mealPlanEmptyTitle => 'لا توجد خطة وجبات بعد';
+
+  @override
+  String get mealPlanEmptyBody =>
+      'حدد تفضيلات التغذية الخاصة بك وأنشئ خطة وجبات أسبوعية مخصصة من وصفاتنا.';
+
+  @override
+  String get mealPlanSetPreferences => 'تحديد تفضيلات التغذية';
+
+  @override
+  String get mealPlanGenerateCta => 'إنشاء خطتي الأسبوعية';
+
+  @override
+  String get mealPlanRegenerateDay => 'إعادة إنشاء اليوم';
+
+  @override
+  String get mealPlanReplaceMeal => 'استبدال';
+
+  @override
+  String mealPlanDayLabel(int number) {
+    return 'اليوم $number';
+  }
+
+  @override
+  String get mealPlanSectionBreakfast => 'الفطور';
+
+  @override
+  String get mealPlanSectionLunch => 'الغداء';
+
+  @override
+  String get mealPlanSectionDinner => 'العشاء';
+
+  @override
+  String get mealPlanSectionSnacks => 'وجبات خفيفة';
+
+  @override
+  String get mealPlanSourceFallbackNote =>
+      'لم يكن مخطط الذكاء الاصطناعي متاحًا، لذا تم بناء هذه الخطة بواسطة المخطط القائم على القواعد بدلاً من ذلك.';
+
+  @override
+  String get mealPlanDisclaimer =>
+      'هذه الاقتراحات عامة وليست بديلًا عن استشارة مختص تغذية.';
+
+  @override
+  String get mealPlanGenerationFailedTitle => 'تعذر إنشاء خطة';
+
+  @override
+  String get mealPlanGenerationFailedBody =>
+      'حدث خطأ ما أثناء إنشاء خطتك. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get mealPlanShoppingListTitle => 'قائمة التسوق';
+
+  @override
+  String get mealPlanShoppingListEmpty =>
+      'ستظهر قائمة التسوق هنا بعد إنشاء خطة.';
+
+  @override
+  String get mealPlanViewShoppingList => 'قائمة التسوق';
+
+  @override
+  String get mealPlanViewHistory => 'الخطط السابقة';
+
+  @override
+  String get mealPlanHistoryEmpty => 'لا توجد خطط وجبات سابقة بعد.';
+
+  @override
+  String get mealPlanReasonMatchesCalorieTarget => 'يتوافق مع هدف السعرات';
+
+  @override
+  String get mealPlanReasonMatchesProteinTarget => 'يتوافق مع هدف البروتين';
+
+  @override
+  String get mealPlanReasonQuickToCook => 'سريع التحضير';
+
+  @override
+  String get mealPlanReasonFitsDietaryPreference => 'يتوافق مع تفضيلك الغذائي';
+
+  @override
+  String get mealPlanReasonBudgetFriendly => 'مناسب للميزانية';
+
+  @override
+  String get mealPlanReasonVarietyBoost => 'يضيف بعض التنوع';
+
+  @override
+  String get mealPlanReasonUsesFavoriteIngredients => 'يستخدم مكونات تفضلها';
+
+  @override
+  String get mealPlanReasonAllergySafeSubstitution =>
+      'تم استبداله لتجنب حساسية/مكون غير مفضل';
+
+  @override
+  String get mealPlanReasonFallbackDefaultMeal =>
+      'اختاره المخطط القائم على القواعد';
+
+  @override
+  String get mealPlanReasonRecipeUnavailablePlaceholder =>
+      'لا توجد وصفة مطابقة بعد — وجبة مؤقتة';
+
+  @override
+  String get mealPlanReasonBalancedAcrossTargets => 'متوازن عبر أهدافك';
+
+  @override
+  String get mealPlanReasonHigherProteinDay => 'يوم أعلى بروتين';
+
+  @override
+  String get mealPlanReasonLighterCalorieDay => 'يوم أخف سعرات';
+
+  @override
+  String get mealPlanReasonFallbackRuleBasedPlan =>
+      'تم إنشاؤه بواسطة المخطط القائم على القواعد';
 
   @override
   String get navCommunityTitle => 'المجتمع';

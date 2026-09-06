@@ -2060,13 +2060,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealPlanTitle => 'Meal Plan';
 
   @override
-  String get mealPlanIntroBody =>
-      'Answer a few quick questions about your diet and goals, and we\'ll put together a personalized meal plan for your week.';
-
-  @override
-  String get mealPlanKnowYourPlan => 'Know Your Plan';
-
-  @override
   String get mealPlanDietaryPreferences => 'Dietary Preferences';
 
   @override
@@ -2078,20 +2071,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mealPlanAllergiesQuestion =>
-      'Do you have any food allergies we should know about?';
+      'Any food allergies? Separate with commas.';
 
   @override
-  String get mealPlanMealTypes => 'Meal Types';
+  String get mealPlanAllergiesHint => 'e.g. peanuts, shellfish';
 
   @override
-  String get mealPlanMealTypesQuestion => 'Which meals do you want to plan?';
+  String get mealPlanDislikedIngredients => 'Disliked Ingredients';
 
   @override
-  String get mealPlanCaloricGoal => 'Caloric Goal';
+  String get mealPlanDislikedIngredientsQuestion =>
+      'Anything you\'d rather avoid? Separate with commas.';
 
   @override
-  String get mealPlanCaloricGoalQuestion =>
-      'What is your daily caloric intake goal?';
+  String get mealPlanDislikedIngredientsHint => 'e.g. mushrooms, olives';
 
   @override
   String get mealPlanCookingTime => 'Cooking Time Preference';
@@ -2108,20 +2101,180 @@ class AppLocalizationsEn extends AppLocalizations {
       'How many servings do you need per meal?';
 
   @override
-  String get mealPlanCreate => 'Create';
-
-  @override
   String get mealPlanGeneratingTitle => 'Creating a plan for you';
 
   @override
-  String get mealPlanBreakfastTitle => 'Breakfast plan for you';
-
-  @override
-  String get mealPlanBreakfastBody =>
-      'Hand-picked breakfast options based on your dietary preferences and caloric goal.';
+  String get mealPlanGeneratingBody =>
+      'Arranging recipes that fit your targets and preferences into a 7-day plan…';
 
   @override
   String get mealPlanSeeRecipe => 'See Recipe';
+
+  @override
+  String get mealPlanDietVegetarian => 'Vegetarian';
+
+  @override
+  String get mealPlanDietVegan => 'Vegan';
+
+  @override
+  String get mealPlanDietHalal => 'Halal';
+
+  @override
+  String get mealPlanDietGlutenFree => 'Gluten-Free';
+
+  @override
+  String get mealPlanDietLactoseFree => 'Lactose-Free';
+
+  @override
+  String get mealPlanCookingQuick => 'Quick (under 15 min)';
+
+  @override
+  String get mealPlanCookingStandard => 'Standard (15-30 min)';
+
+  @override
+  String get mealPlanCookingFlexible => 'Flexible (30+ min)';
+
+  @override
+  String get mealPlanCalorieTarget => 'Daily Calorie Target';
+
+  @override
+  String get mealPlanProteinTarget => 'Daily Protein Target (g)';
+
+  @override
+  String get mealPlanWeeklyBudget => 'Weekly Food Budget (optional)';
+
+  @override
+  String get mealPlanUseEstimate => 'Use estimated target';
+
+  @override
+  String get mealPlanEstimateDisclaimer =>
+      'This is a rough estimate based on your profile, not medical advice. You can always adjust it yourself.';
+
+  @override
+  String get mealPlanEstimateUnavailable =>
+      'Add your age, height, and weight in your profile to get an estimated target.';
+
+  @override
+  String get mealPlanSavePreferences => 'Save Preferences';
+
+  @override
+  String get mealPlanPreferencesSaved => 'Nutrition preferences saved';
+
+  @override
+  String get mealPlanEmptyTitle => 'No meal plan yet';
+
+  @override
+  String get mealPlanEmptyBody =>
+      'Set your nutrition preferences and generate a personalized weekly meal plan built from our recipes.';
+
+  @override
+  String get mealPlanSetPreferences => 'Set Nutrition Preferences';
+
+  @override
+  String get mealPlanGenerateCta => 'Generate My Weekly Plan';
+
+  @override
+  String get mealPlanRegenerateDay => 'Regenerate Day';
+
+  @override
+  String get mealPlanReplaceMeal => 'Replace';
+
+  @override
+  String mealPlanDayLabel(int number) {
+    return 'Day $number';
+  }
+
+  @override
+  String get mealPlanSectionBreakfast => 'Breakfast';
+
+  @override
+  String get mealPlanSectionLunch => 'Lunch';
+
+  @override
+  String get mealPlanSectionDinner => 'Dinner';
+
+  @override
+  String get mealPlanSectionSnacks => 'Snacks';
+
+  @override
+  String get mealPlanSourceFallbackNote =>
+      'The AI planner wasn\'t available, so this plan was built with our rule-based planner instead.';
+
+  @override
+  String get mealPlanDisclaimer =>
+      'These suggestions are general and are not a substitute for consulting a nutrition professional.';
+
+  @override
+  String get mealPlanGenerationFailedTitle => 'Couldn\'t generate a plan';
+
+  @override
+  String get mealPlanGenerationFailedBody =>
+      'Something went wrong while generating your plan. Please try again.';
+
+  @override
+  String get mealPlanShoppingListTitle => 'Shopping List';
+
+  @override
+  String get mealPlanShoppingListEmpty =>
+      'Your shopping list will appear here once you generate a plan.';
+
+  @override
+  String get mealPlanViewShoppingList => 'Shopping List';
+
+  @override
+  String get mealPlanViewHistory => 'Past Plans';
+
+  @override
+  String get mealPlanHistoryEmpty => 'No past meal plans yet.';
+
+  @override
+  String get mealPlanReasonMatchesCalorieTarget => 'Fits your calorie target';
+
+  @override
+  String get mealPlanReasonMatchesProteinTarget => 'Fits your protein target';
+
+  @override
+  String get mealPlanReasonQuickToCook => 'Quick to cook';
+
+  @override
+  String get mealPlanReasonFitsDietaryPreference =>
+      'Matches your dietary preference';
+
+  @override
+  String get mealPlanReasonBudgetFriendly => 'Budget friendly';
+
+  @override
+  String get mealPlanReasonVarietyBoost => 'Adds some variety';
+
+  @override
+  String get mealPlanReasonUsesFavoriteIngredients =>
+      'Uses ingredients you like';
+
+  @override
+  String get mealPlanReasonAllergySafeSubstitution =>
+      'Swapped to avoid an allergy/dislike';
+
+  @override
+  String get mealPlanReasonFallbackDefaultMeal =>
+      'Picked by the rule-based planner';
+
+  @override
+  String get mealPlanReasonRecipeUnavailablePlaceholder =>
+      'No matching recipe yet — placeholder meal';
+
+  @override
+  String get mealPlanReasonBalancedAcrossTargets =>
+      'Balanced across your targets';
+
+  @override
+  String get mealPlanReasonHigherProteinDay => 'A higher-protein day';
+
+  @override
+  String get mealPlanReasonLighterCalorieDay => 'A lighter-calorie day';
+
+  @override
+  String get mealPlanReasonFallbackRuleBasedPlan =>
+      'Built with the rule-based planner';
 
   @override
   String get navCommunityTitle => 'Community';

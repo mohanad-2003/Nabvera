@@ -25,7 +25,13 @@ enum AnalyticsEvent {
   workoutReminderEnabled('workout_reminder_enabled'),
   workoutReminderDisabled('workout_reminder_disabled'),
   workoutReminderOpened('workout_reminder_opened'),
-  challengeExpiryReminderShown('challenge_expiry_reminder_shown');
+  challengeExpiryReminderShown('challenge_expiry_reminder_shown'),
+  nutritionPreferencesUpdated('nutrition_preferences_updated'),
+  mealPlanGenerationRequested('meal_plan_generation_requested'),
+  mealPlanGenerated('meal_plan_generated'),
+  mealPlanGenerationFailed('meal_plan_generation_failed'),
+  mealReplaced('meal_replaced'),
+  shoppingListItemChecked('shopping_list_item_checked');
 
   const AnalyticsEvent(this.apiValue);
   final String apiValue;

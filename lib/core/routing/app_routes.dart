@@ -31,11 +31,11 @@ abstract final class AppRoutes {
   static const workoutCharts = '/workout/charts';
   static const workoutRecommended = '/workout/recommended';
   static const weeklyChallenge = '/workout/weekly-challenge';
-  static const mealPlanIntro = '/nutrition/meal-plan';
+  static const mealPlanHome = '/nutrition/meal-plan';
   static const mealPlanPreferences = '/nutrition/meal-plan/preferences';
-  static const mealPlanGoals = '/nutrition/meal-plan/goals';
   static const mealPlanGenerating = '/nutrition/meal-plan/generating';
-  static const mealPlanBreakfast = '/nutrition/meal-plan/breakfast';
+  static const mealPlanShoppingList = '/nutrition/meal-plan/shopping-list';
+  static const mealPlanHistory = '/nutrition/meal-plan/history';
   static const mealDetail = '/nutrition/meal';
   static const mealIdea = '/nutrition/meal-idea';
   static const mealIdeaDiscover = '/nutrition/meal-idea/discover';

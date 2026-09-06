@@ -67,7 +67,7 @@ class NutritionPage extends ConsumerWidget {
                           ref
                               .read(nutritionTabControllerProvider.notifier)
                               .select(NutritionTab.mealPlans);
-                          context.push(AppRoutes.mealPlanIntro);
+                          context.push(AppRoutes.mealPlanHome);
                         },
                       ),
                     ),

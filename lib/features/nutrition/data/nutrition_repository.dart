@@ -40,10 +40,81 @@ class NutritionRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> createMealPlan(Map<String, dynamic> payload) async {
-    final response = await _client.post('/meal-plans', body: payload);
+  // --- Nutrition preferences (Phase 6) ----------------------------------
+
+  Future<Map<String, dynamic>> fetchNutritionPreferences() async {
+    final response = await _client.get('/users/me/nutrition-preferences');
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateNutritionPreferences(Map<String, dynamic> payload) async {
+    final response = await _client.patch('/users/me/nutrition-preferences', body: payload);
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> fetchCalorieSuggestion() async {
+    final response = await _client.get('/nutrition/calorie-targets/suggestion');
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  // --- AI meal plans (Phase 6) -------------------------------------------
+
+  Future<Map<String, dynamic>?> fetchCurrentMealPlan() async {
+    final response = await _client.get('/nutrition/meal-plans/current');
+    if (response.statusCode == 404) return null;
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchMealPlanHistory() async {
+    final response = await _client.get('/nutrition/meal-plans/history');
+    final body = _client.decode(response);
+    return (body['data'] as List).cast<Map<String, dynamic>>();
+  }
+
+  Future<Map<String, dynamic>> generateMealPlan([Map<String, dynamic> overrides = const {}]) async {
+    final response = await _client.post('/nutrition/meal-plans/generate', body: overrides);
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> regenerateMealPlanDay(String planId, int dayIndex) async {
+    final response = await _client.post(
+      '/nutrition/meal-plans/$planId/regenerate-day',
+      body: {'dayIndex': dayIndex},
+    );
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> replaceMealPlanMeal(
+    String planId, {
+    required int dayIndex,
+    required String mealType,
+    required String itemId,
+    String? recipeId,
+  }) async {
+    final response = await _client.post(
+      '/nutrition/meal-plans/$planId/replace-meal',
+      body: {
+        'dayIndex': dayIndex,
+        'mealType': mealType,
+        'itemId': itemId,
+        if (recipeId != null) 'recipeId': recipeId,
+      },
+    );
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<void> checkShoppingListItem(String planId, {required String itemId, required bool checked}) async {
+    await _client.post(
+      '/nutrition/meal-plans/$planId/shopping-list/check-item',
+      body: {'itemId': itemId, 'checked': checked},
+    );
   }
 }
 

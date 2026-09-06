@@ -33,11 +33,11 @@ import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_detail_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_idea_discover_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_idea_page.dart';
-import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_breakfast_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_generating_page.dart';
-import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_goals_page.dart';
-import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_intro_page.dart';
-import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_preferences_page.dart';
+import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_history_page.dart';
+import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_home_page.dart';
+import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_shopping_list_page.dart';
+import 'package:nabvera/features/nutrition/presentation/pages/nutrition_preferences_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/nutrition_page.dart';
 import 'package:nabvera/features/onboarding/presentation/pages/age_page.dart';
 import 'package:nabvera/features/onboarding/presentation/pages/equipment_page.dart';
@@ -330,24 +330,24 @@ GoRouter appRouter(Ref ref) {
         },
       ),
       GoRoute(
-        path: AppRoutes.mealPlanIntro,
-        builder: (context, state) => const MealPlanIntroPage(),
+        path: AppRoutes.mealPlanHome,
+        builder: (context, state) => const MealPlanHomePage(),
       ),
       GoRoute(
         path: AppRoutes.mealPlanPreferences,
-        builder: (context, state) => const MealPlanPreferencesPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.mealPlanGoals,
-        builder: (context, state) => const MealPlanGoalsPage(),
+        builder: (context, state) => const NutritionPreferencesPage(),
       ),
       GoRoute(
         path: AppRoutes.mealPlanGenerating,
         builder: (context, state) => const MealPlanGeneratingPage(),
       ),
       GoRoute(
-        path: AppRoutes.mealPlanBreakfast,
-        builder: (context, state) => const MealPlanBreakfastPage(),
+        path: AppRoutes.mealPlanShoppingList,
+        builder: (context, state) => const MealPlanShoppingListPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.mealPlanHistory,
+        builder: (context, state) => const MealPlanHistoryPage(),
       ),
       GoRoute(
         path: AppRoutes.mealDetail,
