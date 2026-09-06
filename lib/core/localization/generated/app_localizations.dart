@@ -4256,6 +4256,270 @@ abstract class AppLocalizations {
   /// **'Built with the rule-based planner'**
   String get mealPlanReasonFallbackRuleBasedPlan;
 
+  /// No description provided for @healthConnectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Health Data'**
+  String get healthConnectionTitle;
+
+  /// No description provided for @healthConnectionIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Optionally share steps, activity, and sleep from Health Connect or Apple Health to improve your progress stats and workout suggestions. This is never used for medical purposes, and you can disconnect at any time.'**
+  String get healthConnectionIntroBody;
+
+  /// No description provided for @healthConnectionDataStepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get healthConnectionDataStepsLabel;
+
+  /// No description provided for @healthConnectionDataStepsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your daily step count.'**
+  String get healthConnectionDataStepsBody;
+
+  /// No description provided for @healthConnectionDataActivityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get healthConnectionDataActivityLabel;
+
+  /// No description provided for @healthConnectionDataActivityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Active minutes and active calories, when available.'**
+  String get healthConnectionDataActivityBody;
+
+  /// No description provided for @healthConnectionDataSleepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get healthConnectionDataSleepLabel;
+
+  /// No description provided for @healthConnectionDataSleepBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep duration, only if you grant it.'**
+  String get healthConnectionDataSleepBody;
+
+  /// No description provided for @healthConnectionSelectAtLeastOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one data type to continue'**
+  String get healthConnectionSelectAtLeastOne;
+
+  /// No description provided for @healthConnectionConnectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get healthConnectionConnectButton;
+
+  /// No description provided for @healthConnectionSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get healthConnectionSkip;
+
+  /// No description provided for @healthConnectionDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission not granted'**
+  String get healthConnectionDeniedTitle;
+
+  /// No description provided for @healthConnectionDeniedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nabvera can\'t sync your health data without permission. You can try again anytime from Health Data Settings — the rest of the app works normally either way.'**
+  String get healthConnectionDeniedBody;
+
+  /// No description provided for @healthConnectionUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect not available'**
+  String get healthConnectionUnavailableTitle;
+
+  /// No description provided for @healthConnectionUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Install the Health Connect app to sync your health data. You can keep using Nabvera normally without it.'**
+  String get healthConnectionUnavailableBody;
+
+  /// No description provided for @healthConnectionInstallAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Install Health Connect'**
+  String get healthConnectionInstallAction;
+
+  /// No description provided for @healthConnectionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Health data connected'**
+  String get healthConnectionSuccess;
+
+  /// No description provided for @healthSettingsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Data'**
+  String get healthSettingsSectionTitle;
+
+  /// No description provided for @healthSettingsSyncToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync health data'**
+  String get healthSettingsSyncToggle;
+
+  /// No description provided for @healthSettingsSyncToggleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Used only to improve your progress stats and workout suggestions — never for medical purposes.'**
+  String get healthSettingsSyncToggleBody;
+
+  /// No description provided for @healthSettingsStepsToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get healthSettingsStepsToggle;
+
+  /// No description provided for @healthSettingsActivityToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity (minutes/calories)'**
+  String get healthSettingsActivityToggle;
+
+  /// No description provided for @healthSettingsSleepToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get healthSettingsSleepToggle;
+
+  /// No description provided for @healthSettingsLastSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced {time}'**
+  String healthSettingsLastSynced(String time);
+
+  /// No description provided for @healthSettingsLastSyncedNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never synced'**
+  String get healthSettingsLastSyncedNever;
+
+  /// No description provided for @healthSettingsDeleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete health data'**
+  String get healthSettingsDeleteButton;
+
+  /// No description provided for @healthSettingsDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete health data?'**
+  String get healthSettingsDeleteConfirmTitle;
+
+  /// No description provided for @healthSettingsDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes every stored daily summary from Nabvera and disconnects sync. Your device\'s health app is unaffected.'**
+  String get healthSettingsDeleteConfirmBody;
+
+  /// No description provided for @healthSettingsDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Health data deleted'**
+  String get healthSettingsDeleteSuccess;
+
+  /// No description provided for @healthSnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Activity'**
+  String get healthSnapshotTitle;
+
+  /// No description provided for @healthSnapshotStepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get healthSnapshotStepsLabel;
+
+  /// No description provided for @healthSnapshotActiveMinutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active min'**
+  String get healthSnapshotActiveMinutesLabel;
+
+  /// No description provided for @healthSnapshotNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect health data to see your daily activity here'**
+  String get healthSnapshotNotConnected;
+
+  /// No description provided for @healthSnapshotConnectCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get healthSnapshotConnectCta;
+
+  /// No description provided for @healthInsightsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Health Insights'**
+  String get healthInsightsSectionTitle;
+
+  /// No description provided for @healthInsightsStepsAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg steps/day'**
+  String get healthInsightsStepsAverage;
+
+  /// No description provided for @healthInsightsNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect health data to see weekly insights here.'**
+  String get healthInsightsNoData;
+
+  /// No description provided for @healthInsightsDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'These are general observations, not medical advice.'**
+  String get healthInsightsDisclaimer;
+
+  /// No description provided for @healthInsightActivityUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your activity is trending up this week'**
+  String get healthInsightActivityUp;
+
+  /// No description provided for @healthInsightActivityDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Your activity is a bit lower than last week'**
+  String get healthInsightActivityDown;
+
+  /// No description provided for @healthInsightSleepConsistent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sleep tracking has been consistent'**
+  String get healthInsightSleepConsistent;
+
+  /// No description provided for @healthInsightSleepLowData.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough sleep data this week to say much'**
+  String get healthInsightSleepLowData;
+
+  /// No description provided for @healthInsightRestDaySuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'A lighter day might suit you today'**
+  String get healthInsightRestDaySuggested;
+
+  /// No description provided for @healthInsightKeepMomentum.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep up the momentum'**
+  String get healthInsightKeepMomentum;
+
   /// No description provided for @navCommunityTitle.
   ///
   /// In en, this message translates to:

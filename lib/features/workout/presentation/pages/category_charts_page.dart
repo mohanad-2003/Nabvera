@@ -1,6 +1,8 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/health/presentation/providers/health_summary_controller.dart';
+import 'package:nabvera/features/health/presentation/widgets/weekly_health_insights_card.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:nabvera/features/workout/presentation/providers/workout_progress_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/progress_tab_bar.dart';
@@ -31,8 +33,15 @@ class CategoryChartsPage extends ConsumerWidget {
 
     return PremiumScaffold(
       padding: EdgeInsets.zero,
-      child: SingleChildScrollView(
-        child: Padding(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(weeklyChartProvider);
+          ref.invalidate(activityLogProvider);
+          await ref.read(healthSummaryControllerProvider.notifier).refresh();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +123,9 @@ class CategoryChartsPage extends ConsumerWidget {
                   if (i != recentLogs.length - 1)
                     Divider(height: 1, color: ext.glassBorder),
                 ],
+              const WeeklyHealthInsightsCard(),
             ],
+          ),
           ),
         ),
       ),

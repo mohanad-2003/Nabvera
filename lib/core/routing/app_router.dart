@@ -33,6 +33,7 @@ import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_detail_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_idea_discover_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_idea_page.dart';
+import 'package:nabvera/features/health/presentation/pages/health_connection_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_generating_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_history_page.dart';
 import 'package:nabvera/features/nutrition/presentation/pages/meal_plan_home_page.dart';
@@ -348,6 +349,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.mealPlanHistory,
         builder: (context, state) => const MealPlanHistoryPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.healthConnection,
+        builder: (context, state) => const HealthConnectionPage(),
       ),
       GoRoute(
         path: AppRoutes.mealDetail,

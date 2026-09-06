@@ -47,5 +47,11 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Use Face ID to quickly and securely unlock the app.</string>
+	<!-- Health Connect/Apple Health (Phase 7) — read-only: steps, active
+	     minutes/energy, and sleep, only after the user opts in on the
+	     Health Connection screen. No NSHealthUpdateUsageDescription is
+	     declared because the app never writes to Apple Health. -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>Nabvera can read your steps, active minutes, and sleep from Apple Health to improve your progress stats and workout suggestions. This is optional and never used for medical purposes.</string>
 </dict>
 </plist>

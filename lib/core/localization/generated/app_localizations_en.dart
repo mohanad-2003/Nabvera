@@ -2277,6 +2277,156 @@ class AppLocalizationsEn extends AppLocalizations {
       'Built with the rule-based planner';
 
   @override
+  String get healthConnectionTitle => 'Connect Health Data';
+
+  @override
+  String get healthConnectionIntroBody =>
+      'Optionally share steps, activity, and sleep from Health Connect or Apple Health to improve your progress stats and workout suggestions. This is never used for medical purposes, and you can disconnect at any time.';
+
+  @override
+  String get healthConnectionDataStepsLabel => 'Steps';
+
+  @override
+  String get healthConnectionDataStepsBody => 'Your daily step count.';
+
+  @override
+  String get healthConnectionDataActivityLabel => 'Activity';
+
+  @override
+  String get healthConnectionDataActivityBody =>
+      'Active minutes and active calories, when available.';
+
+  @override
+  String get healthConnectionDataSleepLabel => 'Sleep';
+
+  @override
+  String get healthConnectionDataSleepBody =>
+      'Sleep duration, only if you grant it.';
+
+  @override
+  String get healthConnectionSelectAtLeastOne =>
+      'Select at least one data type to continue';
+
+  @override
+  String get healthConnectionConnectButton => 'Connect';
+
+  @override
+  String get healthConnectionSkip => 'Not now';
+
+  @override
+  String get healthConnectionDeniedTitle => 'Permission not granted';
+
+  @override
+  String get healthConnectionDeniedBody =>
+      'Nabvera can\'t sync your health data without permission. You can try again anytime from Health Data Settings — the rest of the app works normally either way.';
+
+  @override
+  String get healthConnectionUnavailableTitle => 'Health Connect not available';
+
+  @override
+  String get healthConnectionUnavailableBody =>
+      'Install the Health Connect app to sync your health data. You can keep using Nabvera normally without it.';
+
+  @override
+  String get healthConnectionInstallAction => 'Install Health Connect';
+
+  @override
+  String get healthConnectionSuccess => 'Health data connected';
+
+  @override
+  String get healthSettingsSectionTitle => 'Health Data';
+
+  @override
+  String get healthSettingsSyncToggle => 'Sync health data';
+
+  @override
+  String get healthSettingsSyncToggleBody =>
+      'Used only to improve your progress stats and workout suggestions — never for medical purposes.';
+
+  @override
+  String get healthSettingsStepsToggle => 'Steps';
+
+  @override
+  String get healthSettingsActivityToggle => 'Activity (minutes/calories)';
+
+  @override
+  String get healthSettingsSleepToggle => 'Sleep';
+
+  @override
+  String healthSettingsLastSynced(String time) {
+    return 'Last synced $time';
+  }
+
+  @override
+  String get healthSettingsLastSyncedNever => 'Never synced';
+
+  @override
+  String get healthSettingsDeleteButton => 'Delete health data';
+
+  @override
+  String get healthSettingsDeleteConfirmTitle => 'Delete health data?';
+
+  @override
+  String get healthSettingsDeleteConfirmBody =>
+      'This removes every stored daily summary from Nabvera and disconnects sync. Your device\'s health app is unaffected.';
+
+  @override
+  String get healthSettingsDeleteSuccess => 'Health data deleted';
+
+  @override
+  String get healthSnapshotTitle => 'Today\'s Activity';
+
+  @override
+  String get healthSnapshotStepsLabel => 'Steps';
+
+  @override
+  String get healthSnapshotActiveMinutesLabel => 'Active min';
+
+  @override
+  String get healthSnapshotNotConnected =>
+      'Connect health data to see your daily activity here';
+
+  @override
+  String get healthSnapshotConnectCta => 'Connect';
+
+  @override
+  String get healthInsightsSectionTitle => 'Weekly Health Insights';
+
+  @override
+  String get healthInsightsStepsAverage => 'Avg steps/day';
+
+  @override
+  String get healthInsightsNoData =>
+      'Connect health data to see weekly insights here.';
+
+  @override
+  String get healthInsightsDisclaimer =>
+      'These are general observations, not medical advice.';
+
+  @override
+  String get healthInsightActivityUp =>
+      'Your activity is trending up this week';
+
+  @override
+  String get healthInsightActivityDown =>
+      'Your activity is a bit lower than last week';
+
+  @override
+  String get healthInsightSleepConsistent =>
+      'Your sleep tracking has been consistent';
+
+  @override
+  String get healthInsightSleepLowData =>
+      'Not enough sleep data this week to say much';
+
+  @override
+  String get healthInsightRestDaySuggested =>
+      'A lighter day might suit you today';
+
+  @override
+  String get healthInsightKeepMomentum => 'Keep up the momentum';
+
+  @override
   String get navCommunityTitle => 'Community';
 
   @override

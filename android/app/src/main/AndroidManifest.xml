@@ -16,6 +16,22 @@
          reminders are scheduled inexact (see AndroidScheduleMode in
          workout_reminder_scheduler.dart) so no extra "Alarms & reminders"
          permission screen is ever shown to the user for a fitness reminder. -->
+
+    <!-- Health Connect (Phase 7) — steps/active-minutes-or-calories/sleep
+         only, and only ever requested at runtime when the user opts in on
+         the Health Connection screen (see health_onboarding_page.dart);
+         declaring these here does not grant them. No heart rate, no
+         location, no other body/vitals data. -->
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
+    <uses-permission android:name="android.permission.health.READ_EXERCISE"/>
+    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED"/>
+    <uses-permission android:name="android.permission.health.READ_SLEEP"/>
+    <!-- Health Connect's Steps/Exercise data lives behind the Activity
+         Recognition API on Android — requested at runtime via
+         permission_handler right before the first Health Connect
+         permission request, not on app launch. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
     <application
         android:label="Nabvera"
         android:name="${applicationName}"
@@ -41,7 +57,28 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Lets Health Connect show its permissions screen for this app. -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
         </activity>
+        <!-- Health Connect's permissions screen links back to this app's
+             privacy policy — required to pass Google's review when
+             requesting sensitive health permissions. Routes to MainActivity,
+             which should surface the privacy policy (Profile > Privacy >
+             Privacy Policy already exists in-app); point this at a
+             dedicated deep link before release if that page isn't reachable
+             without first signing in. -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -69,6 +106,14 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Lets the app detect whether the Health Connect app is
+             installed (health_service.dart's isPlatformAvailable) and show
+             its permissions-rationale flow — never blocks app usage if
+             it's missing, see HealthOnboardingPage's "not available" state. -->
+        <package android:name="com.google.android.apps.healthdata" />
+        <intent>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
         </intent>
     </queries>
 </manifest>

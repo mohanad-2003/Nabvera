@@ -3,6 +3,7 @@ import 'package:nabvera/core/storage/preferences_service.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/health/presentation/widgets/health_data_settings_section.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_card.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_toggle_row.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +134,10 @@ class _ManageDataPageState extends ConsumerState<ManageDataPage> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 22),
+                  PremiumSectionHeader(title: l10n.healthSettingsSectionTitle),
+                  const SizedBox(height: 12),
+                  const HealthDataSettingsSection(),
                   const SizedBox(height: 22),
                   PremiumSectionHeader(title: l10n.manageDataExportSection),
                   const SizedBox(height: 12),

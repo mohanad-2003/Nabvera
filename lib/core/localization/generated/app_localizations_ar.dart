@@ -2251,6 +2251,151 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم إنشاؤه بواسطة المخطط القائم على القواعد';
 
   @override
+  String get healthConnectionTitle => 'ربط بيانات الصحة';
+
+  @override
+  String get healthConnectionIntroBody =>
+      'شارك اختياريًا الخطوات والنشاط والنوم من Health Connect أو Apple Health لتحسين إحصاءات تقدمك وتوصيات التمرين. لا يُستخدم هذا أبدًا لأغراض طبية، ويمكنك إلغاء الربط في أي وقت.';
+
+  @override
+  String get healthConnectionDataStepsLabel => 'الخطوات';
+
+  @override
+  String get healthConnectionDataStepsBody => 'عدد خطواتك اليومي.';
+
+  @override
+  String get healthConnectionDataActivityLabel => 'النشاط';
+
+  @override
+  String get healthConnectionDataActivityBody =>
+      'دقائق النشاط والسعرات النشطة، عند توفرها.';
+
+  @override
+  String get healthConnectionDataSleepLabel => 'النوم';
+
+  @override
+  String get healthConnectionDataSleepBody => 'مدة النوم، فقط إذا منحت الإذن.';
+
+  @override
+  String get healthConnectionSelectAtLeastOne =>
+      'اختر نوع بيانات واحدًا على الأقل للمتابعة';
+
+  @override
+  String get healthConnectionConnectButton => 'ربط';
+
+  @override
+  String get healthConnectionSkip => 'ليس الآن';
+
+  @override
+  String get healthConnectionDeniedTitle => 'لم يتم منح الإذن';
+
+  @override
+  String get healthConnectionDeniedBody =>
+      'لا يمكن لـ Nabvera مزامنة بياناتك الصحية بدون إذن. يمكنك المحاولة مرة أخرى في أي وقت من إعدادات بيانات الصحة — بقية التطبيق يعمل بشكل طبيعي في كلتا الحالتين.';
+
+  @override
+  String get healthConnectionUnavailableTitle => 'Health Connect غير متاح';
+
+  @override
+  String get healthConnectionUnavailableBody =>
+      'ثبّت تطبيق Health Connect لمزامنة بياناتك الصحية. يمكنك الاستمرار في استخدام Nabvera بشكل طبيعي بدونه.';
+
+  @override
+  String get healthConnectionInstallAction => 'تثبيت Health Connect';
+
+  @override
+  String get healthConnectionSuccess => 'تم ربط بيانات الصحة';
+
+  @override
+  String get healthSettingsSectionTitle => 'بيانات الصحة';
+
+  @override
+  String get healthSettingsSyncToggle => 'مزامنة بيانات الصحة';
+
+  @override
+  String get healthSettingsSyncToggleBody =>
+      'تُستخدم فقط لتحسين إحصاءات تقدمك وتوصيات التمرين — أبدًا لأغراض طبية.';
+
+  @override
+  String get healthSettingsStepsToggle => 'الخطوات';
+
+  @override
+  String get healthSettingsActivityToggle => 'النشاط (دقائق/سعرات)';
+
+  @override
+  String get healthSettingsSleepToggle => 'النوم';
+
+  @override
+  String healthSettingsLastSynced(String time) {
+    return 'آخر مزامنة $time';
+  }
+
+  @override
+  String get healthSettingsLastSyncedNever => 'لم تتم المزامنة بعد';
+
+  @override
+  String get healthSettingsDeleteButton => 'حذف بيانات الصحة';
+
+  @override
+  String get healthSettingsDeleteConfirmTitle => 'حذف بيانات الصحة؟';
+
+  @override
+  String get healthSettingsDeleteConfirmBody =>
+      'سيؤدي هذا إلى إزالة كل ملخص يومي مخزّن في Nabvera وإيقاف المزامنة. تطبيق الصحة على جهازك لن يتأثر.';
+
+  @override
+  String get healthSettingsDeleteSuccess => 'تم حذف بيانات الصحة';
+
+  @override
+  String get healthSnapshotTitle => 'نشاط اليوم';
+
+  @override
+  String get healthSnapshotStepsLabel => 'الخطوات';
+
+  @override
+  String get healthSnapshotActiveMinutesLabel => 'دقائق النشاط';
+
+  @override
+  String get healthSnapshotNotConnected =>
+      'اربط بيانات الصحة لرؤية نشاطك اليومي هنا';
+
+  @override
+  String get healthSnapshotConnectCta => 'ربط';
+
+  @override
+  String get healthInsightsSectionTitle => 'ملاحظات الصحة الأسبوعية';
+
+  @override
+  String get healthInsightsStepsAverage => 'متوسط الخطوات/يوم';
+
+  @override
+  String get healthInsightsNoData =>
+      'اربط بيانات الصحة لرؤية الملاحظات الأسبوعية هنا.';
+
+  @override
+  String get healthInsightsDisclaimer => 'هذه ملاحظات عامة وليست نصيحة طبية.';
+
+  @override
+  String get healthInsightActivityUp => 'نشاطك في ازدياد هذا الأسبوع';
+
+  @override
+  String get healthInsightActivityDown => 'نشاطك أقل قليلاً من الأسبوع الماضي';
+
+  @override
+  String get healthInsightSleepConsistent => 'تتبع نومك كان منتظمًا';
+
+  @override
+  String get healthInsightSleepLowData =>
+      'لا توجد بيانات نوم كافية هذا الأسبوع لقول الكثير';
+
+  @override
+  String get healthInsightRestDaySuggested =>
+      'قد يكون يوم أخف مناسبًا لك اليوم';
+
+  @override
+  String get healthInsightKeepMomentum => 'حافظ على زخمك';
+
+  @override
   String get navCommunityTitle => 'المجتمع';
 
   @override

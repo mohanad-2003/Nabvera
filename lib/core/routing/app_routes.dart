@@ -36,6 +36,7 @@ abstract final class AppRoutes {
   static const mealPlanGenerating = '/nutrition/meal-plan/generating';
   static const mealPlanShoppingList = '/nutrition/meal-plan/shopping-list';
   static const mealPlanHistory = '/nutrition/meal-plan/history';
+  static const healthConnection = '/health/connect';
   static const mealDetail = '/nutrition/meal';
   static const mealIdea = '/nutrition/meal-idea';
   static const mealIdeaDiscover = '/nutrition/meal-idea/discover';
