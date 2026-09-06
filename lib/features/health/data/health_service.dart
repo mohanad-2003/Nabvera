@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,10 +14,22 @@ part 'health_service.g.dart';
 /// scope limit.
 enum HealthDataKind { steps, activity, sleep }
 
-const Map<HealthDataKind, List<HealthDataType>> _kindTypes = {
-  HealthDataKind.steps: [HealthDataType.STEPS],
-  HealthDataKind.activity: [HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.EXERCISE_TIME],
-  HealthDataKind.sleep: [HealthDataType.SLEEP_ASLEEP],
+/// `EXERCISE_TIME` is an Apple HealthKit-only concept — the `health`
+/// package's Android/Health Connect implementation has no mapping for it
+/// at all (confirmed in its own source: absent from `dataTypeKeysAndroid`
+/// and from every Kotlin data-type map). Requesting it on Android doesn't
+/// just skip that one type — Health Connect rejects the *whole*
+/// permission request, which is why every "Connect" tap failed with
+/// "Datatype EXERCISE_TIME not found in HC" and a denied result. Active
+/// minutes are simply unavailable on Android for now; active calories
+/// still work everywhere.
+List<HealthDataType> typesForHealthDataKind(HealthDataKind kind) => switch (kind) {
+  HealthDataKind.steps => [HealthDataType.STEPS],
+  HealthDataKind.activity => [
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+    if (Platform.isIOS) HealthDataType.EXERCISE_TIME,
+  ],
+  HealthDataKind.sleep => [HealthDataType.SLEEP_ASLEEP],
 };
 
 /// Platform abstraction over Health Connect (Android) / HealthKit (iOS) —
@@ -59,7 +73,7 @@ class PluginHealthService implements HealthService {
   }
 
   List<HealthDataType> _typesFor(Set<HealthDataKind> kinds) =>
-      kinds.expand((k) => _kindTypes[k] ?? const <HealthDataType>[]).toList();
+      kinds.expand(typesForHealthDataKind).toList();
 
   @override
   Future<bool> isPlatformAvailable() async {

@@ -84,4 +84,22 @@ void main() {
       expect(HealthDataKind.values, [HealthDataKind.steps, HealthDataKind.activity, HealthDataKind.sleep]);
     });
   });
+
+  group('typesForHealthDataKind', () {
+    test('never requests EXERCISE_TIME on this (non-iOS) test platform', () {
+      // Regression test: EXERCISE_TIME has no Health Connect mapping in
+      // the `health` package at all — requesting it on Android makes the
+      // *entire* permission request fail ("Datatype EXERCISE_TIME not
+      // found in HC"), not just that one type. `flutter test` runs on the
+      // host OS, so Platform.isIOS is false here, exactly like Android.
+      final types = typesForHealthDataKind(HealthDataKind.activity);
+      expect(types, isNot(contains(HealthDataType.EXERCISE_TIME)));
+      expect(types, contains(HealthDataType.ACTIVE_ENERGY_BURNED));
+    });
+
+    test('steps and sleep are unaffected by the platform split', () {
+      expect(typesForHealthDataKind(HealthDataKind.steps), [HealthDataType.STEPS]);
+      expect(typesForHealthDataKind(HealthDataKind.sleep), [HealthDataType.SLEEP_ASLEEP]);
+    });
+  });
 }
