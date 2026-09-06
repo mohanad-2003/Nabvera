@@ -3728,6 +3728,42 @@ abstract class AppLocalizations {
   /// **'Water Intake'**
   String get nutritionWaterIntakeLabel;
 
+  /// No description provided for @waterLogSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Water'**
+  String get waterLogSheetTitle;
+
+  /// No description provided for @waterLogAddCup.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 Cup (250ml)'**
+  String get waterLogAddCup;
+
+  /// No description provided for @waterLogAddTwoCups.
+  ///
+  /// In en, this message translates to:
+  /// **'+2 Cups (500ml)'**
+  String get waterLogAddTwoCups;
+
+  /// No description provided for @waterLogAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Water logged'**
+  String get waterLogAdded;
+
+  /// No description provided for @waterLogFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t log water, please try again'**
+  String get waterLogFailed;
+
+  /// No description provided for @actionDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get actionDone;
+
   /// No description provided for @nutritionNutritionFacts.
   ///
   /// In en, this message translates to:

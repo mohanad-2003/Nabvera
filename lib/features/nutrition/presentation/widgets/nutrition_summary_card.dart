@@ -10,9 +10,13 @@ import 'package:flutter/material.dart';
 /// hero card, so this stays a plain section rather than a second boxed
 /// card competing with it.
 class NutritionSummaryCard extends StatelessWidget {
-  const NutritionSummaryCard({super.key, required this.summary});
+  const NutritionSummaryCard({super.key, required this.summary, this.onLogWater});
 
   final DailyNutritionSummary summary;
+
+  /// Tapping the water row logs an actual amount when provided — omit to
+  /// keep the row display-only (e.g. a read-only context).
+  final VoidCallback? onLogWater;
 
   @override
   Widget build(BuildContext context) {
@@ -115,23 +119,34 @@ class NutritionSummaryCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
-        Row(
-          children: [
-            Icon(Icons.water_drop_rounded, color: AppColors.aquaBlue, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              l10n.nutritionWaterIntakeLabel,
-              style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+        InkWell(
+          onTap: onLogWater,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                Icon(Icons.water_drop_rounded, color: AppColors.aquaBlue, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.nutritionWaterIntakeLabel,
+                  style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+                ),
+                const Spacer(),
+                Text(
+                  summary.waterIntake,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                if (onLogWater != null) ...[
+                  const SizedBox(width: 6),
+                  Icon(Icons.add_circle_outline_rounded, color: ext.accentGlow, size: 18),
+                ],
+              ],
             ),
-            const Spacer(),
-            Text(
-              summary.waterIntake,
-              style: TextStyle(
-                color: ext.textPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

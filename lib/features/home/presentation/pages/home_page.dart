@@ -14,6 +14,7 @@ import 'package:nabvera/features/home/presentation/providers/home_controller.dar
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
 import 'package:nabvera/features/home/presentation/widgets/workout_schedule_card.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:nabvera/features/nutrition/presentation/widgets/log_water_sheet.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
@@ -206,6 +207,9 @@ class HomePage extends ConsumerWidget {
   ) {
     switch (route) {
       case _NextStepRoute.water:
+        // Logs a real amount right here instead of navigating to a tab
+        // with no way to actually record water — see log_water_sheet.dart.
+        showLogWaterSheet(context, ref);
       case _NextStepRoute.meal:
         context.go(AppRoutes.nutrition);
       case _NextStepRoute.workout:

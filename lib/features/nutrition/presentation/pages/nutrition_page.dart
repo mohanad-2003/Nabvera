@@ -9,6 +9,7 @@ import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
 import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/meal_idea_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
+import 'package:nabvera/features/nutrition/presentation/widgets/log_water_sheet.dart';
 import 'package:nabvera/features/nutrition/presentation/widgets/nutrition_summary_card.dart';
 import 'package:nabvera/features/nutrition/presentation/widgets/premium_recipe_card.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
@@ -54,7 +55,10 @@ class NutritionPage extends ConsumerWidget {
                   ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
                 ),
                 SizedBox(height: spacing),
-                NutritionSummaryCard(summary: summary),
+                NutritionSummaryCard(
+                  summary: summary,
+                  onLogWater: () => showLogWaterSheet(context, ref),
+                ),
                 SizedBox(height: spacing),
                 Row(
                   children: [

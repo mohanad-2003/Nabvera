@@ -1,7 +1,6 @@
+import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../data/nutrition_repository.dart';
-import '../../domain/nutrition_models.dart';
 
 part 'nutrition_controller.g.dart';
 
@@ -78,33 +77,7 @@ class DailyNutritionSummaryController
   Future<void> _load() async {
     try {
       final entry = await ref.read(nutritionRepositoryProvider).fetchToday();
-      final calorieGoal = (entry['calorieGoal'] as num?) ?? 2000;
-      final proteinGoal = (entry['proteinGoalG'] as num?) ?? 1;
-      final carbsGoal = (entry['carbsGoalG'] as num?) ?? 1;
-      final fatGoal = (entry['fatGoalG'] as num?) ?? 1;
-      final waterGoalMl = (entry['waterGoalMl'] as num?) ?? 2000;
-      final waterConsumedMl = (entry['waterConsumedMl'] as num?) ?? 0;
-      // ~250ml per "cup", matching the UI's original "X / 8 cups" copy.
-      const mlPerCup = 250;
-
-      state = DailyNutritionSummary(
-        consumedCalories: ((entry['caloriesConsumed'] as num?) ?? 0).round(),
-        goalCalories: calorieGoal.round(),
-        proteinFraction:
-            (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal)
-                .clamp(0, 1)
-                .toDouble(),
-        carbsFraction:
-            (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal)
-                .clamp(0, 1)
-                .toDouble(),
-        fatFraction:
-            (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal)
-                .clamp(0, 1)
-                .toDouble(),
-        waterIntake:
-            '${(waterConsumedMl / mlPerCup).round()} / ${(waterGoalMl / mlPerCup).round()} cups',
-      );
+      state = DailyNutritionSummary.fromEntry(entry);
     } catch (_) {
       // Left at the default placeholder — see WorkoutListByLevel for the
       // same pattern.
@@ -114,4 +87,15 @@ class DailyNutritionSummaryController
   /// Used by Home's `refreshHomeProviders` — the "next step" card reads
   /// today's water/calorie progress from this controller too.
   Future<void> refresh() => _load();
+
+  /// Logs an actual amount of water via `POST /nutrition/water` and
+  /// updates every screen watching this controller immediately (Home's
+  /// next-step card, the Nutrition summary card) — no restart, no
+  /// separate refetch. Errors propagate to the caller so the water-log
+  /// sheet can show a real failure message instead of silently doing
+  /// nothing.
+  Future<void> logWater(int amountMl) async {
+    final entry = await ref.read(nutritionRepositoryProvider).logWater(amountMl);
+    state = DailyNutritionSummary.fromEntry(entry);
+  }
 }

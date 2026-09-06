@@ -1965,6 +1965,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nutritionWaterIntakeLabel => 'شرب الماء';
 
   @override
+  String get waterLogSheetTitle => 'تسجيل الماء';
+
+  @override
+  String get waterLogAddCup => '+1 كوب (250 مل)';
+
+  @override
+  String get waterLogAddTwoCups => '+2 كوب (500 مل)';
+
+  @override
+  String get waterLogAdded => 'تم تسجيل الماء';
+
+  @override
+  String get waterLogFailed => 'تعذر تسجيل الماء، حاول مرة أخرى';
+
+  @override
+  String get actionDone => 'تم';
+
+  @override
   String get nutritionNutritionFacts => 'الحقائق الغذائية';
 
   @override
