@@ -5,6 +5,7 @@ import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/nutrition/domain/meal_plan_models.dart';
+import 'package:nabvera/features/nutrition/presentation/providers/meal_logging_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/meal_plan_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
@@ -236,9 +237,12 @@ class _MealItemCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: ext.glassBorder),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SmartImage(item.recipeImageUrl ?? '', width: 64, height: 64, fit: BoxFit.cover),
@@ -263,16 +267,105 @@ class _MealItemCard extends ConsumerWidget {
               ],
             ),
           ),
-          TextButton(
-            onPressed: () => ref.read(mealPlanControllerProvider.notifier).replaceMeal(
-              dayIndex: dayIndex,
-              mealType: mealType,
-              itemId: item.id,
-            ),
-            child: Text(l10n.mealPlanReplaceMeal),
+            ],
           ),
+          if (item.recipeId != null) ...[
+            const SizedBox(height: 8),
+            _MealItemActions(item: item, mealType: mealType, dayIndex: dayIndex),
+          ],
         ],
       ),
+    );
+  }
+}
+
+/// "Mark as eaten" / "Logged (Undo)" + "Replace" — split from the card's
+/// header row so both actions can live on their own row without crowding
+/// the recipe image/title. Reads [mealLoggingControllerProvider] to know
+/// whether this exact plan item was already logged today (seeded from the
+/// real backend record, not just this session's taps — see that
+/// controller's doc comment).
+class _MealItemActions extends ConsumerStatefulWidget {
+  const _MealItemActions({required this.item, required this.mealType, required this.dayIndex});
+
+  final MealPlanItem item;
+  final String mealType;
+  final int dayIndex;
+
+  @override
+  ConsumerState<_MealItemActions> createState() => _MealItemActionsState();
+}
+
+class _MealItemActionsState extends ConsumerState<_MealItemActions> {
+  bool _submitting = false;
+
+  Future<void> _markEaten() async {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _submitting = true);
+    try {
+      await ref.read(mealLoggingControllerProvider.notifier).markEaten(
+        recipeId: widget.item.recipeId!,
+        mealType: widget.mealType,
+        mealPlanItemId: widget.item.id,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.mealLogAdded)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.mealLogFailed)));
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  Future<void> _undo(String logId) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _submitting = true);
+    try {
+      await ref.read(mealLoggingControllerProvider.notifier).undo(logId, mealPlanItemId: widget.item.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.mealLogRemoved)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.mealLogUndoFailed)));
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final loggedMap = ref.watch(mealLoggingControllerProvider).value ?? const {};
+    final logId = loggedMap[widget.item.id];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (logId != null) ...[
+          Icon(Icons.check_circle_rounded, size: 16, color: ext.accentGlow),
+          const SizedBox(width: 4),
+          Text(l10n.mealLogged, style: TextStyle(color: ext.accentGlow, fontSize: 12, fontWeight: FontWeight.w700)),
+          TextButton(
+            onPressed: _submitting ? null : () => _undo(logId),
+            child: Text(l10n.mealLogUndo),
+          ),
+        ] else
+          TextButton.icon(
+            onPressed: _submitting ? null : _markEaten,
+            icon: _submitting
+                ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.restaurant_rounded, size: 16),
+            label: Text(l10n.mealMarkAsEaten),
+          ),
+        TextButton(
+          onPressed: () => ref
+              .read(mealPlanControllerProvider.notifier)
+              .replaceMeal(dayIndex: widget.dayIndex, mealType: widget.mealType, itemId: widget.item.id),
+          child: Text(l10n.mealPlanReplaceMeal),
+        ),
+      ],
     );
   }
 }

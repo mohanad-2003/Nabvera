@@ -92,6 +92,7 @@ class MealDetail {
     this.prepTimeMinutes,
     this.caloriesValue,
     this.similarRecipes = const [],
+    this.category,
   });
 
   final String image;
@@ -125,6 +126,12 @@ class MealDetail {
   /// being viewed (not a generic "recommended" list shared by every recipe).
   final List<MealItem> similarRecipes;
 
+  /// Recipe.category ('breakfast'/'lunch'/'dinner'/'snack'/'drink') — used
+  /// only to default the mealType when logging this recipe as eaten from
+  /// Meal Ideas (see meal_detail_page.dart); never shown as diagnostic or
+  /// medical information.
+  final String? category;
+
   /// Builds a detail-page model from a `/api/recipes/:id` (or list) JSON
   /// document. `favoriteKey` is the recipe's `_id`, matched against
   /// `UserProfile.favoriteRecipeIds`.
@@ -132,8 +139,11 @@ class MealDetail {
     final nutrition = json['nutrition'] as Map<String, dynamic>? ?? const {};
     final ingredients =
         (json['ingredients'] as List? ?? const []).cast<Map<String, dynamic>>();
+    // .toList() first: `?? const []` returns an unmodifiable list when
+    // `steps` is missing entirely (a recipe with no steps yet), and
+    // `..sort()` on that throws — this is the fix, not new behavior.
     final steps =
-        (json['steps'] as List? ?? const []).cast<Map<String, dynamic>>()..sort(
+        (json['steps'] as List? ?? const []).cast<Map<String, dynamic>>().toList()..sort(
           (a, b) =>
               ((a['order'] as num?) ?? 0).compareTo((b['order'] as num?) ?? 0),
         );
@@ -165,8 +175,15 @@ class MealDetail {
         for (final r in (json['similarRecipes'] as List? ?? const []))
           MealItem.fromJson(r as Map<String, dynamic>),
       ],
+      category: json['category'] as String?,
     );
   }
+
+  /// Maps [category] to a valid `DailyNutrition` mealType, falling back to
+  /// 'snack' for anything not in {breakfast, lunch, dinner, snack} (e.g.
+  /// Recipe's 'drink' category, or no category at all).
+  String get defaultMealType =>
+      const {'breakfast', 'lunch', 'dinner', 'snack'}.contains(category) ? category! : 'snack';
 
   static const empty = MealDetail(
     image: 'assets/workout.png',
@@ -179,9 +196,11 @@ class MealDetail {
 enum MealCategory { breakfast, lunch, dinner }
 
 /// At-a-glance daily nutrition snapshot shown at the top of the Nutrition
-/// home tab — static/mock, matching the same demo-data pattern already used
-/// by [nutritionRecommended]/[nutritionRecipes] (no real food-logging
-/// feature exists in the app yet).
+/// home tab — a real `/api/nutrition/today` document, mapped via
+/// [fromEntry]. [goalSource] and [isLoading] exist specifically so the UI
+/// never presents a guessed/placeholder goal as the user's own (see
+/// [goalSource]'s doc comment) and never shows numbers before they've
+/// actually loaded.
 class DailyNutritionSummary {
   const DailyNutritionSummary({
     required this.consumedCalories,
@@ -190,6 +209,8 @@ class DailyNutritionSummary {
     required this.carbsFraction,
     required this.fatFraction,
     required this.waterIntake,
+    this.goalSource = 'fallback',
+    this.isLoading = false,
   });
 
   final int consumedCalories;
@@ -205,10 +226,36 @@ class DailyNutritionSummary {
   /// than raw numbers + ICU placeholders.
   final String waterIntake;
 
+  /// 'preferences' when [goalCalories] is the user's own manually-set
+  /// target, 'estimate' when it's the rule-based suggestion, 'fallback'
+  /// when it's a fixed placeholder because neither was available — see
+  /// `backend/src/services/nutritionCalculatorService.resolveDailyGoals`.
+  /// Anything other than 'preferences' should read as "not personalized
+  /// yet", never as the user's real goal.
+  final String goalSource;
+
+  /// True only for the initial placeholder shown before the first real
+  /// load completes — lets the summary card show a genuine loading state
+  /// instead of a misleading fixed number.
+  final bool isLoading;
+
+  bool get hasPersonalGoal => goalSource == 'preferences';
+
+  DailyNutritionSummary copyWith({bool? isLoading}) => DailyNutritionSummary(
+    consumedCalories: consumedCalories,
+    goalCalories: goalCalories,
+    proteinFraction: proteinFraction,
+    carbsFraction: carbsFraction,
+    fatFraction: fatFraction,
+    waterIntake: waterIntake,
+    goalSource: goalSource,
+    isLoading: isLoading ?? this.isLoading,
+  );
+
   /// Builds a summary from a `/api/nutrition/today`-shaped document —
-  /// shared by the initial load and by `logWater`'s response, so a
-  /// successful water log updates every field (not just water) from
-  /// exactly the same document the backend just persisted.
+  /// shared by the initial load and by `logWater`/`logMeal`'s response,
+  /// so a successful log updates every field (not just the one that
+  /// changed) from exactly the same document the backend just persisted.
   factory DailyNutritionSummary.fromEntry(Map<String, dynamic> entry) {
     final calorieGoal = (entry['calorieGoal'] as num?) ?? 2000;
     final proteinGoal = (entry['proteinGoalG'] as num?) ?? 1;
@@ -226,6 +273,7 @@ class DailyNutritionSummary {
       carbsFraction: (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal).clamp(0, 1).toDouble(),
       fatFraction: (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal).clamp(0, 1).toDouble(),
       waterIntake: '${(waterConsumedMl / mlPerCup).round()} / ${(waterGoalMl / mlPerCup).round()} cups',
+      goalSource: entry['goalSource'] as String? ?? 'fallback',
     );
   }
 }

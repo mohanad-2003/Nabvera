@@ -10,7 +10,12 @@ import 'package:flutter/material.dart';
 /// hero card, so this stays a plain section rather than a second boxed
 /// card competing with it.
 class NutritionSummaryCard extends StatelessWidget {
-  const NutritionSummaryCard({super.key, required this.summary, this.onLogWater});
+  const NutritionSummaryCard({
+    super.key,
+    required this.summary,
+    this.onLogWater,
+    this.onSetGoals,
+  });
 
   final DailyNutritionSummary summary;
 
@@ -18,11 +23,24 @@ class NutritionSummaryCard extends StatelessWidget {
   /// keep the row display-only (e.g. a read-only context).
   final VoidCallback? onLogWater;
 
+  /// Shown as a CTA banner whenever [DailyNutritionSummary.hasPersonalGoal]
+  /// is false, so a guessed/fallback goal is never presented as the
+  /// user's own — omit to hide the banner entirely.
+  final VoidCallback? onSetGoals;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ext = theme.extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+
+    if (summary.isLoading) {
+      return const SizedBox(
+        height: 84,
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      );
+    }
+
     final progress =
         summary.goalCalories == 0
             ? 0.0
@@ -148,6 +166,33 @@ class NutritionSummaryCard extends StatelessWidget {
             ),
           ),
         ),
+        if (!summary.hasPersonalGoal && onSetGoals != null) ...[
+          const SizedBox(height: 14),
+          InkWell(
+            onTap: onSetGoals,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: ext.accentGlow.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.flag_outlined, color: ext.accentGlow, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.nutritionSetGoalsCta,
+                      style: theme.textTheme.bodySmall?.copyWith(color: ext.textPrimary, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: ext.textMuted, size: 18),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

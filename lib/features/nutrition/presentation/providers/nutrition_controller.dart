@@ -64,6 +64,8 @@ class DailyNutritionSummaryController
   @override
   DailyNutritionSummary build() {
     Future.microtask(_load);
+    // isLoading: true — the summary card shows a real loading state with
+    // this, not these zeros treated as an actual (mis)reading.
     return const DailyNutritionSummary(
       consumedCalories: 0,
       goalCalories: 2000,
@@ -71,6 +73,7 @@ class DailyNutritionSummaryController
       carbsFraction: 0,
       fatFraction: 0,
       waterIntake: '0 / 8 cups',
+      isLoading: true,
     );
   }
 
@@ -79,8 +82,10 @@ class DailyNutritionSummaryController
       final entry = await ref.read(nutritionRepositoryProvider).fetchToday();
       state = DailyNutritionSummary.fromEntry(entry);
     } catch (_) {
-      // Left at the default placeholder — see WorkoutListByLevel for the
-      // same pattern.
+      // Stop showing the loading state even on failure — see
+      // WorkoutListByLevel for the same "left at a safe placeholder"
+      // pattern, just no longer flagged as still-loading.
+      state = state.copyWith(isLoading: false);
     }
   }
 

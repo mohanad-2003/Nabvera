@@ -51,5 +51,45 @@ void main() {
       expect(summary.goalCalories, 0);
       expect(summary.consumedCalories, 100);
     });
+
+    test('goalSource "preferences" means hasPersonalGoal is true', () {
+      final summary = DailyNutritionSummary.fromEntry({'goalSource': 'preferences'});
+      expect(summary.hasPersonalGoal, isTrue);
+    });
+
+    test('goalSource "estimate" or "fallback" means hasPersonalGoal is false — never presented as the user\'s own', () {
+      expect(DailyNutritionSummary.fromEntry({'goalSource': 'estimate'}).hasPersonalGoal, isFalse);
+      expect(DailyNutritionSummary.fromEntry({'goalSource': 'fallback'}).hasPersonalGoal, isFalse);
+    });
+
+    test('defaults goalSource to "fallback" (not personal) when the backend omits it', () {
+      final summary = DailyNutritionSummary.fromEntry({});
+      expect(summary.goalSource, 'fallback');
+      expect(summary.hasPersonalGoal, isFalse);
+    });
+
+    test('a freshly-loaded entry is never flagged as still loading', () {
+      final summary = DailyNutritionSummary.fromEntry({});
+      expect(summary.isLoading, isFalse);
+    });
+  });
+
+  group('DailyNutritionSummary.copyWith', () {
+    test('changes only isLoading, leaving every other field untouched', () {
+      const summary = DailyNutritionSummary(
+        consumedCalories: 500,
+        goalCalories: 2000,
+        proteinFraction: 0.5,
+        carbsFraction: 0.3,
+        fatFraction: 0.2,
+        waterIntake: '3 / 8 cups',
+        goalSource: 'preferences',
+        isLoading: true,
+      );
+      final updated = summary.copyWith(isLoading: false);
+      expect(updated.isLoading, isFalse);
+      expect(updated.consumedCalories, 500);
+      expect(updated.goalSource, 'preferences');
+    });
   });
 }

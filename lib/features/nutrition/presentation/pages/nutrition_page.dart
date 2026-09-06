@@ -58,6 +58,7 @@ class NutritionPage extends ConsumerWidget {
                 NutritionSummaryCard(
                   summary: summary,
                   onLogWater: () => showLogWaterSheet(context, ref),
+                  onSetGoals: () => context.push(AppRoutes.mealPlanPreferences),
                 ),
                 SizedBox(height: spacing),
                 Row(

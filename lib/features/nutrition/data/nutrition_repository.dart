@@ -40,6 +40,37 @@ class NutritionRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
+  /// Logs a real, already-existing recipe as eaten ("Mark as eaten").
+  /// Never sends nutrition values — the backend always re-reads them from
+  /// `Recipe.nutrition` server-side (see
+  /// `backend/src/controllers/dailyNutritionController.js`). Pass
+  /// [mealPlanItemId] when logging a specific meal-plan slot to get
+  /// ownership validation and duplicate-log protection; omit it for a
+  /// plain Meal Ideas recipe with no plan association.
+  Future<Map<String, dynamic>> logMeal({
+    required String recipeId,
+    required String mealType,
+    String? mealPlanItemId,
+  }) async {
+    final response = await _client.post(
+      '/nutrition/meals',
+      body: {
+        'recipeId': recipeId,
+        'mealType': mealType,
+        if (mealPlanItemId != null) 'mealPlanItemId': mealPlanItemId,
+      },
+    );
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  /// Undoes an accidental "mark as eaten".
+  Future<Map<String, dynamic>> unlogMeal(String logId) async {
+    final response = await _client.delete('/nutrition/meals/$logId');
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
   // --- Nutrition preferences (Phase 6) ----------------------------------
 
   Future<Map<String, dynamic>> fetchNutritionPreferences() async {

@@ -1980,6 +1980,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get waterLogFailed => 'تعذر تسجيل الماء، حاول مرة أخرى';
 
   @override
+  String get nutritionSetGoalsCta => 'هذا هدف تقديري — حدد أهداف تغذيتك الخاصة';
+
+  @override
+  String get mealMarkAsEaten => 'تم تناولها';
+
+  @override
+  String get mealLogged => 'تم تسجيلها';
+
+  @override
+  String get mealLogUndo => 'تراجع';
+
+  @override
+  String get mealLogAdded => 'تم تسجيل الوجبة';
+
+  @override
+  String get mealLogFailed => 'تعذر تسجيل هذه الوجبة، حاول مرة أخرى';
+
+  @override
+  String get mealLogRemoved => 'تم إلغاء التسجيل';
+
+  @override
+  String get mealLogUndoFailed => 'تعذر التراجع، حاول مرة أخرى';
+
+  @override
   String get actionDone => 'تم';
 
   @override

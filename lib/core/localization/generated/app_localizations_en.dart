@@ -2001,6 +2001,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waterLogFailed => 'Couldn\'t log water, please try again';
 
   @override
+  String get nutritionSetGoalsCta =>
+      'This is an estimated target — set your own nutrition goals';
+
+  @override
+  String get mealMarkAsEaten => 'Mark as eaten';
+
+  @override
+  String get mealLogged => 'Logged';
+
+  @override
+  String get mealLogUndo => 'Undo';
+
+  @override
+  String get mealLogAdded => 'Meal logged';
+
+  @override
+  String get mealLogFailed => 'Couldn\'t log this meal, please try again';
+
+  @override
+  String get mealLogRemoved => 'Log removed';
+
+  @override
+  String get mealLogUndoFailed => 'Couldn\'t undo, please try again';
+
+  @override
   String get actionDone => 'Done';
 
   @override

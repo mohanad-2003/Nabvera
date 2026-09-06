@@ -3758,6 +3758,54 @@ abstract class AppLocalizations {
   /// **'Couldn\'t log water, please try again'**
   String get waterLogFailed;
 
+  /// No description provided for @nutritionSetGoalsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'This is an estimated target — set your own nutrition goals'**
+  String get nutritionSetGoalsCta;
+
+  /// No description provided for @mealMarkAsEaten.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as eaten'**
+  String get mealMarkAsEaten;
+
+  /// No description provided for @mealLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged'**
+  String get mealLogged;
+
+  /// No description provided for @mealLogUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get mealLogUndo;
+
+  /// No description provided for @mealLogAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal logged'**
+  String get mealLogAdded;
+
+  /// No description provided for @mealLogFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t log this meal, please try again'**
+  String get mealLogFailed;
+
+  /// No description provided for @mealLogRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Log removed'**
+  String get mealLogRemoved;
+
+  /// No description provided for @mealLogUndoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t undo, please try again'**
+  String get mealLogUndoFailed;
+
   /// No description provided for @actionDone.
   ///
   /// In en, this message translates to:
