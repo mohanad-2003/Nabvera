@@ -53,6 +53,34 @@ class _MealPlanHomePageState extends ConsumerState<MealPlanHomePage> {
   }
 }
 
+/// Header row for the Meal Plans page — pairs [WorkoutHeader] with a home
+/// icon button. This page can be reached via `context.go`, which replaces
+/// the route stack and leaves no back destination, so this keeps a
+/// reliable way back to the main dashboard. Optionally also shows a
+/// shopping-list shortcut once a plan exists.
+class _MealPlanHeader extends StatelessWidget {
+  const _MealPlanHeader({required this.l10n, this.showShoppingList = false});
+
+  final AppLocalizations l10n;
+  final bool showShoppingList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: WorkoutHeader(title: l10n.nutritionTabMealPlans)),
+        if (showShoppingList)
+          IconButton(
+            tooltip: l10n.mealPlanViewShoppingList,
+            onPressed: () => context.push(AppRoutes.mealPlanShoppingList),
+            icon: const Icon(Icons.shopping_bag_outlined),
+          ),
+        PremiumIconButton(icon: Icons.home_outlined, onTap: () => context.go(AppRoutes.home)),
+      ],
+    );
+  }
+}
+
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.l10n, required this.ext});
   final AppLocalizations l10n;
@@ -63,7 +91,7 @@ class _EmptyState extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        WorkoutHeader(title: l10n.nutritionTabMealPlans),
+        _MealPlanHeader(l10n: l10n),
         Expanded(
           child: Center(
             child: Column(
@@ -127,16 +155,7 @@ class _PlanView extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(child: WorkoutHeader(title: l10n.nutritionTabMealPlans)),
-            IconButton(
-              tooltip: l10n.mealPlanViewShoppingList,
-              onPressed: () => context.push(AppRoutes.mealPlanShoppingList),
-              icon: const Icon(Icons.shopping_bag_outlined),
-            ),
-          ],
-        ),
+        _MealPlanHeader(l10n: l10n, showShoppingList: true),
         if (plan.generationSource == 'fallback')
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
