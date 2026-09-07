@@ -17,12 +17,14 @@ class GenderPage extends ConsumerWidget {
     final selected = ref.watch(onboardingProfileControllerProvider).gender;
     final controller = ref.read(onboardingProfileControllerProvider.notifier);
     final l10n = AppLocalizations.of(context);
+    final canContinue = selected != null;
 
     return WizardScaffold(
       step: 1,
       totalSteps: 8,
       title: l10n.onboardingGenderTitle,
       description: l10n.onboardingGenderBody,
+      footerMessage: canContinue ? null : l10n.onboardingGenderRequired,
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -41,12 +43,10 @@ class GenderPage extends ConsumerWidget {
           ),
         ],
       ),
-      button: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: PrimaryButton(
-          label: l10n.actionContinue,
-          onPressed: () => context.push(AppRoutes.setupAge),
-        ),
+      button: PrimaryButton(
+        label: l10n.actionContinue,
+        onPressed:
+            canContinue ? () => context.push(AppRoutes.setupAge) : null,
       ),
     );
   }
@@ -69,107 +69,92 @@ class _GenderOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
 
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedScale(
-        scale: isSelected ? 1.0 : 0.96,
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOutBack,
-        child: AnimatedContainer(
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: label,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedScale(
+          scale: isSelected ? 1.0 : 0.94,
           duration: const Duration(milliseconds: 220),
-          width: 150,
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: isSelected ? ext.accentGradient : null,
-            color: isSelected ? null : ext.glassFill,
-            border: Border.all(
-              color: isSelected ? Colors.transparent : ext.glassBorder,
-              width: 1.5,
-            ),
-            boxShadow: [
-              if (isSelected)
-                BoxShadow(
-                  color: ext.accentGlow.withValues(alpha: 0.35),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
-                ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      // The unselected medallion keeps the fixed violet→aqua
-                      // brand gradient; its white glyph stays readable on it
-                      // in both light and dark mode.
-                      gradient:
-                          isSelected
-                              ? null
-                              : const LinearGradient(
-                                colors: [
-                                  AppColors.seedViolet,
-                                  AppColors.aquaBlue,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                      color:
-                          isSelected
-                              ? ext.onAccent.withValues(alpha: 0.14)
-                              : null,
-                      border: Border.all(
-                        color:
+          curve: Curves.easeOutBack,
+          child: SizedBox(
+            width: 130,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // The unselected medallion keeps the fixed violet→aqua
+                        // brand gradient; its white glyph stays readable on it
+                        // in both light and dark mode.
+                        gradient:
                             isSelected
-                                ? ext.onAccent.withValues(alpha: 0.25)
-                                : ext.glassBorder,
-                      ),
-                    ),
-                    child: Icon(
-                      icon,
-                      size: 56,
-                      color: isSelected ? ext.onAccent : Colors.white,
-                    ),
-                  ),
-                  if (isSelected)
-                    PositionedDirectional(
-                      end: -4,
-                      bottom: -4,
-                      child: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ext.onAccent,
-                          border: Border.all(color: ext.accentGlow, width: 2),
+                                ? ext.accentGradient
+                                : const LinearGradient(
+                                  colors: [
+                                    AppColors.seedViolet,
+                                    AppColors.aquaBlue,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                        border: Border.all(
+                          color: isSelected ? ext.onAccent : Colors.transparent,
+                          width: 3,
                         ),
-                        child: Icon(
-                          Icons.check_rounded,
-                          color: ext.accentGlow,
-                          size: 16,
+                        boxShadow: [
+                          if (isSelected)
+                            BoxShadow(
+                              color: ext.accentGlow.withValues(alpha: 0.4),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                        ],
+                      ),
+                      child: Icon(icon, size: 52, color: Colors.white),
+                    ),
+                    if (isSelected)
+                      PositionedDirectional(
+                        end: -4,
+                        bottom: -4,
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: ext.onAccent,
+                            border: Border.all(color: ext.accentGlow, width: 2),
+                          ),
+                          child: Icon(
+                            Icons.check_rounded,
+                            color: ext.accentGlow,
+                            size: 16,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? ext.onAccent : ext.textPrimary,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 14),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? ext.textPrimary : ext.textMuted,
+                    fontSize: 17,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

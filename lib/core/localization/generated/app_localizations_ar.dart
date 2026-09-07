@@ -30,6 +30,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actionBack => 'رجوع';
 
   @override
+  String get actionIncrease => 'زيادة';
+
+  @override
+  String get actionDecrease => 'إنقاص';
+
+  @override
   String get actionSave => 'حفظ';
 
   @override
@@ -409,11 +415,19 @@ class AppLocalizationsAr extends AppLocalizations {
       'ابقَ متحفزًا مع معالم التقدم والتحديات والروتينات المصممة للحياة الواقعية.';
 
   @override
+  String onboardingStepCounter(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
   String get onboardingGenderTitle => 'ما هو جنسك';
 
   @override
   String get onboardingGenderBody =>
       'اختر جنسك لتخصيص خطتك الرياضية وتتبع تقدمك بدقة أكبر.';
+
+  @override
+  String get onboardingGenderRequired => 'اختر جنسك للمتابعة';
 
   @override
   String get onboardingAgeTitle => 'كم عمرك؟';
@@ -443,11 +457,41 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر هدفك الرياضي لتخصيص خطة التمارين والتغذية.';
 
   @override
+  String get onboardingGoalRequired => 'اختر هدفًا للمتابعة';
+
+  @override
+  String get goalLoseWeightHint => 'التركيز على تقليل السعرات';
+
+  @override
+  String get goalGainWeightHint => 'التركيز على فائض السعرات';
+
+  @override
+  String get goalMuscleMassGainHint => 'أولوية للقوة وبناء العضل';
+
+  @override
+  String get goalShapeBodyHint => 'نحت الجسم ونشاط منتظم';
+
+  @override
+  String get goalOthersHint => 'خطة عامة متوازنة';
+
+  @override
   String get onboardingPhysicalTitle => 'مستوى النشاط البدني';
 
   @override
   String get onboardingPhysicalBody =>
       'اختر مستوى نشاطك البدني لتخصيص خطتك الرياضية.';
+
+  @override
+  String get onboardingPhysicalRequired => 'اختر مستوى نشاطك للمتابعة';
+
+  @override
+  String get workoutLevelBeginnerHint => 'جديد على التمارين المنظمة';
+
+  @override
+  String get workoutLevelIntermediateHint => 'تتمرن عدة مرات أسبوعيًا بالفعل';
+
+  @override
+  String get workoutLevelAdvancedHint => 'تتمرن كثيرًا وبكثافة عالية';
 
   @override
   String get onboardingEquipmentTitle => 'ما المعدات المتوفرة لديك؟';
@@ -460,19 +504,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboardingEquipmentNone => 'بدون معدات / وزن الجسم فقط';
 
   @override
+  String get onboardingEquipmentNoneHint => 'ضغط، سكوات، وتمارين أخرى';
+
+  @override
   String get onboardingEquipmentDumbbell => 'دمبل';
+
+  @override
+  String get onboardingEquipmentDumbbellHint => 'أوزان ثابتة أو قابلة للتعديل';
 
   @override
   String get onboardingEquipmentBarbell => 'بار حديد';
 
   @override
+  String get onboardingEquipmentBarbellHint => 'مع أقراص ورف';
+
+  @override
   String get onboardingEquipmentMachine => 'أجهزة النادي';
+
+  @override
+  String get onboardingEquipmentMachineHint => 'وصول كامل لصالة رياضية';
 
   @override
   String get onboardingEquipmentBand => 'أشرطة مقاومة';
 
   @override
+  String get onboardingEquipmentBandHint => 'خفيفة وسهلة الحمل';
+
+  @override
   String get onboardingEquipmentKettlebell => 'كيتل بيل';
+
+  @override
+  String get onboardingEquipmentKettlebellHint => 'وزن واحد أو أكثر';
 
   @override
   String get onboardingTimeTitle => 'كم من الوقت لديك؟';
@@ -484,13 +546,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboardingTime15 => '15 دقيقة';
 
   @override
+  String get onboardingTime15Hint => 'جلسة سريعة ومركّزة';
+
+  @override
   String get onboardingTime30 => '30 دقيقة';
+
+  @override
+  String get onboardingTime30Hint => 'جلسة متوازنة يومية';
 
   @override
   String get onboardingTime45 => '45 دقيقة';
 
   @override
+  String get onboardingTime45Hint => 'جلسة أطول قليلًا';
+
+  @override
   String get onboardingTime60 => '60 دقيقة';
+
+  @override
+  String get onboardingTime60Hint => 'جلسة ممتدة';
+
+  @override
+  String get onboardingSaveFailed => 'تعذر حفظ ملفك الشخصي. حاول مرة أخرى.';
+
+  @override
+  String get onboardingSaving => 'جارٍ حفظ ملفك الشخصي…';
 
   @override
   String get onboardingFillProfileTitle => 'أكمل ملفك الشخصي';
@@ -547,6 +627,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unitCm => 'سم';
+
+  @override
+  String onboardingAgeValue(int value) {
+    return 'العمر: $value سنة';
+  }
+
+  @override
+  String onboardingHeightValue(int value) {
+    return 'الطول: $value سنتيمتر';
+  }
+
+  @override
+  String onboardingWeightValue(int value) {
+    return 'الوزن: $value كيلوغرام';
+  }
 
   @override
   String homeGreeting(String name) {
@@ -1475,6 +1570,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileSuccessMessage => 'تم تحديث الملف الشخصي بنجاح!';
+
+  @override
+  String get editProfileAvatarPickFailed =>
+      'تعذر اختيار الصورة. حاول مرة أخرى.';
+
+  @override
+  String get editProfileAvatarUploadFailed => 'تعذر رفع صورتك. حاول مرة أخرى.';
 
   @override
   String get editProfilePreferencesTitle => 'تفضيلات التمرين';

@@ -1,4 +1,6 @@
 import 'package:nabvera/features/profile/data/user_repository.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'onboarding_profile_controller.g.dart';
@@ -73,7 +75,46 @@ class OnboardingProfile {
 @riverpod
 class OnboardingProfileController extends _$OnboardingProfileController {
   @override
-  OnboardingProfile build() => const OnboardingProfile();
+  OnboardingProfile build() {
+    // A user who already has a saved profile (e.g. they left the wizard
+    // partway and came back, or are revisiting /setup directly) sees their
+    // real existing answers pre-filled instead of the wizard's generic
+    // defaults every time — a brand-new signup has an empty profile, so
+    // this is a no-op for the common case.
+    final existing = ref.watch(currentUserProfileProvider);
+    if (existing.id.isEmpty) return const OnboardingProfile();
+    return _fromExistingProfile(existing);
+  }
+
+  static OnboardingProfile _fromExistingProfile(UserProfile profile) {
+    const fallback = OnboardingProfile();
+    final equipment =
+        profile.availableEquipment
+            .map(equipmentFromApi)
+            .whereType<AvailableEquipment>()
+            .toSet();
+    return OnboardingProfile(
+      // Onboarding's Gender only models male/female (see the enum's doc);
+      // an existing "other" value has no equivalent here, so it's left
+      // unselected rather than guessed.
+      gender: switch (profile.gender) {
+        'male' => Gender.male,
+        'female' => Gender.female,
+        _ => null,
+      },
+      age:
+          profile.dateOfBirth == null
+              ? fallback.age
+              : DateTime.now().year - profile.dateOfBirth!.year,
+      heightCm: profile.heightCmRaw?.round() ?? fallback.heightCm,
+      weightKg: profile.weightKgRaw?.round() ?? fallback.weightKg,
+      goal: goalFromApi(profile.goal),
+      activityLevel: activityLevelFromApi(profile.activityLevel),
+      availableEquipment:
+          equipment.isEmpty ? fallback.availableEquipment : equipment,
+      availableTime: minutesToTime(profile.availableMinutes),
+    );
+  }
 
   void selectGender(Gender gender) => state = state.copyWith(gender: gender);
   void setAge(int age) => state = state.copyWith(age: age);
@@ -99,9 +140,12 @@ class OnboardingProfileController extends _$OnboardingProfileController {
   void selectAvailableTime(AvailableTime time) =>
       state = state.copyWith(availableTime: time);
 
-  /// Persists the wizard's answers to the user's backend profile. Best
-  /// effort: onboarding still finishes and lands on Home even if this
-  /// fails — the user can always fix details later from Edit Profile.
+  /// Persists the wizard's answers to the user's backend profile. Throws
+  /// on failure (a real network/server error) — the final wizard step
+  /// must not navigate to Home until this actually succeeds, so it needs
+  /// a real error to catch and offer Retry on, not a silently-swallowed
+  /// one (Edit Profile is a fallback for changing details *later*, not a
+  /// safety net for onboarding never having saved anything at all).
   Future<void> submit() async {
     final s = state;
     final patch = <String, dynamic>{
@@ -119,11 +163,7 @@ class OnboardingProfileController extends _$OnboardingProfileController {
       'availableEquipment': s.availableEquipment.map(_equipmentToApi).toList(),
       'availableMinutes': _timeToMinutes(s.availableTime),
     };
-    try {
-      await ref.read(userRepositoryProvider).updateProfile(patch);
-    } catch (_) {
-      // See doc comment — swallow and let the user continue.
-    }
+    await ref.read(userRepositoryProvider).updateProfile(patch);
   }
 
   static String _goalToApi(FitnessGoal goal) => goalToApi(goal);

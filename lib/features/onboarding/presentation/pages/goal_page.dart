@@ -1,9 +1,8 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
-import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
-import 'package:nabvera/core/widgets/selectable_option_card.dart';
 import 'package:nabvera/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
+import 'package:nabvera/features/onboarding/presentation/widgets/wizard_option_card.dart';
 import 'package:nabvera/features/onboarding/presentation/widgets/wizard_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +16,22 @@ String _goalLabel(AppLocalizations l10n, FitnessGoal goal) => switch (goal) {
   FitnessGoal.others => l10n.goalOthers,
 };
 
+String _goalHint(AppLocalizations l10n, FitnessGoal goal) => switch (goal) {
+  FitnessGoal.loseWeight => l10n.goalLoseWeightHint,
+  FitnessGoal.gainWeight => l10n.goalGainWeightHint,
+  FitnessGoal.muscleMassGain => l10n.goalMuscleMassGainHint,
+  FitnessGoal.shapeBody => l10n.goalShapeBodyHint,
+  FitnessGoal.others => l10n.goalOthersHint,
+};
+
+IconData _goalIcon(FitnessGoal goal) => switch (goal) {
+  FitnessGoal.loseWeight => Icons.trending_down_rounded,
+  FitnessGoal.gainWeight => Icons.trending_up_rounded,
+  FitnessGoal.muscleMassGain => Icons.fitness_center_rounded,
+  FitnessGoal.shapeBody => Icons.accessibility_new_rounded,
+  FitnessGoal.others => Icons.more_horiz_rounded,
+};
+
 class GoalPage extends ConsumerWidget {
   const GoalPage({super.key});
 
@@ -24,42 +39,31 @@ class GoalPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedGoal = ref.watch(onboardingProfileControllerProvider).goal;
     final controller = ref.read(onboardingProfileControllerProvider.notifier);
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+    final canContinue = selectedGoal != null;
 
     return WizardScaffold(
       step: 5,
       totalSteps: 8,
       title: l10n.onboardingGoalTitle,
       description: l10n.onboardingGoalBody,
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: ext.glassBorder),
-        ),
-        child: Column(
-          children: [
-            for (final goal in FitnessGoal.values) ...[
-              SelectableOptionCard(
-                label: _goalLabel(l10n, goal),
-                isSelected: selectedGoal == goal,
-                showCheckmark: true,
-                onTap: () => controller.selectGoal(goal),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ],
-        ),
+      footerMessage: canContinue ? null : l10n.onboardingGoalRequired,
+      body: WizardOptionList(
+        children: [
+          for (final goal in FitnessGoal.values)
+            WizardOptionCard(
+              icon: _goalIcon(goal),
+              label: _goalLabel(l10n, goal),
+              hint: _goalHint(l10n, goal),
+              isSelected: selectedGoal == goal,
+              onTap: () => controller.selectGoal(goal),
+            ),
+        ],
       ),
-      button: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: PrimaryButton(
-          label: l10n.actionContinue,
-          onPressed: () => context.push(AppRoutes.setupPhysical),
-        ),
+      button: PrimaryButton(
+        label: l10n.actionContinue,
+        onPressed:
+            canContinue ? () => context.push(AppRoutes.setupPhysical) : null,
       ),
     );
   }

@@ -140,6 +140,18 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get actionBack;
 
+  /// No description provided for @actionIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase'**
+  String get actionIncrease;
+
+  /// No description provided for @actionDecrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease'**
+  String get actionDecrease;
+
   /// No description provided for @actionSave.
   ///
   /// In en, this message translates to:
@@ -854,6 +866,12 @@ abstract class AppLocalizations {
   /// **'Stay motivated with progress milestones, challenges, and routines built for real life.'**
   String get onboardingSlide4Description;
 
+  /// No description provided for @onboardingStepCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepCounter(int current, int total);
+
   /// No description provided for @onboardingGenderTitle.
   ///
   /// In en, this message translates to:
@@ -865,6 +883,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select your gender to personalize your fitness plan and track your progress more accurately.'**
   String get onboardingGenderBody;
+
+  /// No description provided for @onboardingGenderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a gender to continue'**
+  String get onboardingGenderRequired;
 
   /// No description provided for @onboardingAgeTitle.
   ///
@@ -914,6 +938,42 @@ abstract class AppLocalizations {
   /// **'Choose your fitness goal to personalize your workout and diet plan.'**
   String get onboardingGoalBody;
 
+  /// No description provided for @onboardingGoalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a goal to continue'**
+  String get onboardingGoalRequired;
+
+  /// No description provided for @goalLoseWeightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Trim down with a calorie-focused plan'**
+  String get goalLoseWeightHint;
+
+  /// No description provided for @goalGainWeightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Build up with a surplus-focused plan'**
+  String get goalGainWeightHint;
+
+  /// No description provided for @goalMuscleMassGainHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritize strength and hypertrophy'**
+  String get goalMuscleMassGainHint;
+
+  /// No description provided for @goalShapeBodyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tone up and stay consistently active'**
+  String get goalShapeBodyHint;
+
+  /// No description provided for @goalOthersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A general, balanced plan'**
+  String get goalOthersHint;
+
   /// No description provided for @onboardingPhysicalTitle.
   ///
   /// In en, this message translates to:
@@ -925,6 +985,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select your physical activity level to personalize your fitness plan.'**
   String get onboardingPhysicalBody;
+
+  /// No description provided for @onboardingPhysicalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your activity level to continue'**
+  String get onboardingPhysicalRequired;
+
+  /// No description provided for @workoutLevelBeginnerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'New to structured training'**
+  String get workoutLevelBeginnerHint;
+
+  /// No description provided for @workoutLevelIntermediateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Train a few times a week already'**
+  String get workoutLevelIntermediateHint;
+
+  /// No description provided for @workoutLevelAdvancedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Train often and push hard'**
+  String get workoutLevelAdvancedHint;
 
   /// No description provided for @onboardingEquipmentTitle.
   ///
@@ -944,11 +1028,23 @@ abstract class AppLocalizations {
   /// **'No equipment / bodyweight only'**
   String get onboardingEquipmentNone;
 
+  /// No description provided for @onboardingEquipmentNoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Push-ups, squats, and more'**
+  String get onboardingEquipmentNoneHint;
+
   /// No description provided for @onboardingEquipmentDumbbell.
   ///
   /// In en, this message translates to:
   /// **'Dumbbells'**
   String get onboardingEquipmentDumbbell;
+
+  /// No description provided for @onboardingEquipmentDumbbellHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustable or fixed pairs'**
+  String get onboardingEquipmentDumbbellHint;
 
   /// No description provided for @onboardingEquipmentBarbell.
   ///
@@ -956,11 +1052,23 @@ abstract class AppLocalizations {
   /// **'Barbell'**
   String get onboardingEquipmentBarbell;
 
+  /// No description provided for @onboardingEquipmentBarbellHint.
+  ///
+  /// In en, this message translates to:
+  /// **'With plates and a rack'**
+  String get onboardingEquipmentBarbellHint;
+
   /// No description provided for @onboardingEquipmentMachine.
   ///
   /// In en, this message translates to:
   /// **'Gym machines'**
   String get onboardingEquipmentMachine;
+
+  /// No description provided for @onboardingEquipmentMachineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full gym access'**
+  String get onboardingEquipmentMachineHint;
 
   /// No description provided for @onboardingEquipmentBand.
   ///
@@ -968,11 +1076,23 @@ abstract class AppLocalizations {
   /// **'Resistance bands'**
   String get onboardingEquipmentBand;
 
+  /// No description provided for @onboardingEquipmentBandHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Light and portable'**
+  String get onboardingEquipmentBandHint;
+
   /// No description provided for @onboardingEquipmentKettlebell.
   ///
   /// In en, this message translates to:
   /// **'Kettlebell'**
   String get onboardingEquipmentKettlebell;
+
+  /// No description provided for @onboardingEquipmentKettlebellHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more weights'**
+  String get onboardingEquipmentKettlebellHint;
 
   /// No description provided for @onboardingTimeTitle.
   ///
@@ -992,11 +1112,23 @@ abstract class AppLocalizations {
   /// **'15 minutes'**
   String get onboardingTime15;
 
+  /// No description provided for @onboardingTime15Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick, focused session'**
+  String get onboardingTime15Hint;
+
   /// No description provided for @onboardingTime30.
   ///
   /// In en, this message translates to:
   /// **'30 minutes'**
   String get onboardingTime30;
+
+  /// No description provided for @onboardingTime30Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'A balanced, everyday session'**
+  String get onboardingTime30Hint;
 
   /// No description provided for @onboardingTime45.
   ///
@@ -1004,11 +1136,35 @@ abstract class AppLocalizations {
   /// **'45 minutes'**
   String get onboardingTime45;
 
+  /// No description provided for @onboardingTime45Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'A fuller, standard session'**
+  String get onboardingTime45Hint;
+
   /// No description provided for @onboardingTime60.
   ///
   /// In en, this message translates to:
   /// **'60 minutes'**
   String get onboardingTime60;
+
+  /// No description provided for @onboardingTime60Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'An extended session'**
+  String get onboardingTime60Hint;
+
+  /// No description provided for @onboardingSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your profile. Please try again.'**
+  String get onboardingSaveFailed;
+
+  /// No description provided for @onboardingSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your profile…'**
+  String get onboardingSaving;
 
   /// No description provided for @onboardingFillProfileTitle.
   ///
@@ -1117,6 +1273,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'cm'**
   String get unitCm;
+
+  /// No description provided for @onboardingAgeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Age: {value} years'**
+  String onboardingAgeValue(int value);
+
+  /// No description provided for @onboardingHeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Height: {value} centimeters'**
+  String onboardingHeightValue(int value);
+
+  /// No description provided for @onboardingWeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight: {value} kilograms'**
+  String onboardingWeightValue(int value);
 
   /// Home screen header greeting
   ///
@@ -2809,6 +2983,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated successfully!'**
   String get editProfileSuccessMessage;
+
+  /// No description provided for @editProfileAvatarPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t select an image. Please try again.'**
+  String get editProfileAvatarPickFailed;
+
+  /// No description provided for @editProfileAvatarUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t upload your photo. Please try again.'**
+  String get editProfileAvatarUploadFailed;
 
   /// No description provided for @editProfilePreferencesTitle.
   ///
