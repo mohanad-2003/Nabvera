@@ -58,6 +58,11 @@ class FilteredFavorites extends _$FilteredFavorites {
         // Skip a favorite that no longer resolves.
       }
     }
+    // This provider is autoDispose — the Favorites page can be popped
+    // (tearing this down) while the loop above is still awaiting a
+    // fetch. Writing to `state` after that throws UnmountedRefException;
+    // `ref.mounted` after the async work is the documented guard.
+    if (!ref.mounted) return;
     _cache = items;
     state = _applyFilter(items, ref.read(favoriteFilterControllerProvider));
   }
@@ -86,6 +91,7 @@ class FilteredFavorites extends _$FilteredFavorites {
       } else {
         await repo.toggleFavoriteRecipe(item.id);
       }
+      if (!ref.mounted) return;
       ref.invalidate(currentUserProfileProvider);
     } catch (_) {
       // Left removed locally — a stale favorite id is harmless, and the

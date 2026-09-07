@@ -66,7 +66,8 @@ class SearchPage extends ConsumerWidget {
               // A real BackButtonIcon (not a raw arrow_back_ios glyph) so it
               // points the correct direction under RTL too — Arabic had it
               // pointing the wrong way before this.
-              if (context.canPop()) _BackButton(onTap: () => context.pop()),
+              if (context.canPop())
+                PremiumBackButton(onTap: () => context.pop()),
               const SizedBox(width: 12),
               Text(
                 l10n.navSearch,
@@ -217,37 +218,6 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
                   : null,
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
           border: InputBorder.none,
-        ),
-      ),
-    );
-  }
-}
-
-/// Same look as [PremiumIconButton], but wraps [BackButtonIcon] instead of
-/// a fixed `arrow_back_ios` glyph — [BackButtonIcon] resolves to the
-/// correct visual direction per platform *and* text direction, so it
-/// points right under RTL instead of always pointing left.
-class _BackButton extends StatelessWidget {
-  const _BackButton({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: ext.glassBorder),
-        ),
-        child: IconTheme(
-          data: IconThemeData(color: ext.textPrimary, size: 22),
-          child: const BackButtonIcon(),
         ),
       ),
     );

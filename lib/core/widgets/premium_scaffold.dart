@@ -191,6 +191,39 @@ class PremiumIconButton extends StatelessWidget {
   }
 }
 
+/// Same look as [PremiumIconButton], but wraps [BackButtonIcon] instead of
+/// a fixed `arrow_back_ios` glyph — [BackButtonIcon] resolves to the
+/// correct visual direction per platform *and* text direction, so it
+/// points right under RTL instead of always pointing left (several pages
+/// used a raw `Icons.arrow_back_ios_new_rounded` for their back button,
+/// which stayed pointing the LTR direction even under Arabic).
+class PremiumBackButton extends StatelessWidget {
+  const PremiumBackButton({super.key, required this.onTap});
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: ext.glassFill,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: ext.glassBorder),
+        ),
+        child: IconTheme(
+          data: IconThemeData(color: ext.textPrimary, size: 22),
+          child: const BackButtonIcon(),
+        ),
+      ),
+    );
+  }
+}
+
 class PremiumSectionHeader extends StatelessWidget {
   const PremiumSectionHeader({
     super.key,

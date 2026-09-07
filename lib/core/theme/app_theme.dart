@@ -41,6 +41,25 @@ abstract final class AppTheme {
         centerTitle: true,
         titleTextStyle: textTheme.titleLarge,
       ),
+      // Material3's own SnackBarThemeData default assumes a dark
+      // (inverse-surface) background regardless of app brightness, so its
+      // default light-colored content text disappears against the light,
+      // near-white background every SnackBar in this app actually uses in
+      // light mode (backgroundColor: ext.cardColor) — this is the fix for
+      // that, applied once here rather than patched at every call site.
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark ? AppColors.graphite : Colors.white,
+        contentTextStyle: TextStyle(
+          color: isDark ? Colors.white : AppColors.seedInk,
+          fontWeight: FontWeight.w600,
+        ),
+        actionTextColor: isDark ? AppColors.seedLime : AppColors.successOnLight,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        elevation: isDark ? 0 : 6,
+      ),
       cardTheme: CardThemeData(
         color:
             isDark ? AppColors.graphite : colorScheme.surfaceContainerHighest,
