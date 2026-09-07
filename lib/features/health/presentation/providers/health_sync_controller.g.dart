@@ -32,7 +32,7 @@ final class HealthSyncControllerProvider
         argument: null,
         retry: null,
         name: r'healthSyncControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -46,7 +46,7 @@ final class HealthSyncControllerProvider
 }
 
 String _$healthSyncControllerHash() =>
-    r'2e33b7e039e84c61d7a1e0731b06d903feb8353d';
+    r'd430b95e12ed19e1e732704f3a59a04c851f34e7';
 
 /// Orchestrates connecting to and syncing from the device's health store.
 /// Never reads/writes anything if the user hasn't opted in — every path

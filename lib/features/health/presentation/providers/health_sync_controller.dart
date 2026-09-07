@@ -19,7 +19,7 @@ enum HealthConnectResult { success, permissionDenied, platformUnavailable }
 /// Never reads/writes anything if the user hasn't opted in — every path
 /// here either starts from an explicit "Connect" tap or is a no-op when
 /// `syncEnabled` is false (see [syncNow]).
-@riverpod
+@Riverpod(keepAlive: true)
 class HealthSyncController extends _$HealthSyncController {
   @override
   FutureOr<void> build() {}
@@ -82,7 +82,9 @@ class HealthSyncController extends _$HealthSyncController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await ref.read(healthRepositoryProvider).deleteHealthData();
-      await ref.read(healthPreferencesControllerProvider.notifier).disableSync();
+      await ref
+          .read(healthPreferencesControllerProvider.notifier)
+          .disableSync();
       ref.invalidate(healthSummaryControllerProvider);
     });
   }
