@@ -1,8 +1,7 @@
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_preferences.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../../core/analytics/analytics_service.dart';
-import '../../data/nutrition_repository.dart';
-import '../../domain/nutrition_preferences.dart';
 
 part 'nutrition_preferences_controller.g.dart';
 
@@ -15,7 +14,8 @@ part 'nutrition_preferences_controller.g.dart';
 class NutritionPreferencesController extends _$NutritionPreferencesController {
   @override
   Future<NutritionPreferences> build() async {
-    final json = await ref.read(nutritionRepositoryProvider).fetchNutritionPreferences();
+    final json =
+        await ref.read(nutritionRepositoryProvider).fetchNutritionPreferences();
     return NutritionPreferences.fromJson(json);
   }
 
@@ -26,10 +26,13 @@ class NutritionPreferencesController extends _$NutritionPreferencesController {
           .read(nutritionRepositoryProvider)
           .updateNutritionPreferences(preferences.toJson());
       final saved = NutritionPreferences.fromJson(json);
-      ref.read(analyticsServiceProvider).logEvent(AnalyticsEvent.nutritionPreferencesUpdated, {
-        'preferencesFieldCount': saved.dietaryPreferences.length + saved.allergies.length,
-        'cookingTimePreference': saved.cookingTimePreference,
-      });
+      ref
+          .read(analyticsServiceProvider)
+          .logEvent(AnalyticsEvent.nutritionPreferencesUpdated, {
+            'preferencesFieldCount':
+                saved.dietaryPreferences.length + saved.allergies.length,
+            'cookingTimePreference': saved.cookingTimePreference,
+          });
       return saved;
     });
   }
@@ -40,6 +43,7 @@ class NutritionPreferencesController extends _$NutritionPreferencesController {
 /// auto-applied: the user always sees and can edit it before saving.
 @riverpod
 Future<CalorieSuggestion> calorieSuggestion(Ref ref) async {
-  final json = await ref.read(nutritionRepositoryProvider).fetchCalorieSuggestion();
+  final json =
+      await ref.read(nutritionRepositoryProvider).fetchCalorieSuggestion();
   return CalorieSuggestion.fromJson(json);
 }

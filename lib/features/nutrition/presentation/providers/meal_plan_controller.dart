@@ -1,9 +1,7 @@
+import 'package:nabvera/core/analytics/analytics_service.dart';
+import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
+import 'package:nabvera/features/nutrition/domain/meal_plan_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../../core/analytics/analytics_service.dart';
-import '../../data/nutrition_repository.dart';
-import '../../domain/meal_plan_models.dart';
-
 part 'meal_plan_controller.g.dart';
 
 /// The current user's active weekly meal plan — `null` means no plan has

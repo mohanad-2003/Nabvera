@@ -49,7 +49,7 @@ final class MealPlanControllerProvider
 }
 
 String _$mealPlanControllerHash() =>
-    r'0e113468d6a5059691e4f669b94c6c2d679d4d02';
+    r'54a7d5586463325c62dbe86cde0ec71643652ec1';
 
 /// The current user's active weekly meal plan — `null` means no plan has
 /// been generated yet (the empty state). An [AsyncNotifier] so

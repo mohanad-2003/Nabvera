@@ -1,7 +1,6 @@
+import 'package:nabvera/core/network/api_client.dart';
+import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../core/network/api_client.dart';
-import '../domain/profile_models.dart';
 
 part 'user_repository.g.dart';
 
