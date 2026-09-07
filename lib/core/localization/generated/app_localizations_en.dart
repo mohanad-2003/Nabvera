@@ -1447,6 +1447,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try a different keyword or browse a category instead.';
 
   @override
+  String get searchStartTypingTitle => 'Search for anything';
+
+  @override
+  String get searchStartTypingBody =>
+      'Find workouts and meals by name — start typing above.';
+
+  @override
   String get navFavorites => 'Favorites';
 
   @override

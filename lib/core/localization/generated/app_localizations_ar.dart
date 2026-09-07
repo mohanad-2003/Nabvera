@@ -1432,6 +1432,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchNoResultsBody => 'جرّب كلمة مختلفة أو تصفّح فئة أخرى.';
 
   @override
+  String get searchStartTypingTitle => 'ابحث عن أي شيء';
+
+  @override
+  String get searchStartTypingBody =>
+      'اعثر على التمارين والوجبات بالاسم — ابدأ الكتابة أعلاه.';
+
+  @override
   String get navFavorites => 'المفضلة';
 
   @override

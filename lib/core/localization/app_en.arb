@@ -532,6 +532,8 @@
   "searchNutritionSuggestions": "Nutrition Suggestions",
   "searchNoResultsTitle": "No results found",
   "searchNoResultsBody": "Try a different keyword or browse a category instead.",
+  "searchStartTypingTitle": "Search for anything",
+  "searchStartTypingBody": "Find workouts and meals by name — start typing above.",
 
   "navFavorites": "Favorites",
   "favoriteFilterAll": "All",

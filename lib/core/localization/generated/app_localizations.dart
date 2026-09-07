@@ -2708,6 +2708,18 @@ abstract class AppLocalizations {
   /// **'Try a different keyword or browse a category instead.'**
   String get searchNoResultsBody;
 
+  /// No description provided for @searchStartTypingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for anything'**
+  String get searchStartTypingTitle;
+
+  /// No description provided for @searchStartTypingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find workouts and meals by name — start typing above.'**
+  String get searchStartTypingBody;
+
   /// No description provided for @navFavorites.
   ///
   /// In en, this message translates to:

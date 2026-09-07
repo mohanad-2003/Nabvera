@@ -449,6 +449,8 @@
   "searchNutritionSuggestions": "اقتراحات تغذية",
   "searchNoResultsTitle": "لا توجد نتائج",
   "searchNoResultsBody": "جرّب كلمة مختلفة أو تصفّح فئة أخرى.",
+  "searchStartTypingTitle": "ابحث عن أي شيء",
+  "searchStartTypingBody": "اعثر على التمارين والوجبات بالاسم — ابدأ الكتابة أعلاه.",
 
   "navFavorites": "المفضلة",
   "favoriteFilterAll": "الكل",

@@ -192,19 +192,28 @@ abstract class _$SearchQueryController extends $Notifier<String> {
 
 /// Debounced live search across `/api/workouts?search=` and
 /// `/api/recipes?search=` — empty query means empty results (nothing
-/// fabricated to fill the screen before the user types).
+/// fabricated to fill the screen before the user types). Tracks
+/// `isLoading`/`hasSearched` too (see [SearchResults]'s doc comment) so
+/// the "no results" message only ever appears for a search that actually
+/// ran and came back empty, never for the fresh, nothing-typed-yet state.
 
 @ProviderFor(SearchAllResults)
 final searchAllResultsProvider = SearchAllResultsProvider._();
 
 /// Debounced live search across `/api/workouts?search=` and
 /// `/api/recipes?search=` — empty query means empty results (nothing
-/// fabricated to fill the screen before the user types).
+/// fabricated to fill the screen before the user types). Tracks
+/// `isLoading`/`hasSearched` too (see [SearchResults]'s doc comment) so
+/// the "no results" message only ever appears for a search that actually
+/// ran and came back empty, never for the fresh, nothing-typed-yet state.
 final class SearchAllResultsProvider
-    extends $NotifierProvider<SearchAllResults, List<SearchResultItem>> {
+    extends $NotifierProvider<SearchAllResults, SearchResults> {
   /// Debounced live search across `/api/workouts?search=` and
   /// `/api/recipes?search=` — empty query means empty results (nothing
-  /// fabricated to fill the screen before the user types).
+  /// fabricated to fill the screen before the user types). Tracks
+  /// `isLoading`/`hasSearched` too (see [SearchResults]'s doc comment) so
+  /// the "no results" message only ever appears for a search that actually
+  /// ran and came back empty, never for the fresh, nothing-typed-yet state.
   SearchAllResultsProvider._()
     : super(
         from: null,
@@ -224,32 +233,34 @@ final class SearchAllResultsProvider
   SearchAllResults create() => SearchAllResults();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<SearchResultItem> value) {
+  Override overrideWithValue(SearchResults value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<SearchResultItem>>(value),
+      providerOverride: $SyncValueProvider<SearchResults>(value),
     );
   }
 }
 
-String _$searchAllResultsHash() => r'5dcbba4938fdacc69ab49432ee316ef9a7fdc3ed';
+String _$searchAllResultsHash() => r'f6a557f58a6807c3977e76a37a6305bc319f628a';
 
 /// Debounced live search across `/api/workouts?search=` and
 /// `/api/recipes?search=` — empty query means empty results (nothing
-/// fabricated to fill the screen before the user types).
+/// fabricated to fill the screen before the user types). Tracks
+/// `isLoading`/`hasSearched` too (see [SearchResults]'s doc comment) so
+/// the "no results" message only ever appears for a search that actually
+/// ran and came back empty, never for the fresh, nothing-typed-yet state.
 
-abstract class _$SearchAllResults extends $Notifier<List<SearchResultItem>> {
-  List<SearchResultItem> build();
+abstract class _$SearchAllResults extends $Notifier<SearchResults> {
+  SearchResults build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref =
-        this.ref as $Ref<List<SearchResultItem>, List<SearchResultItem>>;
+    final ref = this.ref as $Ref<SearchResults, SearchResults>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<List<SearchResultItem>, List<SearchResultItem>>,
-              List<SearchResultItem>,
+              AnyNotifier<SearchResults, SearchResults>,
+              SearchResults,
               Object?,
               Object?
             >;

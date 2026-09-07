@@ -42,6 +42,7 @@ class SearchFeaturedWorkouts extends _$SearchFeaturedWorkouts {
 SearchResultItem _workoutToResult(Map<String, dynamic> doc) {
   final exerciseCount = (doc['exercises'] as List?)?.length ?? 0;
   return SearchResultItem(
+    id: (doc['_id'] as String?) ?? '',
     image: (doc['coverImageUrl'] as String?) ?? 'assets/workout.png',
     name: (doc['title'] as String?) ?? '',
     time: '${doc['durationMinutes'] ?? '—'} Minutes',
@@ -54,6 +55,7 @@ SearchResultItem _workoutToResult(Map<String, dynamic> doc) {
 SearchResultItem _recipeToResult(Map<String, dynamic> doc) {
   final nutrition = doc['nutrition'] as Map<String, dynamic>? ?? const {};
   return SearchResultItem(
+    id: (doc['_id'] as String?) ?? '',
     image: (doc['imageUrl'] as String?) ?? 'assets/workout.png',
     name: (doc['title'] as String?) ?? '',
     time: '${doc['prepTimeMinutes'] ?? '—'} Minutes',
@@ -74,21 +76,24 @@ class SearchQueryController extends _$SearchQueryController {
 
 /// Debounced live search across `/api/workouts?search=` and
 /// `/api/recipes?search=` — empty query means empty results (nothing
-/// fabricated to fill the screen before the user types).
+/// fabricated to fill the screen before the user types). Tracks
+/// `isLoading`/`hasSearched` too (see [SearchResults]'s doc comment) so
+/// the "no results" message only ever appears for a search that actually
+/// ran and came back empty, never for the fresh, nothing-typed-yet state.
 @riverpod
 class SearchAllResults extends _$SearchAllResults {
   Timer? _debounce;
 
   @override
-  List<SearchResultItem> build() {
+  SearchResults build() {
     final query = ref.watch(searchQueryControllerProvider).trim();
     ref.onDispose(() => _debounce?.cancel());
 
-    if (query.isEmpty) return const [];
+    if (query.isEmpty) return const SearchResults();
 
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () => _search(query));
-    return state;
+    return state.copyWith(isLoading: true);
   }
 
   Future<void> _search(String query) async {
@@ -111,10 +116,15 @@ class SearchAllResults extends _$SearchAllResults {
           (results[1])
               .where((r) => (r['title'] as String? ?? '').toLowerCase().contains(lower))
               .map(_recipeToResult);
-      state = [...workouts, ...recipes];
+      state = SearchResults(
+        items: [...workouts, ...recipes],
+        hasSearched: true,
+      );
     } catch (_) {
-      // Left at the previous state — see WorkoutListByLevel for the same
-      // pattern.
+      // Left at the previous items — see WorkoutListByLevel for the same
+      // pattern — but still marked as having searched, and no longer
+      // loading, so the UI doesn't spin forever.
+      state = state.copyWith(isLoading: false, hasSearched: true);
     }
   }
 }
