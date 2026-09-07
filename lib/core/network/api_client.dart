@@ -99,6 +99,31 @@ class ApiClient {
   Future<http.Response> delete(String path, {Object? body}) =>
       _send('DELETE', path, body: body);
 
+  /// Uploads one image while preserving the token refresh behavior used by
+  /// JSON requests. Multipart requests set their own content-type boundary.
+  Future<http.Response> uploadImage(
+    String path, {
+    required List<int> bytes,
+    required String filename,
+  }) async {
+    final uri = Uri.parse('$baseUrl$path');
+
+    Future<http.Response> attempt(bool forceRefresh) async {
+      final headers = await _headers(forceRefresh: forceRefresh);
+      headers.remove('Content-Type');
+      final request = http.MultipartRequest('POST', uri)
+        ..headers.addAll(headers)
+        ..files.add(
+          http.MultipartFile.fromBytes('image', bytes, filename: filename),
+        );
+      return http.Response.fromStream(await request.send());
+    }
+
+    final response = await attempt(false);
+    if (response.statusCode != 401) return response;
+    return attempt(true);
+  }
+
   /// Decodes a JSON body and throws [ApiException] for non-2xx responses,
   /// matching the backend's `{ success, message }` error shape.
   Map<String, dynamic> decode(http.Response response) {

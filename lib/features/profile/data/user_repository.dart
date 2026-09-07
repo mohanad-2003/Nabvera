@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:nabvera/core/network/api_client.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,6 +23,22 @@ class UserRepository {
     final response = await _client.patch('/users/me', body: patch);
     final body = _client.decode(response);
     return UserProfile.fromJson(body['data'] as Map<String, dynamic>);
+  }
+
+  /// Uploads an avatar first, then lets the caller persist its returned URL
+  /// with the regular profile PATCH endpoint.
+  Future<String> uploadAvatar({
+    required Uint8List bytes,
+    required String filename,
+  }) async {
+    final response = await _client.uploadImage(
+      '/uploads',
+      bytes: bytes,
+      filename: filename,
+    );
+    final body = _client.decode(response);
+    final path = (body['data'] as Map<String, dynamic>)['url'] as String;
+    return resolveBackendUrl(path);
   }
 
   Future<UserProfile> setBiometricEnabled(bool enabled) async {

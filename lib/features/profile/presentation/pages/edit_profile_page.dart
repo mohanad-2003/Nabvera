@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'dart:typed_data';
+
 import 'package:nabvera/core/analytics/analytics_service.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
@@ -13,11 +15,13 @@ import 'package:nabvera/features/home/presentation/providers/home_dashboard_cont
     show refreshHomeProviders;
 import 'package:nabvera/features/onboarding/presentation/providers/onboarding_profile_controller.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
 import 'package:nabvera/features/profile/presentation/widgets/profile_stat_row.dart';
 import 'package:nabvera/features/profile/presentation/widgets/workout_schedule_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
 enum _Gender { male, female, other }
@@ -72,6 +76,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   String? _nameError;
   bool _initialized = false;
 
+  XFile? _pendingAvatar;
+  Uint8List? _avatarPreviewBytes;
   // Workout-preferences section — separate save action/state from the
   // identity fields above, since these map onto the recommendation engine
   // rather than the profile card.
@@ -124,6 +130,35 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     }
   }
 
+  /// Opens the gallery picker and shows the picked photo immediately (via
+  /// [UserAvatar]'s `imageBytes`) — it isn't uploaded yet. The actual
+  /// upload happens in [_handleSave], alongside every other field, so
+  /// tapping the avatar and then backing out of the whole edit without
+  /// pressing Update never partially saves just the photo.
+  Future<void> _pickAvatar() async {
+    try {
+      final selected = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (selected == null) return;
+      final bytes = await selected.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _pendingAvatar = selected;
+        _avatarPreviewBytes = bytes;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.editProfileAvatarPickFailed)));
+    }
+  }
+
   Future<void> _handleSave(AppLocalizations l10n) async {
     if (_nameController.text.trim().isEmpty) {
       setState(() => _nameError = l10n.editProfileNameValidation);
@@ -145,17 +180,41 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     final dob = _parseDob(_dobController.text.trim());
     if (dob != null) patch['dateOfBirth'] = dob.toIso8601String();
 
+    final pendingAvatar = _pendingAvatar;
     try {
+      if (pendingAvatar != null) {
+        // Uploaded first, and any failure here aborts the whole save (no
+        // ApiException swallowed into a fake "success") — a half-applied
+        // update (every field but the photo) would be confusing, not just
+        // a missing photo.
+        final avatarUrl = await ref
+            .read(userRepositoryProvider)
+            .uploadAvatar(
+              bytes: _avatarPreviewBytes!,
+              filename: pendingAvatar.name,
+            );
+        patch['avatarUrl'] = avatarUrl;
+      }
       await ref.read(currentUserProfileProvider.notifier).update(patch);
       if (!mounted) return;
+      setState(() {
+        _pendingAvatar = null;
+        _avatarPreviewBytes = null;
+      });
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.editProfileSuccessMessage)));
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.authErrorGeneric)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            pendingAvatar != null
+                ? l10n.editProfileAvatarUploadFailed
+                : l10n.authErrorGeneric,
+          ),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -293,32 +352,39 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   ),
                   const SizedBox(height: 20),
                   Center(
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        UserAvatar(radius: 52, imageUrl: profile.avatarUrl),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: ext.cardColor,
-                              border: Border.all(
-                                color: ext.glassBorder,
-                                width: 2,
+                    child: GestureDetector(
+                      onTap: _pickAvatar,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          UserAvatar(
+                            radius: 52,
+                            imageUrl: profile.avatarUrl,
+                            imageBytes: _avatarPreviewBytes,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: ext.cardColor,
+                                border: Border.all(
+                                  color: ext.glassBorder,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.edit_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 16,
                               ),
                             ),
-                            child: Icon(
-                              Icons.edit_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 16,
-                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),

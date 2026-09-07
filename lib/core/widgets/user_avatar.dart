@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +15,7 @@ class UserAvatar extends StatelessWidget {
     this.borderColor,
     this.borderWidth = 0,
     this.imageUrl,
+    this.imageBytes,
   });
 
   final double radius;
@@ -21,6 +24,7 @@ class UserAvatar extends StatelessWidget {
   final double borderWidth;
   final String? imageUrl;
 
+  final Uint8List? imageBytes;
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
@@ -41,8 +45,17 @@ class UserAvatar extends StatelessWidget {
                 : null,
       ),
       child:
-          hasPhoto
+          imageBytes != null
               ? ClipOval(
+                child: Image.memory(
+                  imageBytes!,
+                  width: radius * 2,
+                  height: radius * 2,
+                  fit: BoxFit.cover,
+                ),
+              )
+              : hasPhoto
+                  ? ClipOval(
                 child: Image.network(
                   imageUrl!,
                   width: radius * 2,

@@ -7,6 +7,7 @@ import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:nabvera/features/profile/presentation/widgets/delete_account_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User, UserCredential;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +29,9 @@ class FakeUserRepository implements UserRepository {
   Future<UserProfile> fetchMe() async => throw UnimplementedError();
   @override
   Future<UserProfile> updateProfile(Map<String, dynamic> patch) async => throw UnimplementedError();
+  @override
+  Future<String> uploadAvatar({required Uint8List bytes, required String filename}) async =>
+      throw UnimplementedError();
   @override
   Future<UserProfile> setBiometricEnabled(bool enabled) async => throw UnimplementedError();
   @override
