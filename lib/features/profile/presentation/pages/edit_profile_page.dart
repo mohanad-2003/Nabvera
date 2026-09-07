@@ -34,11 +34,12 @@ String _goalLabel(AppLocalizations l10n, FitnessGoal goal) => switch (goal) {
   FitnessGoal.others => l10n.goalOthers,
 };
 
-String _levelLabel(AppLocalizations l10n, ActivityLevel level) => switch (level) {
-  ActivityLevel.beginner => l10n.workoutLevelBeginner,
-  ActivityLevel.intermediate => l10n.workoutLevelIntermediate,
-  ActivityLevel.advanced => l10n.workoutLevelAdvanced,
-};
+String _levelLabel(AppLocalizations l10n, ActivityLevel level) =>
+    switch (level) {
+      ActivityLevel.beginner => l10n.workoutLevelBeginner,
+      ActivityLevel.intermediate => l10n.workoutLevelIntermediate,
+      ActivityLevel.advanced => l10n.workoutLevelAdvanced,
+    };
 
 String _equipmentLabel(AppLocalizations l10n, AvailableEquipment equipment) =>
     switch (equipment) {
@@ -110,11 +111,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     super.dispose();
   }
 
-  String _genderLabel(_Gender gender, AppLocalizations l10n) => switch (gender) {
-    _Gender.male => l10n.editProfileGenderMale,
-    _Gender.female => l10n.editProfileGenderFemale,
-    _Gender.other => l10n.editProfileGenderOther,
-  };
+  String _genderLabel(_Gender gender, AppLocalizations l10n) =>
+      switch (gender) {
+        _Gender.male => l10n.editProfileGenderMale,
+        _Gender.female => l10n.editProfileGenderFemale,
+        _Gender.other => l10n.editProfileGenderOther,
+      };
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -192,6 +194,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             .uploadAvatar(
               bytes: _avatarPreviewBytes!,
               filename: pendingAvatar.name,
+              contentType: pendingAvatar.mimeType,
             );
         patch['avatarUrl'] = avatarUrl;
       }
@@ -312,10 +315,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _goal = goalFromApi(profile.goal);
       _activityLevel = activityLevelFromApi(profile.activityLevel);
       final savedEquipment =
-          profile.availableEquipment.map(equipmentFromApi).whereType<AvailableEquipment>().toSet();
-      _equipment = savedEquipment.isEmpty
-          ? {AvailableEquipment.none}
-          : savedEquipment;
+          profile.availableEquipment
+              .map(equipmentFromApi)
+              .whereType<AvailableEquipment>()
+              .toSet();
+      _equipment =
+          savedEquipment.isEmpty ? {AvailableEquipment.none} : savedEquipment;
       _availableTime = minutesToTime(profile.availableMinutes);
     }
 
@@ -565,8 +570,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           child: _GenderChip(
                             label: _levelLabel(l10n, level),
                             selected: _activityLevel == level,
-                            onTap: () =>
-                                setState(() => _activityLevel = level),
+                            onTap: () => setState(() => _activityLevel = level),
                           ),
                         ),
                       ],
@@ -583,23 +587,24 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         _EquipmentChip(
                           label: _equipmentLabel(l10n, equipment),
                           selected: _equipment.contains(equipment),
-                          onTap: () => setState(() {
-                            final selected = {..._equipment};
-                            if (equipment == AvailableEquipment.none) {
-                              selected
-                                ..clear()
-                                ..add(equipment);
-                            } else {
-                              selected.remove(AvailableEquipment.none);
-                              if (!selected.add(equipment)) {
-                                selected.remove(equipment);
-                              }
-                              if (selected.isEmpty) {
-                                selected.add(AvailableEquipment.none);
-                              }
-                            }
-                            _equipment = selected;
-                          }),
+                          onTap:
+                              () => setState(() {
+                                final selected = {..._equipment};
+                                if (equipment == AvailableEquipment.none) {
+                                  selected
+                                    ..clear()
+                                    ..add(equipment);
+                                } else {
+                                  selected.remove(AvailableEquipment.none);
+                                  if (!selected.add(equipment)) {
+                                    selected.remove(equipment);
+                                  }
+                                  if (selected.isEmpty) {
+                                    selected.add(AvailableEquipment.none);
+                                  }
+                                }
+                                _equipment = selected;
+                              }),
                         ),
                     ],
                   ),
@@ -615,8 +620,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           child: _GenderChip(
                             label: _timeLabel(l10n, time),
                             selected: _availableTime == time,
-                            onTap: () =>
-                                setState(() => _availableTime = time),
+                            onTap: () => setState(() => _availableTime = time),
                           ),
                         ),
                       ],
@@ -671,12 +675,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         );
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.editProfileSuccessMessage)),
+                          SnackBar(
+                            content: Text(l10n.editProfileSuccessMessage),
+                          ),
                         );
                       } catch (_) {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.workoutScheduleSaveFailed)),
+                          SnackBar(
+                            content: Text(l10n.workoutScheduleSaveFailed),
+                          ),
                         );
                       }
                     },

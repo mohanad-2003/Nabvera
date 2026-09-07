@@ -26,15 +26,19 @@ class UserRepository {
   }
 
   /// Uploads an avatar first, then lets the caller persist its returned URL
-  /// with the regular profile PATCH endpoint.
+  /// with the regular profile PATCH endpoint. Pass the picker's own
+  /// `XFile.mimeType` as [contentType] when available — see
+  /// [ApiClient.uploadImage]'s doc comment for why this matters.
   Future<String> uploadAvatar({
     required Uint8List bytes,
     required String filename,
+    String? contentType,
   }) async {
     final response = await _client.uploadImage(
       '/uploads',
       bytes: bytes,
       filename: filename,
+      contentType: contentType,
     );
     final body = _client.decode(response);
     final path = (body['data'] as Map<String, dynamic>)['url'] as String;

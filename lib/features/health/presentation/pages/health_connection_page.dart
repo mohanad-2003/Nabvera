@@ -84,7 +84,8 @@ class _HealthConnectionPageState extends ConsumerState<HealthConnectionPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(l10n.healthConnectionIntroBody, style: TextStyle(color: ext.textMuted, height: 1.5)),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
+                    Divider(height: 1, color: ext.glassBorder),
                     _DataTypeTile(
                       icon: Icons.directions_walk_rounded,
                       label: l10n.healthConnectionDataStepsLabel,
@@ -92,6 +93,7 @@ class _HealthConnectionPageState extends ConsumerState<HealthConnectionPage> {
                       selected: _selected.contains(HealthDataKind.steps),
                       onChanged: (v) => setState(() => v ? _selected.add(HealthDataKind.steps) : _selected.remove(HealthDataKind.steps)),
                     ),
+                    Divider(height: 1, color: ext.glassBorder),
                     _DataTypeTile(
                       icon: Icons.local_fire_department_outlined,
                       label: l10n.healthConnectionDataActivityLabel,
@@ -99,6 +101,7 @@ class _HealthConnectionPageState extends ConsumerState<HealthConnectionPage> {
                       selected: _selected.contains(HealthDataKind.activity),
                       onChanged: (v) => setState(() => v ? _selected.add(HealthDataKind.activity) : _selected.remove(HealthDataKind.activity)),
                     ),
+                    Divider(height: 1, color: ext.glassBorder),
                     _DataTypeTile(
                       icon: Icons.bedtime_outlined,
                       label: l10n.healthConnectionDataSleepLabel,
@@ -106,6 +109,7 @@ class _HealthConnectionPageState extends ConsumerState<HealthConnectionPage> {
                       selected: _selected.contains(HealthDataKind.sleep),
                       onChanged: (v) => setState(() => v ? _selected.add(HealthDataKind.sleep) : _selected.remove(HealthDataKind.sleep)),
                     ),
+                    Divider(height: 1, color: ext.glassBorder),
                   ],
                 ),
               ),
@@ -141,30 +145,28 @@ class _DataTypeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: selected ? ext.accentGlow : ext.glassBorder),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: ext.accentGlow, size: 22),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w700)),
-                  Text(body, style: TextStyle(color: ext.textMuted, fontSize: 12)),
-                ],
-              ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, color: selected ? ext.accentGlow : ext.textMuted, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  ),
+                ),
+                Text(body, style: TextStyle(color: ext.textMuted, fontSize: 12)),
+              ],
             ),
-            Switch(value: selected, onChanged: onChanged),
-          ],
-        ),
+          ),
+          Switch(value: selected, onChanged: onChanged),
+        ],
       ),
     );
   }

@@ -18,7 +18,7 @@ class _FakeUserRepository implements UserRepository {
   @override
   Future<UserProfile> updateProfile(Map<String, dynamic> patch) async => UserProfile.empty;
   @override
-  Future<String> uploadAvatar({required Uint8List bytes, required String filename}) async =>
+  Future<String> uploadAvatar({required Uint8List bytes, required String filename, String? contentType}) async =>
       throw UnimplementedError();
   @override
   Future<UserProfile> setBiometricEnabled(bool enabled) async => throw UnimplementedError();

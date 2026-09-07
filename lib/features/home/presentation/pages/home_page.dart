@@ -500,13 +500,6 @@ class _TodayHeroCard extends ConsumerWidget {
               end: Alignment.bottomRight,
             ),
             border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.seedViolet.withValues(alpha: 0.30),
-                blurRadius: 28,
-                offset: const Offset(0, 18),
-              ),
-            ],
           ),
           child: Stack(
             children: [

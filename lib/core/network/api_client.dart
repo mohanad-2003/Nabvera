@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
@@ -101,12 +102,25 @@ class ApiClient {
 
   /// Uploads one image while preserving the token refresh behavior used by
   /// JSON requests. Multipart requests set their own content-type boundary.
+  ///
+  /// [contentType] matters: without it, `http`'s `MultipartFile.fromBytes`
+  /// defaults the part's content-type to `application/octet-stream`, which
+  /// fails the backend's `fileFilter` (`file.mimetype.startsWith('image/')`)
+  /// and rejects the upload with 400 "Only image files are allowed" — the
+  /// upload actually reaching the server and being turned down, not a
+  /// network failure. Pass the picker's own reported mime type when
+  /// available; [_guessImageContentType] is only the fallback for when it
+  /// isn't.
   Future<http.Response> uploadImage(
     String path, {
     required List<int> bytes,
     required String filename,
+    String? contentType,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
+    final mediaType = MediaType.parse(
+      contentType ?? _guessImageContentType(filename),
+    );
 
     Future<http.Response> attempt(bool forceRefresh) async {
       final headers = await _headers(forceRefresh: forceRefresh);
@@ -114,7 +128,12 @@ class ApiClient {
       final request = http.MultipartRequest('POST', uri)
         ..headers.addAll(headers)
         ..files.add(
-          http.MultipartFile.fromBytes('image', bytes, filename: filename),
+          http.MultipartFile.fromBytes(
+            'image',
+            bytes,
+            filename: filename,
+            contentType: mediaType,
+          ),
         );
       return http.Response.fromStream(await request.send());
     }
@@ -122,6 +141,21 @@ class ApiClient {
     final response = await attempt(false);
     if (response.statusCode != 401) return response;
     return attempt(true);
+  }
+
+  /// Extension-based fallback for when the caller has no reported mime
+  /// type (e.g. `XFile.mimeType` was null) — covers every format the
+  /// gallery/camera picker can realistically hand back. Defaults to JPEG
+  /// rather than a non-image type, since an unrecognized extension is far
+  /// more likely to be a photo the OS just didn't label than anything else.
+  static String _guessImageContentType(String filename) {
+    final lower = filename.toLowerCase();
+    if (lower.endsWith('.png')) return 'image/png';
+    if (lower.endsWith('.webp')) return 'image/webp';
+    if (lower.endsWith('.gif')) return 'image/gif';
+    if (lower.endsWith('.heic')) return 'image/heic';
+    if (lower.endsWith('.heif')) return 'image/heif';
+    return 'image/jpeg';
   }
 
   /// Decodes a JSON body and throws [ApiException] for non-2xx responses,
