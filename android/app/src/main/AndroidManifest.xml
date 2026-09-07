@@ -64,17 +64,19 @@
             <!-- App Link for the password-reset "continue URL"
                  (https://fitness-app-fitbody-604e8.web.app/reset-complete —
                  see FirebaseAuthService.sendPasswordResetEmail and
-                 AppRoutes.resetComplete). Deliberately NOT autoVerify="true":
-                 that requires assetlinks.json's SHA-256 to match this
-                 build's actual signing cert, and the release build
-                 currently still signs with the debug key as a placeholder
-                 (see android/app/build.gradle.kts's release buildType) —
-                 turn autoVerify on only once a real release signing config
-                 and its matching SHA-256 are in
-                 firebase-hosting/.well-known/assetlinks.json. Until then,
-                 tapping the link shows Android's normal app-picker instead
-                 of opening Nabvera automatically. -->
-            <intent-filter>
+                 AppRoutes.resetComplete). autoVerify="true" is safe right
+                 now because firebase-hosting/.well-known/assetlinks.json
+                 was deployed with the SHA-256 that this build actually
+                 signs with (the release buildType still uses the debug
+                 key as a placeholder — see build.gradle.kts) — Google
+                 Play's real signing cert (Play App Signing) WILL be
+                 different, so its SHA-256 must be added to assetlinks.json
+                 (redeploy hosting) before/alongside the first Play
+                 release, or verification will silently fail on installs
+                 from the Play Store and this filter degrades back to
+                 showing the app-picker instead of opening Nabvera
+                 automatically. -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
