@@ -14,6 +14,7 @@ import 'package:nabvera/features/home/presentation/providers/home_controller.dar
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
 import 'package:nabvera/features/health/presentation/widgets/health_snapshot_card.dart';
 import 'package:nabvera/features/home/presentation/widgets/workout_schedule_card.dart';
+import 'package:nabvera/features/notification/presentation/providers/notification_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/widgets/log_water_sheet.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
@@ -45,6 +46,7 @@ class HomePage extends ConsumerWidget {
     final profile = ref.watch(currentUserProfileProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+    final unreadNotificationCount = ref.watch(unreadNotificationCountProvider);
     // Fires once per sign-in (empty -> loaded), re-syncing local workout
     // reminders against whatever schedule is on the freshly-loaded
     // profile — the "app just opened" trigger alongside the explicit ones
@@ -78,6 +80,7 @@ class HomePage extends ConsumerWidget {
                     streak: profile.currentStreak,
                     onNotificationTap:
                         () => context.push(AppRoutes.notifications),
+                    unreadNotificationCount: unreadNotificationCount,
                   ),
                 ),
                 const SizedBox(height: 22),
@@ -280,6 +283,7 @@ class _HomeHeader extends StatelessWidget {
     required this.avatarUrl,
     required this.streak,
     required this.onNotificationTap,
+    required this.unreadNotificationCount,
   });
 
   final String firstName;
@@ -287,6 +291,7 @@ class _HomeHeader extends StatelessWidget {
   final int streak;
   final VoidCallback onNotificationTap;
 
+  final int unreadNotificationCount;
   /// Picks a time-of-day appropriate greeting instead of an always-"Good
   /// Morning" that reads oddly by evening.
   String _greeting(AppLocalizations l10n) {
@@ -369,6 +374,7 @@ class _HomeHeader extends StatelessWidget {
         _HeaderIcon(
           icon: Icons.notifications_none_rounded,
           onTap: onNotificationTap,
+          badgeCount: unreadNotificationCount,
         ),
       ],
     );
@@ -376,10 +382,12 @@ class _HomeHeader extends StatelessWidget {
 }
 
 class _HeaderIcon extends StatelessWidget {
-  const _HeaderIcon({required this.icon, required this.onTap});
+  const _HeaderIcon({required this.icon, required this.onTap, this.badgeCount = 0});
 
   final IconData icon;
   final VoidCallback onTap;
+
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -395,9 +403,39 @@ class _HeaderIcon extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: ext.glassBorder),
         ),
-        child: Icon(icon, color: ext.textPrimary, size: 22),
-      ),
-    );
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Icon(icon, color: ext.textPrimary, size: 22),
+            if (badgeCount > 0)
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Container(
+                  constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.error,
+                    borderRadius: BorderRadius.circular(9),
+                    border: Border.all(color: ext.cardColor, width: 1.5),
+                  ),
+                  child: Text(
+                    badgeCount > 99 ? '99+' : '$badgeCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 }
 
