@@ -12,6 +12,7 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     this.onPressed,
     this.isLoading = false,
+    this.showShadow = true,
     this.icon,
   });
 
@@ -19,6 +20,7 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final IconData? icon;
+  final bool showShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class PrimaryButton extends StatelessWidget {
             gradient: disabled ? null : ext.accentGradient,
             boxShadow:
                 disabled
-                    ? const []
+                    || !showShadow ? const []
                     : [
                       BoxShadow(
                         color: ext.accentGlow.withValues(alpha: 0.28),

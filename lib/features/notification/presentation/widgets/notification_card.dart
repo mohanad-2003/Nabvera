@@ -67,15 +67,7 @@ class NotificationCard extends StatelessWidget {
               child: Ink(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: item.isRead ? ext.glassFill : ext.cardColor,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                  border: Border.all(
-                    color:
-                        item.isRead
-                            ? ext.glassBorder
-                            : accent.withValues(alpha: 0.4),
-                  ),
-                  boxShadow: item.isRead ? const [] : ext.cardShadow,
+                  border: Border(bottom: BorderSide(color: ext.glassBorder)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

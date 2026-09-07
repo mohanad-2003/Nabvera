@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_radius_shadows.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,6 +70,8 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ext = theme.extension<AppThemeExtension>()!;
+    final isDark = theme.brightness == Brightness.dark;
     final items = _items(context);
 
     return SafeArea(
@@ -88,14 +91,26 @@ class AppBottomNav extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.pill),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
             child: Container(
               height: 66,
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               decoration: BoxDecoration(
-                color: AppColors.graphite.withValues(alpha: 0.80),
+                gradient: LinearGradient(
+                  colors: [
+                    ext.cardColor.withValues(alpha: isDark ? 0.80 : 0.82),
+                    ext.cardColor.withValues(alpha: isDark ? 0.66 : 0.70),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
                 borderRadius: BorderRadius.circular(AppRadius.pill),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+                border: Border.all(
+                  color:
+                      isDark
+                          ? Colors.white.withValues(alpha: 0.16)
+                          : Colors.white.withValues(alpha: 0.72),
+                ),
               ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -118,7 +133,7 @@ class AppBottomNav extends StatelessWidget {
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  AppColors.seedLime.withValues(alpha: 0.22),
+                                  ext.accentGlow.withValues(alpha: 0.22),
                                   AppColors.seedLime.withValues(alpha: 0),
                                 ],
                               ),
@@ -164,8 +179,12 @@ class _NavItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final ext = theme.extension<AppThemeExtension>()!;
+    final selectedColor =
+        theme.brightness == Brightness.dark ? ext.accentGlow : ext.success;
     final color =
-        selected ? AppColors.seedLime : Colors.white.withValues(alpha: 0.55);
+        selected ? selectedColor : ext.textMuted.withValues(alpha: 0.78);
 
     return Expanded(
       child: InkWell(

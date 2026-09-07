@@ -21,15 +21,9 @@ class HealthSnapshotCard extends ConsumerWidget {
     final prefs = ref.watch(healthPreferencesControllerProvider);
     final connected = prefs.maybeWhen(data: (p) => p.syncEnabled, orElse: () => false);
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: ext.glassBorder),
-      ),
-      child: connected ? _ConnectedContent(l10n: l10n, ext: ext) : _NotConnected(l10n: l10n, ext: ext),
-    );
+    return connected
+        ? _ConnectedContent(l10n: l10n, ext: ext)
+        : _NotConnected(l10n: l10n, ext: ext);
   }
 }
 

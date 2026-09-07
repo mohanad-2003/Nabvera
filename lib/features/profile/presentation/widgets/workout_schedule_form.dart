@@ -5,7 +5,8 @@ import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:nabvera/features/profile/domain/workout_schedule.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_card.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_toggle_row.dart';
-import 'package:nabvera/features/workout/domain/workout_models.dart' show Weekday;
+import 'package:nabvera/features/workout/domain/workout_models.dart'
+    show Weekday;
 import 'package:nabvera/features/workout/presentation/widgets/workout_day_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,11 @@ String weekdayShortLabel(Weekday day, AppLocalizations l10n) => switch (day) {
 /// section on Edit Profile and inside the Home quick-edit bottom sheet, so
 /// the two entry points can never drift apart (see each call site).
 class WorkoutScheduleForm extends StatefulWidget {
-  const WorkoutScheduleForm({super.key, required this.profile, required this.onSave});
+  const WorkoutScheduleForm({
+    super.key,
+    required this.profile,
+    required this.onSave,
+  });
 
   final UserProfile profile;
 
@@ -59,9 +64,11 @@ class _WorkoutScheduleFormState extends State<WorkoutScheduleForm> {
     _reminderTime = parseTimeOfDay(profile.workoutReminderTime);
     _reminderEnabled = profile.reminderEnabled;
     _quietHoursEnabled = profile.quietHoursEnabled;
-    _quietStart = parseTimeOfDay(profile.quietHoursStart) ??
+    _quietStart =
+        parseTimeOfDay(profile.quietHoursStart) ??
         const TimeOfDay(hour: 22, minute: 0);
-    _quietEnd = parseTimeOfDay(profile.quietHoursEnd) ??
+    _quietEnd =
+        parseTimeOfDay(profile.quietHoursEnd) ??
         const TimeOfDay(hour: 6, minute: 0);
     _challengeRemindersEnabled = profile.challengeRemindersEnabled;
   }
@@ -256,7 +263,10 @@ class _TimePickerTile extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

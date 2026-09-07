@@ -166,6 +166,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               label: l10n.authLoginTitle,
                               icon: Icons.arrow_forward_rounded,
                               isLoading: isSubmitting,
+                              showShadow: false,
                               onPressed: () async {
                                 setState(() {
                                   _errorField = null;

@@ -67,13 +67,6 @@ class ProfileHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: ext.accentGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: ext.accentGlow.withValues(alpha: 0.35),
-                        blurRadius: 28,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
                   ),
                   child: UserAvatar(radius: 52, imageUrl: avatarUrl),
                 ),

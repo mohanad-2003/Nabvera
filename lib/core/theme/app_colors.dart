@@ -11,8 +11,10 @@ abstract final class AppColors {
   static const Color graphite = Color(0xFF141C24);
   static const Color glass = Color(0x1FFFFFFF);
 
-  static const Color lightSurface = Color(0xFFF5F7EF);
-  static const Color lightSurfaceVariant = Color(0xFFEAEFE1);
+  // A cool neutral base keeps the light theme clean and lets lime accents
+  // remain readable without tinting every screen green.
+  static const Color lightSurface = Color(0xFFF6F8FC);
+  static const Color lightSurfaceVariant = Color(0xFFEAF0F6);
   static const Color lightOutline = Color(0xFFD3D9C7);
 
   // Dark surfaces deliberately avoid pure black per design-system requirements.

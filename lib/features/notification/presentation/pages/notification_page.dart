@@ -25,115 +25,117 @@ class NotificationPage extends ConsumerWidget {
     final hasAny = grouped.values.any((list) => list.isNotEmpty);
 
     return PremiumScaffold(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          NotificationHeader(
-            title: l10n.notificationsTitle,
-            subtitle: l10n.notificationsSubtitle,
-            canPop: context.canPop(),
-            onBack: () => context.pop(),
-            markAllReadLabel: l10n.notificationsMarkAllRead,
-            onMarkAllRead: () {
-              ref
-                  .read(notificationListControllerProvider.notifier)
-                  .markAllAsRead();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.notificationsMarkAllReadDone),
-                  backgroundColor: ext.cardColor,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+      child: SizedBox.expand(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            NotificationHeader(
+              title: l10n.notificationsTitle,
+              subtitle: l10n.notificationsSubtitle,
+              canPop: context.canPop(),
+              onBack: () => context.pop(),
+              markAllReadLabel: l10n.notificationsMarkAllRead,
+              onMarkAllRead: () {
+                ref
+                    .read(notificationListControllerProvider.notifier)
+                    .markAllAsRead();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.notificationsMarkAllReadDone),
+                    backgroundColor: ext.cardColor,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 40,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: NotificationFilter.values.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                final value = NotificationFilter.values[index];
-                return NotificationCategoryChip(
-                  label: _filterLabel(l10n, value),
-                  icon: value.category?.icon,
-                  selected: value == filter,
-                  onTap:
-                      () => ref
-                          .read(notificationFilterControllerProvider.notifier)
-                          .select(value),
                 );
               },
             ),
-          ),
-          const SizedBox(height: 18),
-          Expanded(
-            child:
-                !hasAny
-                    ? EmptyNotificationsView(
-                      title: l10n.notificationsEmptyTitle,
-                      body: l10n.notificationsEmptyBody,
-                      ctaLabel: l10n.notificationsStartWorkout,
-                      onStartWorkout: () => context.go(AppRoutes.workout),
-                    )
-                    : ListView(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      children: [
-                        for (final group in NotificationDayGroup.values)
-                          if ((grouped[group] ?? const []).isNotEmpty) ...[
-                            NotificationSection(
-                              title: _groupLabel(l10n, group),
-                              items: grouped[group]!,
-                              baseDelayMs: group.index * 60,
-                              onTap: (item) {
-                                if (!item.isRead) {
+            const SizedBox(height: 18),
+            SizedBox(
+              height: 40,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: NotificationFilter.values.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final value = NotificationFilter.values[index];
+                  return NotificationCategoryChip(
+                    label: _filterLabel(l10n, value),
+                    icon: value.category?.icon,
+                    selected: value == filter,
+                    onTap:
+                        () => ref
+                            .read(notificationFilterControllerProvider.notifier)
+                            .select(value),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 18),
+            Expanded(
+              child:
+                  !hasAny
+                      ? EmptyNotificationsView(
+                        title: l10n.notificationsEmptyTitle,
+                        body: l10n.notificationsEmptyBody,
+                        ctaLabel: l10n.notificationsStartWorkout,
+                        onStartWorkout: () => context.go(AppRoutes.workout),
+                      )
+                      : ListView(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        children: [
+                          for (final group in NotificationDayGroup.values)
+                            if ((grouped[group] ?? const []).isNotEmpty) ...[
+                              NotificationSection(
+                                title: _groupLabel(l10n, group),
+                                items: grouped[group]!,
+                                baseDelayMs: group.index * 60,
+                                onTap: (item) {
+                                  if (!item.isRead) {
+                                    ref
+                                        .read(
+                                          notificationListControllerProvider
+                                              .notifier,
+                                        )
+                                        .markAsRead(item.id);
+                                  }
+                                },
+                                onMarkRead:
+                                    (item) => ref
+                                        .read(
+                                          notificationListControllerProvider
+                                              .notifier,
+                                        )
+                                        .markAsRead(item.id),
+                                onDelete: (item) {
                                   ref
                                       .read(
                                         notificationListControllerProvider
                                             .notifier,
                                       )
-                                      .markAsRead(item.id);
-                                }
-                              },
-                              onMarkRead:
-                                  (item) => ref
-                                      .read(
-                                        notificationListControllerProvider
-                                            .notifier,
-                                      )
-                                      .markAsRead(item.id),
-                              onDelete: (item) {
-                                ref
-                                    .read(
-                                      notificationListControllerProvider
-                                          .notifier,
-                                    )
-                                    .delete(item.id);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      l10n.notificationsSwipeDeleted,
+                                      .delete(item.id);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        l10n.notificationsSwipeDeleted,
+                                      ),
+                                      backgroundColor: ext.cardColor,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
                                     ),
-                                    backgroundColor: ext.cardColor,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 22),
-                          ],
-                      ],
-                    ),
-          ),
-        ],
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 22),
+                            ],
+                        ],
+                      ),
+            ),
+          ],
+        ),
       ),
     );
   }

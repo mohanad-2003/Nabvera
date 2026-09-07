@@ -836,6 +836,7 @@ class _MetricGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final nutrition = ref.watch(dailyNutritionSummaryControllerProvider);
     final streak = ref.watch(currentUserProfileProvider).currentStreak;
     final todayMinutes =
@@ -883,7 +884,7 @@ class _MetricGrid extends ConsumerWidget {
             value: '$streak',
             sublabel: streakLabel,
             icon: Icons.bolt_rounded,
-            color: AppColors.seedLime,
+            color: ext.accentGlow,
           ),
         ),
         const _MetricDivider(),
@@ -1041,7 +1042,7 @@ class _RecoveryChip extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final needsRecovery = group.status == RecoveryStatus.needsRecovery;
-    final color = needsRecovery ? AppColors.electricOrange : AppColors.seedLime;
+    final color = needsRecovery ? AppColors.electricOrange : ext.accentGlow;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -1209,7 +1210,7 @@ class _CategoryRail extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final accents = [
-      AppColors.seedLime,
+      ext.accentGlow,
       AppColors.aquaBlue,
       AppColors.electricOrange,
       AppColors.seedViolet,

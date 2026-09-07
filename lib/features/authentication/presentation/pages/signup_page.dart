@@ -142,6 +142,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               label: l10n.authStartTraining,
                               icon: Icons.bolt_rounded,
                               isLoading: isSubmitting,
+                              showShadow: false,
                               onPressed: () async {
                                 if (!_acceptedTerms) {
                                   setState(
