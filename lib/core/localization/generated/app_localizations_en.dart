@@ -1670,6 +1670,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyDelete => 'Delete';
 
   @override
+  String get privacyDeleteFailed =>
+      'Couldn\'t delete your account. Please try again.';
+
+  @override
   String get legalPrivacyPolicyBody =>
       'We collect only the information needed to run your training plan: your profile details, workout and nutrition activity, and device settings like theme and language. This data is stored securely and is never sold to third parties.\n\nYou can review, export, or delete your data at any time from Profile → Privacy → Manage Your Data. Analytics are aggregated and anonymized before use, and you can opt out at any time from the same screen.\n\nIf you have questions about how your data is handled, reach out from Profile → Help & FAQs → Contact Us.';
 

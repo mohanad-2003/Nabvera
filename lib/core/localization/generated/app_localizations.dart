@@ -3146,6 +3146,12 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get privacyDelete;
 
+  /// No description provided for @privacyDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your account. Please try again.'**
+  String get privacyDeleteFailed;
+
   /// No description provided for @legalPrivacyPolicyBody.
   ///
   /// In en, this message translates to:

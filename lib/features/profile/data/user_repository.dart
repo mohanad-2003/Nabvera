@@ -60,6 +60,16 @@ class UserRepository {
   Future<void> unregisterFcmToken(String token) async {
     await _client.delete('/users/me/fcm-token', body: {'token': token});
   }
+
+  /// Permanently deletes the current user's account and every piece of
+  /// data they own (see `backend/src/services/accountDeletionService.js`)
+  /// — irreversible. Throws [ApiException] (503) if deletion couldn't be
+  /// confirmed, in which case nothing was deleted; the caller must not
+  /// treat that as success.
+  Future<void> deleteAccount() async {
+    final response = await _client.delete('/users/me');
+    _client.decode(response);
+  }
 }
 
 @Riverpod(keepAlive: true)

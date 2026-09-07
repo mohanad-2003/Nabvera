@@ -608,6 +608,7 @@
   "privacyDeleteConfirmTitle": "Delete your account?",
   "privacyDeleteConfirmBody": "This permanently removes your profile, workout history, and saved data. This action cannot be undone.",
   "privacyDelete": "Delete",
+  "privacyDeleteFailed": "Couldn't delete your account. Please try again.",
 
   "legalPrivacyPolicyBody": "We collect only the information needed to run your training plan: your profile details, workout and nutrition activity, and device settings like theme and language. This data is stored securely and is never sold to third parties.\n\nYou can review, export, or delete your data at any time from Profile → Privacy → Manage Your Data. Analytics are aggregated and anonymized before use, and you can opt out at any time from the same screen.\n\nIf you have questions about how your data is handled, reach out from Profile → Help & FAQs → Contact Us.",
   "legalTermsBody": "By using Nabvera you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Delete My Account.",

@@ -212,7 +212,7 @@ class ProfilePage extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 28, bottom: 12),
                 child: _DeleteAccountButton(
                   label: l10n.privacyDeleteAccount,
-                  onTap: () => showDeleteAccountSheet(context),
+                  onTap: () => showDeleteAccountSheet(context, ref),
                 ),
               ),
             ),
