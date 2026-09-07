@@ -95,8 +95,15 @@ class DailyNutritionSummaryController
   Future<void> _load() async {
     try {
       final entry = await ref.read(nutritionRepositoryProvider).fetchToday();
+      // This provider is autoDispose — the widget watching it (e.g. the
+      // Nutrition page) can unmount, tearing this down, while the request
+      // above is still in flight. Writing to `state` after that throws
+      // UnmountedRefException; `ref.mounted` after every async gap is the
+      // documented guard for exactly this race.
+      if (!ref.mounted) return;
       state = DailyNutritionSummary.fromEntry(entry);
     } catch (_) {
+      if (!ref.mounted) return;
       // Stop showing the loading state even on failure — see
       // WorkoutListByLevel for the same "left at a safe placeholder"
       // pattern, just no longer flagged as still-loading.
@@ -116,6 +123,9 @@ class DailyNutritionSummaryController
   /// nothing.
   Future<void> logWater(int amountMl) async {
     final entry = await ref.read(nutritionRepositoryProvider).logWater(amountMl);
+    // Same autoDispose race as _load() above — the log-water sheet can
+    // close (unmounting this) right as the request resolves.
+    if (!ref.mounted) return;
     state = DailyNutritionSummary.fromEntry(entry);
   }
 }
