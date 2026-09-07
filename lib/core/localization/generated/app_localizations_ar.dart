@@ -276,6 +276,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authBackToLogin => 'العودة لتسجيل الدخول';
 
   @override
+  String get authPasswordResetSuccess =>
+      'تم تغيير كلمة المرور بنجاح. سجّل دخولك بكلمة المرور الجديدة.';
+
+  @override
   String get authBiometricEnableSuccess => 'تم تفعيل البصمة';
 
   @override

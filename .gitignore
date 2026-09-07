@@ -1,3 +1,8 @@
+# Firebase CLI's local deploy cache — not project config, safe to
+# regenerate, differs per machine (.firebaserc IS committed; it just links
+# this checkout to the "fitness-app-fitbody" project, no secrets in it).
+.firebase/
+
 # Miscellaneous
 *.class
 *.log

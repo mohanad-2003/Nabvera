@@ -94,6 +94,7 @@
   "@authResendLinkIn": {"placeholders": {"seconds": {"type": "int"}}},
   "authChangeEmail": "Change email",
   "authBackToLogin": "Back to login",
+  "authPasswordResetSuccess": "Your password has been changed successfully. Sign in with your new password.",
   "authBiometricEnableSuccess": "Biometric unlock enabled",
   "authBiometricEnableFailed": "Couldn't verify your biometrics — try again",
   "authBiometricUnlockTitle": "Unlock Nabvera",

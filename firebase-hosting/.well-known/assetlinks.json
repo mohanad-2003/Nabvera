@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.example.nabvera",
+      "sha256_cert_fingerprints": [
+        "8B:4D:45:24:0B:04:25:58:31:F9:2B:93:84:B9:08:C5:48:AE:EA:1E:AA:4B:92:EA:F3:A5:B3:29:E9:6B:95:31"
+      ]
+    }
+  }
+]

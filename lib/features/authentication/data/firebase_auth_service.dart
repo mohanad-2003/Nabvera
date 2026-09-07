@@ -5,6 +5,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'firebase_auth_service.g.dart';
 
+/// The Firebase Hosting URL a password-reset email's "Continue" link
+/// points to after a successful reset on Firebase's hosted web page — a
+/// real, already-authorized domain (Firebase Authentication > Authorized
+/// domains), matching `AppRoutes.resetComplete` and the Android App Link
+/// declared in `AndroidManifest.xml` / `firebase-hosting/.well-known/
+/// assetlinks.json`.
+const passwordResetContinueUrl =
+    'https://fitness-app-fitbody-604e8.web.app/reset-complete';
+
 /// Thin wrapper around [FirebaseAuth] (+ Google Sign-In) so the rest of the
 /// app never touches the plugins directly — swapping providers later only
 /// means editing this file.
@@ -51,8 +60,24 @@ class FirebaseAuthService {
     return _auth.signInWithCredential(credential);
   }
 
+  /// Sends Firebase's hosted password-reset email with a "continue URL"
+  /// pointing at our own Firebase Hosting page. `handleCodeInApp` is
+  /// deliberately left false: the reset itself still happens entirely on
+  /// Firebase's hosted web page, not in-app — the continue URL only
+  /// controls where its "Continue" link goes afterwards. No
+  /// `androidPackageName`/`iOSBundleId`/`dynamicLinkDomain` are set, since
+  /// those would make Firebase wrap the link in a Dynamic Link (deprecated
+  /// — see `AppRoutes.resetComplete`'s doc comment); getting back into the
+  /// app instead relies purely on the platform's own Android App Links /
+  /// iOS Universal Links recognizing that continue URL.
   Future<void> sendPasswordResetEmail(String email) {
-    return _auth.sendPasswordResetEmail(email: email);
+    return _auth.sendPasswordResetEmail(
+      email: email,
+      actionCodeSettings: ActionCodeSettings(
+        url: passwordResetContinueUrl,
+        handleCodeInApp: false,
+      ),
+    );
   }
 
   Future<void> signOut() async {

@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'Back to login'**
   String get authBackToLogin;
 
+  /// No description provided for @authPasswordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been changed successfully. Sign in with your new password.'**
+  String get authPasswordResetSuccess;
+
   /// No description provided for @authBiometricEnableSuccess.
   ///
   /// In en, this message translates to:

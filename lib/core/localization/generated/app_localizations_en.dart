@@ -277,6 +277,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authBackToLogin => 'Back to login';
 
   @override
+  String get authPasswordResetSuccess =>
+      'Your password has been changed successfully. Sign in with your new password.';
+
+  @override
   String get authBiometricEnableSuccess => 'Biometric unlock enabled';
 
   @override

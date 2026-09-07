@@ -1,4 +1,5 @@
 import 'package:nabvera/core/routing/admin_route_guard.dart';
+import 'package:nabvera/core/routing/password_reset_redirect.dart';
 import 'package:nabvera/core/widgets/app_bottom_nav.dart';
 import 'package:nabvera/features/admin/presentation/pages/admin_article_editor_page.dart';
 import 'package:nabvera/features/admin/presentation/pages/admin_articles_page.dart';
@@ -81,8 +82,20 @@ part 'app_router.g.dart';
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  // A normal launcher-icon cold start reports "/" here; a cold start from
+  // a verified Android App Link (e.g. the password-reset continue URL)
+  // reports the link's real path instead — respecting it (rather than
+  // always forcing `/splash`) is what lets `/reset-complete` work when the
+  // app was fully closed. A backgrounded app doesn't go through this at
+  // all: Flutter/go_router already route a new intent straight into the
+  // running router via the platform's route information provider.
+  final platformInitialLocation =
+      WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+  final initialLocation =
+      platformInitialLocation == '/' ? AppRoutes.splash : platformInitialLocation;
+
   return GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: initialLocation,
     // The Admin console's structural role guard: evaluated on every
     // navigation (not just once at app start), so a direct/typed
     // navigation into an admin path is blocked here regardless of what
@@ -169,7 +182,12 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => const LoginPage(),
+        builder:
+            (context, state) => LoginPage(
+              showPasswordResetSuccess: isPasswordResetSuccess(
+                state.uri.queryParameters,
+              ),
+            ),
       ),
       GoRoute(
         path: AppRoutes.signup,
@@ -178,6 +196,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.forgotPassword,
         builder: (context, state) => const ForgotPasswordPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetComplete,
+        // No page ever actually builds here — see
+        // `passwordResetRedirectTarget`'s doc comment for why a bare
+        // redirect (no FirebaseAuth/session access at all) is the entire
+        // handler for this route.
+        redirect: (context, state) => passwordResetRedirectTarget(),
       ),
       GoRoute(
         path: AppRoutes.fingerprint,

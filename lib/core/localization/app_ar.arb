@@ -87,6 +87,7 @@
   "authResendLinkIn": "إعادة الإرسال خلال {seconds} ث",
   "authChangeEmail": "تغيير البريد الإلكتروني",
   "authBackToLogin": "العودة لتسجيل الدخول",
+  "authPasswordResetSuccess": "تم تغيير كلمة المرور بنجاح. سجّل دخولك بكلمة المرور الجديدة.",
   "authBiometricEnableSuccess": "تم تفعيل البصمة",
   "authBiometricEnableFailed": "تعذّر التحقق من بصمتك — حاول مرة أخرى",
   "authBiometricUnlockTitle": "افتح Nabvera",

@@ -61,6 +61,28 @@
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
+            <!-- App Link for the password-reset "continue URL"
+                 (https://fitness-app-fitbody-604e8.web.app/reset-complete —
+                 see FirebaseAuthService.sendPasswordResetEmail and
+                 AppRoutes.resetComplete). Deliberately NOT autoVerify="true":
+                 that requires assetlinks.json's SHA-256 to match this
+                 build's actual signing cert, and the release build
+                 currently still signs with the debug key as a placeholder
+                 (see android/app/build.gradle.kts's release buildType) —
+                 turn autoVerify on only once a real release signing config
+                 and its matching SHA-256 are in
+                 firebase-hosting/.well-known/assetlinks.json. Until then,
+                 tapping the link shows Android's normal app-picker instead
+                 of opening Nabvera automatically. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="fitness-app-fitbody-604e8.web.app"
+                    android:pathPrefix="/reset-complete" />
+            </intent-filter>
         </activity>
         <!-- Health Connect's permissions screen links back to this app's
              privacy policy — required to pass Google's review when

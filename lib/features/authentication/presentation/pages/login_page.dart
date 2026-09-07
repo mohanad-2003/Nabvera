@@ -19,7 +19,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.showPasswordResetSuccess = false});
+
+  /// True only when reached via `/login?passwordReset=success` — i.e. the
+  /// user just came back from successfully resetting their password on
+  /// Firebase's hosted page (see `password_reset_redirect.dart`). Never
+  /// true just because a reset email was sent.
+  final bool showPasswordResetSuccess;
 
   @override
   ConsumerState<LoginPage> createState() => _LoginPageState();
@@ -39,6 +45,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ref.read(loginControllerProvider.notifier).emailController.text =
           remembered;
       _rememberMe = true;
+    }
+    if (widget.showPasswordResetSuccess) {
+      // Post-frame: needs a real Scaffold/Overlay in the tree, and only
+      // fires once per navigation to this route (not on every rebuild).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.authPasswordResetSuccess)),
+        );
+      });
     }
   }
 

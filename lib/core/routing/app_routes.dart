@@ -5,6 +5,12 @@ abstract final class AppRoutes {
   static const login = '/login';
   static const signup = '/signup';
   static const forgotPassword = '/forgot-password';
+  /// The Firebase password-reset email's "continue URL" — matches the
+  /// Android App Link / (future) iOS Universal Link path for
+  /// `https://fitness-app-fitbody-604e8.web.app/reset-complete` so a
+  /// device that already verified the link opens straight here instead of
+  /// a browser. See `password_reset_redirect.dart` for what happens next.
+  static const resetComplete = '/reset-complete';
   static const fingerprint = '/fingerprint';
   static const biometricUnlock = '/biometric-unlock';
   static const setup = '/setup';
