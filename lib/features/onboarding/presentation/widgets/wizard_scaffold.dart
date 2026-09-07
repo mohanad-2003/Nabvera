@@ -16,7 +16,7 @@ class WizardScaffold extends StatelessWidget {
     this.step,
     this.totalSteps = 7,
   });
-
+ 
   final String title;
   final String description;
   final Widget body;
@@ -112,6 +112,7 @@ class WizardStepIndicator extends StatelessWidget {
               ),
             ),
           ),
+          
         ],
       ],
     );
