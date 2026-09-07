@@ -1,11 +1,12 @@
 import 'package:nabvera/core/theme/app_colors.dart';
-import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
-/// Row item for the "My Routine" reorderable list: thumbnail, name, editable
-/// sets/reps steppers, remove action, and a drag handle.
+/// Flat row for the "My Routine" reorderable list: thumbnail, name,
+/// editable sets/reps steppers, remove action, and a drag handle. No card
+/// box/border/shadow — rows are separated by a hairline divider drawn by
+/// the parent list.
 class SelectedExerciseItem extends StatelessWidget {
   const SelectedExerciseItem({
     super.key,
@@ -35,16 +36,9 @@ class SelectedExerciseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final radius = BorderRadius.circular(AppRadius.card);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: ext.cardColor,
-        borderRadius: radius,
-        border: Border.all(color: ext.glassBorder),
-        boxShadow: ext.cardShadow,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           if (dragHandle != null) ...[dragHandle!, const SizedBox(width: 6)],

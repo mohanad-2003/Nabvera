@@ -1,15 +1,17 @@
 import 'package:nabvera/core/responsive/app_responsive.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
-import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/pressable_scale.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
 
-/// Premium row card for the "Choose Exercises" library: thumbnail, name,
-/// muscle group + sets/reps, favorite star, and an add/remove circle.
-class ExerciseCard extends StatelessWidget {
-  const ExerciseCard({
+/// Flat list row for the "Choose Exercises" library — thumbnail, name,
+/// muscle group + sets/reps, favorite star, and an add/remove circle. No
+/// card box/border/shadow: rows sit directly on the page and are told
+/// apart by the hairline divider the parent list draws between them, plus
+/// a soft tint on the row itself once added.
+class ExerciseListTile extends StatelessWidget {
+  const ExerciseListTile({
     super.key,
     required this.image,
     required this.name,
@@ -33,22 +35,11 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final radius = BorderRadius.circular(AppRadius.card);
 
     return PressableScale(
       child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: isAdded ? ext.cardColor : ext.glassFill,
-          borderRadius: radius,
-          border: Border.all(
-            color:
-                isAdded
-                    ? AppColors.seedLime.withValues(alpha: 0.5)
-                    : ext.glassBorder,
-          ),
-          boxShadow: isAdded ? ext.cardShadow : const [],
-        ),
+        color: isAdded ? ext.accentGlow.withValues(alpha: 0.06) : Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
         child: Row(
           children: [
             ConstrainedBox(

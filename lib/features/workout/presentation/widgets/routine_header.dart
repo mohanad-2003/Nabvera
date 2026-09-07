@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Header for the Create Routine screen: back button, large title,
-/// subtitle, and a small motivational line. Fades and slides in on load.
+/// subtitle, and a small motivational line — plain text, not a boxed
+/// chip, so the header stays as flat as the rest of the redesigned page.
 class RoutineHeader extends StatelessWidget {
   const RoutineHeader({
     super.key,
@@ -50,22 +51,22 @@ class RoutineHeader extends StatelessWidget {
               context,
             ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
           ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: ext.glassFill,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: ext.glassBorder),
-            ),
-            child: Text(
-              motivation,
-              style: TextStyle(
-                color: ext.accentGlow,
-                fontWeight: FontWeight.w700,
-                fontSize: 12.5,
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(Icons.bolt_rounded, color: ext.accentGlow, size: 16),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  motivation,
+                  style: TextStyle(
+                    color: ext.accentGlow,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.5,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

@@ -13,6 +13,7 @@ class PremiumScaffold extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.fromLTRB(20, 18, 20, 20),
     this.safeArea = true,
+    this.bottomBar,
   });
 
   final Widget child;
@@ -20,11 +21,19 @@ class PremiumScaffold extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final bool safeArea;
 
+  /// A fixed bar pinned below the scrollable [child] (e.g. a sticky
+  /// summary + primary action) — sits outside the gradient/glow
+  /// background's Stack as a real `Scaffold.bottomNavigationBar`, so it
+  /// never scrolls away and the keyboard pushes it up correctly. Omit for
+  /// the previous full-bleed-background behavior.
+  final Widget? bottomBar;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final content = Padding(padding: padding, child: child);
     return Scaffold(
+      bottomNavigationBar: bottomBar,
       body: Stack(
         children: [
           Positioned.fill(

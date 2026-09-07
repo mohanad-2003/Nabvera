@@ -1,24 +1,28 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/responsive/app_responsive.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
-import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
-import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:nabvera/features/workout/presentation/providers/create_routine_controller.dart';
 import 'package:nabvera/features/workout/presentation/providers/your_routine_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/difficulty_selector.dart';
 import 'package:nabvera/features/workout/presentation/widgets/exercise_card.dart';
 import 'package:nabvera/features/workout/presentation/widgets/goal_selector.dart';
+import 'package:nabvera/features/workout/presentation/widgets/routine_bottom_bar.dart';
 import 'package:nabvera/features/workout/presentation/widgets/routine_header.dart';
-import 'package:nabvera/features/workout/presentation/widgets/routine_summary_card.dart';
 import 'package:nabvera/features/workout/presentation/widgets/selected_exercise_item.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_day_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Redesigned Create Routine screen — every section (details, days,
+/// exercise library, selected list) is laid out flat, directly on the
+/// page background, with a hairline divider between rows/sections rather
+/// than each piece living inside its own boxed card. The routine summary
+/// and the "Create" action are pinned in a sticky bottom bar instead of
+/// sitting in a card at the end of the scroll.
 class CreateRoutinePage extends ConsumerStatefulWidget {
   const CreateRoutinePage({super.key});
 
@@ -105,29 +109,6 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     }
   }
 
-  Widget _buildExerciseCard({
-    required CreateRoutineState state,
-    required CreateRoutineController controller,
-    required AppLocalizations l10n,
-    required int index,
-  }) {
-    final entry = state.library[index];
-    final isAdded = controller.isSelected(entry.id);
-    return ExerciseCard(
-      image: entry.image,
-      name: entry.name,
-      muscleGroup: _muscleGroupLabel(entry.muscleGroup, l10n),
-      setsRepsLabel: l10n.createRoutineSetsReps(
-        entry.defaultSets,
-        entry.defaultReps,
-      ),
-      isFavorite: entry.isFavorite,
-      isAdded: isAdded,
-      onFavoriteTap: () => controller.toggleFavorite(entry.id),
-      onAddTap: () => controller.toggleExercise(entry.id),
-    );
-  }
-
   Future<void> _handleCreate(
     CreateRoutineController controller,
     CreateRoutineState state,
@@ -173,6 +154,34 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
 
     return PremiumScaffold(
       padding: EdgeInsets.zero,
+      bottomBar: RoutineBottomBar(
+        stats: [
+          RoutineStat(
+            icon: Icons.fitness_center_rounded,
+            value: '${state.selected.length}',
+            label: l10n.createRoutineSummaryExercises,
+          ),
+          RoutineStat(
+            icon: Icons.timer_outlined,
+            value: '${state.totalDurationMinutes}',
+            label: l10n.createRoutineSummaryDuration,
+          ),
+          RoutineStat(
+            icon: Icons.local_fire_department_rounded,
+            value: '${state.estimatedCalories}',
+            label: l10n.createRoutineSummaryCalories,
+          ),
+          RoutineStat(
+            icon: Icons.calendar_month_rounded,
+            value: '${state.selectedDays.length}',
+            label: l10n.createRoutineSummaryDays,
+          ),
+        ],
+        buttonLabel: l10n.workoutCreateRoutine,
+        isLoading: _creating,
+        errorText: _validationError,
+        onPressed: () => _handleCreate(controller, state, l10n),
+      ),
       child: SafeArea(
         top: false,
         bottom: false,
@@ -191,23 +200,17 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
               compact: double.infinity,
               expanded: 720.0,
             );
-            // Two columns once there's enough room per card (tablets, or a
-            // phone in landscape) so exercise rows don't stretch too wide.
-            final exerciseColumns =
-                (width - horizontalPadding * 2) >= 640 ? 2 : 1;
 
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: maxContentWidth),
                 child: _buildScrollView(
-                  context: context,
                   state: state,
                   controller: controller,
                   theme: theme,
                   ext: ext,
                   l10n: l10n,
                   horizontalPadding: horizontalPadding,
-                  exerciseColumns: exerciseColumns,
                 ),
               ),
             );
@@ -218,15 +221,15 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
   }
 
   Widget _buildScrollView({
-    required BuildContext context,
     required CreateRoutineState state,
     required CreateRoutineController controller,
     required ThemeData theme,
     required AppThemeExtension ext,
     required AppLocalizations l10n,
     required double horizontalPadding,
-    required int exerciseColumns,
   }) {
+    final divider = Divider(height: 1, color: ext.glassBorder);
+
     return CustomScrollView(
       slivers: [
         SliverPadding(
@@ -234,7 +237,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
             horizontalPadding,
             18,
             horizontalPadding,
-            20,
+            16,
           ),
           sliver: SliverMainAxisGroup(
             slivers: [
@@ -245,188 +248,127 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                   motivation: l10n.createRoutineMotivation,
                 ),
               ),
+
+              // --- Routine details -------------------------------------
               SliverToBoxAdapter(
                 child: FadeSlideIn(
                   delay: const Duration(milliseconds: 80),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: ext.glassFill,
-                        borderRadius: BorderRadius.circular(AppRadius.card),
-                        border: Border.all(color: ext.glassBorder),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.createRoutineNameLabel,
-                            style: TextStyle(
-                              color: ext.textPrimary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _nameController,
-                            onChanged: (value) {
-                              controller.setName(value);
-                              if (_validationError != null) {
-                                setState(() => _validationError = null);
-                              }
-                            },
-                            style: TextStyle(color: ext.textPrimary),
-                            decoration: InputDecoration(
-                              hintText: l10n.createRoutineNameHint,
-                              hintStyle: TextStyle(color: ext.textMuted),
-                              filled: true,
-                              fillColor: ext.cardColor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 12,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(color: ext.glassBorder),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(color: ext.glassBorder),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: const BorderSide(
-                                  color: AppColors.seedLime,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            l10n.createRoutineGoalLabel,
-                            style: TextStyle(
-                              color: ext.textPrimary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          GoalSelector(
-                            selected: state.goal,
-                            onChanged: controller.setGoal,
-                            labelBuilder: (g) => _goalLabel(g, l10n),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            l10n.workoutDifficultyLabel,
-                            style: TextStyle(
-                              color: ext.textPrimary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          DifficultySelector(
-                            selected: state.difficulty,
-                            onChanged: controller.setDifficulty,
-                            labelBuilder: (l) => _difficultyLabel(l, l10n),
-                          ),
-                        ],
-                      ),
+                    padding: const EdgeInsets.only(top: 26),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionLabel(l10n.createRoutineNameLabel, ext: ext),
+                        const SizedBox(height: 10),
+                        _UnderlinedField(
+                          controller: _nameController,
+                          hint: l10n.createRoutineNameHint,
+                          ext: ext,
+                          onChanged: (value) {
+                            controller.setName(value);
+                            if (_validationError != null) {
+                              setState(() => _validationError = null);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 22),
+                        _SectionLabel(l10n.createRoutineGoalLabel, ext: ext),
+                        const SizedBox(height: 10),
+                        GoalSelector(
+                          selected: state.goal,
+                          onChanged: controller.setGoal,
+                          labelBuilder: (g) => _goalLabel(g, l10n),
+                        ),
+                        const SizedBox(height: 22),
+                        _SectionLabel(l10n.workoutDifficultyLabel, ext: ext),
+                        const SizedBox(height: 10),
+                        DifficultySelector(
+                          selected: state.difficulty,
+                          onChanged: controller.setDifficulty,
+                          labelBuilder: (l) => _difficultyLabel(l, l10n),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+              ),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: divider,
+                ),
+              ),
+
+              // --- Training days ----------------------------------------
+              SliverToBoxAdapter(
+                child: _SectionTitle(l10n.createRoutineDaysLabel, ext: ext, theme: theme),
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 22, bottom: 10),
-                  child: Text(
-                    l10n.createRoutineDaysLabel,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w900,
-                    ),
+                  padding: const EdgeInsets.only(top: 14),
+                  child: WorkoutDayPicker(
+                    selectedDays: state.selectedDays,
+                    onToggle: controller.toggleDay,
+                    shortLabelBuilder: (d) => _dayShortLabel(d, l10n),
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: WorkoutDayPicker(
-                  selectedDays: state.selectedDays,
-                  onToggle: controller.toggleDay,
-                  shortLabelBuilder: (d) => _dayShortLabel(d, l10n),
-                ),
-              ),
+
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 22, bottom: 10),
-                  child: Text(
-                    l10n.createRoutineChooseExercises,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: divider,
                 ),
               ),
-              if (exerciseColumns == 1)
-                SliverList.separated(
-                  itemCount: state.library.length,
-                  separatorBuilder:
-                      (context, index) => const SizedBox(height: 10),
-                  itemBuilder:
-                      (context, index) => _buildExerciseCard(
-                        state: state,
-                        controller: controller,
-                        l10n: l10n,
-                        index: index,
-                      ),
-                )
-              else
-                SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 10,
-                    mainAxisExtent: 88,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => _buildExerciseCard(
-                      state: state,
-                      controller: controller,
-                      l10n: l10n,
-                      index: index,
+
+              // --- Exercise library --------------------------------------
+              SliverToBoxAdapter(
+                child: _SectionTitle(l10n.createRoutineChooseExercises, ext: ext, theme: theme),
+              ),
+              SliverList.separated(
+                itemCount: state.library.length,
+                separatorBuilder: (context, index) => divider,
+                itemBuilder: (context, index) {
+                  final entry = state.library[index];
+                  final isAdded = controller.isSelected(entry.id);
+                  return ExerciseListTile(
+                    image: entry.image,
+                    name: entry.name,
+                    muscleGroup: _muscleGroupLabel(entry.muscleGroup, l10n),
+                    setsRepsLabel: l10n.createRoutineSetsReps(
+                      entry.defaultSets,
+                      entry.defaultReps,
                     ),
-                    childCount: state.library.length,
-                  ),
-                ),
+                    isFavorite: entry.isFavorite,
+                    isAdded: isAdded,
+                    onFavoriteTap: () => controller.toggleFavorite(entry.id),
+                    onAddTap: () => controller.toggleExercise(entry.id),
+                  );
+                },
+              ),
+
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 22, bottom: 10),
-                  child: Text(
-                    l10n.createRoutineMyRoutineTitle,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: divider,
                 ),
+              ),
+
+              // --- My routine ---------------------------------------------
+              SliverToBoxAdapter(
+                child: _SectionTitle(l10n.createRoutineMyRoutineTitle, ext: ext, theme: theme),
               ),
               if (state.selected.isEmpty)
                 SliverToBoxAdapter(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: ext.glassFill,
-                      borderRadius: BorderRadius.circular(AppRadius.card),
-                      border: Border.all(color: ext.glassBorder),
-                    ),
-                    child: Text(
-                      l10n.createRoutineMyRoutineEmpty,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: ext.textMuted, fontSize: 12.5),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Center(
+                      child: Text(
+                        l10n.createRoutineMyRoutineEmpty,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: ext.textMuted, fontSize: 12.5),
+                      ),
                     ),
                   ),
                 )
@@ -437,9 +379,15 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                   itemBuilder: (context, index) {
                     final selection = state.selected[index];
                     final entry = state.libraryEntry(selection.exerciseId);
-                    return Padding(
+                    return Container(
                       key: ValueKey(selection.exerciseId),
-                      padding: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: index == state.selected.length - 1
+                              ? BorderSide.none
+                              : BorderSide(color: ext.glassBorder),
+                        ),
+                      ),
                       child: SelectedExerciseItem(
                         image: entry.image,
                         name: entry.name,
@@ -471,46 +419,90 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                     );
                   },
                 ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: RoutineSummaryCard(
-                    title: l10n.createRoutineSummaryTitle,
-                    exercisesLabel: l10n.createRoutineSummaryExercises,
-                    exercisesValue: '${state.selected.length}',
-                    durationLabel: l10n.createRoutineSummaryDuration,
-                    durationValue: '${state.totalDurationMinutes} min',
-                    caloriesLabel: l10n.createRoutineSummaryCalories,
-                    caloriesValue: '${state.estimatedCalories}',
-                    daysLabel: l10n.createRoutineSummaryDays,
-                    daysValue: '${state.selectedDays.length}',
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_validationError != null) ...[
-                      Text(
-                        _validationError!,
-                        style: TextStyle(color: ext.danger, fontSize: 12.5),
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                    PrimaryButton(
-                      label: l10n.workoutCreateRoutine,
-                      isLoading: _creating,
-                      onPressed: () => _handleCreate(controller, state, l10n),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text, {required this.ext, required this.theme});
+
+  final String text;
+  final AppThemeExtension ext;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: theme.textTheme.titleLarge?.copyWith(
+        color: ext.textPrimary,
+        fontWeight: FontWeight.w900,
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text, {required this.ext});
+
+  final String text;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: ext.textMuted,
+        fontWeight: FontWeight.w800,
+        fontSize: 12.5,
+        letterSpacing: 0.2,
+      ),
+    );
+  }
+}
+
+/// A borderless, underline-only text field — replaces the filled/boxed
+/// input the previous card-based design used, matching the flatter,
+/// more editorial feel of the redesigned page.
+class _UnderlinedField extends StatelessWidget {
+  const _UnderlinedField({
+    required this.controller,
+    required this.hint,
+    required this.ext,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final AppThemeExtension ext;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      style: TextStyle(
+        color: ext.textPrimary,
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+      ),
+      cursorColor: AppColors.seedLime,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: ext.textMuted, fontWeight: FontWeight.w500),
+        isDense: true,
+        contentPadding: const EdgeInsets.only(bottom: 10),
+        border: UnderlineInputBorder(borderSide: BorderSide(color: ext.glassBorder)),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: ext.glassBorder)),
+        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.seedLime, width: 2)),
+      ),
     );
   }
 }
