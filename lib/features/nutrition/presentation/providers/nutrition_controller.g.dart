@@ -62,6 +62,100 @@ abstract class _$NutritionTabController extends $Notifier<NutritionTab> {
   }
 }
 
+/// Loads `/api/recipes` once, sorted by rating desc — the shared source
+/// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
+/// [NutritionPage]. Public (rather than a private provider) so the page's
+/// pull-to-refresh can call [refresh] directly. A plain state-holding
+/// notifier (not an `AsyncNotifier`) on purpose — same pattern as
+/// [SuggestedChallenges]/[MyChallenges]: a failed [refresh] leaves the
+/// last successfully-loaded list in `state` untouched (never resets to
+/// empty) while still rethrowing so the caller can show a real error.
+
+@ProviderFor(NutritionRecipesSource)
+final nutritionRecipesSourceProvider = NutritionRecipesSourceProvider._();
+
+/// Loads `/api/recipes` once, sorted by rating desc — the shared source
+/// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
+/// [NutritionPage]. Public (rather than a private provider) so the page's
+/// pull-to-refresh can call [refresh] directly. A plain state-holding
+/// notifier (not an `AsyncNotifier`) on purpose — same pattern as
+/// [SuggestedChallenges]/[MyChallenges]: a failed [refresh] leaves the
+/// last successfully-loaded list in `state` untouched (never resets to
+/// empty) while still rethrowing so the caller can show a real error.
+final class NutritionRecipesSourceProvider
+    extends
+        $NotifierProvider<NutritionRecipesSource, List<Map<String, dynamic>>> {
+  /// Loads `/api/recipes` once, sorted by rating desc — the shared source
+  /// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
+  /// [NutritionPage]. Public (rather than a private provider) so the page's
+  /// pull-to-refresh can call [refresh] directly. A plain state-holding
+  /// notifier (not an `AsyncNotifier`) on purpose — same pattern as
+  /// [SuggestedChallenges]/[MyChallenges]: a failed [refresh] leaves the
+  /// last successfully-loaded list in `state` untouched (never resets to
+  /// empty) while still rethrowing so the caller can show a real error.
+  NutritionRecipesSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'nutritionRecipesSourceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$nutritionRecipesSourceHash();
+
+  @$internal
+  @override
+  NutritionRecipesSource create() => NutritionRecipesSource();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Map<String, dynamic>> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Map<String, dynamic>>>(value),
+    );
+  }
+}
+
+String _$nutritionRecipesSourceHash() =>
+    r'cb5b795fa8e648ba8fc0f3b08fabea6f5e042708';
+
+/// Loads `/api/recipes` once, sorted by rating desc — the shared source
+/// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
+/// [NutritionPage]. Public (rather than a private provider) so the page's
+/// pull-to-refresh can call [refresh] directly. A plain state-holding
+/// notifier (not an `AsyncNotifier`) on purpose — same pattern as
+/// [SuggestedChallenges]/[MyChallenges]: a failed [refresh] leaves the
+/// last successfully-loaded list in `state` untouched (never resets to
+/// empty) while still rethrowing so the caller can show a real error.
+
+abstract class _$NutritionRecipesSource
+    extends $Notifier<List<Map<String, dynamic>>> {
+  List<Map<String, dynamic>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<List<Map<String, dynamic>>, List<Map<String, dynamic>>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                List<Map<String, dynamic>>,
+                List<Map<String, dynamic>>
+              >,
+              List<Map<String, dynamic>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// Loads `/api/recipes` once and splits it: the two highest-rated recipes
 /// become "Recommended", the rest fill "Recipes for you".
 
@@ -102,7 +196,7 @@ final class NutritionRecommendedProvider
 }
 
 String _$nutritionRecommendedHash() =>
-    r'0ef5d5acb0b301ff82e241278cac0685f8ebfe90';
+    r'efef25ecf935cafa8689475df513c612178b5342';
 
 /// Loads `/api/recipes` once and splits it: the two highest-rated recipes
 /// become "Recommended", the rest fill "Recipes for you".
@@ -157,7 +251,7 @@ final class NutritionRecipesProvider
   }
 }
 
-String _$nutritionRecipesHash() => r'9076fac56bd27eba48da5c7a235b1923a03e08c3';
+String _$nutritionRecipesHash() => r'539364ac423a3c7802f7bdd4a26ee04af7b03f81';
 
 abstract class _$NutritionRecipes extends $Notifier<List<MealItem>> {
   List<MealItem> build();
@@ -176,47 +270,6 @@ abstract class _$NutritionRecipes extends $Notifier<List<MealItem>> {
     return element.handleCreate(ref, build);
   }
 }
-
-@ProviderFor(_recipes)
-final _recipesProvider = _RecipesProvider._();
-
-final class _RecipesProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Map<String, dynamic>>>,
-          List<Map<String, dynamic>>,
-          FutureOr<List<Map<String, dynamic>>>
-        >
-    with
-        $FutureModifier<List<Map<String, dynamic>>>,
-        $FutureProvider<List<Map<String, dynamic>>> {
-  _RecipesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'_recipesProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$_recipesHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Map<String, dynamic>>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Map<String, dynamic>>> create(Ref ref) {
-    return _recipes(ref);
-  }
-}
-
-String _$_recipesHash() => r'c216a42870b373a933380971cc9a06cb773074ff';
 
 /// Loads the real `/api/nutrition/today` document and converts it into
 /// display fractions/strings.

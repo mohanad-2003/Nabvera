@@ -722,6 +722,7 @@
   "mealMarkAsEaten": "Mark as eaten",
   "mealLogged": "Logged",
   "mealLogUndo": "Undo",
+  "nutritionRefreshFailed": "Couldn't refresh nutrition data. Showing the last saved data.",
   "mealLogAdded": "Meal logged",
   "mealLogFailed": "Couldn't log this meal, please try again",
   "mealLogRemoved": "Log removed",
@@ -926,6 +927,7 @@
   "communityBadgeFirstChallenge": "First Challenge",
   "communityBadgeConsistencyBuilder": "Consistency Builder",
   "communityBadgeWeeklyWinner": "Weekly Winner",
+  "communityRefreshFailed": "Couldn't refresh challenges. Showing the last saved data.",
   "communityChallengeJoinFailed": "Couldn't join this challenge. Try again.",
   "communityChallengeLeaveFailed": "Couldn't leave this challenge. Try again.",
 

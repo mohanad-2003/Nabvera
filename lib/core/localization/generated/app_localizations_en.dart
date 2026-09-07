@@ -2014,6 +2014,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealLogUndo => 'Undo';
 
   @override
+  String get nutritionRefreshFailed =>
+      'Couldn\'t refresh nutrition data. Showing the last saved data.';
+
+  @override
   String get mealLogAdded => 'Meal logged';
 
   @override
@@ -2630,6 +2634,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityBadgeWeeklyWinner => 'Weekly Winner';
+
+  @override
+  String get communityRefreshFailed =>
+      'Couldn\'t refresh challenges. Showing the last saved data.';
 
   @override
   String get communityChallengeJoinFailed =>

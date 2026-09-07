@@ -14,19 +14,51 @@ class NutritionTabController extends _$NutritionTabController {
   void select(NutritionTab tab) => state = tab;
 }
 
+/// Loads `/api/recipes` once, sorted by rating desc — the shared source
+/// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
+/// [NutritionPage]. Public (rather than a private provider) so the page's
+/// pull-to-refresh can call [refresh] directly. A plain state-holding
+/// notifier (not an `AsyncNotifier`) on purpose — same pattern as
+/// [SuggestedChallenges]/[MyChallenges]: a failed [refresh] leaves the
+/// last successfully-loaded list in `state` untouched (never resets to
+/// empty) while still rethrowing so the caller can show a real error.
+@riverpod
+class NutritionRecipesSource extends _$NutritionRecipesSource {
+  @override
+  List<Map<String, dynamic>> build() {
+    Future.microtask(() async {
+      try {
+        await refresh();
+      } catch (_) {
+        // Initial load failure — left at the empty default, see
+        // WorkoutListByLevel for the same pattern.
+      }
+    });
+    return const [];
+  }
+
+  /// Used by [NutritionPage]'s pull-to-refresh. Awaits the real fetch so
+  /// the `RefreshIndicator` spinner stays up until real data has come
+  /// back, and rethrows on failure (after leaving `state` as it was) so
+  /// the caller can surface a real, retriable error instead of pretending
+  /// the refresh succeeded.
+  Future<void> refresh() async {
+    final recipes = await ref.read(nutritionRepositoryProvider).fetchRecipes();
+    state = recipes..sort(
+      (a, b) =>
+          ((b['rating'] as num?) ?? 0).compareTo((a['rating'] as num?) ?? 0),
+    );
+  }
+}
+
 /// Loads `/api/recipes` once and splits it: the two highest-rated recipes
 /// become "Recommended", the rest fill "Recipes for you".
 @riverpod
 class NutritionRecommended extends _$NutritionRecommended {
   @override
   List<MealItem> build() {
-    ref.watch(_recipesProvider);
-    return ref
-        .watch(_recipesProvider)
-        .maybeWhen(
-          data: (recipes) => recipes.take(2).map(MealItem.fromJson).toList(),
-          orElse: () => const [],
-        );
+    final recipes = ref.watch(nutritionRecipesSourceProvider);
+    return recipes.take(2).map(MealItem.fromJson).toList();
   }
 }
 
@@ -34,26 +66,9 @@ class NutritionRecommended extends _$NutritionRecommended {
 class NutritionRecipes extends _$NutritionRecipes {
   @override
   List<MealItem> build() {
-    return ref
-        .watch(_recipesProvider)
-        .maybeWhen(
-          data: (recipes) => recipes.skip(2).map(MealItem.fromJson).toList(),
-          orElse: () => const [],
-        );
+    final recipes = ref.watch(nutritionRecipesSourceProvider);
+    return recipes.skip(2).map(MealItem.fromJson).toList();
   }
-}
-
-@riverpod
-Future<List<Map<String, dynamic>>> _recipes(Ref ref) {
-  final recipes = ref.watch(nutritionRepositoryProvider).fetchRecipes();
-  return recipes.then(
-    (list) =>
-        list..sort(
-          (a, b) => ((b['rating'] as num?) ?? 0).compareTo(
-            (a['rating'] as num?) ?? 0,
-          ),
-        ),
-  );
 }
 
 /// Loads the real `/api/nutrition/today` document and converts it into

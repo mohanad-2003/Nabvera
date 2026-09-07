@@ -344,7 +344,17 @@ class _ChallengesTab extends ConsumerWidget {
       }
     }
 
-    return CustomScrollView(
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+
+    // Real pull-to-refresh: re-fetches suggested + my challenges (active/
+    // completed/badges are all derived from myChallenges, so no separate
+    // fetch needed for those) — never touches join/leave state locally,
+    // only what the backend actually returns. See _pullToRefreshChallenges.
+    return RefreshIndicator(
+      color: ext.accentGlow,
+      backgroundColor: ext.cardColor,
+      onRefresh: () => _pullToRefreshChallenges(context, ref),
+      child: CustomScrollView(
       slivers: [
         if (badges.isNotEmpty)
           SliverToBoxAdapter(
@@ -430,6 +440,34 @@ class _ChallengesTab extends ConsumerWidget {
           ),
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
       ],
+      ),
+    );
+  }
+}
+
+/// Awaits a real reload of suggested + my challenges, so the
+/// [RefreshIndicator] spinner stays up until fresh data (or a real error)
+/// has come back — mirrors Home's own `_pullToRefresh`. On failure, the
+/// already-shown lists are left as-is (see the "left as-is on catch"
+/// pattern in [SuggestedChallenges]/[MyChallenges]) and a short, retriable
+/// error is surfaced instead of pretending the refresh succeeded.
+Future<void> _pullToRefreshChallenges(BuildContext context, WidgetRef ref) async {
+  try {
+    await Future.wait([
+      ref.read(suggestedChallengesProvider.notifier).refresh(),
+      ref.read(myChallengesProvider.notifier).refresh(),
+    ]);
+  } catch (_) {
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.communityRefreshFailed),
+        action: SnackBarAction(
+          label: l10n.actionRetry,
+          onPressed: () => _pullToRefreshChallenges(context, ref),
+        ),
+      ),
     );
   }
 }

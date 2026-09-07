@@ -641,6 +641,7 @@
   "mealMarkAsEaten": "تم تناولها",
   "mealLogged": "تم تسجيلها",
   "mealLogUndo": "تراجع",
+  "nutritionRefreshFailed": "تعذر تحديث بيانات التغذية. يتم عرض آخر بيانات محفوظة.",
   "mealLogAdded": "تم تسجيل الوجبة",
   "mealLogFailed": "تعذر تسجيل هذه الوجبة، حاول مرة أخرى",
   "mealLogRemoved": "تم إلغاء التسجيل",
@@ -843,6 +844,7 @@
   "communityBadgeFirstChallenge": "أول تحدٍ",
   "communityBadgeConsistencyBuilder": "بانِي الاستمرارية",
   "communityBadgeWeeklyWinner": "بطل الأسبوع",
+  "communityRefreshFailed": "تعذر تحديث التحديات. يتم عرض آخر بيانات محفوظة.",
   "communityChallengeJoinFailed": "تعذّر الانضمام لهذا التحدي. حاول مرة أخرى.",
   "communityChallengeLeaveFailed": "تعذّرت مغادرة هذا التحدي. حاول مرة أخرى.",
 

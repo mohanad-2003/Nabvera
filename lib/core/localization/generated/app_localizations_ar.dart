@@ -1992,6 +1992,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mealLogUndo => 'تراجع';
 
   @override
+  String get nutritionRefreshFailed =>
+      'تعذر تحديث بيانات التغذية. يتم عرض آخر بيانات محفوظة.';
+
+  @override
   String get mealLogAdded => 'تم تسجيل الوجبة';
 
   @override
@@ -2596,6 +2600,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityBadgeWeeklyWinner => 'بطل الأسبوع';
+
+  @override
+  String get communityRefreshFailed =>
+      'تعذر تحديث التحديات. يتم عرض آخر بيانات محفوظة.';
 
   @override
   String get communityChallengeJoinFailed =>

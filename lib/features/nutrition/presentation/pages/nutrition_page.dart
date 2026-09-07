@@ -38,7 +38,13 @@ class NutritionPage extends ConsumerWidget {
       // Recommended row live in a single SliverToBoxAdapter, and "Recipes
       // for you" is a SliverList right below it — one real scroll view, so
       // vertical overflow is structurally impossible regardless of device.
-      child: CustomScrollView(
+      // Wrapped in RefreshIndicator so pulling down re-fetches the real
+      // recipes list and today's nutrition summary — see _pullToRefresh.
+      child: RefreshIndicator(
+        color: ext.accentGlow,
+        backgroundColor: ext.cardColor,
+        onRefresh: () => _pullToRefresh(context, ref),
+        child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Column(
@@ -202,8 +208,37 @@ class NutritionPage extends ConsumerWidget {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
         ],
+        ),
       ),
     );
+  }
+
+  /// Awaits a real reload of every provider this page reads from, so the
+  /// [RefreshIndicator] spinner stays up until fresh data (or a real
+  /// error) has come back — mirrors Home's own `_pullToRefresh`. On
+  /// failure, whatever was already shown is left as-is (see
+  /// [NutritionRecipesSource.refresh], which never clears `state` on
+  /// error, and the caught-internally [DailyNutritionSummaryController._load])
+  /// and a short, retriable error is surfaced instead of pretending it worked.
+  Future<void> _pullToRefresh(BuildContext context, WidgetRef ref) async {
+    try {
+      await Future.wait([
+        ref.read(nutritionRecipesSourceProvider.notifier).refresh(),
+        ref.read(dailyNutritionSummaryControllerProvider.notifier).refresh(),
+      ]);
+    } catch (_) {
+      if (!context.mounted) return;
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.nutritionRefreshFailed),
+          action: SnackBarAction(
+            label: l10n.actionRetry,
+            onPressed: () => _pullToRefresh(context, ref),
+          ),
+        ),
+      );
+    }
   }
 
   /// Fetches the full recipe and opens it as a real [MealDetail] — the

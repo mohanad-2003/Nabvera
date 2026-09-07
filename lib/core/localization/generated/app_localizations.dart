@@ -3782,6 +3782,12 @@ abstract class AppLocalizations {
   /// **'Undo'**
   String get mealLogUndo;
 
+  /// No description provided for @nutritionRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t refresh nutrition data. Showing the last saved data.'**
+  String get nutritionRefreshFailed;
+
   /// No description provided for @mealLogAdded.
   ///
   /// In en, this message translates to:
@@ -4873,6 +4879,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weekly Winner'**
   String get communityBadgeWeeklyWinner;
+
+  /// No description provided for @communityRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t refresh challenges. Showing the last saved data.'**
+  String get communityRefreshFailed;
 
   /// No description provided for @communityChallengeJoinFailed.
   ///
