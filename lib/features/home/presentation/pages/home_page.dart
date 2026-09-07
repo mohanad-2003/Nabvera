@@ -12,6 +12,7 @@ import 'package:nabvera/core/widgets/user_avatar.dart';
 import 'package:nabvera/features/home/domain/home_models.dart';
 import 'package:nabvera/features/home/presentation/providers/home_controller.dart';
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
+import 'package:nabvera/features/health/presentation/widgets/health_snapshot_card.dart';
 import 'package:nabvera/features/home/presentation/widgets/workout_schedule_card.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/widgets/log_water_sheet.dart';
@@ -91,6 +92,11 @@ class HomePage extends ConsumerWidget {
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 90),
                   child: const WorkoutScheduleCard(),
+                ),
+                const SizedBox(height: 18),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 95),
+                  child: const HealthSnapshotCard(),
                 ),
                 const SizedBox(height: 18),
                 FadeSlideIn(
