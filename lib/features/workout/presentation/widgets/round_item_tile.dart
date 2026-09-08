@@ -1,4 +1,5 @@
 import 'package:nabvera/core/network/app_icons.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/widgets/pressable_scale.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
@@ -26,10 +27,25 @@ class RoundItemTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
-              ClipRRect(borderRadius: BorderRadius.circular(14),
-                child: item.exerciseDetail == null
-                  ? SizedBox(width: 56, height: 56, child: Icon(Icons.fitness_center, color: ext.accentGlow))
-                  : SmartImage(item.exerciseDetail!.heroImage, width: 56, height: 56)),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child:
+                    item.exerciseDetail == null
+                        ? Container(
+                          width: 56,
+                          height: 56,
+                          color: ext.accentGlow.withValues(alpha: 0.12),
+                          child: Icon(
+                            Icons.fitness_center_rounded,
+                            color: ext.accentGlow,
+                          ),
+                        )
+                        : SmartImage(
+                          item.exerciseDetail!.heroImage,
+                          width: 56,
+                          height: 56,
+                        ),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -51,17 +67,28 @@ class RoundItemTile extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Text(
-                          item.reps,
-                          style: TextStyle(
-                            color: ext.accentGlow,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ext.accentGlow.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(AppRadius.pill),
+                          ),
+                          child: Text(
+                            item.reps,
+                            style: TextStyle(
+                              color: ext.accentGlow,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         SmartImage(
@@ -86,8 +113,6 @@ class RoundItemTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (onTap != null)
-                Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded, color: ext.textMuted),
             ],
           ),
         ),

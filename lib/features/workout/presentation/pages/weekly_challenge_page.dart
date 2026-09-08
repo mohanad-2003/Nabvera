@@ -49,11 +49,10 @@ class WeeklyChallengePage extends ConsumerWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/comm.png',
+                    child: SmartImage(
+                      image,
                       width: double.infinity,
                       height: 165,
-                      fit: BoxFit.cover,
                     ),
                   ),
                   Positioned(
@@ -177,15 +176,28 @@ class _RoundSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 5,
+              height: 20,
+              decoration: BoxDecoration(
+                gradient: ext.accentGradient,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                color: ext.textPrimary,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         for (final round in rounds) ...[
           RoundItemTile(
             item: RoundExerciseItem(
