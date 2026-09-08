@@ -81,7 +81,12 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AspectRatio(
-                aspectRatio: 16 / 10,
+                // The exercise demo clips (Pexels, orientation=portrait) are
+                // shot tall (~9:16) — a 16:10 landscape frame cropped the
+                // FittedBox.cover video down to a sliver of the person. 3:4
+                // keeps enough vertical room to show most of their body
+                // while staying a reasonable hero-card height.
+                aspectRatio: 3 / 4,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
