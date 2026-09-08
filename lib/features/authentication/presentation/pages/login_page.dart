@@ -52,9 +52,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.authPasswordResetSuccess)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.authPasswordResetSuccess)));
       });
     }
   }
@@ -86,7 +86,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       child: AuthLogoHero(
                         logoSize: 120,
                         title: l10n.authWelcomeBackTitle,
-                        subtitle: l10n.authWelcomeBackBody,
+                        //   subtitle: l10n.authWelcomeBackBody,
                       ),
                     ),
                     const SizedBox(height: 22),
@@ -228,7 +228,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             .read(preferencesServiceProvider)
             .setRememberedEmail(
               _rememberMe
-                  ? ref.read(loginControllerProvider.notifier).emailController.text.trim()
+                  ? ref
+                      .read(loginControllerProvider.notifier)
+                      .emailController
+                      .text
+                      .trim()
                   : null,
             );
         if (!context.mounted) return;
