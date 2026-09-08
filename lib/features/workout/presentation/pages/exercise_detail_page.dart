@@ -132,72 +132,81 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                data.description,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: ext.textMuted,
-                  height: 1.5,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    workoutCopy(context, 'نظرة عامة', 'Overview'),
+                    style: TextStyle(
+                      color: ext.accentGlow,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    data.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: ext.textMuted,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.symmetric(
-                    horizontal: BorderSide(color: ext.glassBorder, width: .5),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _InfoStat(
+                          icon: Icons.fitness_center_rounded,
+                          label: l10n.workoutMuscleGroupLabel,
+                          value: data.muscleGroup,
+                          ext: ext,
+                        ),
+                      ),
+                      Expanded(
+                        child: _InfoStat(
+                          icon: Icons.trending_up_rounded,
+                          label: l10n.workoutDifficultyLabel,
+                          value: data.level,
+                          ext: ext,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _InfoStat(
-                            icon: Icons.fitness_center_rounded,
-                            label: l10n.workoutMuscleGroupLabel,
-                            value: data.muscleGroup,
-                            ext: ext,
-                          ),
+                  const SizedBox(height: 16),
+                  Divider(height: 1, color: ext.glassBorder),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _InfoStat(
+                          icon: Icons.timer_outlined,
+                          label: data.duration,
+                          value: data.reps,
+                          ext: ext,
                         ),
-                        Expanded(
-                          child: _InfoStat(
-                            icon: Icons.trending_up_rounded,
-                            label: l10n.workoutDifficultyLabel,
-                            value: data.level,
-                            ext: ext,
-                          ),
+                      ),
+                      Expanded(
+                        child: _InfoStat(
+                          icon: Icons.handyman_outlined,
+                          label: l10n.workoutEquipmentLabel,
+                          value: data.equipment,
+                          ext: ext,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _InfoStat(
-                            icon: Icons.timer_outlined,
-                            label: data.duration,
-                            value: data.reps,
-                            ext: ext,
-                          ),
-                        ),
-                        Expanded(
-                          child: _InfoStat(
-                            icon: Icons.handyman_outlined,
-                            label: l10n.workoutEquipmentLabel,
-                            value: data.equipment,
-                            ext: ext,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),

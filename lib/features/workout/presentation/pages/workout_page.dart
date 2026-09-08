@@ -1,4 +1,4 @@
-import '../providers/workout_request_providers.dart';
+import 'package:nabvera/features/workout/presentation/providers/workout_request_providers.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/network/app_icons.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';

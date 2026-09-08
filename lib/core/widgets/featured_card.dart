@@ -170,26 +170,35 @@ class _FeaturedCardState extends State<FeaturedCard> {
                       const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
-                        height: 38,
-                        child: ElevatedButton.icon(
-                          onPressed: widget.onTap,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppRadius.pill,
-                              ),
+                        height: 40,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: ext.accentGradient,
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.pill,
                             ),
-                            elevation: 0,
                           ),
-                          icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                          label: Text(
-                            widget.ctaLabel!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
+                          child: ElevatedButton.icon(
+                            onPressed: widget.onTap,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: ext.onAccent,
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.pill,
+                                ),
+                              ),
+                              elevation: 0,
+                            ),
+                            icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                            label: Text(
+                              widget.ctaLabel!,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ),

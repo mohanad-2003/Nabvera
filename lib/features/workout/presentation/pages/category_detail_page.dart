@@ -262,15 +262,31 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (final group in data.rounds) ...[
-                          Text(
-                            group.title,
-                            style: TextStyle(
-                              color: ext.accentGlow,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 5,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  gradient: ext.accentGradient,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  group.title,
+                                  style: TextStyle(
+                                    color: ext.textPrimary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           for (final item in group.items) ...[
                             RoundItemTile(
                               item: item,
@@ -285,7 +301,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                             if (item != group.items.last)
                               Divider(height: 1, color: ext.glassBorder),
                           ],
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 22),
                         ],
                       ],
                     ),
