@@ -2991,4 +2991,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminChallengeTypeWeeklyConsistency => 'الانتظام الأسبوعي';
+
+  @override
+  String get favoriteTitle => 'إضافة إلى المفضلة';
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:nabvera/core/analytics/analytics_service.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
@@ -292,6 +291,7 @@ class _HomeHeader extends StatelessWidget {
   final VoidCallback onNotificationTap;
 
   final int unreadNotificationCount;
+
   /// Picks a time-of-day appropriate greeting instead of an always-"Good
   /// Morning" that reads oddly by evening.
   String _greeting(AppLocalizations l10n) {
@@ -382,7 +382,11 @@ class _HomeHeader extends StatelessWidget {
 }
 
 class _HeaderIcon extends StatelessWidget {
-  const _HeaderIcon({required this.icon, required this.onTap, this.badgeCount = 0});
+  const _HeaderIcon({
+    required this.icon,
+    required this.onTap,
+    this.badgeCount = 0,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
@@ -413,7 +417,10 @@ class _HeaderIcon extends StatelessWidget {
                 top: 4,
                 right: 4,
                 child: Container(
-                  constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                  constraints: const BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
@@ -432,10 +439,10 @@ class _HeaderIcon extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -460,6 +467,20 @@ class _TodayHeroCard extends ConsumerWidget {
     final featured = ref.watch(homeFeaturedWorkoutControllerProvider);
     final todayMinutes =
         ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final heroGradient = LinearGradient(
+      colors:
+          isDark
+              ? const [Color(0xFF1B3442), Color(0xFF112630), Color(0xFF0B171F)]
+              : const [Color(0xFF345576), Color(0xFF244369), Color(0xFF173E42)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+    const ctaGradient = LinearGradient(
+      colors: [Color(0xFFB6E85C), Color(0xFFF6AE45)],
+      begin: AlignmentDirectional.centerStart,
+      end: AlignmentDirectional.centerEnd,
+    );
     ref.watch(weeklyActivityControllerProvider);
 
     final title = featured?.title ?? l10n.homeHeroTitle;
@@ -494,12 +515,18 @@ class _TodayHeroCard extends ConsumerWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-            gradient: const LinearGradient(
-              colors: [AppColors.seedViolet, AppColors.seedInk],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            gradient: heroGradient,
+            boxShadow:
+                isDark
+                    ? const []
+                    : [
+                      BoxShadow(
+                        color: const Color(0xFF173E42).withValues(alpha: 0.18),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
+            border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
           ),
           child: Stack(
             children: [
@@ -655,7 +682,7 @@ class _TodayHeroCard extends ConsumerWidget {
                           height: 48,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            gradient: ext.accentGradient,
+                            gradient: ctaGradient,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(

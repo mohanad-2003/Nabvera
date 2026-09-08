@@ -26,21 +26,10 @@ class RoundItemTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
-              Container(
-                width: 45,
-                height: 45,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: item.accent,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.play_arrow_rounded,
-                    color: ext.onAccent,
-                    size: 25,
-                  ),
-                ),
-              ),
+              ClipRRect(borderRadius: BorderRadius.circular(14),
+                child: item.exerciseDetail == null
+                  ? SizedBox(width: 56, height: 56, child: Icon(Icons.fitness_center, color: ext.accentGlow))
+                  : SmartImage(item.exerciseDetail!.heroImage, width: 56, height: 56)),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -65,7 +54,7 @@ class RoundItemTile extends StatelessWidget {
                         Text(
                           item.reps,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: ext.accentGlow,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
@@ -98,7 +87,7 @@ class RoundItemTile extends StatelessWidget {
                 ),
               ),
               if (onTap != null)
-                Icon(Icons.chevron_right_rounded, color: ext.textMuted),
+                Icon(Directionality.of(context) == TextDirection.rtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded, color: ext.textMuted),
             ],
           ),
         ),

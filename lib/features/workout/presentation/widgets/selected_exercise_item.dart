@@ -1,4 +1,3 @@
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +151,11 @@ class _StepButton extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Icon(icon, size: 13, color: AppColors.seedLime),
+        child: Icon(
+          icon,
+          size: 13,
+          color: Theme.of(context).extension<AppThemeExtension>()!.accentGlow,
+        ),
       ),
     );
   }

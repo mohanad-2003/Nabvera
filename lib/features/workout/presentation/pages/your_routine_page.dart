@@ -1,162 +1,147 @@
-import 'package:nabvera/core/localization/generated/app_localizations.dart';
-import 'package:nabvera/core/routing/app_routes.dart';
-import 'package:nabvera/core/widgets/fade_slide_in.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
-import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
-import 'package:nabvera/features/workout/domain/workout_models.dart';
-import 'package:nabvera/features/workout/presentation/providers/your_routine_controller.dart';
-import 'package:nabvera/features/workout/presentation/widgets/workout_banner.dart';
-import 'package:nabvera/features/workout/presentation/widgets/workout_card.dart';
-import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
+import '../providers/workout_request_providers.dart';
+import '../widgets/workout_header.dart';
+import '../widgets/workout_surface.dart';
+import 'routine_detail_page.dart';
 
-class YourRoutinePage extends ConsumerStatefulWidget {
+class YourRoutinePage extends ConsumerWidget {
   const YourRoutinePage({super.key});
 
   @override
-  ConsumerState<YourRoutinePage> createState() => _YourRoutinePageState();
-}
-
-class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
-  MuscleGroup _filter = MuscleGroup.all;
-
-  String _categoryLabel(MuscleGroup group, AppLocalizations l10n) {
-    switch (group) {
-      case MuscleGroup.all:
-        return l10n.workoutCategoryAll;
-      case MuscleGroup.chest:
-        return l10n.workoutCategoryChest;
-      case MuscleGroup.back:
-        return l10n.workoutCategoryBack;
-      case MuscleGroup.legs:
-        return l10n.workoutCategoryLegs;
-      case MuscleGroup.arms:
-        return l10n.workoutCategoryArms;
-      case MuscleGroup.cardio:
-        return l10n.workoutCategoryCardio;
-      case MuscleGroup.strength:
-        return l10n.workoutCategoryStrength;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final routine = ref.watch(yourRoutineControllerProvider);
-    final controller = ref.read(yourRoutineControllerProvider.notifier);
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final request = ref.watch(routinesRequestProvider);
     final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    Future<void> create() async {
+      await context.push(AppRoutes.createRoutine);
+      if (context.mounted) ref.invalidate(routinesRequestProvider);
+    }
 
-    final filtered =
-        _filter == MuscleGroup.all
-            ? routine
-            : routine.where((item) => item.muscleGroup == _filter).toList();
-
-    return PremiumScaffold(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: FadeSlideIn(
+    final createButton = FilledButton.icon(
+      onPressed: create,
+      icon: const Icon(Icons.add_rounded),
+      style: FilledButton.styleFrom(
+        backgroundColor: ext.accentGlow,
+        foregroundColor: ext.onAccentGlow,
+      ),
+      label: Text(l10n.workoutCreateRoutine),
+    );
+    return WorkoutScaffold(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(routinesRequestProvider);
+          await ref.read(routinesRequestProvider.future);
+        },
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  WorkoutHeader(
-                    title: l10n.workoutYourRoutineTitle,
-                    subtitle: l10n.workoutYourRoutineSubtitle,
-                    showProfileAction: true,
+                  WorkoutHeader(title: l10n.workoutYourRoutineTitle),
+                  const SizedBox(height: 12),
+                  Text(
+                    request.asData == null
+                        ? l10n.workoutYourRoutineSubtitle
+                        : workoutCopy(
+                          context,
+                          '${request.asData!.value.length} روتينات • مساحة تدريبك الشخصية',
+                          '${request.asData!.value.length} routines • Your personal training space',
+                        ),
+                    style: TextStyle(color: ext.textMuted),
                   ),
                   const SizedBox(height: 16),
-                  WorkoutBanner(
-                    title: l10n.workoutBannerTitle,
-                    body: l10n.workoutBannerBody,
-                    ctaLabel: l10n.workoutBannerCta,
-                    onTap: () {
-                      if (filtered.isNotEmpty) {
-                        final item = filtered.first;
-                        context.push(
-                          AppRoutes.exerciseDetail,
-                          extra: ExerciseDetailData(
-                            headerTitle: l10n.workoutYourRoutineTitle,
-                            heroImage: item.image,
-                            title: item.title,
-                            duration: item.time,
-                            reps: item.rep,
-                            videoUrl: item.videoUrl,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 40,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: MuscleGroup.values.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
-                      itemBuilder: (context, index) {
-                        final group = MuscleGroup.values[index];
-                        return PremiumPill(
-                          label: _categoryLabel(group, l10n),
-                          selected: _filter == group,
-                          onTap: () => setState(() => _filter = group),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  createButton,
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-          ),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.88,
+            request.when(
+              loading:
+                  () => const SliverToBoxAdapter(
+                    child: WorkoutStatus(loading: true),
+                  ),
+              error:
+                  (error, _) => SliverToBoxAdapter(
+                    child: WorkoutStatus(
+                      error: error,
+                      onRetry: () => ref.invalidate(routinesRequestProvider),
+                    ),
+                  ),
+              data:
+                  (routines) =>
+                      routines.isEmpty
+                          ? SliverToBoxAdapter(
+                            child: WorkoutStatus(
+                              message: workoutCopy(
+                                context,
+                                'ابدأ بروتين يناسبك. اختر تمارينك ورتّبها لتجد خطة تدريبك هنا.',
+                                'Choose and order your exercises to build your first training plan.',
+                              ),
+                              action: createButton,
+                            ),
+                          )
+                          : SliverList.separated(
+                            itemCount: routines.length,
+                            separatorBuilder:
+                                (_, _) => Divider(
+                                  height: 1,
+                                  thickness: .5,
+                                  color: ext.glassBorder,
+                                ),
+                            itemBuilder: (context, index) {
+                              final routine = routines[index];
+                              return ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                leading: Text(
+                                  '${index + 1}'.padLeft(2, '0'),
+                                  style: TextStyle(
+                                    color: ext.accentGlow,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                title: Text(
+                                  routine['name'] as String? ?? '',
+                                  style: TextStyle(
+                                    color: ext.textPrimary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: RoutineSummary(routine: routine),
+                                ),
+                                trailing: Icon(
+                                  Directionality.of(context) ==
+                                          TextDirection.rtl
+                                      ? Icons.chevron_left_rounded
+                                      : Icons.chevron_right_rounded,
+                                  color: ext.textMuted,
+                                ),
+                                onTap:
+                                    () => Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                        builder:
+                                            (_) => RoutineDetailPage(
+                                              routine: routine,
+                                            ),
+                                      ),
+                                    ),
+                              );
+                            },
+                          ),
             ),
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final item = filtered[index];
-              return WorkoutCard(
-                image: item.image,
-                title: item.title,
-                time: item.time,
-                reps: item.rep,
-                isFavorite: item.isFavorite,
-                onFavoriteTap:
-                    () => controller.toggleFavorite(routine.indexOf(item)),
-                actionIcon: Icons.play_arrow_rounded,
-                onActionTap:
-                    () => context.push(
-                      AppRoutes.exerciseDetail,
-                      extra: ExerciseDetailData(
-                        headerTitle: l10n.workoutYourRoutineTitle,
-                        heroImage: item.image,
-                        title: item.title,
-                        duration: item.time,
-                        reps: item.rep,
-                        videoUrl: item.videoUrl,
-                      ),
-                    ),
-                onTap:
-                    () => context.push(
-                      AppRoutes.exerciseDetail,
-                      extra: ExerciseDetailData(
-                        headerTitle: l10n.workoutYourRoutineTitle,
-                        heroImage: item.image,
-                        title: item.title,
-                        duration: item.time,
-                        reps: item.rep,
-                        videoUrl: item.videoUrl,
-                      ),
-                    ),
-              );
-            }, childCount: filtered.length),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 Future<DifficultyRating?> showWorkoutRatingSheet(BuildContext context) {
   final ext = Theme.of(context).extension<AppThemeExtension>()!;
   final l10n = AppLocalizations.of(context);
-
   return showModalBottomSheet<DifficultyRating?>(
     context: context,
     useRootNavigator: true,
@@ -83,8 +82,7 @@ Future<DifficultyRating?> showWorkoutRatingSheet(BuildContext context) {
                 color: AppColors.electricOrange,
                 label: l10n.workoutRatingHard,
                 onTap:
-                    () =>
-                        Navigator.of(sheetContext).pop(DifficultyRating.hard),
+                    () => Navigator.of(sheetContext).pop(DifficultyRating.hard),
               ),
               const SizedBox(height: 10),
               _RatingOption(

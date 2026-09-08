@@ -1,3 +1,4 @@
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'dart:async';
 
 import 'package:nabvera/core/analytics/analytics_service.dart';
@@ -6,7 +7,6 @@ import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/featured_card.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:nabvera/features/home/presentation/providers/home_dashboard_controller.dart';
@@ -67,10 +67,12 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       setState(() => _elapsed = DateTime.now().difference(startedAt));
     });
     unawaited(
-      ref.read(analyticsServiceProvider).logEvent(AnalyticsEvent.workoutStarted, {
-        if (data.workoutId != null) 'workoutId': data.workoutId,
-        'durationMinutes': data.durationMinutes,
-      }),
+      ref
+          .read(analyticsServiceProvider)
+          .logEvent(AnalyticsEvent.workoutStarted, {
+            if (data.workoutId != null) 'workoutId': data.workoutId,
+            'durationMinutes': data.durationMinutes,
+          }),
     );
   }
 
@@ -91,9 +93,10 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
     // The real, measured elapsed time — never 0 (a workout finished within
     // the same minute it started still counts as at least one minute) and
     // capped well above any realistic single session.
-    final actualMinutes = _startedAt == null
-        ? null
-        : _elapsed.inSeconds ~/ 60 == 0 && _elapsed.inSeconds > 0
+    final actualMinutes =
+        _startedAt == null
+            ? null
+            : _elapsed.inSeconds ~/ 60 == 0 && _elapsed.inSeconds > 0
             ? _kMinLoggedMinutes
             : _elapsed.inMinutes.clamp(_kMinLoggedMinutes, _kMaxLoggedMinutes);
     try {
@@ -166,8 +169,55 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final compact = MediaQuery.sizeOf(context).height < 720;
 
-    return PremiumScaffold(
+    return WorkoutScaffold(
       padding: EdgeInsets.zero,
+      bottomBar:
+          data.workoutId == null
+              ? null
+              : SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Only a real backed-by-the-API workout has an id to
+                      // log against — curated/mock content (no workoutId)
+                      // has nothing for "start"/"finish" to actually save.
+                      if (data.workoutId != null && !_started)
+                        PrimaryButton(
+                          showShadow: false,
+                          label: l10n.workoutStartWorkout,
+                          icon: Icons.play_circle_outline_rounded,
+                          onPressed: _startWorkout,
+                        ),
+                      if (data.workoutId != null && _started) ...[
+                        Center(
+                          child: Text(
+                            _formatElapsed(_elapsed),
+                            style: TextStyle(
+                              color: ext.textPrimary,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        PrimaryButton(
+                          showShadow: false,
+                          label: l10n.workoutFinishWorkout,
+                          icon: Icons.check_circle_outline_rounded,
+                          isLoading: _submitting,
+                          onPressed: () => _finishWorkout(context, l10n),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -215,7 +265,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                           Text(
                             group.title,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: ext.accentGlow,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -236,37 +286,6 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               Divider(height: 1, color: ext.glassBorder),
                           ],
                           const SizedBox(height: 18),
-                        ],
-                        // Only a real backed-by-the-API workout has an id to
-                        // log against — curated/mock content (no workoutId)
-                        // has nothing for "start"/"finish" to actually save.
-                        if (data.workoutId != null && !_started)
-                          PrimaryButton(
-                            label: l10n.workoutStartWorkout,
-                            icon: Icons.play_circle_outline_rounded,
-                            onPressed: _startWorkout,
-                          ),
-                        if (data.workoutId != null && _started) ...[
-                          Center(
-                            child: Text(
-                              _formatElapsed(_elapsed),
-                              style: TextStyle(
-                                color: ext.textPrimary,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w900,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          PrimaryButton(
-                            label: l10n.workoutFinishWorkout,
-                            icon: Icons.check_circle_outline_rounded,
-                            isLoading: _submitting,
-                            onPressed: () => _finishWorkout(context, l10n),
-                          ),
                         ],
                       ],
                     ),

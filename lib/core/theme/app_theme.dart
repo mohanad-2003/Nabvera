@@ -213,7 +213,10 @@ abstract final class AppTheme {
                   ? Colors.white.withValues(alpha: 0.62)
                   : AppColors.seedInk.withValues(alpha: 0.6),
           onAccent: AppColors.seedInk,
-          accentGlow: AppColors.seedLime,
+          accentGlow: isDark ? AppColors.seedLime : AppColors.accentOnLight,
+          // Dark ink reads fine on bright lime (dark mode); light mode's
+          // deeper olive accentGlow needs a light foreground instead.
+          onAccentGlow: isDark ? AppColors.seedInk : Colors.white,
         ),
       ],
     );

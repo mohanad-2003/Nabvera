@@ -1,4 +1,3 @@
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
@@ -74,21 +73,12 @@ class _DayChip extends StatelessWidget {
         height: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.seedLime : ext.glassFill,
+          color: selected ? Theme.of(context).extension<AppThemeExtension>()!.accentGlow : ext.glassFill,
           shape: BoxShape.circle,
           border: Border.all(
             color: selected ? Colors.transparent : ext.glassBorder,
           ),
-          boxShadow:
-              selected
-                  ? [
-                    BoxShadow(
-                      color: AppColors.seedLime.withValues(alpha: 0.4),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
-                  : const [],
+
         ),
         child: Padding(
           padding: const EdgeInsets.all(4),
@@ -98,7 +88,7 @@ class _DayChip extends StatelessWidget {
               label,
               maxLines: 1,
               style: TextStyle(
-                color: selected ? AppColors.seedInk : ext.textMuted,
+                color: selected ? ext.onAccentGlow : ext.textMuted,
                 fontWeight: FontWeight.w800,
                 fontSize: 11.5,
               ),

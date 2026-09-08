@@ -41,4 +41,9 @@ abstract final class AppColors {
   static const Color successOnLight = Color(0xFF1E8E5A);
   static const Color warningOnLight = Color(0xFF9A6400);
   static const Color dangerOnLight = Color(0xFFB3261E);
+
+  /// Darker olive-green counterpart to [seedLime] for icons, labels, and
+  /// progress indicators on the light background. The neon original stays
+  /// reserved for dark surfaces where it has the intended contrast.
+  static const Color accentOnLight = Color(0xFF527B13);
 }

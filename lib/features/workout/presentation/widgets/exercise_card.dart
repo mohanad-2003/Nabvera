@@ -1,5 +1,4 @@
 import 'package:nabvera/core/responsive/app_responsive.dart';
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/pressable_scale.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
@@ -38,7 +37,10 @@ class ExerciseListTile extends StatelessWidget {
 
     return PressableScale(
       child: Container(
-        color: isAdded ? ext.accentGlow.withValues(alpha: 0.06) : Colors.transparent,
+        color:
+            isAdded
+                ? ext.accentGlow.withValues(alpha: 0.06)
+                : Colors.transparent,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
         child: Row(
           children: [
@@ -96,7 +98,12 @@ class ExerciseListTile extends StatelessWidget {
               onTap: onFavoriteTap,
               child: Icon(
                 isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                color: isFavorite ? AppColors.seedLime : ext.textMuted,
+                color:
+                    isFavorite
+                        ? Theme.of(
+                          context,
+                        ).extension<AppThemeExtension>()!.accentGlow
+                        : ext.textMuted,
                 size: 22,
               ),
             ),
@@ -107,7 +114,12 @@ class ExerciseListTile extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: isAdded ? AppColors.seedLime : ext.glassFill,
+                  color:
+                      isAdded
+                          ? Theme.of(
+                            context,
+                          ).extension<AppThemeExtension>()!.accentGlow
+                          : ext.glassFill,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: isAdded ? Colors.transparent : ext.glassBorder,
@@ -115,7 +127,7 @@ class ExerciseListTile extends StatelessWidget {
                 ),
                 child: Icon(
                   isAdded ? Icons.check_rounded : Icons.add_rounded,
-                  color: isAdded ? AppColors.seedInk : ext.textPrimary,
+                  color: isAdded ? ext.onAccentGlow : ext.textPrimary,
                   size: 18,
                 ),
               ),

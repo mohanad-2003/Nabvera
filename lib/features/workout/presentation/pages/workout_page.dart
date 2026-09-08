@@ -1,3 +1,5 @@
+import '../providers/workout_request_providers.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/network/app_icons.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
@@ -5,7 +7,6 @@ import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/featured_card.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
-import 'package:nabvera/features/workout/data/workout_category_data.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
@@ -23,13 +24,7 @@ class WorkoutPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final level = ref.watch(workoutTabProvider);
     final items = ref.watch(workoutListByLevelProvider(level));
-    final (
-      badge,
-      headline,
-      subHeadline,
-      time,
-      calories,
-    ) = WorkoutCategoryData.heroCopy(level);
+    final request = ref.watch(workoutRequestProvider(level));
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < 720;
@@ -42,7 +37,7 @@ class WorkoutPage extends ConsumerWidget {
     final heroHeight = compact ? 200.0 : 230.0;
     final listCardHeight = compact ? 104.0 : 117.0;
 
-    return PremiumScaffold(
+    return WorkoutScaffold(
       // The whole page is one CustomScrollView: the header/chips/buttons/
       // hero/section-title live in a single SliverToBoxAdapter, and the
       // workout list is a SliverList right below it. Because everything
@@ -75,7 +70,7 @@ class WorkoutPage extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final tabLevel = WorkoutLevel.values[index];
                       final isSelected = tabLevel == level;
-                      return PremiumPill(
+                      return WorkoutPill(
                         label: _label(l10n, tabLevel),
                         selected: isSelected,
                         onTap:
@@ -109,41 +104,48 @@ class WorkoutPage extends ConsumerWidget {
                   ],
                 ),
                 SizedBox(height: spacing),
-                FeaturedCard(
-                  image:
-                      items.isEmpty
-                          ? WorkoutCategoryData.heroImage(level)
-                          : items.first.image,
-                  badge: badge.toUpperCase(),
-                  title: headline,
-                  metas: [
-                    FeaturedCardMeta(icon: AppIcons.time, label: time),
-                    FeaturedCardMeta(
-                      icon: AppIcons.calories,
-                      label: calories,
-                    ),
-                    FeaturedCardMeta(
-                      icon: AppIcons.run,
-                      label: _label(l10n, level),
-                    ),
-                  ],
-                  ctaLabel: l10n.workoutStartWorkout,
-                  height: heroHeight,
-                  onTap:
-                      () =>
-                          items.isEmpty
-                              ? context.push(
-                                AppRoutes.workoutCategoryDetail,
-                                extra: WorkoutCategoryData.forLevel(level),
-                              )
-                              : _openWorkout(context, ref, items.first.id),
-                ),
+                if (items.isNotEmpty)
+                  FeaturedCard(
+                    image: items.first.image,
+                    badge: _label(l10n, level),
+                    title: items.first.name,
+                    metas: [
+                      if (items.first.time != null)
+                        FeaturedCardMeta(
+                          icon: AppIcons.time,
+                          label: items.first.time!,
+                        ),
+                      if (items.first.calories != null)
+                        FeaturedCardMeta(
+                          icon: AppIcons.calories,
+                          label: items.first.calories!,
+                        ),
+                      FeaturedCardMeta(
+                        icon: AppIcons.run,
+                        label: _label(l10n, level),
+                      ),
+                    ],
+                    ctaLabel: l10n.workoutStartWorkout,
+                    height: heroHeight,
+                    onTap: () => _openWorkout(context, ref, items.first.id),
+                  ),
                 SizedBox(height: spacing),
-                PremiumSectionHeader(title: subHeadline),
+                PremiumSectionHeader(title: l10n.workoutTitle),
                 SizedBox(height: compact ? 8 : 12),
               ],
             ),
           ),
+          if (request.isLoading || request.hasError || items.isEmpty)
+            SliverToBoxAdapter(
+              child: WorkoutStatus(
+                loading: request.isLoading,
+                error: request.error,
+                onRetry: () {
+                  ref.invalidate(workoutRequestProvider(level));
+                  ref.invalidate(workoutListByLevelProvider(level));
+                },
+              ),
+            ),
           SliverList.separated(
             itemCount: items.length,
             separatorBuilder:
@@ -217,7 +219,7 @@ class _WorkoutActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    final accent = Theme.of(context).colorScheme.primary;
+    final accent = ext.accentGlow;
     // Pill outline button (design-system button shape) rather than a flat
     // glass card, so these read as actions instead of content.
     return InkWell(
@@ -234,12 +236,14 @@ class _WorkoutActionButton extends StatelessWidget {
           children: [
             Icon(icon, size: 18, color: accent),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: ext.textPrimary,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
               ),
             ),
           ],

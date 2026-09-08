@@ -1,9 +1,10 @@
+import 'package:go_router/go_router.dart';
+import '../providers/workout_request_providers.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/responsive/app_responsive.dart';
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:nabvera/features/workout/presentation/providers/create_routine_controller.dart';
 import 'package:nabvera/features/workout/presentation/providers/your_routine_controller.dart';
@@ -33,6 +34,9 @@ class CreateRoutinePage extends ConsumerStatefulWidget {
 class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
   late final TextEditingController _nameController;
   bool _creating = false;
+  String _query = '';
+  MuscleGroup _muscleFilter = MuscleGroup.all;
+  bool _saveFailed = false;
   String? _validationError;
 
   @override
@@ -114,6 +118,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     CreateRoutineState state,
     AppLocalizations l10n,
   ) async {
+    if (_creating) return;
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       setState(() => _validationError = l10n.createRoutineNameValidation);
@@ -126,19 +131,23 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     setState(() {
       _validationError = null;
       _creating = true;
+      _saveFailed = false;
     });
     try {
       await controller.create(name);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.createRoutineSuccessMessage)),
-      );
-      ref.invalidate(yourRoutineControllerProvider);
-    } catch (_) {
-      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.authErrorGeneric)));
+      ).showSnackBar(SnackBar(content: Text(l10n.createRoutineSuccessMessage)));
+      ref.invalidate(yourRoutineControllerProvider);
+      ref.invalidate(routinesRequestProvider);
+      if (context.canPop()) context.pop();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _validationError = workoutError(context, error);
+        _saveFailed = true;
+      });
     } finally {
       if (mounted) setState(() => _creating = false);
     }
@@ -152,7 +161,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     final ext = theme.extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
 
-    return PremiumScaffold(
+    return WorkoutScaffold(
       padding: EdgeInsets.zero,
       bottomBar: RoutineBottomBar(
         stats: [
@@ -177,44 +186,47 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
             label: l10n.createRoutineSummaryDays,
           ),
         ],
-        buttonLabel: l10n.workoutCreateRoutine,
+        buttonLabel: _saveFailed ? l10n.actionRetry : l10n.workoutCreateRoutine,
         isLoading: _creating,
         errorText: _validationError,
         onPressed: () => _handleCreate(controller, state, l10n),
       ),
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final width = constraints.maxWidth;
-            final horizontalPadding = responsiveValue(
-              width,
-              compact: 16.0,
-              standard: 20.0,
-              medium: 24.0,
-              expanded: 32.0,
-            );
-            final maxContentWidth = responsiveValue(
-              width,
-              compact: double.infinity,
-              expanded: 720.0,
-            );
+      child: AbsorbPointer(
+        absorbing: _creating,
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final horizontalPadding = responsiveValue(
+                width,
+                compact: 16.0,
+                standard: 20.0,
+                medium: 24.0,
+                expanded: 32.0,
+              );
+              final maxContentWidth = responsiveValue(
+                width,
+                compact: double.infinity,
+                expanded: 720.0,
+              );
 
-            return Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxContentWidth),
-                child: _buildScrollView(
-                  state: state,
-                  controller: controller,
-                  theme: theme,
-                  ext: ext,
-                  l10n: l10n,
-                  horizontalPadding: horizontalPadding,
+              return Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxContentWidth),
+                  child: _buildScrollView(
+                    state: state,
+                    controller: controller,
+                    theme: theme,
+                    ext: ext,
+                    l10n: l10n,
+                    horizontalPadding: horizontalPadding,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -228,9 +240,22 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     required AppLocalizations l10n,
     required double horizontalPadding,
   }) {
-    final divider = Divider(height: 1, color: ext.glassBorder);
+    final divider = Divider(height: 1, thickness: .5, color: ext.glassBorder);
+    final request = ref.watch(exerciseLibraryRequestProvider);
+    final library =
+        state.library
+            .where(
+              (entry) =>
+                  (_muscleFilter == MuscleGroup.all ||
+                      entry.muscleGroup == _muscleFilter) &&
+                  entry.name.toLowerCase().contains(
+                    _query.trim().toLowerCase(),
+                  ),
+            )
+            .toList();
 
     return CustomScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
@@ -258,7 +283,10 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _SectionLabel(l10n.createRoutineNameLabel, ext: ext),
+                        _SectionLabel(
+                          '1. ${l10n.createRoutineNameLabel}',
+                          ext: ext,
+                        ),
                         const SizedBox(height: 10),
                         _UnderlinedField(
                           controller: _nameController,
@@ -302,7 +330,11 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
 
               // --- Training days ----------------------------------------
               SliverToBoxAdapter(
-                child: _SectionTitle(l10n.createRoutineDaysLabel, ext: ext, theme: theme),
+                child: _SectionTitle(
+                  l10n.createRoutineDaysLabel,
+                  ext: ext,
+                  theme: theme,
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -324,13 +356,59 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
 
               // --- Exercise library --------------------------------------
               SliverToBoxAdapter(
-                child: _SectionTitle(l10n.createRoutineChooseExercises, ext: ext, theme: theme),
+                child: _SectionTitle(
+                  '2. ${l10n.createRoutineChooseExercises}',
+                  ext: ext,
+                  theme: theme,
+                ),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      TextField(
+                        onChanged: (value) => setState(() => _query = value),
+                        decoration: InputDecoration(
+                          hintText: l10n.searchHint,
+                          prefixIcon: const Icon(Icons.search_rounded),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 48,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: MuscleGroup.values.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 8),
+                          itemBuilder: (context, index) {
+                            final group = MuscleGroup.values[index];
+                            return WorkoutPill(
+                              label: _muscleGroupLabel(group, l10n),
+                              selected: _muscleFilter == group,
+                              onTap:
+                                  () => setState(() => _muscleFilter = group),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (request.isLoading || request.hasError || library.isEmpty)
+                SliverToBoxAdapter(
+                  child: WorkoutStatus(
+                    loading: request.isLoading,
+                    error: request.error,
+                    onRetry: controller.retryLibrary,
+                  ),
+                ),
               SliverList.separated(
-                itemCount: state.library.length,
+                itemCount: library.length,
                 separatorBuilder: (context, index) => divider,
                 itemBuilder: (context, index) {
-                  final entry = state.library[index];
+                  final entry = library[index];
                   final isAdded = controller.isSelected(entry.id);
                   return ExerciseListTile(
                     image: entry.image,
@@ -357,7 +435,11 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
 
               // --- My routine ---------------------------------------------
               SliverToBoxAdapter(
-                child: _SectionTitle(l10n.createRoutineMyRoutineTitle, ext: ext, theme: theme),
+                child: _SectionTitle(
+                  '3. ${l10n.createRoutineMyRoutineTitle}',
+                  ext: ext,
+                  theme: theme,
+                ),
               ),
               if (state.selected.isEmpty)
                 SliverToBoxAdapter(
@@ -383,14 +465,15 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                       key: ValueKey(selection.exerciseId),
                       decoration: BoxDecoration(
                         border: Border(
-                          bottom: index == state.selected.length - 1
-                              ? BorderSide.none
-                              : BorderSide(color: ext.glassBorder),
+                          bottom:
+                              index == state.selected.length - 1
+                                  ? BorderSide.none
+                                  : BorderSide(color: ext.glassBorder),
                         ),
                       ),
                       child: SelectedExerciseItem(
                         image: entry.image,
-                        name: entry.name,
+                        name: '${index + 1}. ${entry.name}',
                         sets: selection.sets,
                         reps: selection.reps,
                         setsLabel: l10n.createRoutineSetsLabel,
@@ -493,15 +576,21 @@ class _UnderlinedField extends StatelessWidget {
         fontWeight: FontWeight.w700,
         fontSize: 16,
       ),
-      cursorColor: AppColors.seedLime,
+      cursorColor: ext.accentGlow,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: ext.textMuted, fontWeight: FontWeight.w500),
         isDense: true,
         contentPadding: const EdgeInsets.only(bottom: 10),
-        border: UnderlineInputBorder(borderSide: BorderSide(color: ext.glassBorder)),
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: ext.glassBorder)),
-        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.seedLime, width: 2)),
+        border: UnderlineInputBorder(
+          borderSide: BorderSide(color: ext.glassBorder),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ext.glassBorder),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ext.accentGlow, width: 2),
+        ),
       ),
     );
   }

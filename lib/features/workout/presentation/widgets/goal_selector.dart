@@ -1,4 +1,4 @@
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'workout_surface.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +33,7 @@ class GoalSelector extends StatelessWidget {
             for (final goal in RoutineGoal.values)
               SizedBox(
                 width: itemWidth,
-                child: PremiumPill(
+                child: WorkoutPill(
                   label: labelBuilder(goal),
                   selected: selected == goal,
                   onTap: () => onChanged(goal),

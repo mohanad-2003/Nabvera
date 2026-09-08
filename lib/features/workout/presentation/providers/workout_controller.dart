@@ -1,6 +1,6 @@
+import 'workout_request_providers.dart';
 import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
-import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -29,9 +29,8 @@ class WorkoutListByLevel extends _$WorkoutListByLevel {
     try {
       final favoriteIds =
           ref.read(currentUserProfileProvider).favoriteWorkoutIds.toSet();
-      final docs = await ref
-          .read(workoutRepositoryProvider)
-          .fetchWorkouts(difficulty: level.name);
+      final docs = await ref.read(workoutRequestProvider(level).future);
+      if (!ref.mounted) return;
       state = [
         for (final doc in docs)
           WorkoutListItem.fromJson(

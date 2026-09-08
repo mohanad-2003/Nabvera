@@ -188,7 +188,11 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
     return Container(
       height: 54,
       decoration: BoxDecoration(
-        color: ext.glassFill,
+        // A faint tint of the page's own text color rather than
+        // [AppThemeExtension.glassFill] (near-opaque white in light mode,
+        // reading as a thick white card) — keeps the field visibly on top
+        // of the page background without boxing it in.
+        color: ext.textPrimary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: ext.glassBorder),
       ),
@@ -244,8 +248,11 @@ class _SearchTabPill extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
         decoration: BoxDecoration(
-          gradient: selected ? ext.accentGradient : null,
-          color: selected ? null : ext.glassFill,
+          // Solid accentGlow rather than the fixed lime→orange gradient:
+          // accentGlow already swaps to a deep, readable tone in light mode
+          // (accentOnLight) instead of the washed-out neon the gradient
+          // produced there, while staying the familiar lime in dark mode.
+          color: selected ? ext.accentGlow : Colors.transparent,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: selected ? Colors.transparent : ext.glassBorder,
@@ -254,7 +261,7 @@ class _SearchTabPill extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? ext.onAccent : ext.textPrimary,
+            color: selected ? ext.onAccentGlow : ext.textPrimary,
             fontWeight: FontWeight.w800,
             fontSize: 13,
           ),

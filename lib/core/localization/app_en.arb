@@ -1,15 +1,25 @@
 {
   "@@locale": "en",
   "navHome": "Home",
-  "@navHome": {"description": "Bottom nav label for the Home tab"},
+  "@navHome": {
+    "description": "Bottom nav label for the Home tab"
+  },
   "navWorkout": "Workout",
-  "@navWorkout": {"description": "Bottom nav label for the Workout tab"},
+  "@navWorkout": {
+    "description": "Bottom nav label for the Workout tab"
+  },
   "navNutrition": "Nutrition",
-  "@navNutrition": {"description": "Bottom nav label for the Nutrition tab"},
+  "@navNutrition": {
+    "description": "Bottom nav label for the Nutrition tab"
+  },
   "navCommunity": "Community",
-  "@navCommunity": {"description": "Bottom nav label for the Community tab"},
+  "@navCommunity": {
+    "description": "Bottom nav label for the Community tab"
+  },
   "navProfile": "Profile",
-  "@navProfile": {"description": "Bottom nav label for the Profile tab"},
+  "@navProfile": {
+    "description": "Bottom nav label for the Profile tab"
+  },
   "actionContinue": "Continue",
   "actionBack": "Back",
   "actionIncrease": "Increase",
@@ -26,7 +36,6 @@
   "errorGenericTitle": "Something went wrong",
   "emptyGenericTitle": "Nothing here yet",
   "loadingLabel": "Loading...",
-
   "authLoginTitle": "Log In",
   "authWelcomeTitle": "Welcome",
   "authWelcomeSubtitle": "Log in to continue and track your fitness journey",
@@ -73,7 +82,6 @@
   "authBiometricBody": "Add fingerprint access for a secure, frictionless start before every workout.",
   "authEnableFingerprint": "Enable Fingerprint",
   "authSkipForNow": "Skip for now",
-
   "authErrorInvalidEmail": "That email address looks invalid",
   "authErrorUserNotFound": "No account found with that email",
   "authErrorWrongPassword": "Incorrect email or password",
@@ -90,10 +98,22 @@
   "authTermsRequired": "Please accept the Terms and Privacy Policy to continue",
   "authCheckYourEmail": "Check your email",
   "authResetLinkSentTo": "We sent a password reset link to {email}",
-  "@authResetLinkSentTo": {"placeholders": {"email": {"type": "String"}}},
+  "@authResetLinkSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "authResendLink": "Resend link",
   "authResendLinkIn": "Resend in {seconds}s",
-  "@authResendLinkIn": {"placeholders": {"seconds": {"type": "int"}}},
+  "@authResendLinkIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "authChangeEmail": "Change email",
   "authBackToLogin": "Back to login",
   "authPasswordResetSuccess": "Your password has been changed successfully. Sign in with your new password.",
@@ -105,7 +125,6 @@
   "authBiometricLogout": "Log out instead",
   "authBiometricRetry": "Try again",
   "onboardingSetupTimeNote": "Personal setup takes less than a minute",
-
   "validationEmailRequired": "Email is required",
   "validationEmailInvalid": "Please enter a valid email",
   "validationPasswordRequired": "Password is required",
@@ -113,7 +132,6 @@
   "validationFieldRequired": "This field is required",
   "validationFullNameRequired": "Full name is required",
   "validationPasswordMismatch": "Passwords do not match",
-
   "splashBrandName": "Nabvera",
   "splashTagline": "Fitness + strength + health + progress.",
   "splashMetricWorkouts": "Workouts",
@@ -141,7 +159,14 @@
   "onboardingSlide4Description": "Stay motivated with progress milestones, challenges, and routines built for real life.",
   "onboardingStepCounter": "Step {current} of {total}",
   "@onboardingStepCounter": {
-    "placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
   "onboardingGenderTitle": "What's Your Gender",
   "onboardingGenderBody": "Select your gender to personalize your fitness plan and track your progress more accurately.",
@@ -211,28 +236,61 @@
   "unitKg": "Kg",
   "unitCm": "cm",
   "onboardingAgeValue": "Age: {value} years",
-  "@onboardingAgeValue": {"placeholders": {"value": {"type": "int"}}},
+  "@onboardingAgeValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
   "onboardingHeightValue": "Height: {value} centimeters",
-  "@onboardingHeightValue": {"placeholders": {"value": {"type": "int"}}},
+  "@onboardingHeightValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
   "onboardingWeightValue": "Weight: {value} kilograms",
-  "@onboardingWeightValue": {"placeholders": {"value": {"type": "int"}}},
-
+  "@onboardingWeightValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
   "homeGreeting": "Good Morning, {name}",
   "@homeGreeting": {
     "description": "Home screen header greeting",
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeGreetingMorning": "Good Morning, {name}",
   "@homeGreetingMorning": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeGreetingAfternoon": "Good Afternoon, {name}",
   "@homeGreetingAfternoon": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeGreetingEvening": "Good Evening, {name}",
   "@homeGreetingEvening": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeGreetingMorningPlain": "Good Morning",
   "homeGreetingAfternoonPlain": "Good Afternoon",
@@ -240,7 +298,11 @@
   "homeTagline": "Train hard. Recover smart. Repeat.",
   "homeStreakDays": "{days}-day streak",
   "@homeStreakDays": {
-    "placeholders": {"days": {"type": "int"}}
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeTodayPlanLabel": "TODAY PLAN",
   "homeWorkoutCategories": "Workout Categories",
@@ -253,8 +315,12 @@
   "@homeWeeklyProgressSummary": {
     "description": "Weekly progress card subtitle",
     "placeholders": {
-      "workouts": {"type": "int"},
-      "sessions": {"type": "int"}
+      "workouts": {
+        "type": "int"
+      },
+      "sessions": {
+        "type": "int"
+      }
     }
   },
   "homeArticlesAndTips": "Articles & Tips",
@@ -263,10 +329,22 @@
   "articleCategoryRecovery": "Recovery",
   "articleCategoryMindset": "Mindset",
   "articleReadTimeMinutes": "{minutes} min read",
-  "@articleReadTimeMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "@articleReadTimeMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "homeHeroTitle": "Upper Body Strength",
   "homeHeroPersonalizedReason": "Picked for your goal, level, equipment, and {minutes}-minute schedule.",
-  "@homeHeroPersonalizedReason": {"placeholders": {"minutes": {"type": "int"}}},
+  "@homeHeroPersonalizedReason": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "homeHeroFallbackReason": "A balanced session selected from the current workout library.",
   "homeHeroTooHard": "Too intense? Show an easier workout",
   "homeReasonLastWorkoutTooHard": "We eased up the difficulty after your last session felt tough.",
@@ -290,17 +368,41 @@
   "homeHeroSubtitle": "{minutes} min · {moves} movements · {level} intensity",
   "@homeHeroSubtitle": {
     "placeholders": {
-      "minutes": {"type": "int"},
-      "moves": {"type": "int"},
-      "level": {"type": "String"}
+      "minutes": {
+        "type": "int"
+      },
+      "moves": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
     }
   },
   "homeHeroDuration": "{minutes} min",
-  "@homeHeroDuration": {"placeholders": {"minutes": {"type": "int"}}},
+  "@homeHeroDuration": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "homeHeroCalories": "~{kcal} kcal",
-  "@homeHeroCalories": {"placeholders": {"kcal": {"type": "int"}}},
+  "@homeHeroCalories": {
+    "placeholders": {
+      "kcal": {
+        "type": "int"
+      }
+    }
+  },
   "homeWeeklyProgressPercent": "{percent}%",
-  "@homeWeeklyProgressPercent": {"placeholders": {"percent": {"type": "int"}}},
+  "@homeWeeklyProgressPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "homeMetricCalories": "Calories",
   "homeMetricSteps": "Steps",
   "homeMetricDuration": "Duration",
@@ -311,19 +413,51 @@
   "homeCtaContinue": "Continue Workout",
   "homeCtaCompleted": "Workout Completed",
   "homeHeroCompletionPercent": "{percent}% done",
-  "@homeHeroCompletionPercent": {"placeholders": {"percent": {"type": "int"}}},
+  "@homeHeroCompletionPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "homeHeroExercises": "{count} exercises",
-  "@homeHeroExercises": {"placeholders": {"count": {"type": "int"}}},
+  "@homeHeroExercises": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "homeCaloriesConsumedOf": "{consumed} of {goal} kcal",
   "@homeCaloriesConsumedOf": {
-    "placeholders": {"consumed": {"type": "int"}, "goal": {"type": "int"}}
+    "placeholders": {
+      "consumed": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
   },
   "homeCaloriesRemaining": "{remaining} kcal left",
-  "@homeCaloriesRemaining": {"placeholders": {"remaining": {"type": "int"}}},
+  "@homeCaloriesRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
   "homeCaloriesGoalReached": "Goal reached",
   "homeActivityProgress": "{done} of {goal} min",
   "@homeActivityProgress": {
-    "placeholders": {"done": {"type": "int"}, "goal": {"type": "int"}}
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
   },
   "homeStreakStartMessage": "Start your streak today",
   "homeStreakKeepGoing": "Keep it going!",
@@ -336,26 +470,49 @@
   "homeNextStepGo": "Go",
   "homeWeeklyGoalSummary": "{done} of {goal} workouts this week",
   "@homeWeeklyGoalSummary": {
-    "placeholders": {"done": {"type": "int"}, "goal": {"type": "int"}}
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
   },
   "homeWeeklyRestDay": "Rest day",
   "homeWeeklyTotalMinutes": "{minutes} min this week",
   "@homeWeeklyTotalMinutes": {
-    "placeholders": {"minutes": {"type": "int"}}
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
   },
   "homeWeeklyMoreThanLastWeek": "{minutes} min more than last week",
   "@homeWeeklyMoreThanLastWeek": {
-    "placeholders": {"minutes": {"type": "int"}}
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
   },
   "homeWeeklyLessThanLastWeek": "{minutes} min less than last week",
   "@homeWeeklyLessThanLastWeek": {
-    "placeholders": {"minutes": {"type": "int"}}
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
   },
   "homeWeeklySameAsLastWeek": "Same as last week",
   "homeWeeklyNoLastWeekData": "No data from last week yet",
   "homeWeeklyLongestStreak": "{days, plural, =0{No streak yet} =1{1-day streak} other{{days}-day streak}}",
   "@homeWeeklyLongestStreak": {
-    "placeholders": {"days": {"type": "int"}}
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeWeeklyEmptyStateTitle": "No workouts logged yet",
   "homeWeeklyEmptyStateBody": "Finish your first workout to start seeing your weekly progress here.",
@@ -370,7 +527,6 @@
   "homeArticlesError": "Couldn't load articles",
   "homeRecommendedEmpty": "No recommendations yet",
   "homeArticlesEmpty": "No articles yet",
-
   "workoutTitle": "Train",
   "workoutSubtitle": "Pick your level and move with purpose.",
   "workoutYourRoutine": "Your Routine",
@@ -407,7 +563,13 @@
   "workoutMostPopular": "Most Popular",
   "workoutWeeklyChallengeTitle": "Weekly Challenge",
   "workoutRoundNumber": "Round {number}",
-  "@workoutRoundNumber": {"placeholders": {"number": {"type": "int"}}},
+  "@workoutRoundNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "workoutCreateRoutineTitle": "Create your routine",
   "workoutCreateRoutineSubtitle": "Pick exercises and build your next training flow.",
   "workoutYourRoutineTitle": "Your Routine",
@@ -415,7 +577,6 @@
   "workoutProfileAge": "Age",
   "workoutProfileWeight": "Weight",
   "workoutProfileHeight": "Height",
-
   "createRoutineSubtitle": "Build your personalized workout plan",
   "createRoutineMotivation": "🔥 Every great transformation starts with a plan",
   "createRoutineNameLabel": "Routine Name",
@@ -446,7 +607,16 @@
   "createRoutineSetsLabel": "Sets",
   "createRoutineRepsLabel": "Reps",
   "createRoutineSetsReps": "{sets} Sets × {reps} Reps",
-  "@createRoutineSetsReps": {"placeholders": {"sets": {"type": "int"}, "reps": {"type": "int"}}},
+  "@createRoutineSetsReps": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      },
+      "reps": {
+        "type": "int"
+      }
+    }
+  },
   "createRoutineSummaryTitle": "Routine Summary",
   "createRoutineSummaryExercises": "Exercises",
   "createRoutineSummaryDuration": "Duration",
@@ -455,7 +625,6 @@
   "createRoutineNameValidation": "Please enter a routine name",
   "createRoutineExerciseValidation": "Add at least one exercise",
   "createRoutineSuccessMessage": "Routine created successfully!",
-
   "progressTitle": "Progress Tracking",
   "progressTabLogs": "Workout Log",
   "progressTabCharts": "Charts",
@@ -472,27 +641,37 @@
   "progressStatAvgSession": "Avg / Session",
   "progressRecentSessions": "Recent Sessions",
   "progressNoSessionsYet": "No sessions this week",
-
   "notificationActionStart": "Start",
   "notificationActionView": "View",
   "notificationWorkoutCompletedTitle": "Workout completed!",
   "notificationWorkoutCompletedBody": "{calories} kcal burned. Great job!",
   "@notificationWorkoutCompletedBody": {
-    "placeholders": {"calories": {"type": "int"}}
+    "placeholders": {
+      "calories": {
+        "type": "int"
+      }
+    }
   },
   "notificationStreakTitle": "{days}-day streak!",
   "@notificationStreakTitle": {
-    "placeholders": {"days": {"type": "int"}}
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "notificationStreakBody": "You've worked out {days} days in a row. Keep it up!",
   "@notificationStreakBody": {
-    "placeholders": {"days": {"type": "int"}}
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "notificationWorkoutReminderTitle": "Haven't trained today yet",
   "notificationWorkoutReminderBody": "A few minutes now still counts — pick up where you left off.",
   "notificationChallengeExpiringTitle": "Challenge ending soon",
   "notificationChallengeExpiringBody": "One of your challenges ends within 24 hours — finish strong!",
-
   "notificationsTitle": "Notifications",
   "notificationsSubtitle": "Stay motivated. Never miss your fitness journey.",
   "notificationsMarkAllRead": "Mark all as read",
@@ -517,12 +696,29 @@
   "notificationsUndo": "Undo",
   "notificationsTimeJustNow": "Just now",
   "notificationsTimeMinutesAgo": "{minutes}m ago",
-  "@notificationsTimeMinutesAgo": {"placeholders": {"minutes": {"type": "int"}}},
+  "@notificationsTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "notificationsTimeHoursAgo": "{hours}h ago",
-  "@notificationsTimeHoursAgo": {"placeholders": {"hours": {"type": "int"}}},
+  "@notificationsTimeHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "notificationsTimeDaysAgo": "{days}d ago",
-  "@notificationsTimeDaysAgo": {"placeholders": {"days": {"type": "int"}}},
-
+  "@notificationsTimeDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "navSearch": "Search",
   "searchHint": "Search workouts, meals, articles…",
   "searchTabAll": "All",
@@ -534,7 +730,6 @@
   "searchNoResultsBody": "Try a different keyword or browse a category instead.",
   "searchStartTypingTitle": "Search for anything",
   "searchStartTypingBody": "Find workouts and meals by name — start typing above.",
-
   "navFavorites": "Favorites",
   "favoriteFilterAll": "All",
   "favoriteFilterWorkouts": "Workouts",
@@ -545,7 +740,6 @@
   "favoriteEmptyBody": "Tap the star on any workout or meal to save it here for quick access later.",
   "favoriteBrowseWorkouts": "Browse Workouts",
   "favoriteBrowseNutrition": "Browse Nutrition",
-
   "profileMyProfile": "My Profile",
   "profileBirthdayLabel": "Birthday: ",
   "profileMotivation": "Keep pushing, your journey continues 🔥",
@@ -569,7 +763,6 @@
   "profileMenuLogoutSubtitle": "Sign out of your account",
   "profileLogoutConfirm": "Are you sure you want to\nlog out?",
   "profileLogoutYes": "Yes, logout",
-
   "editProfileTitle": "Edit Profile",
   "editProfileFullName": "Full Name",
   "editProfileMobileNumber": "Mobile Number",
@@ -592,7 +785,6 @@
   "editProfilePreferencesEquipmentLabel": "Available Equipment",
   "editProfilePreferencesTimeLabel": "Available Time",
   "editProfilePreferencesSave": "Save Preferences",
-
   "workoutScheduleTitle": "Workout Schedule",
   "workoutScheduleSubtitle": "Pick your workout days and a reminder time — we'll nudge you locally, right on your device.",
   "workoutScheduleDaysLabel": "Workout days",
@@ -609,7 +801,6 @@
   "workoutScheduleSave": "Save Schedule",
   "workoutScheduleSaveFailed": "Couldn't save your schedule. Try again.",
   "workoutScheduleQuietHoursAllDayWarning": "Same start and end time means quiet hours all day — no reminder will ever fire.",
-
   "homeScheduleCardTitle": "Your Schedule",
   "homeScheduleTodayWorkout": "Today's a workout day",
   "homeScheduleTodayRest": "Today's a rest day",
@@ -619,7 +810,6 @@
   "homeScheduleSetUp": "Set up",
   "homeScheduleEdit": "Edit",
   "workoutScheduleSheetTitle": "Edit Your Schedule",
-
   "privacyTitle": "Privacy",
   "privacySectionLegal": "Legal",
   "privacyPolicy": "Privacy Policy",
@@ -642,13 +832,16 @@
   "privacyContactSupportSubtitle": "Get help from our team",
   "privacyComingSoon": "{feature} coming soon",
   "@privacyComingSoon": {
-    "placeholders": {"feature": {"type": "String"}}
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
   },
   "privacyDeleteConfirmTitle": "Delete your account?",
   "privacyDeleteConfirmBody": "This permanently removes your profile, workout history, and saved data. This action cannot be undone.",
   "privacyDelete": "Delete",
   "privacyDeleteFailed": "Couldn't delete your account. Please try again.",
-
   "legalPrivacyPolicyBody": "We collect only the information needed to run your training plan: your profile details, workout and nutrition activity, and device settings like theme and language. This data is stored securely and is never sold to third parties.\n\nYou can review, export, or delete your data at any time from Profile → Privacy → Manage Your Data. Analytics are aggregated and anonymized before use, and you can opt out at any time from the same screen.\n\nIf you have questions about how your data is handled, reach out from Profile → Help & FAQs → Contact Us.",
   "legalTermsBody": "By using Nabvera you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Delete My Account.",
   "manageDataTitle": "Manage Your Data",
@@ -674,7 +867,13 @@
   "helpContactFacebook": "Facebook",
   "helpContactInstagram": "Instagram",
   "helpContactCopied": "Copied: {value}",
-  "@helpContactCopied": {"placeholders": {"value": {"type": "String"}}},
+  "@helpContactCopied": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "helpFaqQ1": "How do I create a custom workout routine?",
   "helpFaqA1": "Go to Workout → Create Routine, then pick exercises from the list to build your own routine. Tap the star to favorite exercises you use often.",
   "helpFaqQ2": "How is my daily calorie goal calculated?",
@@ -685,7 +884,6 @@
   "helpFaqA4": "Go to Profile → Settings → Language, or use the language toggle shown on the sign-in and onboarding screens.",
   "helpFaqQ5": "How do I delete my account?",
   "helpFaqA5": "Go to Profile → Privacy Policy → Delete My Account. This permanently removes your profile, workout history, and saved data.",
-
   "notificationSettingsTitle": "Notification Setting",
   "notificationSettingsSubtitle": "Choose how Nabvera keeps you in the loop",
   "notificationToggleGeneral": "General Notification",
@@ -700,7 +898,6 @@
   "notificationToggleLockScreenBody": "Show previews on the lock screen",
   "notificationToggleReminders": "Reminders",
   "notificationToggleRemindersBody": "Daily workout & meal reminders",
-
   "passwordSettingsTitle": "Password Setting",
   "passwordSettingsSubtitle": "Keep your account safe with a strong password",
   "passwordCurrentPassword": "Current Password",
@@ -716,9 +913,7 @@
   "passwordStrengthStrong": "Strong",
   "passwordUpdateAction": "Update Password",
   "passwordUpdateSuccess": "Password updated successfully!",
-
   "documentsTitle": "Documents",
-
   "settingsTitle": "Settings",
   "settingsSubtitle": "Customize your experience",
   "settingsSectionAccount": "Account",
@@ -728,7 +923,6 @@
   "settingsPasswordSubtitle": "Update your account password",
   "settingsDeleteAccount": "Delete Account",
   "settingsDeleteAccountSubtitle": "Permanently remove your account",
-
   "helpTitle": "Help & FAQs",
   "helpHowCanWeHelp": "How can we help you?",
   "helpFaqTab": "FAQ",
@@ -738,7 +932,6 @@
   "helpTabServices": "Services",
   "helpSearchHint": "Search",
   "helpFaqPlaceholder": "Lorem ipsum dolor sit amet?",
-
   "nutritionSubtitle": "Fuel your training with meals that actually fit your day.",
   "nutritionTabMealPlans": "Meal Plans",
   "nutritionTabMealIdeas": "Meal Ideas",
@@ -778,9 +971,21 @@
   "nutritionRecipeSaved": "Saved to Favorites",
   "nutritionServingsShort": "Servings",
   "nutritionMinutesValue": "{minutes} Minutes",
-  "@nutritionMinutesValue": {"placeholders": {"minutes": {"type": "int"}}},
+  "@nutritionMinutesValue": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "nutritionCaloriesValue": "{calories} Cal",
-  "@nutritionCaloriesValue": {"placeholders": {"calories": {"type": "int"}}},
+  "@nutritionCaloriesValue": {
+    "placeholders": {
+      "calories": {
+        "type": "int"
+      }
+    }
+  },
   "nutritionDifficultyEasy": "Easy",
   "nutritionDifficultyMedium": "Medium",
   "nutritionDifficultyHard": "Hard",
@@ -809,7 +1014,6 @@
   "mealPlanGeneratingTitle": "Creating a plan for you",
   "mealPlanGeneratingBody": "Arranging recipes that fit your targets and preferences into a 7-day plan…",
   "mealPlanSeeRecipe": "See Recipe",
-
   "mealPlanDietVegetarian": "Vegetarian",
   "mealPlanDietVegan": "Vegan",
   "mealPlanDietHalal": "Halal",
@@ -818,7 +1022,6 @@
   "mealPlanCookingQuick": "Quick (under 15 min)",
   "mealPlanCookingStandard": "Standard (15-30 min)",
   "mealPlanCookingFlexible": "Flexible (30+ min)",
-
   "mealPlanCalorieTarget": "Daily Calorie Target",
   "mealPlanProteinTarget": "Daily Protein Target (g)",
   "mealPlanWeeklyBudget": "Weekly Food Budget (optional)",
@@ -827,7 +1030,6 @@
   "mealPlanEstimateUnavailable": "Add your age, height, and weight in your profile to get an estimated target.",
   "mealPlanSavePreferences": "Save Preferences",
   "mealPlanPreferencesSaved": "Nutrition preferences saved",
-
   "mealPlanEmptyTitle": "No meal plan yet",
   "mealPlanEmptyBody": "Set your nutrition preferences and generate a personalized weekly meal plan built from our recipes.",
   "mealPlanSetPreferences": "Set Nutrition Preferences",
@@ -835,7 +1037,13 @@
   "mealPlanRegenerateDay": "Regenerate Day",
   "mealPlanReplaceMeal": "Replace",
   "mealPlanDayLabel": "Day {number}",
-  "@mealPlanDayLabel": {"placeholders": {"number": {"type": "int"}}},
+  "@mealPlanDayLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "mealPlanSectionBreakfast": "Breakfast",
   "mealPlanSectionLunch": "Lunch",
   "mealPlanSectionDinner": "Dinner",
@@ -849,7 +1057,6 @@
   "mealPlanViewShoppingList": "Shopping List",
   "mealPlanViewHistory": "Past Plans",
   "mealPlanHistoryEmpty": "No past meal plans yet.",
-
   "mealPlanReasonMatchesCalorieTarget": "Fits your calorie target",
   "mealPlanReasonMatchesProteinTarget": "Fits your protein target",
   "mealPlanReasonQuickToCook": "Quick to cook",
@@ -864,7 +1071,6 @@
   "mealPlanReasonHigherProteinDay": "A higher-protein day",
   "mealPlanReasonLighterCalorieDay": "A lighter-calorie day",
   "mealPlanReasonFallbackRuleBasedPlan": "Built with the rule-based planner",
-
   "healthConnectionTitle": "Connect Health Data",
   "healthConnectionIntroBody": "Optionally share steps, activity, and sleep from Health Connect or Apple Health to improve your progress stats and workout suggestions. This is never used for medical purposes, and you can disconnect at any time.",
   "healthConnectionDataStepsLabel": "Steps",
@@ -882,7 +1088,6 @@
   "healthConnectionUnavailableBody": "Install the Health Connect app to sync your health data. You can keep using Nabvera normally without it.",
   "healthConnectionInstallAction": "Install Health Connect",
   "healthConnectionSuccess": "Health data connected",
-
   "healthSettingsSectionTitle": "Health Data",
   "healthSettingsSyncToggle": "Sync health data",
   "healthSettingsSyncToggleBody": "Used only to improve your progress stats and workout suggestions — never for medical purposes.",
@@ -890,31 +1095,33 @@
   "healthSettingsActivityToggle": "Activity (minutes/calories)",
   "healthSettingsSleepToggle": "Sleep",
   "healthSettingsLastSynced": "Last synced {time}",
-  "@healthSettingsLastSynced": {"placeholders": {"time": {"type": "String"}}},
+  "@healthSettingsLastSynced": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "healthSettingsLastSyncedNever": "Never synced",
   "healthSettingsDeleteButton": "Delete health data",
   "healthSettingsDeleteConfirmTitle": "Delete health data?",
   "healthSettingsDeleteConfirmBody": "This removes every stored daily summary from Nabvera and disconnects sync. Your device's health app is unaffected.",
   "healthSettingsDeleteSuccess": "Health data deleted",
-
   "healthSnapshotTitle": "Today's Activity",
   "healthSnapshotStepsLabel": "Steps",
   "healthSnapshotActiveMinutesLabel": "Active min",
   "healthSnapshotNotConnected": "Connect health data to see your daily activity here",
   "healthSnapshotConnectCta": "Connect",
-
   "healthInsightsSectionTitle": "Weekly Health Insights",
   "healthInsightsStepsAverage": "Avg steps/day",
   "healthInsightsNoData": "Connect health data to see weekly insights here.",
   "healthInsightsDisclaimer": "These are general observations, not medical advice.",
-
   "healthInsightActivityUp": "Your activity is trending up this week",
   "healthInsightActivityDown": "Your activity is a bit lower than last week",
   "healthInsightSleepConsistent": "Your sleep tracking has been consistent",
   "healthInsightSleepLowData": "Not enough sleep data this week to say much",
   "healthInsightRestDaySuggested": "A lighter day might suit you today",
   "healthInsightKeepMomentum": "Keep up the momentum",
-
   "navCommunityTitle": "Community",
   "communitySubtitle": "Train together, share wins, and join challenges.",
   "communityTabForum": "Discussion Forum",
@@ -933,7 +1140,6 @@
   "communityPost3": "Question for the group: how do you stay consistent with meal prep on busy weeks? Looking for quick high-protein ideas.",
   "communityPost4": "Hit a new personal best on kettlebell swings this morning. The weekly challenge really pushed me to show up.",
   "communityPost5": "Loving the new routine builder — put together a full upper-body session in under two minutes.",
-
   "communitySuggestedForYou": "Suggested for you",
   "communityMyActiveChallenges": "My active challenges",
   "communityCompletedChallenges": "Completed challenges",
@@ -944,20 +1150,65 @@
   "communityLeaveChallenge": "Leave",
   "communityChallengeCompletedBadge": "Completed",
   "communityChallengeProgressLabel": "{value} / {target}",
-  "@communityChallengeProgressLabel": {"placeholders": {"value": {"type": "int"}, "target": {"type": "int"}}},
+  "@communityChallengeProgressLabel": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeGoalWorkoutsCount": "Complete {count} workouts",
-  "@communityChallengeGoalWorkoutsCount": {"placeholders": {"count": {"type": "int"}}},
+  "@communityChallengeGoalWorkoutsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeGoalActiveMinutes": "Reach {minutes} active minutes",
-  "@communityChallengeGoalActiveMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "@communityChallengeGoalActiveMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeGoalWorkoutStreak": "Train {days} days in a row",
-  "@communityChallengeGoalWorkoutStreak": {"placeholders": {"days": {"type": "int"}}},
+  "@communityChallengeGoalWorkoutStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeGoalWeeklyConsistency": "Complete {count} workouts this week",
-  "@communityChallengeGoalWeeklyConsistency": {"placeholders": {"count": {"type": "int"}}},
+  "@communityChallengeGoalWeeklyConsistency": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeGoalHeading": "Your goal",
   "communityChallengeTimeLeftDays": "{days} days left",
-  "@communityChallengeTimeLeftDays": {"placeholders": {"days": {"type": "int"}}},
+  "@communityChallengeTimeLeftDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeTimeLeftHours": "{hours}h left",
-  "@communityChallengeTimeLeftHours": {"placeholders": {"hours": {"type": "int"}}},
+  "@communityChallengeTimeLeftHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "communityChallengeExpired": "Window expired",
   "communityChallengeReasonWhy": "Why this challenge?",
   "communityChallengeReasonGoodStartingChallenge": "A great first challenge to build momentum",
@@ -971,10 +1222,8 @@
   "communityRefreshFailed": "Couldn't refresh challenges. Showing the last saved data.",
   "communityChallengeJoinFailed": "Couldn't join this challenge. Try again.",
   "communityChallengeLeaveFailed": "Couldn't leave this challenge. Try again.",
-
   "profileMenuAdminConsole": "Admin Console",
   "profileMenuAdminConsoleSubtitle": "Manage workouts, recipes, and content",
-
   "adminNavDashboard": "Dashboard",
   "adminNavWorkouts": "Workouts",
   "adminNavExercises": "Exercises",
@@ -983,7 +1232,6 @@
   "adminNavChallenges": "Challenges",
   "adminNavProfile": "Profile",
   "adminNavMore": "More",
-
   "adminActionEdit": "Edit",
   "adminActionDelete": "Delete",
   "adminActionRetry": "Retry",
@@ -991,28 +1239,27 @@
   "adminNoResultsTitle": "No matches",
   "adminNoResultsMessage": "Try a different search term or filter.",
   "adminFilterAll": "All",
-
   "adminUnauthorizedTitle": "Admins only",
   "adminUnauthorizedBody": "Your account doesn't have access to the Admin console.",
   "adminUnauthorizedAction": "Back to Home",
-
   "adminDashboardTitle": "Admin Dashboard",
   "adminDashboardSubtitle": "A quick look at your content library.",
   "adminStatUnavailable": "Unavailable",
-
   "adminRoleBadge": "Administrator",
   "adminBackToApp": "Back to the app",
-
   "adminLoadErrorTitle": "Couldn't load this list",
   "adminSaveFailed": "Couldn't save — check your connection and try again.",
   "adminSave": "Save",
   "adminDeleteConfirmTitle": "Delete this item?",
   "adminDeleteConfirmBody": "\"{name}\" will be permanently removed. This can't be undone.",
   "@adminDeleteConfirmBody": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "adminFeaturedBadge": "Featured",
-
   "adminWorkoutsEmptyTitle": "No workouts yet",
   "adminWorkoutsEmptyMessage": "Add your first workout to get started.",
   "adminExercisesEmptyTitle": "No exercises yet",
@@ -1023,7 +1270,6 @@
   "adminArticlesEmptyMessage": "Add your first article to get started.",
   "adminChallengesEmptyTitle": "No challenges yet",
   "adminChallengesEmptyMessage": "Add your first challenge to get started.",
-
   "adminEditWorkoutTitle": "Edit Workout",
   "adminAddWorkoutTitle": "Add Workout",
   "adminEditExerciseTitle": "Edit Exercise",
@@ -1032,7 +1278,6 @@
   "adminAddRecipeTitle": "Add Recipe",
   "adminAddArticleTitle": "Add Article",
   "adminAddChallengeTitle": "Add Challenge",
-
   "adminFieldTitle": "Title",
   "adminFieldName": "Name",
   "adminFieldDescription": "Description",
@@ -1069,5 +1314,6 @@
   "adminChallengeTypeWorkoutsCount": "Workouts completed",
   "adminChallengeTypeActiveMinutes": "Active minutes",
   "adminChallengeTypeWorkoutStreak": "Workout streak (days)",
-  "adminChallengeTypeWeeklyConsistency": "Weekly consistency"
+  "adminChallengeTypeWeeklyConsistency": "Weekly consistency",
+  "favoriteTitle": "Add to favorites"
 }

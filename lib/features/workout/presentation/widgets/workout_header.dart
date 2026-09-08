@@ -37,8 +37,7 @@ class WorkoutHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (canPop)
-          PremiumIconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
+          PremiumBackButton(
             onTap: () => context.canPop() ? context.pop() : null,
           ),
         if (canPop) const SizedBox(width: 12),

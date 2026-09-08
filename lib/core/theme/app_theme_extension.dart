@@ -19,6 +19,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
     required this.textMuted,
     required this.onAccent,
     required this.accentGlow,
+    required this.onAccentGlow,
   });
 
   final Color cardColor;
@@ -51,6 +52,14 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
   /// Brand accent used for glows/badges paired with [accentGradient].
   final Color accentGlow;
 
+  /// Foreground drawn on top of a solid [accentGlow] fill (e.g. a selected
+  /// segmented-control pill). Unlike [onAccent] — fixed because
+  /// [accentGradient] uses fixed brand colors — [accentGlow] itself swaps
+  /// per mode (bright lime in dark, a deepened olive in light), so its
+  /// foreground swaps too: dark ink reads fine on bright lime, but needs to
+  /// flip to a light foreground on light mode's deeper accent.
+  final Color onAccentGlow;
+
   @override
   AppThemeExtension copyWith({
     Color? cardColor,
@@ -67,6 +76,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
     Color? textMuted,
     Color? onAccent,
     Color? accentGlow,
+    Color? onAccentGlow,
   }) {
     return AppThemeExtension(
       cardColor: cardColor ?? this.cardColor,
@@ -83,6 +93,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
       textMuted: textMuted ?? this.textMuted,
       onAccent: onAccent ?? this.onAccent,
       accentGlow: accentGlow ?? this.accentGlow,
+      onAccentGlow: onAccentGlow ?? this.onAccentGlow,
     );
   }
 
@@ -105,6 +116,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
       onAccent: Color.lerp(onAccent, other.onAccent, t)!,
       accentGlow: Color.lerp(accentGlow, other.accentGlow, t)!,
+      onAccentGlow: Color.lerp(onAccentGlow, other.onAccentGlow, t)!,
     );
   }
 }

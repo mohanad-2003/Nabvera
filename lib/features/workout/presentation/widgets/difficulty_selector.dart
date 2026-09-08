@@ -1,4 +1,4 @@
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'workout_surface.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +23,7 @@ class DifficultySelector extends StatelessWidget {
         for (final level in WorkoutLevel.values) ...[
           if (level != WorkoutLevel.values.first) const SizedBox(width: 8),
           Expanded(
-            child: PremiumPill(
+            child: WorkoutPill(
               label: labelBuilder(level),
               selected: selected == level,
               onTap: () => onChanged(level),

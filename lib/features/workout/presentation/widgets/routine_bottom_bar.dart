@@ -37,7 +37,7 @@ class RoutineBottomBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: ext.cardColor,
+        color: ext.glassFill,
         border: Border(top: BorderSide(color: ext.glassBorder)),
       ),
       child: SafeArea(
@@ -61,7 +61,7 @@ class RoutineBottomBar extends StatelessWidget {
                 Text(errorText!, style: TextStyle(color: ext.danger, fontSize: 12.5)),
                 const SizedBox(height: 10),
               ],
-              PrimaryButton(label: buttonLabel, isLoading: isLoading, onPressed: onPressed),
+              PrimaryButton(showShadow: false, label: buttonLabel, isLoading: isLoading, onPressed: onPressed),
             ],
           ),
         ),

@@ -3035,4 +3035,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminChallengeTypeWeeklyConsistency => 'Weekly consistency';
+
+  @override
+  String get favoriteTitle => 'Add to favorites';
 }

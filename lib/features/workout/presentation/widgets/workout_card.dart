@@ -68,10 +68,7 @@ class WorkoutCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Hero(
-                      tag: image,
-                      child: SmartImage(image),
-                    ),
+                    Hero(tag: image, child: SmartImage(image)),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(

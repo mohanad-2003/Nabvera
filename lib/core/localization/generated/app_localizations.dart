@@ -5623,6 +5623,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weekly consistency'**
   String get adminChallengeTypeWeeklyConsistency;
+
+  /// No description provided for @favoriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get favoriteTitle;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
@@ -34,9 +35,9 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
 
   void _startWorkout(BuildContext context, AppLocalizations l10n) {
     if (data.videoUrl == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.workoutNoVideoAvailable)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.workoutNoVideoAvailable)));
       return;
     }
     _scrollController.animateTo(
@@ -53,8 +54,20 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     final ext = theme.extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
 
-    return PremiumScaffold(
+    return WorkoutScaffold(
       padding: EdgeInsets.zero,
+      bottomBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          child: PrimaryButton(
+            showShadow: false,
+            label: l10n.workoutStartWorkout,
+            icon: Icons.play_arrow_rounded,
+            onPressed: () => _startWorkout(context, l10n),
+          ),
+        ),
+      ),
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
@@ -68,7 +81,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AspectRatio(
-                aspectRatio: 0.9,
+                aspectRatio: 16 / 10,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -92,9 +105,9 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                           borderRadius: BorderRadius.circular(24),
                           gradient: LinearGradient(
                             colors: [
-                              Colors.transparent,
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.55),
+                              AppColors.seedInk.withValues(alpha: 0),
+                              AppColors.seedInk.withValues(alpha: 0),
+                              AppColors.seedInk.withValues(alpha: 0.55),
                             ],
                             stops: const [0, 0.5, 1],
                             begin: Alignment.topCenter,
@@ -104,44 +117,13 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                       ),
                     ),
                     Positioned(
-                      top: 12,
-                      right: 12,
-                      child: _CircleIcon(
-                        icon: Icons.star_rounded,
-                        color: ext.accentGlow,
-                      ),
-                    ),
-                    if (data.videoUrl == null)
-                      Center(
-                        child: Container(
-                          width: 76,
-                          height: 76,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: ext.accentGradient,
-                            boxShadow: [
-                              BoxShadow(
-                                color: ext.accentGlow.withValues(alpha: 0.45),
-                                blurRadius: 24,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.play_arrow_rounded,
-                            color: ext.onAccent,
-                            size: 40,
-                          ),
-                        ),
-                      ),
-                    Positioned(
                       left: 16,
                       bottom: 16,
                       right: 16,
                       child: Text(
                         data.title,
                         style: theme.textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
+                          color: AppColors.lightSurface,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -167,9 +149,9 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: ext.glassFill,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: ext.glassBorder),
+                  border: Border.symmetric(
+                    horizontal: BorderSide(color: ext.glassBorder, width: .5),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -218,39 +200,10 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: PrimaryButton(
-                label: l10n.workoutStartWorkout,
-                icon: Icons.play_arrow_rounded,
-                onPressed: () => _startWorkout(context, l10n),
-              ),
-            ),
             const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _CircleIcon extends StatelessWidget {
-  const _CircleIcon({required this.icon, required this.color});
-
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.32),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon, color: color, size: 19),
     );
   }
 }

@@ -30,8 +30,7 @@ class RoutineHeader extends StatelessWidget {
           Row(
             children: [
               if (context.canPop())
-                PremiumIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
+                PremiumBackButton(
                   onTap: () => context.pop(),
                 ),
             ],

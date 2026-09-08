@@ -1,3 +1,4 @@
+import 'workout_request_providers.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -14,7 +15,8 @@ class CreateRoutineController extends _$CreateRoutineController {
 
   Future<void> _loadLibrary() async {
     try {
-      final docs = await ref.read(workoutRepositoryProvider).fetchExercises();
+      final docs = await ref.read(exerciseLibraryRequestProvider.future);
+      if (!ref.mounted) return;
       state = state.copyWith(
         library: [for (final doc in docs) RoutineExercise.fromJson(doc)],
       );
@@ -22,6 +24,11 @@ class CreateRoutineController extends _$CreateRoutineController {
       // Left empty — the picker just shows nothing to choose from rather
       // than crashing when the backend is unreachable.
     }
+  }
+
+  Future<void> retryLibrary() {
+    ref.invalidate(exerciseLibraryRequestProvider);
+    return _loadLibrary();
   }
 
   void setName(String name) => state = state.copyWith(name: name);

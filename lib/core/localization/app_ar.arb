@@ -977,5 +977,6 @@
   "adminChallengeTypeWorkoutsCount": "عدد التمارين المكتملة",
   "adminChallengeTypeActiveMinutes": "دقائق النشاط",
   "adminChallengeTypeWorkoutStreak": "أيام متتالية من التمرين",
-  "adminChallengeTypeWeeklyConsistency": "الانتظام الأسبوعي"
+  "adminChallengeTypeWeeklyConsistency": "الانتظام الأسبوعي",
+  "favoriteTitle": "إضافة إلى المفضلة"
 }
