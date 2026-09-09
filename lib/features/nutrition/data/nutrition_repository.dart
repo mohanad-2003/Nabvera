@@ -106,8 +106,18 @@ class NutritionRepository {
     return (body['data'] as List).cast<Map<String, dynamic>>();
   }
 
+  // Both of these call an AI provider (or its rule-based fallback) server
+  // side, which can take noticeably longer than a plain CRUD call — the
+  // default ApiClient timeout is comfortably enough for everything else,
+  // but too tight here.
+  static const _aiTimeout = Duration(seconds: 45);
+
   Future<Map<String, dynamic>> generateMealPlan([Map<String, dynamic> overrides = const {}]) async {
-    final response = await _client.post('/nutrition/meal-plans/generate', body: overrides);
+    final response = await _client.post(
+      '/nutrition/meal-plans/generate',
+      body: overrides,
+      timeout: _aiTimeout,
+    );
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
   }
@@ -116,6 +126,7 @@ class NutritionRepository {
     final response = await _client.post(
       '/nutrition/meal-plans/$planId/regenerate-day',
       body: {'dayIndex': dayIndex},
+      timeout: _aiTimeout,
     );
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
