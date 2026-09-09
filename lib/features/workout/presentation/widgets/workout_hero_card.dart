@@ -176,22 +176,29 @@ class _WorkoutHeroCardState extends State<WorkoutHeroCard> {
                   bottom: 18,
                   child: SizedBox(
                     height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: widget.onTap,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(999),
-                        ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: ext.accentGradient,
+                        borderRadius: BorderRadius.circular(999),
                       ),
-                      icon: const Icon(Icons.play_arrow_rounded, size: 22),
-                      label: Text(
-                        widget.ctaLabel,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
+                      child: ElevatedButton.icon(
+                        onPressed: widget.onTap,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: ext.onAccent,
+                          shadowColor: Colors.transparent,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded, size: 22),
+                        label: Text(
+                          widget.ctaLabel,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
