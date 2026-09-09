@@ -1,6 +1,7 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/responsive/app_responsive.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
@@ -21,15 +22,24 @@ class WorkoutRecommendedPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final popular = ref.watch(popularExercisesProvider);
     final l10n = AppLocalizations.of(context);
+    // Prefer the real, most-popular exercise for the hero card — the
+    // hardcoded "Dumbbell Step Up" placeholder (local asset, fake stats)
+    // only ever showed because this route never actually passed `featured`,
+    // so every visit saw the same fake content regardless of real data.
+    final firstPopular = popular.isEmpty ? null : popular.first;
     final featuredData =
         featured ??
-        ExerciseDetailData(
-          headerTitle: l10n.workoutRecommendationsTitle,
-          heroImage: 'assets/dum.png',
-          title: 'Dumbbell Step Up',
-          duration: '12 Minute',
-          reps: '120 Kcal',
-        );
+        (firstPopular == null
+            ? null
+            : ExerciseDetailData(
+              headerTitle: l10n.workoutRecommendationsTitle,
+              heroImage: firstPopular.image,
+              title: firstPopular.name,
+              duration: firstPopular.time,
+              reps: firstPopular.calories,
+              level: firstPopular.difficulty,
+              videoUrl: firstPopular.videoUrl,
+            ));
     final heroHeight = context.responsive(
       compact: 260.0,
       standard: 320.0,
@@ -54,20 +64,23 @@ class WorkoutRecommendedPage extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
               child: FadeSlideIn(
-                child: WorkoutHeroCard(
-                  image: featuredData.heroImage,
-                  categoryLabel: featuredData.title,
-                  duration: featuredData.duration,
-                  calories: featuredData.reps,
-                  difficulty: featuredData.level,
-                  ctaLabel: l10n.workoutStartWorkout,
-                  height: heroHeight,
-                  onTap:
-                      () => context.push(
-                        AppRoutes.exerciseDetail,
-                        extra: featuredData,
-                      ),
-                ),
+                child:
+                    featuredData == null
+                        ? _HeroPlaceholder(height: heroHeight)
+                        : WorkoutHeroCard(
+                          image: featuredData.heroImage,
+                          categoryLabel: featuredData.title,
+                          duration: featuredData.duration,
+                          calories: featuredData.reps,
+                          difficulty: featuredData.level,
+                          ctaLabel: l10n.workoutStartWorkout,
+                          height: heroHeight,
+                          onTap:
+                              () => context.push(
+                                AppRoutes.exerciseDetail,
+                                extra: featuredData,
+                              ),
+                        ),
               ),
             ),
             Padding(
@@ -128,10 +141,42 @@ class WorkoutRecommendedPage extends ConsumerWidget {
   }
 }
 
-/// Bespoke header for this screen: a glass back button, the full
-/// (never-truncated) title, and glass search/notification actions —
-/// reuses [PremiumIconButton] for the consistent rounded/glassmorphism
-/// look already established across the app.
+/// Shown in the hero card's place while the real popular-exercises request
+/// is still in flight (or came back empty) — a plain glass block instead of
+/// either an empty gap or (as before) a hardcoded fake exercise card.
+class _HeroPlaceholder extends StatelessWidget {
+  const _HeroPlaceholder({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Container(
+      width: double.infinity,
+      height: height,
+      decoration: BoxDecoration(
+        color: ext.glassFill,
+        borderRadius: BorderRadius.circular(AppRadius.card + 6),
+        border: Border.all(color: ext.glassBorder),
+      ),
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 28,
+        height: 28,
+        child: CircularProgressIndicator(
+          strokeWidth: 2.5,
+          color: ext.accentGlow,
+        ),
+      ),
+    );
+  }
+}
+
+/// Bespoke header for this screen: a bare (unboxed) back button, the full
+/// (never-truncated) title, and bare search/notification icons — plain
+/// icons directly on the page background rather than [PremiumIconButton]'s
+/// glass pill, per this screen's flatter look.
 class _RecommendedTopBar extends StatelessWidget {
   const _RecommendedTopBar({required this.title});
 
@@ -144,11 +189,11 @@ class _RecommendedTopBar extends StatelessWidget {
     return Row(
       children: [
         if (context.canPop())
-          PremiumIconButton(
+          _BareIconButton(
             icon: Icons.arrow_back_ios_new_rounded,
             onTap: () => context.pop(),
           ),
-        if (context.canPop()) const SizedBox(width: 12),
+        if (context.canPop()) const SizedBox(width: 6),
         Expanded(
           child: Text(
             title,
@@ -160,17 +205,37 @@ class _RecommendedTopBar extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 10),
-        PremiumIconButton(
+        _BareIconButton(
           icon: Icons.search_rounded,
           onTap: () => context.push(AppRoutes.search),
         ),
-        const SizedBox(width: 10),
-        PremiumIconButton(
+        _BareIconButton(
           icon: Icons.notifications_none_rounded,
           onTap: () => context.push(AppRoutes.notifications),
         ),
       ],
+    );
+  }
+}
+
+/// A plain, unboxed icon button — no glass fill/border behind it, just the
+/// icon itself with a tap target and ripple.
+class _BareIconButton extends StatelessWidget {
+  const _BareIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Icon(icon, color: ext.textPrimary, size: 22),
+      ),
     );
   }
 }
