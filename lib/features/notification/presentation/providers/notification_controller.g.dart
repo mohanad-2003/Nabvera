@@ -65,26 +65,91 @@ abstract class _$NotificationFilterController
   }
 }
 
-/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
-/// applied to local state immediately, then sent to the backend; failures
-/// are silently left as-is rather than reverted, since a missed
-/// read/delete sync here is low-stakes and self-corrects on next refresh.
+@ProviderFor(NotificationInboxMetaController)
+final notificationInboxMetaControllerProvider =
+    NotificationInboxMetaControllerProvider._();
+
+final class NotificationInboxMetaControllerProvider
+    extends
+        $NotifierProvider<
+          NotificationInboxMetaController,
+          NotificationInboxMeta
+        > {
+  NotificationInboxMetaControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationInboxMetaControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$notificationInboxMetaControllerHash();
+
+  @$internal
+  @override
+  NotificationInboxMetaController create() => NotificationInboxMetaController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(NotificationInboxMeta value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<NotificationInboxMeta>(value),
+    );
+  }
+}
+
+String _$notificationInboxMetaControllerHash() =>
+    r'3344d1dabe864cc897f0e057ce8b8b62bd16800b';
+
+abstract class _$NotificationInboxMetaController
+    extends $Notifier<NotificationInboxMeta> {
+  NotificationInboxMeta build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<NotificationInboxMeta, NotificationInboxMeta>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<NotificationInboxMeta, NotificationInboxMeta>,
+              NotificationInboxMeta,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Loads the real `/api/notifications` inbox, one cursor-paginated page
+/// at a time (see [NotificationInboxMetaController] for hasMore/
+/// unreadCount). Mutations are optimistic — applied to local state
+/// immediately, then sent to the backend; failures are silently left
+/// as-is rather than reverted, since a missed read/delete sync here is
+/// low-stakes and self-corrects on next refresh.
 
 @ProviderFor(NotificationListController)
 final notificationListControllerProvider =
     NotificationListControllerProvider._();
 
-/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
-/// applied to local state immediately, then sent to the backend; failures
-/// are silently left as-is rather than reverted, since a missed
-/// read/delete sync here is low-stakes and self-corrects on next refresh.
+/// Loads the real `/api/notifications` inbox, one cursor-paginated page
+/// at a time (see [NotificationInboxMetaController] for hasMore/
+/// unreadCount). Mutations are optimistic — applied to local state
+/// immediately, then sent to the backend; failures are silently left
+/// as-is rather than reverted, since a missed read/delete sync here is
+/// low-stakes and self-corrects on next refresh.
 final class NotificationListControllerProvider
     extends
         $NotifierProvider<NotificationListController, List<NotificationItem>> {
-  /// Loads the real `/api/notifications` inbox. Mutations are optimistic —
-  /// applied to local state immediately, then sent to the backend; failures
-  /// are silently left as-is rather than reverted, since a missed
-  /// read/delete sync here is low-stakes and self-corrects on next refresh.
+  /// Loads the real `/api/notifications` inbox, one cursor-paginated page
+  /// at a time (see [NotificationInboxMetaController] for hasMore/
+  /// unreadCount). Mutations are optimistic — applied to local state
+  /// immediately, then sent to the backend; failures are silently left
+  /// as-is rather than reverted, since a missed read/delete sync here is
+  /// low-stakes and self-corrects on next refresh.
   NotificationListControllerProvider._()
     : super(
         from: null,
@@ -113,12 +178,14 @@ final class NotificationListControllerProvider
 }
 
 String _$notificationListControllerHash() =>
-    r'5577f67b118d16dd9e002371cc9a8522c02075ea';
+    r'17b89bbeed64a9293ec9c7908950b0c5e134efdc';
 
-/// Loads the real `/api/notifications` inbox. Mutations are optimistic —
-/// applied to local state immediately, then sent to the backend; failures
-/// are silently left as-is rather than reverted, since a missed
-/// read/delete sync here is low-stakes and self-corrects on next refresh.
+/// Loads the real `/api/notifications` inbox, one cursor-paginated page
+/// at a time (see [NotificationInboxMetaController] for hasMore/
+/// unreadCount). Mutations are optimistic — applied to local state
+/// immediately, then sent to the backend; failures are silently left
+/// as-is rather than reverted, since a missed read/delete sync here is
+/// low-stakes and self-corrects on next refresh.
 
 abstract class _$NotificationListController
     extends $Notifier<List<NotificationItem>> {
@@ -192,12 +259,26 @@ final class GroupedNotificationsProvider
 String _$groupedNotificationsHash() =>
     r'dec484b4597e00ddced760969b841da80db8667e';
 
+/// The true unread count across the user's *entire* inbox — from the
+/// server (see [NotificationInboxMetaController]), never derived from
+/// [NotificationListController]'s state, which may only hold the first
+/// page or two of it.
+
 @ProviderFor(unreadNotificationCount)
 final unreadNotificationCountProvider = UnreadNotificationCountProvider._();
+
+/// The true unread count across the user's *entire* inbox — from the
+/// server (see [NotificationInboxMetaController]), never derived from
+/// [NotificationListController]'s state, which may only hold the first
+/// page or two of it.
 
 final class UnreadNotificationCountProvider
     extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
+  /// The true unread count across the user's *entire* inbox — from the
+  /// server (see [NotificationInboxMetaController]), never derived from
+  /// [NotificationListController]'s state, which may only hold the first
+  /// page or two of it.
   UnreadNotificationCountProvider._()
     : super(
         from: null,
@@ -232,4 +313,4 @@ final class UnreadNotificationCountProvider
 }
 
 String _$unreadNotificationCountHash() =>
-    r'05e73b04e84de384c30e50f2ea69fa1a6827b97b';
+    r'5b39131d3d3e06510a0276753988cb7e0baac3b6';

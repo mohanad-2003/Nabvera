@@ -19,6 +19,7 @@ class NotificationPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(notificationFilterControllerProvider);
     final grouped = ref.watch(groupedNotificationsProvider);
+    final inboxMeta = ref.watch(notificationInboxMetaControllerProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
 
@@ -131,6 +132,42 @@ class NotificationPage extends ConsumerWidget {
                               ),
                               const SizedBox(height: 22),
                             ],
+                          if (filter == NotificationFilter.all &&
+                              inboxMeta.hasMore)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Center(
+                                child:
+                                    inboxMeta.isLoadingMore
+                                        ? const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: SizedBox(
+                                            width: 22,
+                                            height: 22,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.5,
+                                            ),
+                                          ),
+                                        )
+                                        : TextButton(
+                                          onPressed:
+                                              () => ref
+                                                  .read(
+                                                    notificationListControllerProvider
+                                                        .notifier,
+                                                  )
+                                                  .loadMore(),
+                                          child: Text(
+                                            Localizations.localeOf(
+                                                          context,
+                                                        ).languageCode ==
+                                                        'ar'
+                                                    ? 'عرض المزيد'
+                                                    : 'Load more',
+                                          ),
+                                        ),
+                              ),
+                            ),
                         ],
                       ),
             ),
