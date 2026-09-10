@@ -42,7 +42,7 @@ final class HealthPreferencesControllerProvider
 }
 
 String _$healthPreferencesControllerHash() =>
-    r'216d5702301f62167e04b230c1bf7433a3531279';
+    r'f6a4433d2b5f03726097790aa52655e5c3294d6f';
 
 /// Loads and saves `/api/health/preferences`. An [AsyncNotifier] so the
 /// Health Data Settings screen shows a real loading/error state.

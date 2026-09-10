@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
 
-/// Large title + motivational subtitle + rounded back button + "mark all as
+/// Large title + motivational subtitle + flat back button + "mark all as
 /// read" action. Fades and slides in on first build.
 class NotificationHeader extends StatelessWidget {
   const NotificationHeader({
@@ -36,12 +35,12 @@ class NotificationHeader extends StatelessWidget {
           Row(
             children: [
               if (canPop)
-                _RoundIconButton(
+                _HeaderIconButton(
                   icon: Icons.arrow_back_ios_new_rounded,
                   onTap: onBack,
                 ),
               const Spacer(),
-              _RoundIconButton(
+              _HeaderIconButton(
                 icon: Icons.done_all_rounded,
                 onTap: onMarkAllRead,
                 tooltip: markAllReadLabel,
@@ -69,8 +68,8 @@ class NotificationHeader extends StatelessWidget {
   }
 }
 
-class _RoundIconButton extends StatelessWidget {
-  const _RoundIconButton({
+class _HeaderIconButton extends StatelessWidget {
+  const _HeaderIconButton({
     required this.icon,
     required this.onTap,
     this.tooltip,
@@ -85,15 +84,10 @@ class _RoundIconButton extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final button = InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.pill),
-      child: Container(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
         width: 44,
         height: 44,
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          shape: BoxShape.circle,
-          border: Border.all(color: ext.glassBorder),
-        ),
         child: Icon(icon, color: ext.textPrimary, size: 20),
       ),
     );

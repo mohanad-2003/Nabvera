@@ -1,16 +1,15 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/storage/preferences_service.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
-import 'package:nabvera/core/widgets/glow_orb.dart';
 import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Premium, fully-vector splash screen: an ambient gradient backdrop, a
-/// pulsing energy ring around the brand mark, and a staggered fade/scale
-/// entrance for the wordmark, tagline, stat pills, and loading bar.
+/// Premium splash screen with a calm branded backdrop, a pulsing logo reveal,
+/// and a compact loading cue before routing into the app.
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
@@ -29,7 +28,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
     vsync: this,
     duration: const Duration(milliseconds: 1100),
   )..addStatusListener(_handleAnimationStatus)
-   ..forward();
+    ..forward();
 
   late final AnimationController _pulseController = AnimationController(
     vsync: this,
@@ -109,29 +108,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
       backgroundColor: theme.colorScheme.surface,
       body: Stack(
         children: [
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(gradient: ext.backgroundGradient),
-            ),
-          ),
-          Positioned(
-            top: -70,
-            right: -80,
-            child: GlowOrb(
-              color: ext.accentGlow,
-              size: 300,
-              opacity: theme.brightness == Brightness.dark ? 0.30 : 0.4,
-            ),
-          ),
-          Positioned(
-            bottom: 60,
-            left: -120,
-            child: GlowOrb(
-              color: theme.colorScheme.secondary,
-              size: 320,
-              opacity: theme.brightness == Brightness.dark ? 0.26 : 0.32,
-            ),
-          ),
+          const Positioned.fill(child: _SplashBackdrop()),
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -149,9 +126,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         vertical: 30,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Spacer(flex: 3),
+                          const Spacer(flex: 4),
                           _PulsingLogo(
                             size: logoSize,
                             pulse: _pulseController,
@@ -159,13 +136,13 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             scale: _logoScale,
                             ringColor: ext.accentGlow,
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 28),
                           FadeTransition(
                             opacity: _brandFade,
                             child: SlideTransition(
                               position: _brandSlide,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   ShaderMask(
                                     blendMode: BlendMode.srcIn,
@@ -175,17 +152,29 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                       l10n.splashBrandName,
                                       style: theme.textTheme.displayLarge
                                           ?.copyWith(
-                                        fontSize: 48,
-                                        height: 1.0,
-                                        letterSpacing: -1,
+                                        fontSize: 50,
+                                        height: 0.98,
+                                        letterSpacing: 0,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    l10n.splashTagline,
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(color: ext.textMuted),
+                                  const SizedBox(height: 14),
+                                  ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 340),
+                                    child: Text(
+                                      l10n.splashTagline,
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        color: ext.textMuted.withValues(
+                                          alpha: 0.88,
+                                        ),
+                                        height: 1.35,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -195,21 +184,28 @@ class _SplashPageState extends ConsumerState<SplashPage>
                           FadeTransition(
                             opacity: _barFade,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                _GradientProgressBar(
-                                  controller: _controller,
-                                  gradient: ext.accentGradient,
-                                  trackColor: theme
-                                      .colorScheme.surfaceContainerHighest
-                                      .withValues(alpha: 0.16),
+                                ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 360),
+                                  child: _GradientProgressBar(
+                                    controller: _controller,
+                                    gradient: ext.accentGradient,
+                                    trackColor: theme
+                                        .colorScheme.surfaceContainerHighest
+                                        .withValues(alpha: 0.18),
+                                  ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 14),
                                 Text(
                                   l10n.loadingLabel,
                                   style: theme.textTheme.labelSmall?.copyWith(
-                                    color: ext.textMuted,
-                                    letterSpacing: 0.4,
+                                    color: ext.textMuted.withValues(
+                                      alpha: 0.74,
+                                    ),
+                                    letterSpacing: 0,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ],
@@ -226,6 +222,88 @@ class _SplashPageState extends ConsumerState<SplashPage>
         ],
       ),
     );
+  }
+}
+
+class _SplashBackdrop extends StatelessWidget {
+  const _SplashBackdrop();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? const [
+                  AppColors.seedInk,
+                  Color(0xFF061B1A),
+                  Color(0xFF11101D),
+                  AppColors.seedInk,
+                ]
+              : const [
+                  Color(0xFFF8FBF4),
+                  Color(0xFFEFF8EA),
+                  Color(0xFFF6F8FC),
+                ],
+        ),
+      ),
+      child: CustomPaint(
+        painter: _SplashBackdropPainter(isDark: isDark),
+      ),
+    );
+  }
+}
+
+class _SplashBackdropPainter extends CustomPainter {
+  const _SplashBackdropPainter({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bandPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = (isDark ? AppColors.seedLime : AppColors.accentOnLight)
+          .withValues(alpha: isDark ? 0.055 : 0.075);
+    final shadowPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = (isDark ? AppColors.aquaBlue : AppColors.seedViolet)
+          .withValues(alpha: isDark ? 0.035 : 0.045);
+
+    final upperBand = Path()
+      ..moveTo(0, size.height * 0.16)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width, size.height * 0.25)
+      ..lineTo(0, size.height * 0.43)
+      ..close();
+
+    final lowerBand = Path()
+      ..moveTo(0, size.height * 0.72)
+      ..lineTo(size.width, size.height * 0.54)
+      ..lineTo(size.width, size.height * 0.83)
+      ..lineTo(0, size.height)
+      ..close();
+
+    final accentBand = Path()
+      ..moveTo(0, size.height * 0.56)
+      ..lineTo(size.width, size.height * 0.36)
+      ..lineTo(size.width, size.height * 0.47)
+      ..lineTo(0, size.height * 0.67)
+      ..close();
+
+    canvas.drawPath(upperBand, shadowPaint);
+    canvas.drawPath(accentBand, bandPaint);
+    canvas.drawPath(lowerBand, shadowPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SplashBackdropPainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
   }
 }
 
@@ -274,17 +352,23 @@ class _PulsingLogo extends StatelessWidget {
                 width: size,
                 height: size,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withValues(
-                    alpha: 0.10,
-                  ),
-                  borderRadius: BorderRadius.circular(size * 0.3),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(size * 0.28),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.14),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.12),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: ringColor.withValues(alpha: 0.24),
-                      blurRadius: 40,
+                      color: ringColor.withValues(alpha: 0.18),
+                      blurRadius: 34,
+                      offset: const Offset(0, 16),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha:
+                            theme.brightness == Brightness.dark ? 0.24 : 0.08,
+                      ),
+                      blurRadius: 28,
                       offset: const Offset(0, 18),
                     ),
                   ],
@@ -302,8 +386,8 @@ class _PulsingLogo extends StatelessWidget {
   }
 
   Widget _pulseRing(double baseSize, double t) {
-    final ringSize = baseSize * (1 + t * 0.7);
-    final opacity = (1 - t) * 0.35;
+    final ringSize = baseSize * (1 + t * 0.52);
+    final opacity = (1 - t) * 0.28;
     return Container(
       width: ringSize,
       height: ringSize,
@@ -334,7 +418,7 @@ class _GradientProgressBar extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: SizedBox(
-        height: 6,
+        height: 5,
         child: DecoratedBox(
           decoration: BoxDecoration(color: trackColor),
           child: AnimatedBuilder(

@@ -58,95 +58,117 @@ class SearchPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return PremiumScaffold(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // A real BackButtonIcon (not a raw arrow_back_ios glyph) so it
-              // points the correct direction under RTL too — Arabic had it
-              // pointing the wrong way before this.
-              if (context.canPop())
-                PremiumBackButton(onTap: () => context.pop()),
-              const SizedBox(width: 12),
-              Text(
-                l10n.navSearch,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: ext.textPrimary,
-                  fontWeight: FontWeight.w900,
+              Row(
+                children: [
+                  if (context.canPop())
+                    _SearchHeaderButton(
+                      isBack: true,
+                      onTap: () => context.pop(),
+                    ),
+                  if (context.canPop()) const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.navSearch,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  _SearchHeaderButton(
+                    icon: Icons.notifications_none_rounded,
+                    onTap: () => context.push(AppRoutes.notifications),
+                  ),
+                  const SizedBox(width: 4),
+                  _SearchHeaderButton(
+                    icon: Icons.person_outline_rounded,
+                    onTap: () => context.go(AppRoutes.profile),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              _SearchField(),
+              const SizedBox(height: 18),
+              SizedBox(
+                height: 42,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: SearchTab.values.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 10),
+                  itemBuilder: (context, index) {
+                    final t = SearchTab.values[index];
+                    return _SearchTabPill(
+                      label: _label(l10n, t),
+                      selected: tab == t,
+                      onTap:
+                          () => ref
+                              .read(searchTabControllerProvider.notifier)
+                              .select(t),
+                    );
+                  },
                 ),
               ),
-              const Spacer(),
-              PremiumIconButton(
-                icon: Icons.notifications_none_rounded,
-                onTap: () => context.push(AppRoutes.notifications),
-              ),
-              const SizedBox(width: 10),
-              PremiumIconButton(
-                icon: Icons.person_outline_rounded,
-                onTap: () => context.go(AppRoutes.profile),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          _SearchField(),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              for (final t in SearchTab.values) ...[
-                _SearchTabPill(
-                  label: _label(l10n, t),
-                  selected: tab == t,
-                  onTap:
-                      () => ref
+              const SizedBox(height: 20),
+              Expanded(
+                child: switch (tab) {
+                  SearchTab.all => _AllResultsSection(
+                    featured: featured,
+                    results: results,
+                    onTap: (item) => _openResult(context, ref, item),
+                  ),
+                  SearchTab.workoutSuggestions => _SuggestionsSection(
+                    title: l10n.searchWorkoutSuggestions,
+                    icon: Icons.fitness_center_rounded,
+                    suggestions: const [
+                      'Circuit',
+                      'Split',
+                      'Challenge',
+                      'Legs',
+                      'Cardio',
+                    ],
+                    onTap: (s) {
+                      ref
+                          .read(searchQueryControllerProvider.notifier)
+                          .update(s);
+                      ref
                           .read(searchTabControllerProvider.notifier)
-                          .select(t),
-                ),
-                const SizedBox(width: 10),
-              ],
+                          .select(SearchTab.all);
+                    },
+                  ),
+                  SearchTab.nutritionSuggestions => _SuggestionsSection(
+                    title: l10n.searchNutritionSuggestions,
+                    icon: Icons.restaurant_rounded,
+                    suggestions: const [
+                      'Breakfast',
+                      'Yogurt',
+                      'Vegetarian',
+                      'Smoothie',
+                      'Chicken',
+                    ],
+                    onTap: (s) {
+                      ref
+                          .read(searchQueryControllerProvider.notifier)
+                          .update(s);
+                      ref
+                          .read(searchTabControllerProvider.notifier)
+                          .select(SearchTab.all);
+                    },
+                  ),
+                },
+              ),
             ],
           ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: switch (tab) {
-              SearchTab.all => _AllResultsSection(
-                featured: featured,
-                results: results,
-                onTap: (item) => _openResult(context, ref, item),
-              ),
-              SearchTab.workoutSuggestions => _SuggestionsSection(
-                title: l10n.searchWorkoutSuggestions,
-                icon: Icons.fitness_center_rounded,
-                suggestions: const [
-                  'Circuit',
-                  'Split',
-                  'Challenge',
-                  'Legs',
-                  'Cardio',
-                ],
-                onTap:
-                    (s) => ref
-                        .read(searchQueryControllerProvider.notifier)
-                        .update(s),
-              ),
-              SearchTab.nutritionSuggestions => _SuggestionsSection(
-                title: l10n.searchNutritionSuggestions,
-                icon: Icons.restaurant_rounded,
-                suggestions: const [
-                  'Breakfast',
-                  'Yogurt',
-                  'Vegetarian',
-                  'Smoothie',
-                  'Chicken',
-                ],
-                onTap:
-                    (s) => ref
-                        .read(searchQueryControllerProvider.notifier)
-                        .update(s),
-              ),
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -156,6 +178,35 @@ class SearchPage extends ConsumerWidget {
     SearchTab.workoutSuggestions => l10n.searchTabWorkout,
     SearchTab.nutritionSuggestions => l10n.searchTabNutrition,
   };
+}
+
+/// Flat header action: a full-size tap target without a surrounding card.
+class _SearchHeaderButton extends StatelessWidget {
+  const _SearchHeaderButton({
+    required this.onTap,
+    this.icon,
+    this.isBack = false,
+  }) : assert(isBack || icon != null);
+
+  final IconData? icon;
+  final bool isBack;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox.square(
+        dimension: 44,
+        child: IconTheme(
+          data: IconThemeData(color: ext.textPrimary, size: 22),
+          child: isBack ? const BackButtonIcon() : Icon(icon),
+        ),
+      ),
+    );
+  }
 }
 
 /// The search box itself — a clear (×) button appears once there's text to
@@ -184,6 +235,13 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
     final hasText = ref.watch(
       searchQueryControllerProvider.select((q) => q.isNotEmpty),
     );
+    ref.listen<String>(searchQueryControllerProvider, (previous, next) {
+      if (_controller.text == next) return;
+      _controller.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: next.length),
+      );
+    });
 
     return Container(
       height: 54,
@@ -253,7 +311,7 @@ class _SearchTabPill extends StatelessWidget {
           // (accentOnLight) instead of the washed-out neon the gradient
           // produced there, while staying the familiar lime in dark mode.
           color: selected ? ext.accentGlow : Colors.transparent,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: selected ? Colors.transparent : ext.glassBorder,
           ),
@@ -308,18 +366,27 @@ class _AllResultsSection extends StatelessWidget {
     return ListView(
       children: [
         if (featured.isNotEmpty) ...[
-          SizedBox(
-            height: 190,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: featured.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 10),
-              itemBuilder:
-                  (context, index) => _FeaturedCard(
-                    item: featured[index],
-                    onTap: () => onTap(featured[index]),
-                  ),
-            ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final itemWidth = (constraints.maxWidth * .72).clamp(
+                220.0,
+                290.0,
+              ).toDouble();
+              return SizedBox(
+                height: 238,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: featured.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 14),
+                  itemBuilder:
+                      (context, index) => _FeaturedResult(
+                        item: featured[index],
+                        width: itemWidth,
+                        onTap: () => onTap(featured[index]),
+                      ),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
         ],
@@ -460,24 +527,25 @@ class _SuggestionsSection extends StatelessWidget {
   }
 }
 
-class _FeaturedCard extends StatelessWidget {
-  const _FeaturedCard({required this.item, required this.onTap});
+class _FeaturedResult extends StatelessWidget {
+  const _FeaturedResult({
+    required this.item,
+    required this.width,
+    required this.onTap,
+  });
   final SearchResultItem item;
+  final double width;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        width: 198,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: ext.glassFill,
-          border: Border.all(color: ext.glassBorder),
-        ),
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -487,21 +555,21 @@ class _FeaturedCard extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     child: SmartImage(
                       item.image,
                       width: double.infinity,
                       height: double.infinity,
                     ),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     top: 8,
-                    right: 8,
+                    end: 8,
                     child: Icon(Icons.star, color: ext.accentGlow),
                   ),
-                  Positioned(
-                    bottom: -15,
-                    right: 8,
+                  PositionedDirectional(
+                    bottom: 10,
+                    end: 10,
                     child: Container(
                       width: 32,
                       height: 32,
@@ -519,51 +587,34 @@ class _FeaturedCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.only(top: 10, left: 2, right: 2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.name,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: ext.accentGlow,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: ext.textPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 6,
                     children: [
-                      Icon(
-                        Icons.timer_outlined,
-                        size: 12,
+                      _SearchMeta(
+                        icon: Icons.timer_outlined,
+                        label: _durationLabel(l10n, item),
                         color: ext.textMuted,
                       ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          item.time,
-                          style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Icon(
-                        Icons.local_fire_department_outlined,
-                        size: 12,
-                        color: ext.textMuted,
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          item.calories,
-                          style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      _SearchMeta(
+                        icon: Icons.local_fire_department_outlined,
+                        label: _calorieLabel(l10n, item),
+                        color: ext.accentGlow,
                       ),
                     ],
                   ),
@@ -587,6 +638,7 @@ class _ResultTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -613,40 +665,23 @@ class _ResultTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 6,
                     children: [
-                      Icon(
-                        Icons.timer_outlined,
-                        size: 14,
+                      _SearchMeta(
+                        icon: Icons.timer_outlined,
+                        label: _durationLabel(l10n, item),
                         color: ext.textMuted,
                       ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          item.time,
-                          style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.local_fire_department_outlined,
-                        size: 14,
+                      _SearchMeta(
+                        icon: Icons.local_fire_department_outlined,
+                        label: _calorieLabel(l10n, item),
                         color: ext.accentGlow,
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          item.calories,
-                          style: TextStyle(fontSize: 12, color: ext.textMuted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
                       ),
                     ],
                   ),
-                  if (item.exercises != null) ...[
+                  if (item.exerciseCount != null) ...[
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -658,7 +693,7 @@ class _ResultTile extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            item.exercises!,
+                            l10n.homeHeroExercises(item.exerciseCount!),
                             style: TextStyle(
                               fontSize: 12,
                               color: ext.textMuted,
@@ -680,3 +715,43 @@ class _ResultTile extends StatelessWidget {
     );
   }
 }
+
+class _SearchMeta extends StatelessWidget {
+  const _SearchMeta({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).extension<AppThemeExtension>()!.textMuted,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String _durationLabel(AppLocalizations l10n, SearchResultItem item) =>
+    item.durationMinutes == null
+        ? '—'
+        : l10n.nutritionMinutesValue(item.durationMinutes!);
+
+String _calorieLabel(AppLocalizations l10n, SearchResultItem item) =>
+    item.calories == null ? '—' : l10n.nutritionCaloriesValue(item.calories!);

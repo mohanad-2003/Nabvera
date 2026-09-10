@@ -45,10 +45,10 @@ SearchResultItem _workoutToResult(Map<String, dynamic> doc) {
     id: (doc['_id'] as String?) ?? '',
     image: (doc['coverImageUrl'] as String?) ?? 'assets/workout.png',
     name: (doc['title'] as String?) ?? '',
-    time: '${doc['durationMinutes'] ?? '—'} Minutes',
-    calories: '${doc['estimatedCalories'] ?? '—'} Kcal',
+    durationMinutes: (doc['durationMinutes'] as num?)?.toInt(),
+    calories: (doc['estimatedCalories'] as num?)?.toInt(),
     type: SearchResultType.workout,
-    exercises: exerciseCount == 0 ? null : '$exerciseCount exercises',
+    exerciseCount: exerciseCount == 0 ? null : exerciseCount,
   );
 }
 
@@ -58,8 +58,8 @@ SearchResultItem _recipeToResult(Map<String, dynamic> doc) {
     id: (doc['_id'] as String?) ?? '',
     image: (doc['imageUrl'] as String?) ?? 'assets/workout.png',
     name: (doc['title'] as String?) ?? '',
-    time: '${doc['prepTimeMinutes'] ?? '—'} Minutes',
-    calories: '${nutrition['calories'] ?? '—'} Cal',
+    durationMinutes: (doc['prepTimeMinutes'] as num?)?.toInt(),
+    calories: (nutrition['calories'] as num?)?.toInt(),
     type: SearchResultType.nutrition,
   );
 }

@@ -73,6 +73,7 @@ class WorkoutPage extends ConsumerWidget {
                       return WorkoutPill(
                         label: _label(l10n, tabLevel),
                         selected: isSelected,
+                        appearance: WorkoutPillAppearance.filter,
                         onTap:
                             () => ref
                                 .read(workoutTabProvider.notifier)

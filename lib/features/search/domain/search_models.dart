@@ -5,10 +5,10 @@ class SearchResultItem {
     required this.id,
     required this.image,
     required this.name,
-    required this.time,
+    required this.durationMinutes,
     required this.calories,
     required this.type,
-    this.exercises,
+    this.exerciseCount,
   });
 
   /// Backend `_id` — lets a tap open the real workout/recipe detail
@@ -17,10 +17,10 @@ class SearchResultItem {
   final String id;
   final String image;
   final String name;
-  final String time;
-  final String calories;
+  final int? durationMinutes;
+  final int? calories;
   final SearchResultType type;
-  final String? exercises;
+  final int? exerciseCount;
 }
 
 /// [SearchAllResults]' full state — distinguishes "haven't searched yet"

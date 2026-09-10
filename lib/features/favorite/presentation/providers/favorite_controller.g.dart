@@ -110,7 +110,7 @@ final class FilteredFavoritesProvider
   }
 }
 
-String _$filteredFavoritesHash() => r'6bd35efe41a704e2285845a5026299fd603e3662';
+String _$filteredFavoritesHash() => r'0098fa09259c7a14ffca0e27e965cdb978874225';
 
 /// Loads the user's real favorites — `favoriteWorkoutIds` fetched from
 /// `/api/workouts/:id` (shown as "video" cards) and `favoriteRecipeIds`

@@ -55,4 +55,4 @@ final class WorkoutReminderSchedulerProvider
 }
 
 String _$workoutReminderSchedulerHash() =>
-    r'eca55b4f4113eb6700cf0e7eaf1ad5ff968ad2c3';
+    r'469942317afa5209bf3f8f3e2ae7e0a688b08561';

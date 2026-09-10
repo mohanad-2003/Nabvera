@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/pressable_scale.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
 class HelpPageArgs {
   const HelpPageArgs({this.startOnContact = false});
@@ -59,9 +60,21 @@ class _HelpPageState extends State<HelpPage> {
           (index: i, faq: faqs[i]),
     ];
     final contacts = [
-      _ContactOption(l10n.helpContactCustomerService, 'assets/customer.png', 'support@fitbody.app'),
-      _ContactOption(l10n.helpContactWebsite, 'assets/website.png', 'www.fitbody.app'),
-      _ContactOption(l10n.helpContactWhatsapp, 'assets/whats.png', '+1 555 010 2024'),
+      _ContactOption(
+        l10n.helpContactCustomerService,
+        'assets/customer.png',
+        'support@fitbody.app',
+      ),
+      _ContactOption(
+        l10n.helpContactWebsite,
+        'assets/website.png',
+        'www.fitbody.app',
+      ),
+      _ContactOption(
+        l10n.helpContactWhatsapp,
+        'assets/whats.png',
+        '+1 555 010 2024',
+      ),
       _ContactOption(l10n.helpContactFacebook, 'assets/face_help.png', '@fitbody'),
       _ContactOption(l10n.helpContactInstagram, 'assets/insta.png', '@fitbody'),
     ];
@@ -76,9 +89,11 @@ class _HelpPageState extends State<HelpPage> {
                 subtitle: l10n.helpHowCanWeHelp,
                 showBack: context.canPop(),
                 onBack: () => context.pop(),
+                faqCount: faqs.length,
+                contactCount: contacts.length,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 22)),
             SliverToBoxAdapter(
               child: _ModeSwitch(
                 faqLabel: l10n.helpFaqTab,
@@ -88,7 +103,7 @@ class _HelpPageState extends State<HelpPage> {
                 onContact: () => setState(() => _showContact = true),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 22)),
             if (_showContact)
               SliverList.separated(
                 itemCount: contacts.length,
@@ -141,11 +156,13 @@ class _HelpPageState extends State<HelpPage> {
                     return _FaqCard(
                       question: entry.faq.question,
                       answer: entry.faq.answer,
+                      categoryLabel: categories[entry.faq.category],
                       icon: _categoryIcon(entry.faq.category),
                       expanded: _expandedFaqIndex == entry.index,
                       onTap: () => setState(() {
-                        _expandedFaqIndex =
-                            _expandedFaqIndex == entry.index ? null : entry.index;
+                        _expandedFaqIndex = _expandedFaqIndex == entry.index
+                            ? null
+                            : entry.index;
                       }),
                     );
                   },
@@ -179,86 +196,90 @@ class _HelpPageState extends State<HelpPage> {
 }
 
 class _HelpHero extends StatelessWidget {
-  const _HelpHero({required this.title, required this.subtitle, required this.showBack, required this.onBack});
+  const _HelpHero({
+    required this.title,
+    required this.subtitle,
+    required this.showBack,
+    required this.onBack,
+    required this.faqCount,
+    required this.contactCount,
+  });
+
   final String title;
   final String subtitle;
   final bool showBack;
   final VoidCallback onBack;
+  final int faqCount;
+  final int contactCount;
 
   @override
   Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: const LinearGradient(
-          colors: [AppColors.seedViolet, AppColors.seedInk],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.seedViolet.withValues(alpha: 0.28),
-            blurRadius: 28,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
-      child: Stack(
+    final theme = Theme.of(context);
+    final ext = theme.extension<AppThemeExtension>()!;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PositionedDirectional(
-            end: -18,
-            bottom: -24,
-            child: Icon(
-              Icons.support_agent_rounded,
-              color: Colors.white.withValues(alpha: 0.07),
-              size: 148,
+          Row(
+            children: [
+              if (showBack) ...[
+                PremiumBackButton(onTap: onBack),
+                const SizedBox(width: 12),
+              ],
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: ext.accentGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: ext.accentGlow.withValues(alpha: 0.22),
+                      blurRadius: 22,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.support_agent_rounded, color: ext.onAccent),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: ext.textPrimary,
+              fontWeight: FontWeight.w900,
+              height: 1.05,
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 8),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: Text(
+              subtitle,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: ext.textMuted,
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
             children: [
-              Row(
-                children: [
-                  if (showBack)
-                    InkWell(
-                      onTap: onBack,
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-                      ),
-                    ),
-                  if (showBack) const SizedBox(width: 12),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(shape: BoxShape.circle, gradient: ext.accentGradient),
-                    child: Icon(Icons.forum_rounded, color: ext.onAccent),
-                  ),
-                ],
+              _HelpMetric(
+                icon: Icons.quiz_outlined,
+                value: '$faqCount',
+                color: ext.accentGlow,
               ),
-              const SizedBox(height: 22),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.72),
-                ),
+              const SizedBox(width: 10),
+              _HelpMetric(
+                icon: Icons.forum_outlined,
+                value: '$contactCount',
+                color: theme.colorScheme.secondary,
               ),
             ],
           ),
@@ -268,8 +289,54 @@ class _HelpHero extends StatelessWidget {
   }
 }
 
+class _HelpMetric extends StatelessWidget {
+  const _HelpMetric({
+    required this.icon,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 7),
+          Text(
+            value,
+            style: TextStyle(
+              color: ext.textPrimary,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ModeSwitch extends StatelessWidget {
-  const _ModeSwitch({required this.faqLabel, required this.contactLabel, required this.showContact, required this.onFaq, required this.onContact});
+  const _ModeSwitch({
+    required this.faqLabel,
+    required this.contactLabel,
+    required this.showContact,
+    required this.onFaq,
+    required this.onContact,
+  });
+
   final String faqLabel;
   final String contactLabel;
   final bool showContact;
@@ -278,18 +345,27 @@ class _ModeSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: ext.glassBorder),
+        color: _surfaceTint(context, alpha: 0.86),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: _borderTint(context)),
       ),
       child: Row(
         children: [
-          _ModeSegment(label: faqLabel, icon: Icons.quiz_outlined, selected: !showContact, onTap: onFaq),
-          _ModeSegment(label: contactLabel, icon: Icons.chat_bubble_outline_rounded, selected: showContact, onTap: onContact),
+          _ModeSegment(
+            label: faqLabel,
+            icon: Icons.quiz_outlined,
+            selected: !showContact,
+            onTap: onFaq,
+          ),
+          _ModeSegment(
+            label: contactLabel,
+            icon: Icons.chat_bubble_outline_rounded,
+            selected: showContact,
+            onTap: onContact,
+          ),
         ],
       ),
     );
@@ -297,7 +373,13 @@ class _ModeSwitch extends StatelessWidget {
 }
 
 class _ModeSegment extends StatelessWidget {
-  const _ModeSegment({required this.label, required this.icon, required this.selected, required this.onTap});
+  const _ModeSegment({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
   final String label;
   final IconData icon;
   final bool selected;
@@ -309,22 +391,32 @@ class _ModeSegment extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           padding: const EdgeInsets.symmetric(vertical: 11),
-          decoration: BoxDecoration(gradient: selected ? ext.accentGradient : null, borderRadius: BorderRadius.circular(14)),
+          decoration: BoxDecoration(
+            gradient: selected ? ext.accentGradient : null,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 17, color: selected ? ext.onAccent : ext.textMuted),
+              Icon(
+                icon,
+                size: 17,
+                color: selected ? ext.onAccent : ext.textMuted,
+              ),
               const SizedBox(width: 7),
               Flexible(
                 child: Text(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: selected ? ext.onAccent : ext.textPrimary, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: selected ? ext.onAccent : ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
@@ -336,7 +428,13 @@ class _ModeSegment extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller, required this.hint, required this.onChanged, required this.onClear});
+  const _SearchField({
+    required this.controller,
+    required this.hint,
+    required this.onChanged,
+    required this.onClear,
+  });
+
   final TextEditingController controller;
   final String hint;
   final ValueChanged<String> onChanged;
@@ -353,24 +451,36 @@ class _SearchField extends StatelessWidget {
         hintText: hint,
         hintStyle: TextStyle(color: ext.textMuted),
         prefixIcon: Icon(Icons.search_rounded, color: ext.accentGlow),
-        suffixIcon: onClear == null ? null : IconButton(onPressed: onClear, icon: Icon(Icons.close_rounded, color: ext.textMuted)),
+        suffixIcon: onClear == null
+            ? null
+            : IconButton(
+                onPressed: onClear,
+                icon: Icon(Icons.close_rounded, color: ext.textMuted),
+              ),
         filled: true,
-        fillColor: ext.glassFill,
-        border: _border(ext.glassBorder),
-        enabledBorder: _border(ext.glassBorder),
+        fillColor: _surfaceTint(context, alpha: 0.82),
+        border: _border(_borderTint(context)),
+        enabledBorder: _border(_borderTint(context)),
         focusedBorder: _border(ext.accentGlow, 1.4),
       ),
     );
   }
 
-  OutlineInputBorder _border(Color color, [double width = 1]) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(20),
-    borderSide: BorderSide(color: color, width: width),
-  );
+  OutlineInputBorder _border(Color color, [double width = 1]) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppRadius.lg),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
 }
 
 class _CategoryTabs extends StatelessWidget {
-  const _CategoryTabs({required this.labels, required this.selectedIndex, required this.onSelected});
+  const _CategoryTabs({
+    required this.labels,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
+
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
@@ -391,9 +501,14 @@ class _CategoryTabs extends StatelessWidget {
             selected: selected,
             onSelected: (_) => onSelected(index),
             selectedColor: ext.accentGlow.withValues(alpha: 0.18),
-            backgroundColor: ext.glassFill,
-            side: BorderSide(color: selected ? ext.accentGlow : ext.glassBorder),
-            labelStyle: TextStyle(color: selected ? ext.accentGlow : ext.textPrimary, fontWeight: FontWeight.w800),
+            backgroundColor: _surfaceTint(context, alpha: 0.7),
+            side: BorderSide(
+              color: selected ? ext.accentGlow : _borderTint(context),
+            ),
+            labelStyle: TextStyle(
+              color: selected ? ext.accentGlow : ext.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           );
         },
       ),
@@ -402,9 +517,18 @@ class _CategoryTabs extends StatelessWidget {
 }
 
 class _FaqCard extends StatelessWidget {
-  const _FaqCard({required this.question, required this.answer, required this.icon, required this.expanded, required this.onTap});
+  const _FaqCard({
+    required this.question,
+    required this.answer,
+    required this.categoryLabel,
+    required this.icon,
+    required this.expanded,
+    required this.onTap,
+  });
+
   final String question;
   final String answer;
+  final String categoryLabel;
   final IconData icon;
   final bool expanded;
   final VoidCallback onTap;
@@ -413,47 +537,119 @@ class _FaqCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return PressableScale(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: expanded ? ext.cardColor : ext.glassFill,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: expanded ? ext.accentGlow.withValues(alpha: 0.6) : ext.glassBorder),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(color: ext.accentGlow.withValues(alpha: 0.14), shape: BoxShape.circle),
-                    child: Icon(icon, color: ext.accentGlow, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(question, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800, fontSize: 14.5))),
-                  AnimatedRotation(
-                    turns: expanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 220),
-                    child: Icon(Icons.expand_more_rounded, color: ext.accentGlow),
-                  ),
-                ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: _faqFill(context, expanded),
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              border: Border.all(
+                color: expanded
+                    ? ext.accentGlow.withValues(alpha: 0.56)
+                    : _borderTint(context),
               ),
-              AnimatedCrossFade(
-                duration: const Duration(milliseconds: 220),
-                crossFadeState: expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                firstChild: const SizedBox.shrink(),
-                secondChild: Padding(
-                  padding: const EdgeInsetsDirectional.only(top: 14, start: 50, end: 4),
-                  child: Text(answer, style: TextStyle(color: ext.textMuted, height: 1.55, fontSize: 13.5)),
+              boxShadow: expanded
+                  ? [
+                      BoxShadow(
+                        color: ext.accentGlow.withValues(alpha: 0.14),
+                        blurRadius: 26,
+                        offset: const Offset(0, 12),
+                      ),
+                    ]
+                  : const [],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: ext.accentGlow.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        border: Border.all(
+                          color: ext.accentGlow.withValues(alpha: 0.16),
+                        ),
+                      ),
+                      child: Icon(icon, color: ext.accentGlow, size: 21),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            categoryLabel,
+                            style: TextStyle(
+                              color: ext.accentGlow,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            question,
+                            style: TextStyle(
+                              color: ext.textPrimary,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 14.5,
+                              height: 1.25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    AnimatedRotation(
+                      turns: expanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 220),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: ext.accentGlow.withValues(alpha: 0.12),
+                        ),
+                        child: Icon(
+                          Icons.expand_more_rounded,
+                          color: ext.accentGlow,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 220),
+                  crossFadeState: expanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  firstChild: const SizedBox.shrink(),
+                  secondChild: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      top: 16,
+                      start: 54,
+                      end: 4,
+                    ),
+                    child: Text(
+                      answer,
+                      style: TextStyle(
+                        color: ext.textMuted,
+                        height: 1.58,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -463,6 +659,7 @@ class _FaqCard extends StatelessWidget {
 
 class _ContactCard extends StatelessWidget {
   const _ContactCard({required this.option, required this.onTap});
+
   final _ContactOption option;
   final VoidCallback onTap;
 
@@ -470,37 +667,60 @@ class _ContactCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return PressableScale(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: ext.glassBorder),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(color: ext.accentGlow.withValues(alpha: 0.14), shape: BoxShape.circle),
-                child: Center(child: Image.asset(option.icon, width: 22, height: 22)),
-              ),
-              const SizedBox(width: 13),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(option.title, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 3),
-                    Text(option.value, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: ext.textMuted, fontSize: 12.5)),
-                  ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: _surfaceTint(context, alpha: 0.82),
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              border: Border.all(color: _borderTint(context)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: ext.accentGlow.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Center(
+                    child: Image.asset(option.icon, width: 22, height: 22),
+                  ),
                 ),
-              ),
-              Icon(Icons.copy_rounded, color: ext.accentGlow, size: 19),
-            ],
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        option.title,
+                        style: TextStyle(
+                          color: ext.textPrimary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        option.value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: ext.textMuted,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.copy_rounded, color: ext.accentGlow, size: 19),
+              ],
+            ),
           ),
         ),
       ),
@@ -510,6 +730,7 @@ class _ContactCard extends StatelessWidget {
 
 class _NoResults extends StatelessWidget {
   const _NoResults({required this.title, required this.message});
+
   final String title;
   final String message;
 
@@ -524,14 +745,50 @@ class _NoResults extends StatelessWidget {
           children: [
             Icon(Icons.search_off_rounded, color: ext.textMuted, size: 42),
             const SizedBox(height: 12),
-            Text(title, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800)),
+            Text(
+              title,
+              style: TextStyle(
+                color: ext.textPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: 5),
-            Text(message, textAlign: TextAlign.center, style: TextStyle(color: ext.textMuted, height: 1.4)),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: ext.textMuted, height: 1.4),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+Color _surfaceTint(BuildContext context, {required double alpha}) {
+  final theme = Theme.of(context);
+  return theme.brightness == Brightness.dark
+      ? AppColors.graphite.withValues(alpha: alpha)
+      : const Color(0xFFEAF4E2).withValues(alpha: alpha);
+}
+
+Color _faqFill(BuildContext context, bool expanded) {
+  final theme = Theme.of(context);
+  if (theme.brightness == Brightness.dark) {
+    return expanded
+        ? const Color(0xFF14211C).withValues(alpha: 0.94)
+        : AppColors.graphite.withValues(alpha: 0.78);
+  }
+  return expanded
+      ? const Color(0xFFE5F3D5).withValues(alpha: 0.96)
+      : const Color(0xFFEEF6E8).withValues(alpha: 0.9);
+}
+
+Color _borderTint(BuildContext context) {
+  final theme = Theme.of(context);
+  return theme.brightness == Brightness.dark
+      ? Colors.white.withValues(alpha: 0.10)
+      : AppColors.accentOnLight.withValues(alpha: 0.14);
 }
 
 class _HelpFaq {

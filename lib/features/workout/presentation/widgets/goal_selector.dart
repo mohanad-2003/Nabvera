@@ -37,6 +37,7 @@ class GoalSelector extends StatelessWidget {
                   label: labelBuilder(goal),
                   selected: selected == goal,
                   onTap: () => onChanged(goal),
+                  appearance: WorkoutPillAppearance.flat,
                 ),
               ),
           ],

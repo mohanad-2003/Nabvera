@@ -2,11 +2,9 @@ import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:flutter/material.dart';
 
-/// Weekly day picker: 7 circular chips (Mon–Sun), neon-filled when selected.
-/// Each chip fills an equal [Expanded] share of the available width and
-/// stays circular via [AspectRatio], capped by [ConstrainedBox] so it
-/// doesn't balloon on tablets; the label shrinks under large text scaling
-/// via [FittedBox] instead of overflowing.
+/// Weekly day picker with flat, compact options. Unselected days blend into
+/// the page instead of creating seven white cards; selection uses a compact
+/// rounded rectangle that remains easy to spot and tap.
 class WorkoutDayPicker extends StatelessWidget {
   const WorkoutDayPicker({
     super.key,
@@ -30,15 +28,15 @@ class WorkoutDayPicker extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 3),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 54),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: _DayChip(
-                      label: shortLabelBuilder(day),
-                      selected: selectedDays.contains(day),
-                      onTap: () => onToggle(day),
-                      ext: ext,
-                    ),
+                  constraints: const BoxConstraints(
+                    minHeight: 44,
+                    maxWidth: 58,
+                  ),
+                  child: _DayChip(
+                    label: shortLabelBuilder(day),
+                    selected: selectedDays.contains(day),
+                    onTap: () => onToggle(day),
+                    ext: ext,
                   ),
                 ),
               ),
@@ -66,19 +64,22 @@ class _DayChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
         width: double.infinity,
-        height: double.infinity,
+        height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? Theme.of(context).extension<AppThemeExtension>()!.accentGlow : ext.glassFill,
-          shape: BoxShape.circle,
+          color: selected ? ext.accentGlow : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? Colors.transparent : ext.glassBorder,
+            color:
+                selected
+                    ? ext.accentGlow
+                    : ext.glassBorder.withValues(alpha: .45),
           ),
-
         ),
         child: Padding(
           padding: const EdgeInsets.all(4),

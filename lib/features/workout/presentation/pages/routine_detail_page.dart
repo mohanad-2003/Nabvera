@@ -68,7 +68,9 @@ class RoutineDetailPage extends StatelessWidget {
         children: [
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: BackButton(onPressed: () => Navigator.of(context).pop()),
+            child: WorkoutBackButton(
+              onTap: () => Navigator.of(context).pop(),
+            ),
           ),
           const SizedBox(height: 12),
           Text(

@@ -9,6 +9,7 @@ import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/presentation/providers/popular_exercises_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/popular_workout_card.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_hero_card.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -189,8 +190,7 @@ class _RecommendedTopBar extends StatelessWidget {
     return Row(
       children: [
         if (context.canPop())
-          _BareIconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
+          WorkoutBackButton(
             onTap: () => context.pop(),
           ),
         if (context.canPop()) const SizedBox(width: 6),

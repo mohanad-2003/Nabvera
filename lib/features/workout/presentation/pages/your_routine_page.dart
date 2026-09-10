@@ -4,16 +4,93 @@ import 'package:go_router/go_router.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
+import '../providers/your_routine_controller.dart';
 import '../providers/workout_request_providers.dart';
 import '../widgets/workout_header.dart';
 import '../widgets/workout_surface.dart';
 import 'routine_detail_page.dart';
 
-class YourRoutinePage extends ConsumerWidget {
+class YourRoutinePage extends ConsumerStatefulWidget {
   const YourRoutinePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<YourRoutinePage> createState() => _YourRoutinePageState();
+}
+
+class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
+  String? _deletingRoutineId;
+
+  Future<void> _deleteRoutine(Map<String, dynamic> routine) async {
+    final id = routine['_id'] as String?;
+    if (id == null || id.isEmpty || _deletingRoutineId != null) return;
+
+    final name = routine['name'] as String? ?? '';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text(
+              workoutCopy(dialogContext, 'حذف الروتين؟', 'Delete routine?'),
+            ),
+            content: Text(
+              workoutCopy(
+                dialogContext,
+                'هل أنت متأكد من حذف «$name»؟ لا يمكن التراجع عن هذا الإجراء.',
+                'Are you sure you want to delete “$name”? This action cannot be undone.',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(
+                  workoutCopy(dialogContext, 'إلغاء', 'Cancel'),
+                ),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(dialogContext)
+                          .extension<AppThemeExtension>()!
+                          .danger,
+                ),
+                child: Text(workoutCopy(dialogContext, 'حذف', 'Delete')),
+              ),
+            ],
+          ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deletingRoutineId = id);
+    try {
+      await ref.read(workoutRepositoryProvider).deleteRoutine(id);
+      ref.invalidate(routinesRequestProvider);
+      ref.invalidate(yourRoutineControllerProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            workoutCopy(
+              context,
+              'تم حذف الروتين بنجاح.',
+              'Routine deleted successfully.',
+            ),
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(workoutError(context, error))),
+      );
+    } finally {
+      if (mounted) setState(() => _deletingRoutineId = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final request = ref.watch(routinesRequestProvider);
     final l10n = AppLocalizations.of(context);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
@@ -120,22 +197,53 @@ class YourRoutinePage extends ConsumerWidget {
                                   padding: const EdgeInsets.only(top: 8),
                                   child: RoutineSummary(routine: routine),
                                 ),
-                                trailing: Icon(
-                                  Directionality.of(context) ==
-                                          TextDirection.rtl
-                                      ? Icons.chevron_left_rounded
-                                      : Icons.chevron_right_rounded,
-                                  color: ext.textMuted,
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (_deletingRoutineId == routine['_id'])
+                                      SizedBox.square(
+                                        dimension: 40,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: ext.danger,
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      IconButton(
+                                        onPressed: () => _deleteRoutine(routine),
+                                        tooltip: workoutCopy(
+                                          context,
+                                          'حذف الروتين',
+                                          'Delete routine',
+                                        ),
+                                        icon: Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: ext.danger,
+                                        ),
+                                      ),
+                                    Icon(
+                                      Directionality.of(context) ==
+                                              TextDirection.rtl
+                                          ? Icons.chevron_left_rounded
+                                          : Icons.chevron_right_rounded,
+                                      color: ext.textMuted,
+                                    ),
+                                  ],
                                 ),
                                 onTap:
-                                    () => Navigator.of(context).push(
-                                      MaterialPageRoute<void>(
-                                        builder:
-                                            (_) => RoutineDetailPage(
-                                              routine: routine,
-                                            ),
-                                      ),
-                                    ),
+                                    _deletingRoutineId == routine['_id']
+                                        ? null
+                                        : () => Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder:
+                                                (_) => RoutineDetailPage(
+                                                  routine: routine,
+                                                ),
+                                          ),
+                                        ),
                               );
                             },
                           ),

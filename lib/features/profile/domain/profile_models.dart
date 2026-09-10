@@ -34,6 +34,7 @@ class UserProfile {
   });
 
   /// Backend `User._id` — empty for [UserProfile.empty].
+
   final String id;
   final String name;
   final String email;

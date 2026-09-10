@@ -42,7 +42,7 @@ final class CreateRoutineControllerProvider
 }
 
 String _$createRoutineControllerHash() =>
-    r'6c7f54fbf048b13a600f5eb34cced083eb617b26';
+    r'b583898f7ebe5f31129566cafd5c259e9a50977a';
 
 abstract class _$CreateRoutineController extends $Notifier<CreateRoutineState> {
   CreateRoutineState build();

@@ -5,7 +5,8 @@ import '../storage/preferences_service.dart';
 
 part 'locale_controller.g.dart';
 
-const supportedLocales = [Locale('en'), Locale('ar')];
+const defaultLocale = Locale('ar');
+const supportedLocales = [Locale('ar'), Locale('en')];
 
 @Riverpod(keepAlive: true)
 class LocaleController extends _$LocaleController {
@@ -16,14 +17,7 @@ class LocaleController extends _$LocaleController {
       final match = supportedLocales.where((l) => l.languageCode == stored);
       if (match.isNotEmpty) return match.first;
     }
-    // No saved preference yet (first launch) — follow the device locale if
-    // it's one we support, otherwise fall back to English.
-    final deviceLanguageCode =
-        WidgetsBinding.instance.platformDispatcher.locale.languageCode;
-    final deviceMatch = supportedLocales.where(
-      (l) => l.languageCode == deviceLanguageCode,
-    );
-    return deviceMatch.isNotEmpty ? deviceMatch.first : supportedLocales.first;
+    return defaultLocale;
   }
 
   Future<void> setLocale(Locale locale) async {

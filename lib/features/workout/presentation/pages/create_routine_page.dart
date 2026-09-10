@@ -388,6 +388,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                               selected: _muscleFilter == group,
                               onTap:
                                   () => setState(() => _muscleFilter = group),
+                              appearance: WorkoutPillAppearance.filter,
                             );
                           },
                         ),

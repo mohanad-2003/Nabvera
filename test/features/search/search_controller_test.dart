@@ -27,6 +27,8 @@ class FakeWorkoutRepository implements WorkoutRepository {
     Map<String, dynamic> payload,
   ) async => throw UnimplementedError();
   @override
+  Future<void> deleteRoutine(String id) async => throw UnimplementedError();
+  @override
   Future<List<Map<String, dynamic>>> fetchWorkoutLogs() async => [];
   @override
   Future<Map<String, dynamic>> createWorkoutLog({

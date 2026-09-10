@@ -52,36 +52,88 @@ class WorkoutScaffold extends StatelessWidget {
   }
 }
 
+/// Unboxed back action shared by workout sub-pages. [BackButtonIcon]
+/// automatically follows the current platform and RTL/LTR direction.
+class WorkoutBackButton extends StatelessWidget {
+  const WorkoutBackButton({super.key, required this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox.square(
+        dimension: 44,
+        child: IconTheme(
+          data: IconThemeData(color: ext.textPrimary, size: 22),
+          child: const BackButtonIcon(),
+        ),
+      ),
+    );
+  }
+}
+
 class WorkoutPill extends StatelessWidget {
   const WorkoutPill({
     super.key,
     required this.label,
     this.selected = false,
     this.onTap,
+    this.appearance = WorkoutPillAppearance.standard,
   });
   final String label;
   final bool selected;
   final VoidCallback? onTap;
+  final WorkoutPillAppearance appearance;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final isFlat = appearance == WorkoutPillAppearance.flat;
+    final isFilter = appearance == WorkoutPillAppearance.filter;
+
     return ChoiceChip(
       label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       selected: selected,
       onSelected: onTap == null ? null : (_) => onTap!(),
       showCheckmark: false,
-      selectedColor: ext.accentGlow.withValues(alpha: .12),
-      backgroundColor: ext.glassFill,
+      selectedColor: ext.accentGlow.withValues(alpha: isFilter ? .18 : .12),
+      backgroundColor: isFlat ? Colors.transparent : ext.glassFill,
+      disabledColor: isFlat ? Colors.transparent : ext.glassFill,
+      elevation: isFilter && !selected ? 1 : 0,
+      pressElevation: isFilter ? 2 : 0,
+      padding:
+          isFilter
+              ? const EdgeInsets.symmetric(horizontal: 14, vertical: 10)
+              : null,
       labelStyle: TextStyle(
         color: selected ? ext.accentGlow : ext.textMuted,
         fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
       ),
-      side: BorderSide(color: selected ? ext.accentGlow : ext.glassBorder),
-      shape: const StadiumBorder(),
+      side: BorderSide(
+        color:
+            selected
+                ? ext.accentGlow.withValues(alpha: .85)
+                : isFlat
+                ? Colors.transparent
+                : ext.glassBorder,
+      ),
+      shape:
+          isFilter
+              ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+              : isFlat
+              ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+              : const StadiumBorder(),
     );
   }
 }
+
+/// Keeps selection controls visually consistent while allowing flat form
+/// options and stronger rectangular filter cards to coexist.
+enum WorkoutPillAppearance { standard, flat, filter }
 
 class WorkoutStatus extends StatelessWidget {
   const WorkoutStatus({

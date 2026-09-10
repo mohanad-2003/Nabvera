@@ -121,7 +121,7 @@ final class WorkoutListByLevelProvider
 }
 
 String _$workoutListByLevelHash() =>
-    r'2519f7e65968848f9fde6cf22e69974b9d9804b7';
+    r'8ef1193e4b4f60ca03c11574095f049248ac40f2';
 
 /// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
 /// empty and fills in once the fetch resolves — matches the pattern used by

@@ -56,6 +56,11 @@ class WorkoutRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
+  Future<void> deleteRoutine(String id) async {
+    final response = await _client.delete('/routines/$id');
+    _client.decode(response);
+  }
+
   Future<List<Map<String, dynamic>>> fetchWorkoutLogs() async {
     final response = await _client.get('/workout-logs');
     final body = _client.decode(response);

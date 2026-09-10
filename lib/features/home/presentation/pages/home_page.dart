@@ -398,15 +398,10 @@ class _HeaderIcon extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
         width: 44,
         height: 44,
-        decoration: BoxDecoration(
-          color: ext.glassFill,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: ext.glassBorder),
-        ),
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.center,

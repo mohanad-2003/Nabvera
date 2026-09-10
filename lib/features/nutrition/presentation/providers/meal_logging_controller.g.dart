@@ -52,7 +52,7 @@ final class MealLoggingControllerProvider
 }
 
 String _$mealLoggingControllerHash() =>
-    r'ab9dd6279a217ed6d3d1f3aec55f9aa4db78e029';
+    r'104dd54ffa854852c9131b36fd1466c18a823430';
 
 /// Tracks which meal-plan items have already been "marked as eaten"
 /// today, keyed by `mealPlanItemId` -> the resulting log's id (needed for

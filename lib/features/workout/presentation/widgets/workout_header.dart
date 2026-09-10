@@ -1,6 +1,6 @@
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,7 +37,7 @@ class WorkoutHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (canPop)
-          PremiumBackButton(
+          WorkoutBackButton(
             onTap: () => context.canPop() ? context.pop() : null,
           ),
         if (canPop) const SizedBox(width: 12),
@@ -69,23 +69,44 @@ class WorkoutHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        PremiumIconButton(
+        _WorkoutHeaderIconButton(
           icon: Icons.search_rounded,
           onTap: () => context.push(AppRoutes.search),
         ),
         const SizedBox(width: 10),
-        PremiumIconButton(
+        _WorkoutHeaderIconButton(
           icon: Icons.notifications_none_rounded,
           onTap: () => context.push(AppRoutes.notifications),
         ),
         if (showProfileAction) ...[
           const SizedBox(width: 10),
-          PremiumIconButton(
+          _WorkoutHeaderIconButton(
             icon: Icons.person_outline_rounded,
             onTap: () => context.push(AppRoutes.profile),
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Header action with a full 44dp tap target but no card, fill, or border.
+class _WorkoutHeaderIconButton extends StatelessWidget {
+  const _WorkoutHeaderIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox.square(
+        dimension: 44,
+        child: Icon(icon, color: ext.textPrimary, size: 22),
+      ),
     );
   }
 }

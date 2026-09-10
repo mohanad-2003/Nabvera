@@ -27,6 +27,7 @@ class DifficultySelector extends StatelessWidget {
               label: labelBuilder(level),
               selected: selected == level,
               onTap: () => onChanged(level),
+              appearance: WorkoutPillAppearance.flat,
             ),
           ),
         ],

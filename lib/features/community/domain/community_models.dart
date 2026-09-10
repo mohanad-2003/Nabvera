@@ -164,6 +164,7 @@ class ForumThread {
     required this.id,
     required this.title,
     required this.subtitle,
+    required this.authorAvatarUrl,
     required this.allLabel,
     required this.date,
     required this.content,
@@ -175,6 +176,7 @@ class ForumThread {
   final String id;
   final String title;
   final String subtitle;
+  final String? authorAvatarUrl;
   final String allLabel;
   final String date;
   final String content;
@@ -186,6 +188,7 @@ class ForumThread {
     id: id,
     title: title,
     subtitle: subtitle,
+    authorAvatarUrl: authorAvatarUrl,
     allLabel: allLabel,
     date: date,
     content: content,
@@ -209,6 +212,7 @@ class ForumThread {
       id: json['_id'] as String? ?? '',
       title: content.length > 60 ? '${content.substring(0, 60)}…' : content,
       subtitle: (author?['name'] as String?) ?? 'Member',
+      authorAvatarUrl: author?['avatarUrl'] as String?,
       allLabel: 'See All',
       date: _formatDate(json['createdAt'] as String?),
       content: content,
@@ -233,11 +237,13 @@ class ForumThread {
 class ForumComment {
   const ForumComment({
     required this.authorName,
+    required this.authorAvatarUrl,
     required this.text,
     required this.date,
   });
 
   final String authorName;
+  final String? authorAvatarUrl;
   final String text;
   final String date;
 
@@ -245,6 +251,7 @@ class ForumComment {
     final author = json['author'] as Map<String, dynamic>?;
     return ForumComment(
       authorName: (author?['name'] as String?) ?? 'Member',
+      authorAvatarUrl: author?['avatarUrl'] as String?,
       text: (json['text'] as String?) ?? '',
       date: ForumThread._formatDate(json['createdAt'] as String?),
     );

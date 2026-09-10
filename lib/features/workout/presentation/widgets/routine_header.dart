@@ -1,6 +1,6 @@
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
-import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,7 +30,7 @@ class RoutineHeader extends StatelessWidget {
           Row(
             children: [
               if (context.canPop())
-                PremiumBackButton(
+                WorkoutBackButton(
                   onTap: () => context.pop(),
                 ),
             ],

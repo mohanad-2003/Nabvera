@@ -39,6 +39,11 @@ class AppBottomNav extends StatelessWidget {
   List<AppBottomNavItem> _items(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return [
+      // AppBottomNavItem(
+      //   image: 'assets/bottom/home.png',
+      //   fallbackIcon: Icons.home_rounded,
+      //   label: l10n.navHome,
+      // ),
       AppBottomNavItem(
         image: 'assets/bottom/home.png',
         fallbackIcon: Icons.home_rounded,

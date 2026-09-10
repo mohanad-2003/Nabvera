@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 
-/// Filter capsule chip (All / Unread / Workouts / …). The selected chip
-/// gets the brand gradient; others stay a soft glass pill.
+/// Compact rectangular filter card (All / Unread / Workouts / …). The
+/// selected card gets the brand gradient; others stay softly outlined.
 class NotificationCategoryChip extends StatelessWidget {
   const NotificationCategoryChip({
     super.key,
@@ -32,7 +31,7 @@ class NotificationCategoryChip extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: selected ? ext.accentGradient : null,
           color: selected ? null : ext.glassFill,
-          borderRadius: BorderRadius.circular(AppRadius.pill),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: selected ? Colors.transparent : ext.glassBorder,
           ),
