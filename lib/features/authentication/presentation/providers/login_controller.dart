@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../data/firebase_auth_service.dart';
 
 part 'login_controller.g.dart';
@@ -31,6 +32,7 @@ class LoginController extends _$LoginController {
             email: emailController.text.trim(),
             password: passwordController.text,
           );
+      await _refreshProfileAfterSignIn();
     });
   }
 
@@ -38,6 +40,19 @@ class LoginController extends _$LoginController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await ref.read(firebaseAuthServiceProvider).signInWithGoogle();
+      await _refreshProfileAfterSignIn();
     });
+  }
+
+  /// `currentUserProfileProvider` is `keepAlive` (see its own doc comment)
+  /// and typically already built — and already failed once, silently, at
+  /// app boot with no signed-in user yet — long before this screen ever
+  /// ran. Without this, the home page it feeds keeps showing that stale
+  /// empty profile (no name, no avatar, no streak) after a successful
+  /// sign-in until something else happens to trigger a refresh (e.g. a
+  /// manual pull-to-refresh) — awaited here so navigation to home only
+  /// happens once the real profile has actually loaded.
+  Future<void> _refreshProfileAfterSignIn() {
+    return ref.read(currentUserProfileProvider.notifier).refresh();
   }
 }
