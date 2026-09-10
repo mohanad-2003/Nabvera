@@ -55,6 +55,31 @@ class CurrentUserProfile extends _$CurrentUserProfile {
   Future<void> update(Map<String, dynamic> patch) async {
     state = await ref.read(userRepositoryProvider).updateProfile(patch);
   }
+
+  /// Same as [refresh], but meant to be called right after a fresh sign-in
+  /// (see `LoginController`/`SignupController`) — retries once, after a
+  /// short delay, if the first attempt comes back empty.
+  ///
+  /// Why this can happen right after `signInWithEmailAndPassword` (rarer,
+  /// seemingly, after `signInWithGoogle` — consistent with a genuine
+  /// timing race rather than a deterministic bug): `ApiClient` attaches
+  /// `Authorization` from `FirebaseAuth.currentUser?.getIdToken()`, and
+  /// there's a narrow window right after sign-in where the Future has
+  /// already resolved but `currentUser` hasn't propagated to that getter
+  /// yet — the very first `/auth/me` call goes out with *no* Authorization
+  /// header at all in that window. That's not the same failure
+  /// `ApiClient`'s own 401-retry-with-forceRefresh exists for (a *stale*
+  /// token, not a *missing* one), so it doesn't help here: both the
+  /// original attempt and the retry go out tokenless, `refresh()`'s
+  /// internal catch swallows the resulting error, and the profile is left
+  /// at [UserProfile.empty] — indistinguishable, from the caller's side,
+  /// from a brand new account that genuinely has no data yet.
+  Future<void> refreshAfterSignIn() async {
+    await refresh();
+    if (state.id.isNotEmpty) return;
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    await refresh();
+  }
 }
 
 @riverpod

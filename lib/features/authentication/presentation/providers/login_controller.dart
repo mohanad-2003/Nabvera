@@ -52,7 +52,12 @@ class LoginController extends _$LoginController {
   /// sign-in until something else happens to trigger a refresh (e.g. a
   /// manual pull-to-refresh) — awaited here so navigation to home only
   /// happens once the real profile has actually loaded.
+  ///
+  /// `refreshAfterSignIn`, not plain `refresh` — see its own doc comment:
+  /// it retries once if the very first post-sign-in fetch comes back
+  /// empty, to ride out a real (if narrow) timing window right after
+  /// sign-in.
   Future<void> _refreshProfileAfterSignIn() {
-    return ref.read(currentUserProfileProvider.notifier).refresh();
+    return ref.read(currentUserProfileProvider.notifier).refreshAfterSignIn();
   }
 }

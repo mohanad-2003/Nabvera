@@ -50,6 +50,6 @@ class SignupController extends _$SignupController {
   /// and typically already built (and already failed once, silently, at
   /// app boot with no signed-in user yet) before this screen ever ran.
   Future<void> _refreshProfileAfterSignIn() {
-    return ref.read(currentUserProfileProvider.notifier).refresh();
+    return ref.read(currentUserProfileProvider.notifier).refreshAfterSignIn();
   }
 }
