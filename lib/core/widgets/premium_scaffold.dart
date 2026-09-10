@@ -35,6 +35,19 @@ class PremiumScaffold extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: bottomBar,
       body: Stack(
+        // Scaffold gives `body` *loose* constraints, not tight ones — so
+        // a plain Stack (the default StackFit.loose) sizes itself to its
+        // one non-positioned child (`content` below) instead of filling
+        // the available space. For a short page (few rows, no long list)
+        // that child is shorter than the screen, and so was the whole
+        // Stack — leaving the gradient background (a Positioned.fill
+        // child, which doesn't drive sizing under `loose`) covering only
+        // that shorter area, with Scaffold's own plain background color
+        // showing through everywhere below it. `expand` forces the Stack
+        // itself to the full available size regardless of content
+        // height, and content's SingleChildScrollView correctly reads
+        // that as its viewport (scrolling only if it's actually taller).
+        fit: StackFit.expand,
         children: [
           Positioned.fill(
             child: DecoratedBox(
