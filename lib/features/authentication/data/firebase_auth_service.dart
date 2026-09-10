@@ -43,6 +43,20 @@ class FirebaseAuthService {
       password: password,
     );
     await credential.user?.updateDisplayName(fullName);
+    // `updateDisplayName` changes the profile, but the ID token the SDK
+    // already has cached keeps carrying the *old* (empty, for a brand
+    // new account) `name` claim until something forces a fresh one — a
+    // plain `getIdToken()` right after this, with no forceRefresh, would
+    // still hand back that stale token. That matters a lot here
+    // specifically: the backend auto-provisions this user's Mongo profile
+    // from that very first token's `name` claim (see
+    // `backend/src/middlewares/authMiddleware.js`), and only ever does so
+    // once — so a stale claim here doesn't just show the wrong name
+    // briefly, it bakes "the part of the email before @" in as the
+    // account's name permanently. Forcing a refresh now, before the
+    // caller's first backend call, is what makes the *next* `getIdToken()`
+    // (even a plain one) already carry the real name.
+    await credential.user?.getIdToken(true);
     return credential;
   }
 
