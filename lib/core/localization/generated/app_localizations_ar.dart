@@ -1900,38 +1900,22 @@ class AppLocalizationsAr extends AppLocalizations {
       'تحديثات التمارين والتغذية والمجتمع';
 
   @override
-  String get notificationToggleSound => 'الصوت';
-
-  @override
-  String get notificationToggleSoundBody => 'تشغيل صوت عند وصول إشعار جديد';
-
-  @override
-  String get notificationToggleDoNotDisturb => 'وضع عدم الإزعاج';
-
-  @override
-  String get notificationToggleDoNotDisturbBody =>
-      'كتم الإشعارات خلال ساعات الهدوء';
-
-  @override
-  String get notificationToggleVibrate => 'الاهتزاز';
-
-  @override
-  String get notificationToggleVibrateBody =>
-      'اهتزاز الجهاز عند التنبيهات الجديدة';
-
-  @override
-  String get notificationToggleLockScreen => 'شاشة القفل';
-
-  @override
-  String get notificationToggleLockScreenBody =>
-      'إظهار المعاينات على شاشة القفل';
-
-  @override
   String get notificationToggleReminders => 'التذكيرات';
 
   @override
   String get notificationToggleRemindersBody =>
       'تذكيرات يومية بالتمارين والوجبات';
+
+  @override
+  String get notificationOpenSystemSettingsTitle =>
+      'الصوت، الاهتزاز، وشاشة القفل';
+
+  @override
+  String get notificationOpenSystemSettingsBody =>
+      'يتحكم بها نظام جهازك — اضغط لفتح الإعدادات';
+
+  @override
+  String get notificationOpenSystemSettingsFailed => 'تعذّر فتح إعدادات النظام';
 
   @override
   String get passwordSettingsTitle => 'إعدادات كلمة المرور';

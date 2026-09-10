@@ -17,6 +17,7 @@ class PreferencesService {
   static const _biometricEnabledKey = 'app.biometric_enabled';
   static const _rememberedEmailKey = 'app.remembered_email';
   static const _analyticsEnabledKey = 'app.analytics_enabled';
+  static const _notificationsEnabledKey = 'app.notifications_enabled';
 
   String? get themeMode => _prefs.getString(_themeModeKey);
   Future<void> setThemeMode(String value) =>
@@ -53,6 +54,17 @@ class PreferencesService {
   bool get analyticsEnabled => _prefs.getBool(_analyticsEnabledKey) ?? true;
   Future<void> setAnalyticsEnabled(bool value) =>
       _prefs.setBool(_analyticsEnabledKey, value);
+
+  /// The "General Notification" master switch on the Notification
+  /// Settings page — gates whether [PushNotificationService] registers
+  /// (or stays registered for) this device's FCM token. Defaults to on,
+  /// matching the toggle's default UI state and every existing user's
+  /// current (already-registered) behavior — this is opt-out, not opt-in.
+  /// Turning it off never touches the in-app inbox itself, only push.
+  bool get notificationsEnabled =>
+      _prefs.getBool(_notificationsEnabledKey) ?? true;
+  Future<void> setNotificationsEnabled(bool value) =>
+      _prefs.setBool(_notificationsEnabledKey, value);
 }
 
 /// Overridden in [main] with the resolved [SharedPreferences] instance

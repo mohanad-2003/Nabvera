@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:nabvera/core/notifications/push_notification_service.dart';
+import 'package:nabvera/core/storage/preferences_service.dart';
 import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,10 +33,15 @@ class CurrentUserProfile extends _$CurrentUserProfile {
   Future<void> refresh() async {
     try {
       state = await ref.read(userRepositoryProvider).fetchMe();
-      if (state.id.isNotEmpty) {
+      final notificationsEnabled =
+          ref.read(preferencesServiceProvider).notificationsEnabled;
+      if (state.id.isNotEmpty && notificationsEnabled) {
         // Fire-and-forget: registering for push shouldn't block or fail
         // profile loading, and PushNotificationService is itself
-        // idempotent past the first successful call.
+        // idempotent past the first successful call. Skipped entirely
+        // when the user has turned the "General Notification" toggle off
+        // (see NotificationSettingsPage) — otherwise a fresh app launch
+        // would silently re-register the device regardless of that choice.
         unawaited(
           ref.read(pushNotificationServiceProvider).initializeIfNeeded(),
         );

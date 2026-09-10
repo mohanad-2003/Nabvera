@@ -1,79 +1,99 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/notifications/push_notification_service.dart';
+import 'package:nabvera/core/storage/preferences_service.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
+import 'package:nabvera/features/profile/presentation/providers/workout_schedule_controller.dart';
+import 'package:nabvera/features/profile/presentation/widgets/settings_action_row.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_card.dart';
 import 'package:nabvera/features/profile/presentation/widgets/settings_toggle_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-enum _NotificationToggle {
-  general,
-  sound,
-  doNotDisturb,
-  vibrate,
-  lockScreen,
-  reminders,
-}
-
-class NotificationSettingsPage extends StatefulWidget {
+/// Two of the six toggles this screen used to show were purely cosmetic —
+/// a local `setState` with nothing behind it, resetting the moment you
+/// left the screen. The other four (sound/vibrate/lock-screen/do-not-
+/// disturb) can't be toggles at all: on Android, a notification channel's
+/// sound/vibration/visibility are locked in at the moment the channel is
+/// first created and only the user can change them afterwards, from
+/// system Settings — no app, this one included, can override that later.
+/// So this screen now has exactly two *real* toggles (General, wired to
+/// [PreferencesService.notificationsEnabled]; Reminders, wired to the
+/// actual [WorkoutReminderScheduler] via `profile.reminderEnabled`) and
+/// one action row that opens system Settings for everything else.
+class NotificationSettingsPage extends ConsumerStatefulWidget {
   const NotificationSettingsPage({super.key});
 
   @override
-  State<NotificationSettingsPage> createState() =>
+  ConsumerState<NotificationSettingsPage> createState() =>
       _NotificationSettingsPageState();
 }
 
-class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
-  final Map<_NotificationToggle, bool> _toggles = {
-    _NotificationToggle.general: true,
-    _NotificationToggle.sound: true,
-    _NotificationToggle.doNotDisturb: false,
-    _NotificationToggle.vibrate: true,
-    _NotificationToggle.lockScreen: true,
-    _NotificationToggle.reminders: true,
-  };
+class _NotificationSettingsPageState
+    extends ConsumerState<NotificationSettingsPage> {
+  late bool _generalEnabled;
+  bool _savingReminders = false;
 
-  (IconData, String, String) _copy(
-    _NotificationToggle key,
-    AppLocalizations l10n,
-  ) => switch (key) {
-    _NotificationToggle.general => (
-      Icons.notifications_active_outlined,
-      l10n.notificationToggleGeneral,
-      l10n.notificationToggleGeneralBody,
-    ),
-    _NotificationToggle.sound => (
-      Icons.volume_up_outlined,
-      l10n.notificationToggleSound,
-      l10n.notificationToggleSoundBody,
-    ),
-    _NotificationToggle.doNotDisturb => (
-      Icons.do_not_disturb_on_outlined,
-      l10n.notificationToggleDoNotDisturb,
-      l10n.notificationToggleDoNotDisturbBody,
-    ),
-    _NotificationToggle.vibrate => (
-      Icons.vibration_rounded,
-      l10n.notificationToggleVibrate,
-      l10n.notificationToggleVibrateBody,
-    ),
-    _NotificationToggle.lockScreen => (
-      Icons.lock_outline_rounded,
-      l10n.notificationToggleLockScreen,
-      l10n.notificationToggleLockScreenBody,
-    ),
-    _NotificationToggle.reminders => (
-      Icons.alarm_outlined,
-      l10n.notificationToggleReminders,
-      l10n.notificationToggleRemindersBody,
-    ),
-  };
+  @override
+  void initState() {
+    super.initState();
+    _generalEnabled = ref.read(preferencesServiceProvider).notificationsEnabled;
+  }
+
+  Future<void> _onGeneralChanged(bool value) async {
+    setState(() => _generalEnabled = value);
+    await ref.read(preferencesServiceProvider).setNotificationsEnabled(value);
+    // Actually start/stop receiving push, not just remember the choice —
+    // see PushNotificationService's own doc comments.
+    final pushService = ref.read(pushNotificationServiceProvider);
+    if (value) {
+      await pushService.initializeIfNeeded();
+    } else {
+      await pushService.unregisterCurrentDevice();
+    }
+  }
+
+  Future<void> _onRemindersChanged(bool value) async {
+    final profile = ref.read(currentUserProfileProvider);
+    setState(() => _savingReminders = true);
+    try {
+      await saveWorkoutSchedule(
+        ref,
+        patch: {'reminderEnabled': value},
+        previousReminderEnabled: profile.reminderEnabled,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.workoutScheduleSaveFailed)));
+    } finally {
+      if (mounted) setState(() => _savingReminders = false);
+    }
+  }
+
+  Future<void> _openSystemSettings() async {
+    final opened = await openAppSettings();
+    if (!opened && mounted) {
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.notificationOpenSystemSettingsFailed)),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+    final remindersEnabled = ref.watch(
+      currentUserProfileProvider.select((p) => p.reminderEnabled),
+    );
 
     return PremiumScaffold(
       child: SingleChildScrollView(
@@ -119,20 +139,32 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               const SizedBox(height: 26),
               SettingsCard(
                 children: [
-                  for (final key in _NotificationToggle.values)
-                    Builder(
-                      builder: (context) {
-                        final (icon, title, subtitle) = _copy(key, l10n);
-                        return SettingsToggleRow(
-                          icon: icon,
-                          title: title,
-                          subtitle: subtitle,
-                          value: _toggles[key]!,
-                          onChanged:
-                              (value) => setState(() => _toggles[key] = value),
-                        );
-                      },
+                  SettingsToggleRow(
+                    icon: Icons.notifications_active_outlined,
+                    title: l10n.notificationToggleGeneral,
+                    subtitle: l10n.notificationToggleGeneralBody,
+                    value: _generalEnabled,
+                    onChanged: (value) => _onGeneralChanged(value),
+                  ),
+                  Opacity(
+                    opacity: _savingReminders ? 0.5 : 1,
+                    child: IgnorePointer(
+                      ignoring: _savingReminders,
+                      child: SettingsToggleRow(
+                        icon: Icons.alarm_outlined,
+                        title: l10n.notificationToggleReminders,
+                        subtitle: l10n.notificationToggleRemindersBody,
+                        value: remindersEnabled,
+                        onChanged: (value) => _onRemindersChanged(value),
+                      ),
                     ),
+                  ),
+                  SettingsActionRow(
+                    icon: Icons.tune_rounded,
+                    title: l10n.notificationOpenSystemSettingsTitle,
+                    subtitle: l10n.notificationOpenSystemSettingsBody,
+                    onTap: _openSystemSettings,
+                  ),
                 ],
               ),
               const SizedBox(height: 20),

@@ -3584,54 +3584,6 @@ abstract class AppLocalizations {
   /// **'Workout, nutrition & community updates'**
   String get notificationToggleGeneralBody;
 
-  /// No description provided for @notificationToggleSound.
-  ///
-  /// In en, this message translates to:
-  /// **'Sound'**
-  String get notificationToggleSound;
-
-  /// No description provided for @notificationToggleSoundBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Play a sound for new notifications'**
-  String get notificationToggleSoundBody;
-
-  /// No description provided for @notificationToggleDoNotDisturb.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t Disturb Mode'**
-  String get notificationToggleDoNotDisturb;
-
-  /// No description provided for @notificationToggleDoNotDisturbBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Silence notifications during quiet hours'**
-  String get notificationToggleDoNotDisturbBody;
-
-  /// No description provided for @notificationToggleVibrate.
-  ///
-  /// In en, this message translates to:
-  /// **'Vibrate'**
-  String get notificationToggleVibrate;
-
-  /// No description provided for @notificationToggleVibrateBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Vibrate the device on new alerts'**
-  String get notificationToggleVibrateBody;
-
-  /// No description provided for @notificationToggleLockScreen.
-  ///
-  /// In en, this message translates to:
-  /// **'Lock Screen'**
-  String get notificationToggleLockScreen;
-
-  /// No description provided for @notificationToggleLockScreenBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Show previews on the lock screen'**
-  String get notificationToggleLockScreenBody;
-
   /// No description provided for @notificationToggleReminders.
   ///
   /// In en, this message translates to:
@@ -3643,6 +3595,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily workout & meal reminders'**
   String get notificationToggleRemindersBody;
+
+  /// No description provided for @notificationOpenSystemSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound, Vibration & Lock Screen'**
+  String get notificationOpenSystemSettingsTitle;
+
+  /// No description provided for @notificationOpenSystemSettingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Controlled by your device settings — tap to open them'**
+  String get notificationOpenSystemSettingsBody;
+
+  /// No description provided for @notificationOpenSystemSettingsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open system settings'**
+  String get notificationOpenSystemSettingsFailed;
 
   /// No description provided for @passwordSettingsTitle.
   ///

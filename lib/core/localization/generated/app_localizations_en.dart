@@ -1921,39 +1921,23 @@ class AppLocalizationsEn extends AppLocalizations {
       'Workout, nutrition & community updates';
 
   @override
-  String get notificationToggleSound => 'Sound';
-
-  @override
-  String get notificationToggleSoundBody =>
-      'Play a sound for new notifications';
-
-  @override
-  String get notificationToggleDoNotDisturb => 'Don\'t Disturb Mode';
-
-  @override
-  String get notificationToggleDoNotDisturbBody =>
-      'Silence notifications during quiet hours';
-
-  @override
-  String get notificationToggleVibrate => 'Vibrate';
-
-  @override
-  String get notificationToggleVibrateBody =>
-      'Vibrate the device on new alerts';
-
-  @override
-  String get notificationToggleLockScreen => 'Lock Screen';
-
-  @override
-  String get notificationToggleLockScreenBody =>
-      'Show previews on the lock screen';
-
-  @override
   String get notificationToggleReminders => 'Reminders';
 
   @override
   String get notificationToggleRemindersBody =>
       'Daily workout & meal reminders';
+
+  @override
+  String get notificationOpenSystemSettingsTitle =>
+      'Sound, Vibration & Lock Screen';
+
+  @override
+  String get notificationOpenSystemSettingsBody =>
+      'Controlled by your device settings — tap to open them';
+
+  @override
+  String get notificationOpenSystemSettingsFailed =>
+      'Couldn\'t open system settings';
 
   @override
   String get passwordSettingsTitle => 'Password Setting';
