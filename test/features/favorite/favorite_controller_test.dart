@@ -58,6 +58,8 @@ class FakeWorkoutRepository implements WorkoutRepository {
   @override
   Future<Map<String, dynamic>> fetchRecoveryMap() async =>
       throw UnimplementedError();
+  @override
+  Future<void> deleteRoutine(String id) async {}
 }
 
 class FakeNutritionRepository implements NutritionRepository {
