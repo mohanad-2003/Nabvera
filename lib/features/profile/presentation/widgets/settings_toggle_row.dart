@@ -12,6 +12,7 @@ class SettingsToggleRow extends StatelessWidget {
     required this.subtitle,
     required this.value,
     required this.onChanged,
+    this.iconColor,
   });
 
   final IconData icon;
@@ -20,10 +21,17 @@ class SettingsToggleRow extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
+  /// Defaults to [AppThemeExtension.accentGlow] — override to differentiate
+  /// rows within the same [SettingsCard] by category (e.g. matching the
+  /// hue [NotificationCategory] already uses for the same concept
+  /// elsewhere) instead of every row reading as visually identical.
+  final Color? iconColor;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final theme = Theme.of(context);
+    final color = iconColor ?? ext.accentGlow;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -33,9 +41,9 @@ class SettingsToggleRow extends StatelessWidget {
             height: 38,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: ext.accentGlow.withValues(alpha: 0.14),
+              color: color.withValues(alpha: 0.14),
             ),
-            child: Icon(icon, color: ext.accentGlow, size: 19),
+            child: Icon(icon, color: color, size: 19),
           ),
           const SizedBox(width: 14),
           Expanded(

@@ -1,5 +1,6 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/storage/preferences_service.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
@@ -85,6 +86,7 @@ class _ManageDataPageState extends ConsumerState<ManageDataPage> {
                         value: _cameraAccess,
                         onChanged:
                             (value) => setState(() => _cameraAccess = value),
+                        iconColor: AppColors.electricOrange,
                       ),
                       SettingsToggleRow(
                         icon: Icons.location_on_outlined,
@@ -93,6 +95,7 @@ class _ManageDataPageState extends ConsumerState<ManageDataPage> {
                         value: _locationAccess,
                         onChanged:
                             (value) => setState(() => _locationAccess = value),
+                        iconColor: AppColors.aquaBlue,
                       ),
                       SettingsToggleRow(
                         icon: Icons.notifications_outlined,
@@ -121,6 +124,7 @@ class _ManageDataPageState extends ConsumerState<ManageDataPage> {
                               .read(preferencesServiceProvider)
                               .setAnalyticsEnabled(value);
                         },
+                        iconColor: AppColors.seedViolet,
                       ),
                       SettingsToggleRow(
                         icon: Icons.auto_awesome_outlined,
@@ -131,6 +135,10 @@ class _ManageDataPageState extends ConsumerState<ManageDataPage> {
                             (value) => setState(
                               () => _personalizedRecommendations = value,
                             ),
+                        // ext.success (not AppColors.success directly) —
+                        // this one's a semantic status color with real
+                        // light/dark variants, unlike the brand hues above.
+                        iconColor: ext.success,
                       ),
                     ],
                   ),

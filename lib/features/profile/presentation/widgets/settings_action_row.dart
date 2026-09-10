@@ -13,6 +13,7 @@ class SettingsActionRow extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.iconColor,
   });
 
   final IconData icon;
@@ -20,9 +21,14 @@ class SettingsActionRow extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
 
+  /// Defaults to [AppThemeExtension.accentGlow] — see the matching doc
+  /// comment on [SettingsToggleRow.iconColor].
+  final Color? iconColor;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final color = iconColor ?? ext.accentGlow;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -35,9 +41,9 @@ class SettingsActionRow extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: ext.accentGlow.withValues(alpha: 0.14),
+                color: color.withValues(alpha: 0.14),
               ),
-              child: Icon(icon, color: ext.accentGlow, size: 19),
+              child: Icon(icon, color: color, size: 19),
             ),
             const SizedBox(width: 14),
             Expanded(

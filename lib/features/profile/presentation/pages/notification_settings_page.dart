@@ -1,6 +1,7 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/notifications/push_notification_service.dart';
 import 'package:nabvera/core/storage/preferences_service.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
@@ -156,6 +157,10 @@ class _NotificationSettingsPageState
                         subtitle: l10n.notificationToggleRemindersBody,
                         value: remindersEnabled,
                         onChanged: (value) => _onRemindersChanged(value),
+                        // Matches NotificationCategory.reminder's own
+                        // accent (notification_models.dart) — the same
+                        // concept, so the same color, wherever it shows up.
+                        iconColor: AppColors.aquaBlue,
                       ),
                     ),
                   ),
@@ -164,6 +169,10 @@ class _NotificationSettingsPageState
                     title: l10n.notificationOpenSystemSettingsTitle,
                     subtitle: l10n.notificationOpenSystemSettingsBody,
                     onTap: _openSystemSettings,
+                    // Deliberately muted, not a brand accent — this row
+                    // doesn't toggle an in-app feature, it hands off to
+                    // the OS, and the color says so at a glance.
+                    iconColor: ext.textMuted,
                   ),
                 ],
               ),
