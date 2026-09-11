@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 enum SearchResultType { workout, nutrition }
 
 class SearchResultItem {
@@ -9,6 +11,7 @@ class SearchResultItem {
     required this.calories,
     required this.type,
     this.exerciseCount,
+    this.nameAr = '',
   });
 
   /// Backend `_id` — lets a tap open the real workout/recipe detail
@@ -21,6 +24,17 @@ class SearchResultItem {
   final int? calories;
   final SearchResultType type;
   final int? exerciseCount;
+
+  /// Arabic translation, from `Workout.titleAr`/`Recipe.titleAr` — empty
+  /// for an item an admin hasn't translated yet, in which case
+  /// [localizedName] falls back to [name] (same pattern as
+  /// `ArticleTip.localizedTitle`).
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
 }
 
 /// [SearchAllResults]' full state — distinguishes "haven't searched yet"

@@ -592,7 +592,7 @@ class _FeaturedResult extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    item.localizedName(context),
                     style: TextStyle(
                       fontSize: 14,
                       color: ext.textPrimary,
@@ -655,7 +655,7 @@ class _ResultTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    item.localizedName(context),
                     style: TextStyle(
                       color: ext.textPrimary,
                       fontSize: 15,

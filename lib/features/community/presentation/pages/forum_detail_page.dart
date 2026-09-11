@@ -46,6 +46,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     final comments = ref.watch(forumCommentsProvider(widget.thread.id));
 
     return PremiumScaffold(
@@ -53,7 +54,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PremiumHeader(
-            title: widget.thread.subtitle,
+            title: widget.thread.displayAuthorName(l10n),
             subtitle: widget.thread.date,
             showBack: true,
           ),
@@ -64,7 +65,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
               children: [
                 _DiscussionCard(
                   ext: ext,
-                  authorName: widget.thread.subtitle,
+                  authorName: widget.thread.displayAuthorName(l10n),
                   body: widget.thread.content,
                   isTopContribution: true,
                 ),
@@ -72,7 +73,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
                   Divider(height: 1, color: ext.glassBorder),
                   _DiscussionCard(
                     ext: ext,
-                    authorName: comment.authorName,
+                    authorName: comment.displayAuthorName(l10n),
                     body: comment.text,
                     isTopContribution: false,
                   ),
@@ -89,7 +90,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
                   Expanded(
                     child: AppTextField(
                       controller: _replyController,
-                      hint: 'Write a reply…',
+                      hint: l10n.communityReplyHint,
                     ),
                   ),
                   const SizedBox(width: 8),

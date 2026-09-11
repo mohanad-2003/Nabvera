@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart' show BuildContext, Localizations;
 
+import '../../../core/localization/generated/app_localizations.dart';
+
 class ChallengeItem {
   const ChallengeItem({
     this.id = '',
@@ -189,7 +191,6 @@ class ForumThread {
     required this.title,
     required this.subtitle,
     required this.authorAvatarUrl,
-    required this.allLabel,
     required this.date,
     required this.content,
     required this.likesCount,
@@ -199,21 +200,27 @@ class ForumThread {
 
   final String id;
   final String title;
+
+  /// The post author's display name — empty when the backend's `author`
+  /// record is missing, in which case [displayAuthorName] falls back to a
+  /// localized generic label rather than showing blank text or a
+  /// hardcoded English "Member".
   final String subtitle;
   final String? authorAvatarUrl;
-  final String allLabel;
   final String date;
   final String content;
   final int likesCount;
   final bool liked;
   final int commentsCount;
 
+  String displayAuthorName(AppLocalizations l10n) =>
+      subtitle.trim().isEmpty ? l10n.communityMember : subtitle.trim();
+
   ForumThread copyWith({int? likesCount, bool? liked}) => ForumThread(
     id: id,
     title: title,
     subtitle: subtitle,
     authorAvatarUrl: authorAvatarUrl,
-    allLabel: allLabel,
     date: date,
     content: content,
     likesCount: likesCount ?? this.likesCount,
@@ -235,9 +242,8 @@ class ForumThread {
     return ForumThread(
       id: json['_id'] as String? ?? '',
       title: content.length > 60 ? '${content.substring(0, 60)}…' : content,
-      subtitle: (author?['name'] as String?) ?? 'Member',
+      subtitle: (author?['name'] as String?) ?? '',
       authorAvatarUrl: author?['avatarUrl'] as String?,
-      allLabel: 'See All',
       date: _formatDate(json['createdAt'] as String?),
       content: content,
       likesCount: likes.length,
@@ -266,15 +272,20 @@ class ForumComment {
     required this.date,
   });
 
+  /// The commenter's display name — same empty-string/fallback contract as
+  /// `ForumThread.subtitle`.
   final String authorName;
   final String? authorAvatarUrl;
   final String text;
   final String date;
 
+  String displayAuthorName(AppLocalizations l10n) =>
+      authorName.trim().isEmpty ? l10n.communityMember : authorName.trim();
+
   factory ForumComment.fromJson(Map<String, dynamic> json) {
     final author = json['author'] as Map<String, dynamic>?;
     return ForumComment(
-      authorName: (author?['name'] as String?) ?? 'Member',
+      authorName: (author?['name'] as String?) ?? '',
       authorAvatarUrl: author?['avatarUrl'] as String?,
       text: (json['text'] as String?) ?? '',
       date: ForumThread._formatDate(json['createdAt'] as String?),

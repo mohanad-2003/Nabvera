@@ -24,7 +24,7 @@ class PopularExercises extends _$PopularExercises {
             time: '${doc['defaultSets'] ?? 3} sets',
             calories:
                 '${((doc['caloriesPerMinute'] as num?) ?? 5) * 10} Kcal',
-            difficulty: _difficultyLabel(doc['difficulty'] as String?),
+            difficulty: (doc['difficulty'] as String?) ?? 'beginner',
             videoUrl: doc['videoUrl'] as String?,
           ),
       ];
@@ -32,10 +32,4 @@ class PopularExercises extends _$PopularExercises {
       // Left empty on failure — see WorkoutListByLevel for the same pattern.
     }
   }
-
-  static String _difficultyLabel(String? value) => switch (value) {
-    'intermediate' => 'Medium',
-    'advanced' => 'Hard',
-    _ => 'Easy',
-  };
 }

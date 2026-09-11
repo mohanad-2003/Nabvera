@@ -181,6 +181,7 @@ class _ForumThreadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
 
     // No card container — the list separates threads with a divider
     // instead (see _ForumTab's SliverList).
@@ -221,7 +222,7 @@ class _ForumThreadCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    thread.subtitle.trim(),
+                    thread.displayAuthorName(l10n),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(
@@ -270,7 +271,7 @@ class _ForumThreadCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  thread.allLabel,
+                  l10n.actionSeeAll,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w800,

@@ -341,7 +341,7 @@ class _FavoriteCardState extends State<_FavoriteCard> {
                   _CategoryTag(isWorkout: isWorkout),
                   const SizedBox(height: 8),
                   Text(
-                    item.title,
+                    item.localizedTitle(context),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,

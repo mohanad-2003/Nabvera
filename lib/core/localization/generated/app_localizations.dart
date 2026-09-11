@@ -4868,6 +4868,12 @@ abstract class AppLocalizations {
   /// **'Community member'**
   String get communityMember;
 
+  /// No description provided for @communityReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a reply…'**
+  String get communityReplyHint;
+
   /// No description provided for @communityPost1.
   ///
   /// In en, this message translates to:

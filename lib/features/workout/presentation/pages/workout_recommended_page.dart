@@ -6,6 +6,7 @@ import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart';
 import 'package:nabvera/features/workout/presentation/providers/popular_exercises_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/popular_workout_card.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_hero_card.dart';
@@ -36,9 +37,10 @@ class WorkoutRecommendedPage extends ConsumerWidget {
               headerTitle: l10n.workoutRecommendationsTitle,
               heroImage: firstPopular.image,
               title: firstPopular.name,
+              titleAr: firstPopular.nameAr,
               duration: firstPopular.time,
               reps: firstPopular.calories,
-              level: firstPopular.difficulty,
+              level: exerciseDifficultyLabel(l10n, firstPopular.difficulty),
               videoUrl: firstPopular.videoUrl,
             ));
     final heroHeight = context.responsive(
@@ -70,7 +72,7 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                         ? _HeroPlaceholder(height: heroHeight)
                         : WorkoutHeroCard(
                           image: featuredData.heroImage,
-                          categoryLabel: featuredData.title,
+                          categoryLabel: featuredData.localizedTitle(context),
                           duration: featuredData.duration,
                           calories: featuredData.reps,
                           difficulty: featuredData.level,
@@ -114,7 +116,10 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                           name: item.localizedName(context),
                           duration: item.time,
                           calories: item.calories,
-                          difficulty: item.difficulty,
+                          difficulty: exerciseDifficultyLabel(
+                            l10n,
+                            item.difficulty,
+                          ),
                           onTap:
                               () => context.push(
                                 AppRoutes.exerciseDetail,
@@ -125,7 +130,10 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                                   titleAr: item.nameAr,
                                   duration: item.time,
                                   reps: item.calories,
-                                  level: item.difficulty,
+                                  level: exerciseDifficultyLabel(
+                                    l10n,
+                                    item.difficulty,
+                                  ),
                                   videoUrl: item.videoUrl,
                                 ),
                               ),

@@ -2619,6 +2619,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityMember => 'Community member';
 
   @override
+  String get communityReplyHint => 'Write a reply…';
+
+  @override
   String get communityPost1 =>
       'Just finished week 3 of the strength plan — the incline bench sit-ups are finally starting to feel manageable! Anyone else on the beginner track?';
 

@@ -2582,6 +2582,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityMember => 'عضو في المجتمع';
 
   @override
+  String get communityReplyHint => 'اكتب ردًا…';
+
+  @override
   String get communityPost1 =>
       'أنهيت للتو الأسبوع الثالث من خطة القوة — تمارين الجلوس على المقعد المائل بدأت تصبح أسهل أخيرًا! هل يوجد أحد آخر في مسار المبتدئين؟';
 

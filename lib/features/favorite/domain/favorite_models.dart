@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 enum FavoriteType { video, article }
 
 class FavoriteItem {
@@ -10,6 +12,7 @@ class FavoriteItem {
     this.calories,
     this.exercises,
     this.text,
+    this.titleAr = '',
   });
 
   /// Backend `Workout._id` or `Recipe._id`, depending on [type].
@@ -22,6 +25,17 @@ class FavoriteItem {
   final String? exercises;
   final String? text;
 
+  /// Arabic translation, from `Workout.titleAr`/`Recipe.titleAr` — empty
+  /// for an item an admin hasn't translated yet, in which case
+  /// [localizedTitle] falls back to [title] (same pattern as
+  /// `ArticleTip.localizedTitle`).
+  final String titleAr;
+
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
+          ? titleAr
+          : title;
+
   /// Builds a "video" (favorited workout) card from a `/api/workouts/:id`
   /// JSON document.
   factory FavoriteItem.fromWorkoutJson(Map<String, dynamic> json) {
@@ -30,6 +44,7 @@ class FavoriteItem {
       id: json['_id'] as String? ?? '',
       image: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
       title: (json['title'] as String?) ?? '',
+      titleAr: (json['titleAr'] as String?) ?? '',
       type: FavoriteType.video,
       duration: '${json['durationMinutes'] ?? '—'} Minutes',
       calories: '${json['estimatedCalories'] ?? '—'} Kcal',
@@ -45,6 +60,7 @@ class FavoriteItem {
       id: json['_id'] as String? ?? '',
       image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
       title: (json['title'] as String?) ?? '',
+      titleAr: (json['titleAr'] as String?) ?? '',
       type: FavoriteType.article,
       duration: '${json['prepTimeMinutes'] ?? '—'} Minutes',
       calories: '${nutrition['calories'] ?? '—'} Cal',

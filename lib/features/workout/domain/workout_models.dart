@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart' show BuildContext, Localizations;
 
+import '../../../core/localization/generated/app_localizations.dart';
+
 /// Replaces the `Map<String, dynamic>`/`RxMap` items used throughout the
 /// legacy workout controllers with typed, immutable value objects.
 enum WorkoutLevel { beginner, intermediate, advanced }
@@ -228,7 +230,7 @@ class PopularExerciseItem {
     required this.name,
     required this.time,
     required this.calories,
-    this.difficulty = 'Easy',
+    this.difficulty = 'beginner',
     this.videoUrl,
     this.nameAr = '',
   });
@@ -237,6 +239,11 @@ class PopularExerciseItem {
   final String name;
   final String time;
   final String calories;
+
+  /// Raw backend value (`Exercise.difficulty`: `beginner`/`intermediate`/
+  /// `advanced`) — the widget layer maps this to a localized label via
+  /// [exerciseDifficultyLabel] instead of showing it verbatim (same
+  /// contract as `MealItem.difficulty`).
   final String difficulty;
 
   /// From the backend's `Exercise.videoUrl` — null for exercises without one.
@@ -317,3 +324,15 @@ class CreateRoutineState {
     selected: selected ?? this.selected,
   );
 }
+
+/// Maps the backend's raw `Exercise.difficulty`/`Workout.difficulty`
+/// (`beginner`/`intermediate`/`advanced`) to a localized label — shared by
+/// every widget that renders a difficulty chip for an exercise or workout
+/// outside the Create Routine flow (which already has its own
+/// `WorkoutLevel`-typed equivalent).
+String exerciseDifficultyLabel(AppLocalizations l10n, String? difficulty) =>
+    switch (difficulty) {
+      'intermediate' => l10n.workoutLevelIntermediate,
+      'advanced' => l10n.workoutLevelAdvanced,
+      _ => l10n.workoutLevelBeginner,
+    };
