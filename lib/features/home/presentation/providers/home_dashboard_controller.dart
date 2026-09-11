@@ -5,6 +5,7 @@ import 'package:nabvera/features/home/domain/weekly_progress_calculator.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
 import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -49,11 +50,22 @@ class AlternativeWorkoutSuggestion {
     required this.id,
     required this.title,
     required this.reasonCode,
+    this.titleAr = '',
   });
 
   final String id;
   final String title;
   final String reasonCode;
+
+  /// Arabic translation, from `Workout.titleAr` — empty when the admin
+  /// hasn't translated this workout yet, in which case [localizedTitle]
+  /// falls back to [title] (same pattern as `ArticleTip.localizedTitle`).
+  final String titleAr;
+
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
+          ? titleAr
+          : title;
 
   static AlternativeWorkoutSuggestion? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -63,6 +75,7 @@ class AlternativeWorkoutSuggestion {
       id: (workout['_id'] as String?) ?? '',
       title: (workout['title'] as String?) ?? '',
       reasonCode: (json['reasonCode'] as String?) ?? '',
+      titleAr: (workout['titleAr'] as String?) ?? '',
     );
   }
 }
@@ -82,6 +95,7 @@ class HomeFeaturedWorkout {
     required this.reasonCode,
     required this.recoveryMap,
     this.alternative,
+    this.titleAr = '',
   });
 
   final String id;
@@ -93,6 +107,16 @@ class HomeFeaturedWorkout {
   final String reasonCode;
   final List<MuscleGroupRecovery> recoveryMap;
   final AlternativeWorkoutSuggestion? alternative;
+
+  /// Arabic translation, from `Workout.titleAr` — empty when the admin
+  /// hasn't translated this workout yet, in which case [localizedTitle]
+  /// falls back to [title] (same pattern as `ArticleTip.localizedTitle`).
+  final String titleAr;
+
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
+          ? titleAr
+          : title;
 }
 
 @riverpod
@@ -119,6 +143,7 @@ class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
       state = HomeFeaturedWorkout(
         id: (workout['_id'] as String?) ?? '',
         title: (workout['title'] as String?) ?? '',
+        titleAr: (workout['titleAr'] as String?) ?? '',
         durationMinutes: (workout['durationMinutes'] as num?)?.toInt() ?? 0,
         estimatedCalories: (workout['estimatedCalories'] as num?)?.toInt() ?? 0,
         difficulty: (workout['difficulty'] as String?) ?? 'beginner',

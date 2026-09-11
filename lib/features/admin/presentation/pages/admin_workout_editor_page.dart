@@ -42,6 +42,9 @@ class _AdminWorkoutEditorPageState
   late final _title = TextEditingController(
     text: widget.existing?['title'] as String?,
   );
+  late final _titleAr = TextEditingController(
+    text: widget.existing?['titleAr'] as String?,
+  );
   late final _description = TextEditingController(
     text: widget.existing?['description'] as String?,
   );
@@ -66,6 +69,7 @@ class _AdminWorkoutEditorPageState
   @override
   void dispose() {
     _title.dispose();
+    _titleAr.dispose();
     _description.dispose();
     _imageUrl.dispose();
     _duration.dispose();
@@ -78,6 +82,10 @@ class _AdminWorkoutEditorPageState
     setState(() => _saving = true);
     final payload = <String, dynamic>{
       'title': _title.text.trim(),
+      // Optional Arabic translation — left as '' when not filled in, which
+      // the Flutter app treats as "not translated yet" and falls back to
+      // the English title above (see `RecommendedWorkout.localizedTitle`).
+      'titleAr': _titleAr.text.trim(),
       'description': _description.text.trim(),
       'coverImageUrl': _imageUrl.text.trim(),
       'category': _category,
@@ -154,6 +162,27 @@ class _AdminWorkoutEditorPageState
                   controller: _imageUrl,
                   label: l10n.adminFieldImageUrl,
                   flat: true,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.adminArabicTranslationHeading,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.adminArabicTranslationSubtitle,
+                  style: TextStyle(color: ext.textMuted, fontSize: 12),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _titleAr,
+                  label: l10n.adminFieldTitleAr,
+                  flat: true,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(

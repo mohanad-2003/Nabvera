@@ -478,7 +478,7 @@ class _TodayHeroCard extends ConsumerWidget {
     );
     ref.watch(weeklyActivityControllerProvider);
 
-    final title = featured?.title ?? l10n.homeHeroTitle;
+    final title = featured?.localizedTitle(context) ?? l10n.homeHeroTitle;
     final duration = featured?.durationMinutes ?? 42;
     final calories = featured?.estimatedCalories ?? 380;
     final profile = ref.watch(currentUserProfileProvider);
@@ -774,7 +774,7 @@ class _AlternativeSuggestion extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  alternative.title,
+                  alternative.localizedTitle(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -1538,7 +1538,7 @@ class _WorkoutCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  workout.title,
+                  workout.localizedTitle(context),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(

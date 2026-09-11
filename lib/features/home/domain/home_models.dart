@@ -17,6 +17,7 @@ class RecommendedWorkout {
     required this.title,
     required this.duration,
     required this.calories,
+    this.titleAr = '',
   });
 
   final String id;
@@ -24,6 +25,20 @@ class RecommendedWorkout {
   final String title;
   final String duration;
   final String calories;
+
+  /// Arabic translation, from `Workout.titleAr` — empty for a workout an
+  /// admin hasn't translated yet, in which case [localizedTitle] falls
+  /// back to [title] rather than showing blank text (same pattern as
+  /// `ArticleTip.localizedTitle`).
+  final String titleAr;
+
+  /// The title to display for [context]'s current locale — Arabic when the
+  /// app is in Arabic *and* this workout has an Arabic title, English
+  /// otherwise.
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
+          ? titleAr
+          : title;
 
   /// Builds a card from a `/api/workouts` JSON document.
   factory RecommendedWorkout.fromJson(Map<String, dynamic> json) {
@@ -33,6 +48,7 @@ class RecommendedWorkout {
       title: (json['title'] as String?) ?? '',
       duration: '${json['durationMinutes'] ?? '—'} Minutes',
       calories: '${json['estimatedCalories'] ?? '—'} Kcal',
+      titleAr: (json['titleAr'] as String?) ?? '',
     );
   }
 }
