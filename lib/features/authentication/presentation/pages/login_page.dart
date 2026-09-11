@@ -130,28 +130,49 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               transparent: true,
                             ),
                             const SizedBox(height: 6),
-                            Row(
+                            // Wrap, not Row: on every phone width this app
+                            // actually ships to, both groups sit on one
+                            // line exactly as before (spaceBetween pushes
+                            // them to opposite edges same as the old
+                            // Row+Spacer did). Only on the narrowest
+                            // supported screens does "Forgot password?"
+                            // genuinely not fit next to the checkbox +
+                            // label at any reasonable text size — Wrap
+                            // drops it to its own line there instead of
+                            // overflowing or illegibly truncating either
+                            // string.
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              runSpacing: 4,
                               children: [
-                                SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Checkbox(
-                                    value: _rememberMe,
-                                    onChanged:
-                                        (value) => setState(
-                                          () => _rememberMe = value ?? false,
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: _rememberMe,
+                                        onChanged:
+                                            (value) => setState(
+                                              () =>
+                                                  _rememberMe = value ?? false,
+                                            ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      l10n.authRememberMe,
+                                      style: TextStyle(color: ext.textMuted),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  l10n.authRememberMe,
-                                  style: TextStyle(color: ext.textMuted),
-                                ),
-                                const Spacer(),
                                 TextButton(
                                   onPressed:
                                       () => context.push(
