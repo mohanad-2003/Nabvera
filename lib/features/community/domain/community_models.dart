@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 class ChallengeItem {
   const ChallengeItem({
     this.id = '',
@@ -8,6 +10,8 @@ class ChallengeItem {
     this.caloriesLabel,
     this.type,
     this.targetValue,
+    this.nameAr = '',
+    this.detailsAr = '',
   });
 
   /// Backend `Challenge._id` — needed to call `/challenges/:id/join`, etc.
@@ -17,6 +21,24 @@ class ChallengeItem {
   final String details;
   final String? durationLabel;
   final String? caloriesLabel;
+
+  /// Arabic translations, from `Challenge.nameAr`/`detailsAr` — empty for a
+  /// challenge an admin hasn't translated yet, in which case
+  /// [localizedName]/[localizedDetails] fall back to [name]/[details]
+  /// (same pattern as `ArticleTip.localizedTitle`).
+  final String nameAr;
+  final String detailsAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
+
+  String localizedDetails(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              detailsAr.isNotEmpty
+          ? detailsAr
+          : details;
 
   /// One of `workouts_count` / `active_minutes` / `workout_streak` /
   /// `weekly_consistency` (see `backend/src/utils/challengeProgressHelpers.
@@ -36,7 +58,9 @@ class ChallengeItem {
       id: (json['_id'] as String?) ?? '',
       image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['name'] as String?) ?? '',
+      nameAr: (json['nameAr'] as String?) ?? '',
       details: (json['details'] as String?) ?? '',
+      detailsAr: (json['detailsAr'] as String?) ?? '',
       durationLabel: json['durationLabel'] as String?,
       caloriesLabel: json['caloriesLabel'] as String?,
       type: json['type'] as String?,

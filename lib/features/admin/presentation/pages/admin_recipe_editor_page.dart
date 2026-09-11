@@ -32,8 +32,14 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
   late final _title = TextEditingController(
     text: widget.existing?['title'] as String?,
   );
+  late final _titleAr = TextEditingController(
+    text: widget.existing?['titleAr'] as String?,
+  );
   late final _description = TextEditingController(
     text: widget.existing?['description'] as String?,
+  );
+  late final _descriptionAr = TextEditingController(
+    text: widget.existing?['descriptionAr'] as String?,
   );
   late final _imageUrl = TextEditingController(
     text: widget.existing?['imageUrl'] as String?,
@@ -75,7 +81,9 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
   @override
   void dispose() {
     _title.dispose();
+    _titleAr.dispose();
     _description.dispose();
+    _descriptionAr.dispose();
     _imageUrl.dispose();
     _prepTime.dispose();
     _calories.dispose();
@@ -102,7 +110,12 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
 
     final payload = <String, dynamic>{
       'title': _title.text.trim(),
+      // Optional Arabic translations — left as '' when not filled in, which
+      // the Flutter app treats as "not translated yet" and falls back to
+      // the English fields above (see `MealItem.localizedName`).
+      'titleAr': _titleAr.text.trim(),
       'description': _description.text.trim(),
+      'descriptionAr': _descriptionAr.text.trim(),
       'imageUrl': _imageUrl.text.trim(),
       'category': _category,
       'difficulty': _difficulty,
@@ -188,6 +201,35 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
                   controller: _imageUrl,
                   label: l10n.adminFieldImageUrl,
                   flat: true,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.adminArabicTranslationHeading,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.adminArabicTranslationSubtitle,
+                  style: TextStyle(color: ext.textMuted, fontSize: 12),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _titleAr,
+                  label: l10n.adminFieldTitleAr,
+                  flat: true,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _descriptionAr,
+                  label: l10n.adminFieldDescriptionAr,
+                  flat: true,
+                  maxLines: 3,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(

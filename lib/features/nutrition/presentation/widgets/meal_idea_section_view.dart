@@ -72,7 +72,7 @@ class MealIdeaSectionView extends StatelessWidget {
                         width: 190,
                         child: PremiumRecipeCard(
                           image: item.image,
-                          name: item.name,
+                          name: item.localizedName(context),
                           time: recipeMinutesLabel(
                             l10n,
                             item.prepTimeMinutes,
@@ -130,7 +130,7 @@ class MealIdeaSectionView extends StatelessWidget {
                     final item = section.recipes[index];
                     return PremiumRecipeListTile(
                       image: item.image,
-                      name: item.name,
+                      name: item.localizedName(context),
                       time: recipeMinutesLabel(
                         l10n,
                         item.prepTimeMinutes,
@@ -271,7 +271,7 @@ class _TopRecipeHero extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        meal.name,
+                        meal.localizedName(context),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleLarge?.copyWith(

@@ -64,7 +64,7 @@ class MealDetailHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                meal.name,
+                meal.localizedName(context),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: ext.textPrimary,
                   height: 1.08,
@@ -227,7 +227,7 @@ class MealDetailHeader extends StatelessWidget {
                   width: 190,
                   child: PremiumRecipeCard(
                     image: item.image,
-                    name: item.name,
+                    name: item.localizedName(context),
                     time: recipeMinutesLabel(
                       l10n,
                       item.prepTimeMinutes,

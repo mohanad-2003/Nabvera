@@ -5540,6 +5540,18 @@ abstract class AppLocalizations {
   /// **'Title (Arabic)'**
   String get adminFieldTitleAr;
 
+  /// No description provided for @adminFieldNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get adminFieldNameAr;
+
+  /// No description provided for @adminFieldDetailsAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Details (Arabic)'**
+  String get adminFieldDetailsAr;
+
   /// No description provided for @adminFieldDescriptionAr.
   ///
   /// In en, this message translates to:

@@ -413,7 +413,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                   final isAdded = controller.isSelected(entry.id);
                   return ExerciseListTile(
                     image: entry.image,
-                    name: entry.name,
+                    name: entry.localizedName(context),
                     muscleGroup: _muscleGroupLabel(entry.muscleGroup, l10n),
                     setsRepsLabel: l10n.createRoutineSetsReps(
                       entry.defaultSets,
@@ -474,7 +474,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                       ),
                       child: SelectedExerciseItem(
                         image: entry.image,
-                        name: '${index + 1}. ${entry.name}',
+                        name: '${index + 1}. ${entry.localizedName(context)}',
                         sets: selection.sets,
                         reps: selection.reps,
                         setsLabel: l10n.createRoutineSetsLabel,

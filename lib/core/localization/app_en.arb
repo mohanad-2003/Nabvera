@@ -1301,6 +1301,8 @@
   "adminArabicTranslationHeading": "Arabic translation (optional)",
   "adminArabicTranslationSubtitle": "Shown when the app is in Arabic; falls back to English above if left blank.",
   "adminFieldTitleAr": "Title (Arabic)",
+  "adminFieldNameAr": "Name (Arabic)",
+  "adminFieldDetailsAr": "Details (Arabic)",
   "adminFieldDescriptionAr": "Description (Arabic)",
   "adminFieldContentAr": "Content (Arabic)",
   "adminFieldChallengeType": "Challenge type",

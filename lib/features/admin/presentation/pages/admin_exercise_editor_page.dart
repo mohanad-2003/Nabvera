@@ -48,6 +48,9 @@ class _AdminExerciseEditorPageState
   late final _name = TextEditingController(
     text: widget.existing?['name'] as String?,
   );
+  late final _nameAr = TextEditingController(
+    text: widget.existing?['nameAr'] as String?,
+  );
   late final _description = TextEditingController(
     text: widget.existing?['description'] as String?,
   );
@@ -69,6 +72,7 @@ class _AdminExerciseEditorPageState
   @override
   void dispose() {
     _name.dispose();
+    _nameAr.dispose();
     _description.dispose();
     _imageUrl.dispose();
     _videoUrl.dispose();
@@ -80,6 +84,10 @@ class _AdminExerciseEditorPageState
     setState(() => _saving = true);
     final payload = <String, dynamic>{
       'name': _name.text.trim(),
+      // Optional Arabic translation — left as '' when not filled in, which
+      // the Flutter app treats as "not translated yet" and falls back to
+      // the English name above (see `RoutineExercise.localizedName`).
+      'nameAr': _nameAr.text.trim(),
       'description': _description.text.trim(),
       'imageUrl': _imageUrl.text.trim(),
       'videoUrl': _videoUrl.text.trim(),
@@ -160,6 +168,27 @@ class _AdminExerciseEditorPageState
                   controller: _videoUrl,
                   label: l10n.adminFieldVideoUrl,
                   flat: true,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.adminArabicTranslationHeading,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.adminArabicTranslationSubtitle,
+                  style: TextStyle(color: ext.textMuted, fontSize: 12),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _nameAr,
+                  label: l10n.adminFieldNameAr,
+                  flat: true,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _Dropdown(

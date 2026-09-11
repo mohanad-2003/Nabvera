@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 /// Replaces the `Map<String, dynamic>`/`RxMap` items used throughout the
 /// legacy workout controllers with typed, immutable value objects.
 enum WorkoutLevel { beginner, intermediate, advanced }
@@ -34,6 +36,7 @@ class WorkoutListItem {
     this.calories,
     this.exercises,
     this.isFavorite = false,
+    this.nameAr = '',
   });
 
   /// Backend `Workout._id` — empty for the few remaining pieces of curated
@@ -46,6 +49,16 @@ class WorkoutListItem {
   final String? exercises;
   final bool isFavorite;
 
+  /// Arabic translation, from `Workout.titleAr` — empty for a workout an
+  /// admin hasn't translated yet, in which case [localizedName] falls back
+  /// to [name] (same pattern as `ArticleTip.localizedTitle`).
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
+
   WorkoutListItem copyWith({bool? isFavorite}) => WorkoutListItem(
     id: id,
     image: image,
@@ -54,6 +67,7 @@ class WorkoutListItem {
     calories: calories,
     exercises: exercises,
     isFavorite: isFavorite ?? this.isFavorite,
+    nameAr: nameAr,
   );
 
   /// Builds a display item from a `/api/workouts` JSON document — falls
@@ -68,6 +82,7 @@ class WorkoutListItem {
       id: json['_id'] as String? ?? '',
       image: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['title'] as String?) ?? '',
+      nameAr: (json['titleAr'] as String?) ?? '',
       time: '${json['durationMinutes'] ?? '—'} Minutes',
       calories: '${json['estimatedCalories'] ?? '—'} Kcal',
       exercises: exerciseCount == 0 ? null : '$exerciseCount exercises',
@@ -88,6 +103,7 @@ class RoutineExercise {
     this.defaultSets = 3,
     this.defaultReps = 12,
     this.isFavorite = false,
+    this.nameAr = '',
   });
 
   final String id;
@@ -99,6 +115,16 @@ class RoutineExercise {
   final int defaultReps;
   final bool isFavorite;
 
+  /// Arabic translation, from `Exercise.nameAr` — empty for an exercise an
+  /// admin hasn't translated yet, in which case [localizedName] falls back
+  /// to [name] (same pattern as `ArticleTip.localizedTitle`).
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
+
   RoutineExercise copyWith({bool? isFavorite}) => RoutineExercise(
     id: id,
     image: image,
@@ -108,6 +134,7 @@ class RoutineExercise {
     defaultSets: defaultSets,
     defaultReps: defaultReps,
     isFavorite: isFavorite ?? this.isFavorite,
+    nameAr: nameAr,
   );
 
   /// Builds a library entry from a `/api/exercises` JSON document.
@@ -118,6 +145,7 @@ class RoutineExercise {
       id: json['_id'] as String? ?? '',
       image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['name'] as String?) ?? '',
+      nameAr: (json['nameAr'] as String?) ?? '',
       muscleGroup: muscleGroupFromApi(json['muscleGroup'] as String?),
       time: '${json['defaultSets'] ?? 3} sets',
       defaultSets: json['defaultSets'] as int? ?? 3,
@@ -202,6 +230,7 @@ class PopularExerciseItem {
     required this.calories,
     this.difficulty = 'Easy',
     this.videoUrl,
+    this.nameAr = '',
   });
 
   final String image;
@@ -212,6 +241,16 @@ class PopularExerciseItem {
 
   /// From the backend's `Exercise.videoUrl` — null for exercises without one.
   final String? videoUrl;
+
+  /// Arabic translation, from `Exercise.nameAr` — empty for an exercise an
+  /// admin hasn't translated yet, in which case [localizedName] falls back
+  /// to [name] (same pattern as `ArticleTip.localizedTitle`).
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
 }
 
 class WeeklyRound {

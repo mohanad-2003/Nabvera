@@ -126,7 +126,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                       bottom: 16,
                       right: 16,
                       child: Text(
-                        data.title,
+                        data.localizedTitle(context),
                         style: theme.textTheme.headlineSmall?.copyWith(
                           color: AppColors.lightSurface,
                           fontWeight: FontWeight.w900,

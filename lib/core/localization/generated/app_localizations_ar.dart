@@ -2950,6 +2950,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminFieldTitleAr => 'العنوان (عربي)';
 
   @override
+  String get adminFieldNameAr => 'الاسم (عربي)';
+
+  @override
+  String get adminFieldDetailsAr => 'التفاصيل (عربي)';
+
+  @override
   String get adminFieldDescriptionAr => 'الوصف (عربي)';
 
   @override

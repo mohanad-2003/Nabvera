@@ -964,6 +964,8 @@
   "adminArabicTranslationHeading": "الترجمة العربية (اختياري)",
   "adminArabicTranslationSubtitle": "بتظهر لما التطبيق يكون بالعربي؛ لو سبتها فاضية هيظهر النص الإنجليزي فوق بدالها.",
   "adminFieldTitleAr": "العنوان (عربي)",
+  "adminFieldNameAr": "الاسم (عربي)",
+  "adminFieldDetailsAr": "التفاصيل (عربي)",
   "adminFieldDescriptionAr": "الوصف (عربي)",
   "adminFieldContentAr": "المحتوى (عربي)",
   "adminFieldChallengeType": "نوع التحدي",

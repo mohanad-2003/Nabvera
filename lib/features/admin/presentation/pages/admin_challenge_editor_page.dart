@@ -37,7 +37,9 @@ const _kChallengeTypes = [
 class _AdminChallengeEditorPageState
     extends ConsumerState<AdminChallengeEditorPage> {
   final _name = TextEditingController();
+  final _nameAr = TextEditingController();
   final _details = TextEditingController();
+  final _detailsAr = TextEditingController();
   final _imageUrl = TextEditingController();
   final _durationLabel = TextEditingController();
   final _caloriesLabel = TextEditingController();
@@ -52,7 +54,9 @@ class _AdminChallengeEditorPageState
   @override
   void dispose() {
     _name.dispose();
+    _nameAr.dispose();
     _details.dispose();
+    _detailsAr.dispose();
     _imageUrl.dispose();
     _durationLabel.dispose();
     _caloriesLabel.dispose();
@@ -66,7 +70,12 @@ class _AdminChallengeEditorPageState
     final targetValue = int.tryParse(_targetValue.text.trim());
     final payload = <String, dynamic>{
       'name': _name.text.trim(),
+      // Optional Arabic translations — left as '' when not filled in, which
+      // the Flutter app treats as "not translated yet" and falls back to
+      // the English fields above (see `ChallengeItem.localizedName`).
+      'nameAr': _nameAr.text.trim(),
       'details': _details.text.trim(),
+      'detailsAr': _detailsAr.text.trim(),
       'imageUrl': _imageUrl.text.trim(),
       'durationLabel': _durationLabel.text.trim(),
       'caloriesLabel': _caloriesLabel.text.trim(),
@@ -143,6 +152,35 @@ class _AdminChallengeEditorPageState
                   controller: _imageUrl,
                   label: l10n.adminFieldImageUrl,
                   flat: true,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  l10n.adminArabicTranslationHeading,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.adminArabicTranslationSubtitle,
+                  style: TextStyle(color: ext.textMuted, fontSize: 12),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _nameAr,
+                  label: l10n.adminFieldNameAr,
+                  flat: true,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _detailsAr,
+                  label: l10n.adminFieldDetailsAr,
+                  flat: true,
+                  maxLines: 3,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(

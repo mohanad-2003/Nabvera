@@ -111,7 +111,7 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                         final item = popular[index];
                         return PopularWorkoutCard(
                           image: item.image,
-                          name: item.name,
+                          name: item.localizedName(context),
                           duration: item.time,
                           calories: item.calories,
                           difficulty: item.difficulty,
@@ -122,6 +122,7 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                                   headerTitle: l10n.workoutRecommendationsTitle,
                                   heroImage: item.image,
                                   title: item.name,
+                                  titleAr: item.nameAr,
                                   duration: item.time,
                                   reps: item.calories,
                                   level: item.difficulty,

@@ -240,7 +240,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                     child: FeaturedCard(
                       image: data.heroImage,
                       badge: l10n.workoutTrainingOfTheDay.toUpperCase(),
-                      title: data.heroLabel,
+                      title: data.localizedHeroLabel(context),
                       metas: [
                         FeaturedCardMeta(icon: AppIcons.time, label: data.time),
                         FeaturedCardMeta(

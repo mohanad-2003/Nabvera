@@ -57,7 +57,7 @@ class RoundItemTile extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            item.name,
+                            item.localizedName(context),
                             style: TextStyle(
                               color: ext.textPrimary,
                               fontWeight: FontWeight.bold,

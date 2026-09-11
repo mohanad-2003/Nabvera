@@ -168,7 +168,7 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                         ),
                         const SizedBox(height: 14),
                         Text(
-                          challenge.name,
+                          challenge.localizedName(context),
                           style: Theme.of(
                             context,
                           ).textTheme.headlineSmall?.copyWith(
@@ -179,7 +179,7 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          challenge.details,
+                          challenge.localizedDetails(context),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(
@@ -343,7 +343,9 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                                         AppRoutes.weeklyChallenge,
                                         extra: {
                                           'image': challenge.image,
-                                          'name': challenge.name,
+                                          'name': challenge.localizedName(
+                                            context,
+                                          ),
                                         },
                                       ),
                                   child: Padding(

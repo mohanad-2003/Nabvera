@@ -142,14 +142,14 @@ class NutritionPage extends ConsumerWidget {
               final item = recommended[index];
               return PremiumRecipeCard(
                 image: item.image,
-                name: item.name,
+                name: item.localizedName(context),
                 time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
                 calories: recipeCaloriesLabel(
                   l10n,
                   item.caloriesValue,
                   item.calories,
                 ),
-                subtitle: item.subtitle,
+                subtitle: item.localizedSubtitle(context),
                 protein: item.protein,
                 carbs: item.carbs,
                 fat: item.fat,
@@ -189,7 +189,7 @@ class NutritionPage extends ConsumerWidget {
               final item = recipes[index];
               return PremiumRecipeListTile(
                 image: item.image,
-                name: item.name,
+                name: item.localizedName(context),
                 time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
                 calories: recipeCaloriesLabel(
                   l10n,

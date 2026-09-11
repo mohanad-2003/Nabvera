@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+
 import '../../../core/localization/generated/app_localizations.dart';
 
 /// Replaces the `Map<String, dynamic>` meal entries used throughout the
@@ -17,6 +19,8 @@ class MealItem {
     this.difficulty,
     this.prepTimeMinutes,
     this.caloriesValue,
+    this.nameAr = '',
+    this.subtitleAr = '',
   });
 
   /// Backend `Recipe._id` — used to fetch the full detail on tap and to
@@ -30,6 +34,24 @@ class MealItem {
   /// Short one-line description shown under the name on grid cards, so no
   /// card ever renders as a bare photo without context.
   final String subtitle;
+
+  /// Arabic translations, from `Recipe.titleAr`/`descriptionAr` — empty for
+  /// a recipe an admin hasn't translated yet, in which case
+  /// [localizedName]/[localizedSubtitle] fall back to [name]/[subtitle]
+  /// (same pattern as `ArticleTip.localizedTitle`).
+  final String nameAr;
+  final String subtitleAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
+
+  String localizedSubtitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              subtitleAr.isNotEmpty
+          ? subtitleAr
+          : subtitle;
 
   /// Optional macro/quality metadata for the premium recipe card. Null when
   /// not supplied by a given mock source — cards render gracefully without
@@ -57,7 +79,9 @@ class MealItem {
       id: json['_id'] as String? ?? '',
       image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['title'] as String?) ?? '',
+      nameAr: (json['titleAr'] as String?) ?? '',
       subtitle: (json['description'] as String?) ?? '',
+      subtitleAr: (json['descriptionAr'] as String?) ?? '',
       time: '${minutes ?? '—'} Minutes',
       calories: '${calories ?? '—'} Cal',
       prepTimeMinutes: minutes,
@@ -93,6 +117,7 @@ class MealDetail {
     this.caloriesValue,
     this.similarRecipes = const [],
     this.category,
+    this.nameAr = '',
   });
 
   final String image;
@@ -101,6 +126,15 @@ class MealDetail {
   final String calories;
   final List<String> ingredients;
   final List<String> preparation;
+
+  /// Arabic translation, from `Recipe.titleAr` — same fallback contract as
+  /// `MealItem.nameAr`.
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
 
   /// Identity used to look up/toggle favorite state; null when the detail
   /// page is opened for a screen that doesn't track favorites.
@@ -153,6 +187,7 @@ class MealDetail {
     return MealDetail(
       image: (json['imageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['title'] as String?) ?? '',
+      nameAr: (json['titleAr'] as String?) ?? '',
       time: '${minutes ?? '—'} Minutes',
       calories: '${calories ?? '—'} Cal',
       prepTimeMinutes: minutes,

@@ -48,7 +48,7 @@ class WorkoutListCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        item.name,
+                        item.localizedName(context),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

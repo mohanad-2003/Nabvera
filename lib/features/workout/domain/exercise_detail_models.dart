@@ -19,6 +19,7 @@ class ExerciseDetailData {
     this.muscleGroup = 'Full Body',
     this.equipment = 'Bodyweight',
     this.videoUrl,
+    this.titleAr = '',
   });
 
   final String headerTitle;
@@ -34,6 +35,16 @@ class ExerciseDetailData {
   /// From the backend's `Exercise.videoUrl` — null for curated/mock content
   /// that has no real exercise behind it.
   final String? videoUrl;
+
+  /// Arabic translation, from `Exercise.nameAr` — empty for an exercise an
+  /// admin hasn't translated yet, in which case [localizedTitle] falls
+  /// back to [title] (same pattern as `ArticleTip.localizedTitle`).
+  final String titleAr;
+
+  String localizedTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
+          ? titleAr
+          : title;
 }
 
 /// A single tappable round entry inside a [CategoryDetailData] round group.
@@ -44,6 +55,7 @@ class RoundExerciseItem {
     required this.reps,
     required this.accent,
     this.exerciseDetail,
+    this.nameAr = '',
   });
 
   final String name;
@@ -55,6 +67,15 @@ class RoundExerciseItem {
   /// this data; otherwise the item is inert (matches legacy behavior where
   /// most round items had no `onTap`).
   final ExerciseDetailData? exerciseDetail;
+
+  /// Arabic translation, from `Exercise.nameAr` — same fallback contract
+  /// as [ExerciseDetailData.titleAr].
+  final String nameAr;
+
+  String localizedName(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
+          ? nameAr
+          : name;
 }
 
 class RoundGroup {
@@ -79,6 +100,7 @@ class CategoryDetailData {
     this.workoutId,
     this.durationMinutes = 0,
     this.estimatedCalories = 0,
+    this.heroLabelAr = '',
   });
 
   final String headerTitle;
@@ -97,6 +119,16 @@ class CategoryDetailData {
   final String? workoutId;
   final int durationMinutes;
   final int estimatedCalories;
+
+  /// Arabic translation, from `Workout.titleAr` — same fallback contract
+  /// as `ExerciseDetailData.titleAr`.
+  final String heroLabelAr;
+
+  String localizedHeroLabel(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              heroLabelAr.isNotEmpty
+          ? heroLabelAr
+          : heroLabel;
 
   static const _accents = [
     AppColors.seedViolet,
@@ -140,6 +172,7 @@ class CategoryDetailData {
       headerTitle: _difficultyLabels[difficulty] ?? 'Workout',
       heroImage: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
       heroLabel: (json['title'] as String?) ?? '',
+      heroLabelAr: (json['titleAr'] as String?) ?? '',
       time: '${json['durationMinutes'] ?? '—'} Minutes',
       calories: '${json['estimatedCalories'] ?? '—'} Kcal',
       levelLabel: _difficultyLabels[difficulty] ?? 'Beginner',
@@ -156,12 +189,14 @@ class CategoryDetailData {
   ) {
     final exercise = entry['exercise'] as Map<String, dynamic>;
     final name = (exercise['name'] as String?) ?? '';
+    final nameAr = (exercise['nameAr'] as String?) ?? '';
     final sets = (entry['sets'] as num?) ?? (exercise['defaultSets'] as num?) ?? 3;
     final reps = (entry['reps'] as num?) ?? (exercise['defaultReps'] as num?) ?? 12;
     final image = (exercise['imageUrl'] as String?) ?? 'assets/workout.png';
 
     return RoundExerciseItem(
       name: name,
+      nameAr: nameAr,
       time: '$sets sets',
       reps: '${reps}x Reps',
       accent: _accents[index % _accents.length],
@@ -169,6 +204,7 @@ class CategoryDetailData {
         headerTitle: name,
         heroImage: image,
         title: name,
+        titleAr: nameAr,
         duration: '$sets sets',
         reps: '${reps}x Reps',
         muscleGroup:

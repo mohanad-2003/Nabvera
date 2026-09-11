@@ -20,6 +20,7 @@ class PopularExercises extends _$PopularExercises {
           PopularExerciseItem(
             image: (doc['imageUrl'] as String?) ?? 'assets/workout.png',
             name: (doc['name'] as String?) ?? '',
+            nameAr: (doc['nameAr'] as String?) ?? '',
             time: '${doc['defaultSets'] ?? 3} sets',
             calories:
                 '${((doc['caloriesPerMinute'] as num?) ?? 5) * 10} Kcal',

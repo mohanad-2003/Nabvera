@@ -2994,6 +2994,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminFieldTitleAr => 'Title (Arabic)';
 
   @override
+  String get adminFieldNameAr => 'Name (Arabic)';
+
+  @override
+  String get adminFieldDetailsAr => 'Details (Arabic)';
+
+  @override
   String get adminFieldDescriptionAr => 'Description (Arabic)';
 
   @override
