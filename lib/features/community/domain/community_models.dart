@@ -223,18 +223,19 @@ class ForumThread {
   String displayAuthorName(AppLocalizations l10n) =>
       subtitle.trim().isEmpty ? l10n.communityMember : subtitle.trim();
 
-  ForumThread copyWith({int? likesCount, bool? liked}) => ForumThread(
-    id: id,
-    title: title,
-    subtitle: subtitle,
-    authorAvatarUrl: authorAvatarUrl,
-    date: date,
-    content: content,
-    likesCount: likesCount ?? this.likesCount,
-    liked: liked ?? this.liked,
-    commentsCount: commentsCount,
-    isOwnPost: isOwnPost,
-  );
+  ForumThread copyWith({int? likesCount, bool? liked, int? commentsCount}) =>
+      ForumThread(
+        id: id,
+        title: title,
+        subtitle: subtitle,
+        authorAvatarUrl: authorAvatarUrl,
+        date: date,
+        content: content,
+        likesCount: likesCount ?? this.likesCount,
+        liked: liked ?? this.liked,
+        commentsCount: commentsCount ?? this.commentsCount,
+        isOwnPost: isOwnPost,
+      );
 
   /// Builds a thread card from a `/api/posts` JSON document.
   /// [currentUserId] decides whether the current user already liked it —
