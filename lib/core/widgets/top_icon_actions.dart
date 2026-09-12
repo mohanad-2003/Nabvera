@@ -24,7 +24,15 @@ class TopIconActions extends StatelessWidget {
           icon: Icon(Icons.notifications, color: iconColor),
         ),
         IconButton(
-          onPressed: () => context.push(AppRoutes.profile),
+          // `go`, not `push`: AppRoutes.profile is a branch of the bottom
+          // StatefulShellRoute (app_router.dart), not a standalone route.
+          // `push`ing it from a screen that lives outside the shell (e.g.
+          // ChallengePage, a top-level sibling route) crashes — go_router
+          // can't insert a shell branch as a single pushed page onto the
+          // root Navigator. `go` re-resolves the full location, correctly
+          // entering the shell, and matches how tapping the Profile tab
+          // itself behaves (switches to it, doesn't stack).
+          onPressed: () => context.go(AppRoutes.profile),
           icon: Icon(Icons.person, color: iconColor),
         ),
       ],
