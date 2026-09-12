@@ -1,4 +1,4 @@
-package com.example.nabvera
+package com.nabvera.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
