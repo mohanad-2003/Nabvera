@@ -18,16 +18,6 @@ extension on AdminEntity {
     AdminEntity.article => '/articles',
     AdminEntity.challenge => '/challenges',
   };
-
-  /// Only Challenge has no `PATCH /:id` on the backend — every other
-  /// entity, Article included, supports create + update + delete. See the
-  /// respective `backend/src/routes/*.js` for the exact set of methods
-  /// mounted per entity.
-  bool get supportsUpdate =>
-      this == AdminEntity.workout ||
-      this == AdminEntity.exercise ||
-      this == AdminEntity.recipe ||
-      this == AdminEntity.article;
 }
 
 /// Talks to the same list/create/update/delete endpoints the rest of the
@@ -54,17 +44,11 @@ class AdminRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
-  /// Throws [UnsupportedError] for [AdminEntity.challenge] — see
-  /// [AdminEntity.supportsUpdate]. Call sites should check that first (the
-  /// Challenge editor never offers an edit mode at all).
   Future<Map<String, dynamic>> update(
     AdminEntity entity,
     String id,
     Map<String, dynamic> payload,
   ) async {
-    if (!entity.supportsUpdate) {
-      throw UnsupportedError('${entity.name} has no update endpoint');
-    }
     final response = await _client.patch('${entity.path}/$id', body: payload);
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;

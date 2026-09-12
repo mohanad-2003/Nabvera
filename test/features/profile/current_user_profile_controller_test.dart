@@ -51,6 +51,8 @@ class FakeUserRepository implements UserRepository {
   Future<void> unregisterFcmToken(String token) async {}
   @override
   Future<void> deleteAccount() async => throw UnimplementedError();
+  @override
+  Future<Map<String, dynamic>> exportData() async => throw UnimplementedError();
 }
 
 UserProfile _realProfile() => UserProfile(

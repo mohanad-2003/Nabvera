@@ -67,6 +67,25 @@ class CommunityRepository {
     return (body['data'] as List).cast<Map<String, dynamic>>();
   }
 
+  /// Publishes a new post to the community feed (`POST /posts`) — the
+  /// composer this repository never had, despite the backend supporting
+  /// it since before the feed screen existed (see `createPost` in
+  /// `backend/src/controllers/postController.js`). 1-2000 characters,
+  /// enforced server-side.
+  Future<Map<String, dynamic>> createPost(String content) async {
+    final response = await _client.post('/posts', body: {'content': content});
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  /// Deletes one of the current user's own posts (`DELETE /posts/:id`) —
+  /// the backend refuses to delete another user's post regardless of what
+  /// id is passed.
+  Future<void> deletePost(String postId) async {
+    final response = await _client.delete('/posts/$postId');
+    _client.decode(response);
+  }
+
   Future<List<Map<String, dynamic>>> fetchComments(String postId) async {
     final response = await _client.get('/posts/$postId/comments');
     final body = _client.decode(response);

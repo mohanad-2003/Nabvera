@@ -11,18 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Create-only form for a Challenge — name, goal (details), duration, and
-/// image, per the brief. No `PATCH /challenges/:id` exists on the backend
-/// (see `backend/src/routes/challengeRoutes.js`), so — like Articles —
-/// this page never opens in an edit mode.
-class AdminChallengeEditorPage extends ConsumerStatefulWidget {
-  const AdminChallengeEditorPage({super.key});
-
-  @override
-  ConsumerState<AdminChallengeEditorPage> createState() =>
-      _AdminChallengeEditorPageState();
-}
-
 /// Challenge types the app can actually track progress for — see
 /// `backend/src/utils/challengeProgressHelpers.js`'s `CHALLENGE_TYPES`.
 /// Kept in sync manually since this is the only Flutter call site that
@@ -34,22 +22,52 @@ const _kChallengeTypes = [
   'weekly_consistency',
 ];
 
+/// Create/edit form for a Challenge — `state.extra` (the raw document from
+/// the list page) means edit mode (`PATCH /challenges/:id`); no extra
+/// means create (`POST /challenges`).
+class AdminChallengeEditorPage extends ConsumerStatefulWidget {
+  const AdminChallengeEditorPage({super.key, this.existing});
+
+  final Map<String, dynamic>? existing;
+
+  @override
+  ConsumerState<AdminChallengeEditorPage> createState() =>
+      _AdminChallengeEditorPageState();
+}
+
 class _AdminChallengeEditorPageState
     extends ConsumerState<AdminChallengeEditorPage> {
-  final _name = TextEditingController();
-  final _nameAr = TextEditingController();
-  final _details = TextEditingController();
-  final _detailsAr = TextEditingController();
-  final _imageUrl = TextEditingController();
-  final _durationLabel = TextEditingController();
-  final _caloriesLabel = TextEditingController();
-  final _targetValue = TextEditingController();
-  bool _isFeatured = false;
+  late final _name = TextEditingController(
+    text: widget.existing?['name'] as String?,
+  );
+  late final _nameAr = TextEditingController(
+    text: widget.existing?['nameAr'] as String?,
+  );
+  late final _details = TextEditingController(
+    text: widget.existing?['details'] as String?,
+  );
+  late final _detailsAr = TextEditingController(
+    text: widget.existing?['detailsAr'] as String?,
+  );
+  late final _imageUrl = TextEditingController(
+    text: widget.existing?['imageUrl'] as String?,
+  );
+  late final _durationLabel = TextEditingController(
+    text: widget.existing?['durationLabel'] as String?,
+  );
+  late final _caloriesLabel = TextEditingController(
+    text: widget.existing?['caloriesLabel'] as String?,
+  );
+  late final _targetValue = TextEditingController(
+    text: widget.existing?['targetValue']?.toString(),
+  );
+  late bool _isFeatured = widget.existing?['isFeatured'] as bool? ?? false;
   bool _saving = false;
+  bool get _isEditing => widget.existing != null;
 
   // `null` keeps the challenge untrackable (view-only, no join) — an admin
   // opts in to progress tracking explicitly by picking a type.
-  String? _type;
+  late String? _type = widget.existing?['type'] as String?;
 
   @override
   void dispose() {
@@ -84,9 +102,16 @@ class _AdminChallengeEditorPageState
       if (_type != null && targetValue != null) 'targetValue': targetValue,
     };
     try {
-      await ref
-          .read(adminRepositoryProvider)
-          .create(AdminEntity.challenge, payload);
+      final repo = ref.read(adminRepositoryProvider);
+      if (_isEditing) {
+        await repo.update(
+          AdminEntity.challenge,
+          widget.existing!['_id'] as String,
+          payload,
+        );
+      } else {
+        await repo.create(AdminEntity.challenge, payload);
+      }
       await ref.read(adminChallengesControllerProvider.notifier).refresh();
       if (!mounted) return;
       context.pop();
@@ -125,7 +150,13 @@ class _AdminChallengeEditorPageState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(title: l10n.adminAddChallengeTitle, showBack: true),
+          AdminPageHeader(
+            title:
+                _isEditing
+                    ? l10n.adminEditChallengeTitle
+                    : l10n.adminAddChallengeTitle,
+            showBack: true,
+          ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(

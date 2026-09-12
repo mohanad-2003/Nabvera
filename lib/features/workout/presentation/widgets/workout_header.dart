@@ -82,7 +82,13 @@ class WorkoutHeader extends StatelessWidget {
           const SizedBox(width: 10),
           _WorkoutHeaderIconButton(
             icon: Icons.person_outline_rounded,
-            onTap: () => context.push(AppRoutes.profile),
+            // `go`, not `push` — AppRoutes.profile is a bottom-nav shell
+            // branch, not a standalone route; pushing it from a screen
+            // outside the shell crashes (see top_icon_actions.dart's
+            // matching fix). Not reachable today (no call site passes
+            // showProfileAction: true yet), fixed pre-emptively so
+            // whoever enables it next doesn't reintroduce the crash.
+            onTap: () => context.go(AppRoutes.profile),
           ),
         ],
       ],

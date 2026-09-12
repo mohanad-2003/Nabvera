@@ -20,11 +20,53 @@ class ForumDetailPage extends ConsumerStatefulWidget {
 class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
   final _replyController = TextEditingController();
   bool _sending = false;
+  bool _deleting = false;
 
   @override
   void dispose() {
     _replyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _confirmDelete() async {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text(l10n.communityDeletePostTitle),
+            content: Text(l10n.communityDeletePostBody),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(l10n.actionCancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(
+                  l10n.privacyDelete,
+                  style: TextStyle(color: ext.danger),
+                ),
+              ),
+            ],
+          ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ref
+          .read(communityForumsProvider.notifier)
+          .delete(widget.thread.id);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _deleting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.communityDeletePostFailed)),
+      );
+    }
   }
 
   Future<void> _send() async {
@@ -57,6 +99,15 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
             title: widget.thread.displayAuthorName(l10n),
             subtitle: widget.thread.date,
             showBack: true,
+            trailing:
+                widget.thread.isOwnPost
+                    ? PremiumIconButton(
+                      icon: Icons.delete_outline_rounded,
+                      onTap: () {
+                        if (!_deleting) _confirmDelete();
+                      },
+                    )
+                    : null,
           ),
           const SizedBox(height: 16),
           Expanded(

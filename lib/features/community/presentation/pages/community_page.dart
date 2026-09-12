@@ -16,6 +16,7 @@ import 'package:nabvera/features/community/domain/challenge_badges.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:nabvera/features/community/presentation/widgets/challenge_progress_card.dart';
+import 'package:nabvera/features/community/presentation/widgets/new_post_sheet.dart';
 
 import 'forum_detail_page.dart';
 
@@ -37,6 +38,13 @@ class CommunityPage extends ConsumerWidget {
           PremiumHeader(
             title: l10n.navCommunityTitle,
             subtitle: l10n.communitySubtitle,
+            trailing:
+                tab == CommunityTab.forum
+                    ? PremiumIconButton(
+                      icon: Icons.add_rounded,
+                      onTap: () => showNewPostSheet(context, ref),
+                    )
+                    : null,
           ),
           SizedBox(height: compact ? 10 : 14),
           Row(
@@ -150,24 +158,68 @@ class _ForumTab extends StatelessWidget {
             ],
           ),
         ),
-        SliverList.separated(
-          itemCount: forums.length,
-          separatorBuilder:
-              (context, _) => Divider(
-                height: 1,
-                color:
-                    Theme.of(
-                      context,
-                    ).extension<AppThemeExtension>()!.glassBorder,
-              ),
-          itemBuilder:
-              (context, index) => _ForumThreadCard(
-                thread: forums[index],
-                onToggleLike: () => onToggleLike(forums[index].id),
-              ),
-        ),
+        if (forums.isEmpty)
+          const SliverToBoxAdapter(child: _ForumsEmptyState())
+        else
+          SliverList.separated(
+            itemCount: forums.length,
+            separatorBuilder:
+                (context, _) => Divider(
+                  height: 1,
+                  color:
+                      Theme.of(
+                        context,
+                      ).extension<AppThemeExtension>()!.glassBorder,
+                ),
+            itemBuilder:
+                (context, index) => _ForumThreadCard(
+                  thread: forums[index],
+                  onToggleLike: () => onToggleLike(forums[index].id),
+                ),
+          ),
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
       ],
+    );
+  }
+}
+
+/// Shown instead of the forum list when `/api/posts` is genuinely empty —
+/// no seed/demo content ever ships in its place (see
+/// `removeDemoCommunityContent.js`), so a fresh launch reads as "no posts
+/// yet" rather than a broken-looking bare section header with nothing
+/// under it.
+class _ForumsEmptyState extends ConsumerWidget {
+  const _ForumsEmptyState();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 30),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.forum_outlined, color: ext.textMuted, size: 42),
+          const SizedBox(height: 12),
+          Text(
+            l10n.communityForumsEmptyTitle,
+            style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            l10n.communityForumsEmptyMessage,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: ext.textMuted, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () => showNewPostSheet(context, ref),
+            icon: const Icon(Icons.add_rounded),
+            label: Text(l10n.communityForumsEmptyAction),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
-import 'package:nabvera/core/widgets/top_icon_actions.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:nabvera/features/community/presentation/widgets/challenge_progress_card.dart';
@@ -137,8 +136,6 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                         icon: Icons.arrow_back_ios_new_rounded,
                         onTap: () => context.canPop() ? context.pop() : null,
                       ),
-                      const Spacer(),
-                      const TopIconActions(color: Colors.white),
                     ],
                   ),
                   const Spacer(),
@@ -208,6 +205,38 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            l10n.communityChallengeGoalHint,
+                            style: const TextStyle(
+                              color: Colors.white60,
+                              fontSize: 11.5,
+                              height: 1.35,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          InkWell(
+                            onTap: () => context.go(AppRoutes.workout),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  l10n.communityBrowseWorkouts,
+                                  style: const TextStyle(
+                                    color: AppColors.seedLime,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: AppColors.seedLime,
+                                  size: 14,
+                                ),
+                              ],
                             ),
                           ),
                         ],

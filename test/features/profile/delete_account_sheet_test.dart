@@ -42,6 +42,8 @@ class FakeUserRepository implements UserRepository {
   Future<void> registerFcmToken(String token) async {}
   @override
   Future<void> unregisterFcmToken(String token) async {}
+  @override
+  Future<Map<String, dynamic>> exportData() async => throw UnimplementedError();
 }
 
 class FakeFirebaseAuthService implements FirebaseAuthService {

@@ -59,6 +59,41 @@ class CommunityForums extends _$CommunityForums {
     }
   }
 
+  /// Publishes a new post and reloads the feed so it appears immediately
+  /// at the top (matching the backend's newest-first sort) — no manual
+  /// prepend, since that would have to guess at every server-assigned
+  /// field (`_id`, `createdAt`, the populated `author`) that
+  /// [ForumThread.fromJson] needs. Rethrows on failure so the composer UI
+  /// can show a real error instead of silently discarding the post.
+  Future<void> create(String content) async {
+    await ref.read(communityRepositoryProvider).createPost(content);
+    await _load();
+  }
+
+  /// Deletes one of the current user's own posts and reloads the feed.
+  Future<void> delete(String postId) async {
+    await ref.read(communityRepositoryProvider).deletePost(postId);
+    await _load();
+  }
+
+  /// Bumps a post's `commentsCount` by one in the feed's own copy of it —
+  /// called after [ForumComments.add] actually posts the comment, since
+  /// that provider only holds *that one thread's* comment list and has no
+  /// way to update the count shown back on the feed/card otherwise. Purely
+  /// a local increment (no re-fetch): the feed's sort order and every
+  /// other field stay exactly as last loaded.
+  void incrementCommentCount(String postId) {
+    final index = state.indexWhere((t) => t.id == postId);
+    if (index == -1) return;
+    final updated = state[index].copyWith(
+      commentsCount: state[index].commentsCount + 1,
+    );
+    state = [
+      for (var i = 0; i < state.length; i++)
+        if (i == index) updated else state[i],
+    ];
+  }
+
   Future<void> toggleLike(String postId) async {
     final index = state.indexWhere((t) => t.id == postId);
     if (index == -1) return;
@@ -185,5 +220,10 @@ class ForumComments extends _$ForumComments {
     if (text.trim().isEmpty) return;
     await ref.read(communityRepositoryProvider).addComment(postId, text.trim());
     await _load();
+    // Keep the feed's card in sync too — it holds its own copy of
+    // commentsCount (see ForumThread), which this provider never touches
+    // otherwise, so without this the count only catches up on the next
+    // full feed reload (pull-to-refresh, or leaving and coming back).
+    ref.read(communityForumsProvider.notifier).incrementCommentCount(postId);
   }
 }

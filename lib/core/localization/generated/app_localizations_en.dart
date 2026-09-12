@@ -1787,11 +1787,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legalPrivacyPolicyBody =>
-      'We collect only the information needed to run your training plan: your profile details, workout and nutrition activity, and device settings like theme and language. This data is stored securely and is never sold to third parties.\n\nYou can review, export, or delete your data at any time from Profile → Privacy → Manage Your Data. Analytics are aggregated and anonymized before use, and you can opt out at any time from the same screen.\n\nIf you have questions about how your data is handled, reach out from Profile → Help & FAQs → Contact Us.';
+      'Last updated: September 12, 2026. This Privacy Policy explains what information Nabvera (\"we\", \"us\") collects, how we use it, and the choices you have. Nabvera is built and operated by an individual developer, not a registered company.\n\nWhen you create an account, we collect your name, email address, and the profile details you choose to add — gender, date of birth, height, weight, fitness goal, activity level, and your available equipment and workout time. You can also add a profile picture from your device\'s photo library.\n\nWe store the workouts you complete, your logged sets and streaks, favorited workouts and recipes, challenge participation, and any nutrition preferences you set — dietary preferences like vegetarian or halal, allergies, disliked ingredients, and calorie/protein targets. These food preferences are self-reported by you and are not medical records.\n\nIf you choose to connect Apple Health or Health Connect, we only read the specific data types you turn on — steps, active minutes/calories, or sleep — and only after you explicitly enable syncing in Health Settings. This connection is off by default; you can disconnect it or turn off any individual data type at any time, and none of it is used for medical diagnosis or shared for advertising.\n\nSign-in is handled by Firebase Authentication (Google). If you enable Face ID or fingerprint unlock, your biometric data is processed entirely on your device by its operating system — it never reaches our servers; we only store whether you\'ve turned this feature on.\n\nIf you allow notifications, we store a device token (via Firebase Cloud Messaging) so we can send you the workout reminders and challenge updates you\'ve opted into. You can turn reminders off at any time from Settings.\n\nWe use our own first-party analytics — not a third-party tracking SDK — to understand which features are used (for example, that a workout was started or a meal plan was generated). These events never include your name, email, weight, or health data, and you can turn this off entirely from Profile → Privacy → Manage Your Data.\n\nWhen you use the AI meal planner, only your dietary preferences and calorie/protein targets are sent to our AI provider (Anthropic) to generate suggestions — never your name, email, or any other identifying information.\n\nWe do not sell your data. We share it only with the service providers that run the app on our behalf: Firebase (Google) for authentication and notifications, MongoDB Atlas for database hosting, Render for backend hosting, and Anthropic for AI meal suggestions as described above. These providers may process data outside your country.\n\nYou can view and edit most of your profile directly in the app, export a full copy of everything you\'ve stored with us at any time from Profile → Privacy → Manage Your Data → Export My Data, and delete your account at any time from Profile → Delete My Account — this permanently removes your workouts, nutrition data, posts, and profile within a short time.\n\nNabvera is not directed at children under 13, and we don\'t knowingly collect data from them. If you believe a child has created an account, contact us and we\'ll delete it.\n\nWe may update this policy as the app evolves; the date above will change when we do. Questions about this policy or your data? Email us at mohnadzakoot34@gmail.com.';
 
   @override
   String get legalTermsBody =>
-      'By using Nabvera you agree to use the app for personal fitness tracking only, keep your account credentials secure, and respect the community guidelines when posting in Community.\n\nWorkout and nutrition guidance in this app is for general informational purposes and is not a substitute for professional medical advice — consult a physician before starting a new fitness or nutrition program.\n\nWe may update these terms as the app evolves; continued use after an update means you accept the revised terms. You can delete your account at any time from Profile → Delete My Account.';
+      'By creating an account or using Nabvera, you agree to these Terms. If you don\'t agree, please don\'t use the app.\n\nYou must be at least 13 years old to use Nabvera. You\'re responsible for keeping your account credentials secure and for all activity under your account.\n\nWorkout and nutrition content in Nabvera — including AI-generated meal suggestions — is for general informational purposes only and is not medical, dietary, or professional advice. Consult a physician or registered dietitian before starting a new fitness or nutrition program, especially if you have a health condition.\n\nAI-generated meal plans are a suggestion layer built from vetted recipes and your stated preferences — they are not reviewed by a nutrition professional and may occasionally be inaccurate or unsuitable for your needs. Use your own judgment.\n\nUse Nabvera for personal fitness and nutrition tracking only. Don\'t misuse the app, attempt to access other users\' accounts or data, or interfere with its normal operation.\n\nYou own the content you add to your profile, like your photo and preferences. We only use it to provide the app\'s features as described in our Privacy Policy.\n\nWe aim to keep Nabvera available and reliable but don\'t guarantee uninterrupted access — features may change, and we may suspend or discontinue parts of the service.\n\nYou can delete your account at any time from Profile → Delete My Account. This action is permanent and cannot be undone.\n\nWe may update these Terms as the app evolves. Continuing to use Nabvera after an update means you accept the revised Terms. Questions? Email us at mohnadzakoot34@gmail.com.';
 
   @override
   String get manageDataTitle => 'Manage Your Data';
@@ -1842,14 +1842,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manageDataExportBody =>
-      'Download a copy of your profile, workout history, and nutrition logs.';
+      'Download a copy of your profile, workout history, and nutrition logs as a JSON file.';
 
   @override
-  String get manageDataExportAction => 'Request Export';
+  String get manageDataExportAction => 'Export My Data';
 
   @override
-  String get manageDataExportConfirmation =>
-      'Your data export has been requested. We\'ll notify you when it\'s ready.';
+  String get manageDataExportFailed =>
+      'Couldn\'t export your data. Please try again.';
 
   @override
   String get helpContactCustomerService => 'Customer Service';
@@ -2594,6 +2594,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityForums => 'Forums';
 
   @override
+  String get communityForumsEmptyTitle => 'Be the first to post';
+
+  @override
+  String get communityForumsEmptyMessage =>
+      'Share a workout win, a question, or a tip — your post could be the first thing someone else sees here.';
+
+  @override
   String get communityChallengesAndCompetitions =>
       'Challenges and competitions';
 
@@ -2620,6 +2627,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityReplyHint => 'Write a reply…';
+
+  @override
+  String get communityNewPostTitle => 'New Post';
+
+  @override
+  String get communityNewPostHint =>
+      'Share a workout win, a question, or a tip…';
+
+  @override
+  String get communityPostAction => 'Post';
+
+  @override
+  String get communityPostFailed =>
+      'Couldn\'t publish your post. Please try again.';
+
+  @override
+  String get communityForumsEmptyAction => 'New Post';
+
+  @override
+  String get communityDeletePostTitle => 'Delete post?';
+
+  @override
+  String get communityDeletePostBody =>
+      'This removes it for everyone and can\'t be undone.';
+
+  @override
+  String get communityDeletePostFailed =>
+      'Couldn\'t delete your post. Please try again.';
 
   @override
   String get communityPost1 =>
@@ -2697,6 +2732,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityChallengeGoalHeading => 'Your goal';
+
+  @override
+  String get communityChallengeGoalHint =>
+      'Any workout you log counts toward this goal — no specific routine required.';
+
+  @override
+  String get communityBrowseWorkouts => 'Browse Workouts';
 
   @override
   String communityChallengeTimeLeftDays(int days) {
@@ -2910,6 +2952,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminAddArticleTitle => 'Add Article';
+
+  @override
+  String get adminEditChallengeTitle => 'Edit Challenge';
 
   @override
   String get adminAddChallengeTitle => 'Add Challenge';
