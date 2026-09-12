@@ -118,6 +118,10 @@ class MealDetail {
     this.similarRecipes = const [],
     this.category,
     this.nameAr = '',
+    this.ingredientsAr = const [],
+    this.preparationAr = const [],
+    this.tipsAr = const [],
+    this.benefitsAr = const [],
   });
 
   final String image;
@@ -127,14 +131,40 @@ class MealDetail {
   final List<String> ingredients;
   final List<String> preparation;
 
-  /// Arabic translation, from `Recipe.titleAr` — same fallback contract as
-  /// `MealItem.nameAr`.
+  /// Arabic translations, from `Recipe.titleAr`/`ingredientsAr`/`stepsAr`/
+  /// `tipsAr`/`benefitsAr` — same fallback contract as `MealItem.nameAr`:
+  /// empty means "not translated yet", so the `localized*` getters below
+  /// fall back to the English list rather than showing nothing.
   final String nameAr;
+  final List<String> ingredientsAr;
+  final List<String> preparationAr;
+  final List<String> tipsAr;
+  final List<String> benefitsAr;
 
   String localizedName(BuildContext context) =>
       Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
           ? nameAr
           : name;
+
+  List<String> localizedIngredients(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && ingredientsAr.isNotEmpty
+          ? ingredientsAr
+          : ingredients;
+
+  List<String> localizedPreparation(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && preparationAr.isNotEmpty
+          ? preparationAr
+          : preparation;
+
+  List<String> localizedTips(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && tipsAr.isNotEmpty
+          ? tipsAr
+          : tips;
+
+  List<String> localizedBenefits(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' && benefitsAr.isNotEmpty
+          ? benefitsAr
+          : benefits;
 
   /// Identity used to look up/toggle favorite state; null when the detail
   /// page is opened for a screen that doesn't track favorites.
@@ -173,11 +203,18 @@ class MealDetail {
     final nutrition = json['nutrition'] as Map<String, dynamic>? ?? const {};
     final ingredients =
         (json['ingredients'] as List? ?? const []).cast<Map<String, dynamic>>();
+    final ingredientsAr =
+        (json['ingredientsAr'] as List? ?? const []).cast<Map<String, dynamic>>();
     // .toList() first: `?? const []` returns an unmodifiable list when
     // `steps` is missing entirely (a recipe with no steps yet), and
     // `..sort()` on that throws — this is the fix, not new behavior.
     final steps =
         (json['steps'] as List? ?? const []).cast<Map<String, dynamic>>().toList()..sort(
+          (a, b) =>
+              ((a['order'] as num?) ?? 0).compareTo((b['order'] as num?) ?? 0),
+        );
+    final stepsAr =
+        (json['stepsAr'] as List? ?? const []).cast<Map<String, dynamic>>().toList()..sort(
           (a, b) =>
               ((a['order'] as num?) ?? 0).compareTo((b['order'] as num?) ?? 0),
         );
@@ -196,7 +233,14 @@ class MealDetail {
         for (final i in ingredients)
           '${i['amount'] ?? ''} ${i['name'] ?? ''}'.trim(),
       ],
+      ingredientsAr: [
+        for (final i in ingredientsAr)
+          '${i['amount'] ?? ''} ${i['name'] ?? ''}'.trim(),
+      ],
       preparation: [for (final s in steps) (s['instruction'] as String?) ?? ''],
+      preparationAr: [for (final s in stepsAr) (s['instruction'] as String?) ?? ''],
+      tipsAr: (json['tipsAr'] as List? ?? const []).cast<String>(),
+      benefitsAr: (json['benefitsAr'] as List? ?? const []).cast<String>(),
       favoriteKey: json['_id'] as String?,
       protein:
           nutrition['proteinG'] == null ? null : '${nutrition['proteinG']}g',

@@ -2862,6 +2862,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminAddRecipeTitle => 'إضافة وصفة';
 
   @override
+  String get adminEditArticleTitle => 'تعديل المقالة';
+
+  @override
   String get adminAddArticleTitle => 'إضافة مقالة';
 
   @override
@@ -2926,6 +2929,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminFieldSteps => 'الخطوات';
+
+  @override
+  String get adminFieldIngredientsAr => 'المكونات (بالعربي)';
+
+  @override
+  String get adminFieldStepsAr => 'الخطوات (بالعربي)';
 
   @override
   String get adminFieldOnePerLine => 'عنصر واحد في كل سطر';

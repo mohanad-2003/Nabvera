@@ -71,6 +71,16 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
         .map((e) => (e as Map)['instruction'])
         .join('\n'),
   );
+  late final _ingredientsAr = TextEditingController(
+    text: ((widget.existing?['ingredientsAr'] as List?) ?? const [])
+        .map((e) => (e as Map)['name'])
+        .join('\n'),
+  );
+  late final _stepsAr = TextEditingController(
+    text: ((widget.existing?['stepsAr'] as List?) ?? const [])
+        .map((e) => (e as Map)['instruction'])
+        .join('\n'),
+  );
   late String _category =
       (widget.existing?['category'] as String?) ?? _kCategories.first;
   late String _difficulty =
@@ -92,6 +102,8 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
     _fat.dispose();
     _ingredients.dispose();
     _steps.dispose();
+    _ingredientsAr.dispose();
+    _stepsAr.dispose();
     super.dispose();
   }
 
@@ -104,6 +116,14 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
         .map((line) => line.trim())
         .where((line) => line.isNotEmpty);
     final stepLines = _steps.text
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty);
+    final ingredientLinesAr = _ingredientsAr.text
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty);
+    final stepLinesAr = _stepsAr.text
         .split('\n')
         .map((line) => line.trim())
         .where((line) => line.isNotEmpty);
@@ -131,6 +151,13 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
       ],
       'steps': [
         for (final (index, instruction) in stepLines.indexed)
+          {'order': index + 1, 'instruction': instruction},
+      ],
+      'ingredientsAr': [
+        for (final name in ingredientLinesAr) {'name': name, 'amount': ''},
+      ],
+      'stepsAr': [
+        for (final (index, instruction) in stepLinesAr.indexed)
           {'order': index + 1, 'instruction': instruction},
       ],
     };
@@ -330,6 +357,24 @@ class _AdminRecipeEditorPageState extends ConsumerState<AdminRecipeEditorPage> {
                   hint: l10n.adminFieldOnePerLine,
                   flat: true,
                   maxLines: 5,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _ingredientsAr,
+                  label: l10n.adminFieldIngredientsAr,
+                  hint: l10n.adminFieldOnePerLine,
+                  flat: true,
+                  maxLines: 5,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _stepsAr,
+                  label: l10n.adminFieldStepsAr,
+                  hint: l10n.adminFieldOnePerLine,
+                  flat: true,
+                  maxLines: 5,
+                  textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(

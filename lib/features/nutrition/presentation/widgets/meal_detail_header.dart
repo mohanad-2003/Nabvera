@@ -143,48 +143,50 @@ class MealDetailHeader extends StatelessWidget {
                   ),
                 ),
               ],
-              if (meal.ingredients.isNotEmpty) ...[
+              if (meal.localizedIngredients(context).isNotEmpty) ...[
                 const SizedBox(height: 18),
                 _SectionCard(
                   title: l10n.mealIngredients,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final ingredient in meal.ingredients)
+                      for (final ingredient in meal.localizedIngredients(context))
                         _Bullet(text: ingredient),
                     ],
                   ),
                 ),
               ],
-              if (meal.preparation.isNotEmpty) ...[
+              if (meal.localizedPreparation(context).isNotEmpty) ...[
                 const SizedBox(height: 18),
                 _SectionCard(
                   title: l10n.nutritionCookingSteps,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (var i = 0; i < meal.preparation.length; i++)
+                      for (final (i, step) in meal.localizedPreparation(context).indexed)
                         _StepRow(
                           index: i + 1,
-                          text: meal.preparation[i],
-                          isLast: i == meal.preparation.length - 1,
+                          text: step,
+                          isLast: i == meal.localizedPreparation(context).length - 1,
                         ),
                     ],
                   ),
                 ),
               ],
-              if (meal.tips.isNotEmpty) ...[
+              if (meal.localizedTips(context).isNotEmpty) ...[
                 const SizedBox(height: 18),
                 _SectionCard(
                   title: l10n.nutritionTips,
                   icon: Icons.lightbulb_outline_rounded,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [for (final tip in meal.tips) _Bullet(text: tip)],
+                    children: [
+                      for (final tip in meal.localizedTips(context)) _Bullet(text: tip),
+                    ],
                   ),
                 ),
               ],
-              if (meal.benefits.isNotEmpty) ...[
+              if (meal.localizedBenefits(context).isNotEmpty) ...[
                 const SizedBox(height: 18),
                 _SectionCard(
                   title: l10n.nutritionBenefits,
@@ -192,7 +194,7 @@ class MealDetailHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final benefit in meal.benefits)
+                      for (final benefit in meal.localizedBenefits(context))
                         _Bullet(text: benefit),
                     ],
                   ),
