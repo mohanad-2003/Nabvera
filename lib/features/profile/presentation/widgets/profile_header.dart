@@ -45,11 +45,20 @@ class ProfileHeader extends StatelessWidget {
                   onTap: onBack,
                 ),
               const Spacer(),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: ext.textPrimary,
-                  fontWeight: FontWeight.w900,
+              // Flexible so the title shrinks instead of overflowing past
+              // the two fixed 44px icon buttons on the narrowest screens —
+              // the Spacers on either side only redistribute leftover
+              // space, they can't rescue a title that's already too wide.
+              Flexible(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
               const Spacer(),

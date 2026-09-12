@@ -125,15 +125,23 @@ class NotificationCard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Text(
-                                _relativeTime(
-                                  item.timestamp,
-                                  AppLocalizations.of(context),
-                                ),
-                                style: TextStyle(
-                                  color: ext.textMuted,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                              // Flexible so a long relative-time string
+                              // (longer locale plurals, e.g. "X hours ago")
+                              // shrinks instead of pushing the action pill
+                              // off the card on narrow screens.
+                              Flexible(
+                                child: Text(
+                                  _relativeTime(
+                                    item.timestamp,
+                                    AppLocalizations.of(context),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: ext.textMuted,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               if (item.action != null) ...[
