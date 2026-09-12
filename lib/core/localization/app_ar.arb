@@ -321,6 +321,8 @@
   "workoutMuscleGroupLabel": "المجموعة العضلية",
   "workoutEquipmentLabel": "المعدات",
   "workoutCategoryAll": "الكل",
+  "workoutIronSectionLabel": "تمارين حديد",
+  "workoutFitnessSectionLabel": "لياقة بدنية",
   "workoutCategoryChest": "الصدر",
   "workoutCategoryBack": "الظهر",
   "workoutCategoryLegs": "الأرجل",

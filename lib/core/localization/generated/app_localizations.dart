@@ -1976,6 +1976,18 @@ abstract class AppLocalizations {
   /// **'All'**
   String get workoutCategoryAll;
 
+  /// No description provided for @workoutIronSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron Training'**
+  String get workoutIronSectionLabel;
+
+  /// No description provided for @workoutFitnessSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'General Fitness'**
+  String get workoutFitnessSectionLabel;
+
   /// No description provided for @workoutCategoryChest.
   ///
   /// In en, this message translates to:

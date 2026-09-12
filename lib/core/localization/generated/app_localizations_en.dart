@@ -1056,6 +1056,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutCategoryAll => 'All';
 
   @override
+  String get workoutIronSectionLabel => 'Iron Training';
+
+  @override
+  String get workoutFitnessSectionLabel => 'General Fitness';
+
+  @override
   String get workoutCategoryChest => 'Chest';
 
   @override

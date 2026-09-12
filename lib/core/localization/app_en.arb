@@ -547,6 +547,8 @@
   "workoutMuscleGroupLabel": "Muscle Group",
   "workoutEquipmentLabel": "Equipment",
   "workoutCategoryAll": "All",
+  "workoutIronSectionLabel": "Iron Training",
+  "workoutFitnessSectionLabel": "General Fitness",
   "workoutCategoryChest": "Chest",
   "workoutCategoryBack": "Back",
   "workoutCategoryLegs": "Legs",
