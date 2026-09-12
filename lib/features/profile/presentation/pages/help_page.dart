@@ -63,20 +63,14 @@ class _HelpPageState extends State<HelpPage> {
       _ContactOption(
         l10n.helpContactCustomerService,
         'assets/customer.png',
-        'support@fitbody.app',
+        'mohnadzakoot34@gmail.com',
       ),
-      _ContactOption(
-        l10n.helpContactWebsite,
-        'assets/website.png',
-        'www.fitbody.app',
-      ),
-      _ContactOption(
-        l10n.helpContactWhatsapp,
-        'assets/whats.png',
-        '+1 555 010 2024',
-      ),
-      _ContactOption(l10n.helpContactFacebook, 'assets/face_help.png', '@fitbody'),
-      _ContactOption(l10n.helpContactInstagram, 'assets/insta.png', '@fitbody'),
+      // Website/WhatsApp/Facebook/Instagram tiles removed — they held
+      // leftover "FitBody"-branding placeholder values (a fake +1 555
+      // number, @fitbody handles, www.fitbody.app) that were never real
+      // for Nabvera. Add them back with real values once those channels
+      // exist; showing fake contact info is misleading (and a possible
+      // App Store/Play Store review flag).
     ];
 
     return PremiumScaffold(
