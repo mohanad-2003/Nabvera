@@ -4934,6 +4934,24 @@ abstract class AppLocalizations {
   /// **'Couldn\'t delete your post. Please try again.'**
   String get communityDeletePostFailed;
 
+  /// No description provided for @communityDeleteCommentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete comment?'**
+  String get communityDeleteCommentTitle;
+
+  /// No description provided for @communityDeleteCommentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes it for everyone and can\'t be undone.'**
+  String get communityDeleteCommentBody;
+
+  /// No description provided for @communityDeleteCommentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your comment. Please try again.'**
+  String get communityDeleteCommentFailed;
+
   /// No description provided for @communityPost1.
   ///
   /// In en, this message translates to:

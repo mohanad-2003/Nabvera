@@ -2657,6 +2657,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t delete your post. Please try again.';
 
   @override
+  String get communityDeleteCommentTitle => 'Delete comment?';
+
+  @override
+  String get communityDeleteCommentBody =>
+      'This removes it for everyone and can\'t be undone.';
+
+  @override
+  String get communityDeleteCommentFailed =>
+      'Couldn\'t delete your comment. Please try again.';
+
+  @override
   String get communityPost1 =>
       'Just finished week 3 of the strength plan — the incline bench sit-ups are finally starting to feel manageable! Anyone else on the beginner track?';
 

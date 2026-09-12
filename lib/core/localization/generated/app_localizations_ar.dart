@@ -2615,6 +2615,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityDeletePostFailed => 'تعذّر حذف المنشور. حاول مرة أخرى.';
 
   @override
+  String get communityDeleteCommentTitle => 'حذف التعليق؟';
+
+  @override
+  String get communityDeleteCommentBody => 'هيتشال للجميع ومش هيرجع تاني.';
+
+  @override
+  String get communityDeleteCommentFailed =>
+      'تعذّر حذف التعليق. حاول مرة أخرى.';
+
+  @override
   String get communityPost1 =>
       'أنهيت للتو الأسبوع الثالث من خطة القوة — تمارين الجلوس على المقعد المائل بدأت تصبح أسهل أخيرًا! هل يوجد أحد آخر في مسار المبتدئين؟';
 

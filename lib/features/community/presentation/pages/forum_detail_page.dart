@@ -21,6 +21,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
   final _replyController = TextEditingController();
   bool _sending = false;
   bool _deleting = false;
+  String? _deletingCommentId;
 
   @override
   void dispose() {
@@ -66,6 +67,47 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.communityDeletePostFailed)),
       );
+    }
+  }
+
+  Future<void> _confirmDeleteComment(String commentId) async {
+    final l10n = AppLocalizations.of(context);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text(l10n.communityDeleteCommentTitle),
+            content: Text(l10n.communityDeleteCommentBody),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(l10n.actionCancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(
+                  l10n.privacyDelete,
+                  style: TextStyle(color: ext.danger),
+                ),
+              ),
+            ],
+          ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deletingCommentId = commentId);
+    try {
+      await ref
+          .read(forumCommentsProvider(widget.thread.id).notifier)
+          .delete(commentId);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.communityDeleteCommentFailed)),
+      );
+    } finally {
+      if (mounted) setState(() => _deletingCommentId = null);
     }
   }
 
@@ -127,6 +169,11 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
                     authorName: comment.displayAuthorName(l10n),
                     body: comment.text,
                     isTopContribution: false,
+                    onDelete:
+                        comment.isOwnComment
+                            ? () => _confirmDeleteComment(comment.id)
+                            : null,
+                    isDeleting: _deletingCommentId == comment.id,
                   ),
                 ],
               ],
@@ -172,12 +219,19 @@ class _DiscussionCard extends StatelessWidget {
     required this.authorName,
     required this.body,
     required this.isTopContribution,
+    this.onDelete,
+    this.isDeleting = false,
   });
 
   final AppThemeExtension ext;
   final String authorName;
   final String body;
   final bool isTopContribution;
+
+  /// Non-null only for the current user's own comment — gates showing a
+  /// delete action instead of offering one that would just 404.
+  final VoidCallback? onDelete;
+  final bool isDeleting;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +271,22 @@ class _DiscussionCard extends StatelessWidget {
               ),
               if (isTopContribution)
                 Icon(Icons.star_rounded, color: theme.colorScheme.primary),
+              if (onDelete != null)
+                isDeleting
+                    ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                    : IconButton(
+                      onPressed: onDelete,
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: ext.textMuted,
+                        size: 20,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
             ],
           ),
           const SizedBox(height: 12),

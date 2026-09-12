@@ -277,11 +277,15 @@ class ForumThread {
 /// forum thread's discussion view.
 class ForumComment {
   const ForumComment({
+    required this.id,
     required this.authorName,
     required this.authorAvatarUrl,
     required this.text,
     required this.date,
+    this.isOwnComment = false,
   });
+
+  final String id;
 
   /// The commenter's display name — same empty-string/fallback contract as
   /// `ForumThread.subtitle`.
@@ -290,16 +294,27 @@ class ForumComment {
   final String text;
   final String date;
 
+  /// Whether the signed-in user authored this comment — same
+  /// gate-the-option-rather-than-fail-on-tap contract as
+  /// `ForumThread.isOwnPost`.
+  final bool isOwnComment;
+
   String displayAuthorName(AppLocalizations l10n) =>
       authorName.trim().isEmpty ? l10n.communityMember : authorName.trim();
 
-  factory ForumComment.fromJson(Map<String, dynamic> json) {
+  factory ForumComment.fromJson(
+    Map<String, dynamic> json, {
+    String currentUserId = '',
+  }) {
     final author = json['author'] as Map<String, dynamic>?;
+    final authorId = author?['_id'] as String?;
     return ForumComment(
+      id: json['_id'] as String? ?? '',
       authorName: (author?['name'] as String?) ?? '',
       authorAvatarUrl: author?['avatarUrl'] as String?,
       text: (json['text'] as String?) ?? '',
       date: ForumThread._formatDate(json['createdAt'] as String?),
+      isOwnComment: currentUserId.isNotEmpty && authorId == currentUserId,
     );
   }
 }
