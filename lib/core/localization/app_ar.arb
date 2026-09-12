@@ -934,6 +934,7 @@
   "adminAddExerciseTitle": "إضافة حركة",
   "adminEditRecipeTitle": "تعديل الوصفة",
   "adminAddRecipeTitle": "إضافة وصفة",
+  "adminEditArticleTitle": "تعديل المقالة",
   "adminAddArticleTitle": "إضافة مقالة",
   "adminAddChallengeTitle": "إضافة تحدٍ",
 
@@ -957,6 +958,8 @@
   "adminFieldFat": "الدهون (غ)",
   "adminFieldIngredients": "المكونات",
   "adminFieldSteps": "الخطوات",
+  "adminFieldIngredientsAr": "المكونات (بالعربي)",
+  "adminFieldStepsAr": "الخطوات (بالعربي)",
   "adminFieldOnePerLine": "عنصر واحد في كل سطر",
   "adminFieldContent": "المحتوى (فقرات)",
   "adminFieldReadTimeMinutes": "وقت القراءة (دقائق)",

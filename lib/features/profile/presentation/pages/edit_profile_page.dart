@@ -342,13 +342,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           onTap: () => context.pop(),
                         ),
                       const Spacer(),
-                      Text(
-                        l10n.editProfileTitle,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(
-                          color: ext.textPrimary,
-                          fontWeight: FontWeight.w900,
+                      // Flexible so the title shrinks instead of
+                      // overflowing past the back button + trailing 44px
+                      // spacer on the narrowest screens — same reasoning
+                      // as ProfileHeader's own title.
+                      Flexible(
+                        child: Text(
+                          l10n.editProfileTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(
+                            color: ext.textPrimary,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
                       ),
                       const Spacer(),

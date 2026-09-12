@@ -19,14 +19,15 @@ extension on AdminEntity {
     AdminEntity.challenge => '/challenges',
   };
 
-  /// Only Workout/Exercise/Recipe have `PATCH /:id` on the backend —
-  /// Article and Challenge only ever supported create + delete. See the
+  /// Only Challenge has no `PATCH /:id` on the backend — every other
+  /// entity, Article included, supports create + update + delete. See the
   /// respective `backend/src/routes/*.js` for the exact set of methods
   /// mounted per entity.
   bool get supportsUpdate =>
       this == AdminEntity.workout ||
       this == AdminEntity.exercise ||
-      this == AdminEntity.recipe;
+      this == AdminEntity.recipe ||
+      this == AdminEntity.article;
 }
 
 /// Talks to the same list/create/update/delete endpoints the rest of the
@@ -53,9 +54,9 @@ class AdminRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
-  /// Throws [UnsupportedError] for [AdminEntity.article]/[AdminEntity.challenge]
-  /// — see [AdminEntity.supportsUpdate]. Call sites should check that
-  /// first (the Article/Challenge editors never offer an edit mode at all).
+  /// Throws [UnsupportedError] for [AdminEntity.challenge] — see
+  /// [AdminEntity.supportsUpdate]. Call sites should check that first (the
+  /// Challenge editor never offers an edit mode at all).
   Future<Map<String, dynamic>> update(
     AdminEntity entity,
     String id,

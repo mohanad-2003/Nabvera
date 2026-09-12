@@ -1,5 +1,30 @@
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/localization/generated/app_localizations_en.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// Pumps an otherwise-empty app under [languageCode] and hands back a
+/// [BuildContext] with a real `Localizations` ancestor, so
+/// `Localizations.localeOf(context)` inside `localizedName`/
+/// `localizedDetails` resolves exactly as it would in the real app.
+Future<BuildContext> _contextFor(WidgetTester tester, String languageCode) async {
+  late BuildContext ctx;
+  await tester.pumpWidget(
+    MaterialApp(
+      locale: Locale(languageCode),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Builder(
+        builder: (context) {
+          ctx = context;
+          return const SizedBox.shrink();
+        },
+      ),
+    ),
+  );
+  return ctx;
+}
 
 void main() {
   group('ChallengeItem.fromJson', () {
@@ -158,6 +183,95 @@ void main() {
       });
       expect(suggestion.challenge.name, 'Streak Starter');
       expect(suggestion.reasonCode, 'good_starting_challenge');
+    });
+  });
+
+  group('ChallengeItem — nameAr/detailsAr + localizedName/localizedDetails', () {
+    test('fromJson parses nameAr/detailsAr from a /api/challenges document', () {
+      final item = ChallengeItem.fromJson({
+        '_id': 'c1',
+        'name': '30-Day Push',
+        'nameAr': 'تحدي الثلاثين يومًا',
+        'details': 'Complete 10 workouts',
+        'detailsAr': 'أكمل 10 تمارين',
+      });
+      expect(item.nameAr, 'تحدي الثلاثين يومًا');
+      expect(item.detailsAr, 'أكمل 10 تمارين');
+    });
+
+    testWidgets('shows nameAr/detailsAr under Arabic when set', (tester) async {
+      const item = ChallengeItem(
+        image: 'assets/workout.png',
+        name: '30-Day Push',
+        nameAr: 'تحدي الثلاثين يومًا',
+        details: 'Complete 10 workouts',
+        detailsAr: 'أكمل 10 تمارين',
+      );
+      final context = await _contextFor(tester, 'ar');
+      expect(item.localizedName(context), 'تحدي الثلاثين يومًا');
+      expect(item.localizedDetails(context), 'أكمل 10 تمارين');
+    });
+
+    testWidgets('falls back to English under Arabic when untranslated', (tester) async {
+      const item = ChallengeItem(
+        image: 'assets/workout.png',
+        name: '30-Day Push',
+        details: 'Complete 10 workouts',
+      );
+      final context = await _contextFor(tester, 'ar');
+      expect(item.localizedName(context), '30-Day Push');
+      expect(item.localizedDetails(context), 'Complete 10 workouts');
+    });
+  });
+
+  group('ForumThread.displayAuthorName', () {
+    final l10n = AppLocalizationsEn();
+
+    test('shows the real author name when present', () {
+      final thread = ForumThread.fromJson({
+        '_id': 't1',
+        'content': 'Just finished week 3!',
+        'author': {'name': 'Sam'},
+      }, currentUserId: '');
+      expect(thread.displayAuthorName(l10n), 'Sam');
+    });
+
+    test('falls back to a localized generic label when the author is missing, never a hardcoded "Member"', () {
+      final thread = ForumThread.fromJson({
+        '_id': 't2',
+        'content': 'Anyone else on the beginner track?',
+      }, currentUserId: '');
+      expect(thread.subtitle, ''); // raw field stays empty, not 'Member'
+      expect(thread.displayAuthorName(l10n), l10n.communityMember);
+    });
+
+    test('no longer carries an allLabel field — callers use l10n.actionSeeAll directly', () {
+      final thread = ForumThread.fromJson({
+        '_id': 't3',
+        'content': 'x',
+      }, currentUserId: '');
+      // Compiles at all only if `allLabel` was actually removed from the
+      // constructor's required parameters — this call would fail to
+      // compile otherwise, which is the real assertion here.
+      expect(thread.id, 't3');
+    });
+  });
+
+  group('ForumComment.displayAuthorName', () {
+    final l10n = AppLocalizationsEn();
+
+    test('shows the real author name when present', () {
+      final comment = ForumComment.fromJson({
+        'author': {'name': 'Alex'},
+        'text': 'Nice work!',
+      });
+      expect(comment.displayAuthorName(l10n), 'Alex');
+    });
+
+    test('falls back to a localized generic label when the author is missing', () {
+      final comment = ForumComment.fromJson({'text': 'Nice work!'});
+      expect(comment.authorName, '');
+      expect(comment.displayAuthorName(l10n), l10n.communityMember);
     });
   });
 }

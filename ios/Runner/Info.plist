@@ -53,5 +53,11 @@
 	     declared because the app never writes to Apple Health. -->
 	<key>NSHealthShareUsageDescription</key>
 	<string>Nabvera can read your steps, active minutes, and sleep from Apple Health to improve your progress stats and workout suggestions. This is optional and never used for medical purposes.</string>
+	<!-- image_picker (edit_profile_page.dart) only ever calls
+	     ImageSource.gallery — never .camera — so only the photo-library
+	     description is declared; add NSCameraUsageDescription too if a
+	     camera capture option is ever added. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nabvera needs access to your photo library so you can choose a profile picture.</string>
 </dict>
 </plist>

@@ -10,10 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// List → search → add/delete, using only `/api/articles` — the backend
-/// never added an update endpoint for articles (see
-/// `backend/src/routes/articleRoutes.js`), so there's no edit action here;
-/// inventing one client-side would just fail against the real API.
+/// List → search → add/edit/delete, using `/api/articles`.
 class AdminArticlesPage extends ConsumerWidget {
   const AdminArticlesPage({super.key});
 
@@ -50,6 +47,9 @@ class AdminArticlesPage extends ConsumerWidget {
                     '${item['readTimeMinutes'] ?? 3} min read',
                   ],
               onRefresh: controller.refresh,
+              onEdit:
+                  (item) =>
+                      context.push(AppRoutes.adminArticleEditor, extra: item),
               onDelete: (item) async {
                 final confirmed = await showDangerConfirmationSheet(
                   context,

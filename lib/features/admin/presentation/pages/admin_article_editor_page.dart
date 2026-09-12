@@ -13,12 +13,13 @@ import 'package:go_router/go_router.dart';
 
 const _kCategories = ['nutrition', 'workout', 'recovery', 'mindset'];
 
-/// Create-only form for an Article — title, description, image, and
-/// publish (category + read time). There's no `PATCH /articles/:id` on the
-/// backend (see `backend/src/routes/articleRoutes.js`), so this page never
-/// opens in an edit mode.
+/// Create/edit form for an Article — `state.extra` (the raw document from
+/// the list page) means edit mode (`PATCH /articles/:id`); no extra means
+/// create (`POST /articles`).
 class AdminArticleEditorPage extends ConsumerStatefulWidget {
-  const AdminArticleEditorPage({super.key});
+  const AdminArticleEditorPage({super.key, this.existing});
+
+  final Map<String, dynamic>? existing;
 
   @override
   ConsumerState<AdminArticleEditorPage> createState() =>
@@ -27,16 +28,37 @@ class AdminArticleEditorPage extends ConsumerStatefulWidget {
 
 class _AdminArticleEditorPageState
     extends ConsumerState<AdminArticleEditorPage> {
-  final _title = TextEditingController();
-  final _description = TextEditingController();
-  final _imageUrl = TextEditingController();
-  final _content = TextEditingController();
-  final _titleAr = TextEditingController();
-  final _descriptionAr = TextEditingController();
-  final _contentAr = TextEditingController();
-  final _readTime = TextEditingController(text: '3');
-  String _category = _kCategories.first;
+  late final _title = TextEditingController(
+    text: widget.existing?['title'] as String?,
+  );
+  late final _description = TextEditingController(
+    text: widget.existing?['description'] as String?,
+  );
+  late final _imageUrl = TextEditingController(
+    text: widget.existing?['imageUrl'] as String?,
+  );
+  late final _content = TextEditingController(
+    text: _linesOf(widget.existing?['content']),
+  );
+  late final _titleAr = TextEditingController(
+    text: widget.existing?['titleAr'] as String?,
+  );
+  late final _descriptionAr = TextEditingController(
+    text: widget.existing?['descriptionAr'] as String?,
+  );
+  late final _contentAr = TextEditingController(
+    text: _linesOf(widget.existing?['contentAr']),
+  );
+  late final _readTime = TextEditingController(
+    text: widget.existing?['readTimeMinutes']?.toString() ?? '3',
+  );
+  late String _category =
+      (widget.existing?['category'] as String?) ?? _kCategories.first;
   bool _saving = false;
+  bool get _isEditing => widget.existing != null;
+
+  static String _linesOf(dynamic value) =>
+      (value as List?)?.cast<String>().join('\n') ?? '';
 
   @override
   void dispose() {
@@ -75,9 +97,16 @@ class _AdminArticleEditorPageState
       'contentAr': _paragraphsOf(_contentAr.text),
     };
     try {
-      await ref
-          .read(adminRepositoryProvider)
-          .create(AdminEntity.article, payload);
+      final repo = ref.read(adminRepositoryProvider);
+      if (_isEditing) {
+        await repo.update(
+          AdminEntity.article,
+          widget.existing!['_id'] as String,
+          payload,
+        );
+      } else {
+        await repo.create(AdminEntity.article, payload);
+      }
       await ref.read(adminArticlesControllerProvider.notifier).refresh();
       if (!mounted) return;
       context.pop();
@@ -101,7 +130,13 @@ class _AdminArticleEditorPageState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(title: l10n.adminAddArticleTitle, showBack: true),
+          AdminPageHeader(
+            title:
+                _isEditing
+                    ? l10n.adminEditArticleTitle
+                    : l10n.adminAddArticleTitle,
+            showBack: true,
+          ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(

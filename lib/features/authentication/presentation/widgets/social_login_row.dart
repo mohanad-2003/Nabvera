@@ -38,11 +38,18 @@ class SocialLoginRow extends StatelessWidget {
             children: [
               SmartImage('assets/png/google.png', width: 22, height: 22),
               const SizedBox(width: 10),
-              Text(
-                l10n.authContinueWithGoogle,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: ext.textPrimary,
-                  fontWeight: FontWeight.w700,
+              // Flexible lets the label shrink to the button's actual width
+              // on a narrow screen instead of overflowing past it — same
+              // fix, same reasoning, as PrimaryButton's own label.
+              Flexible(
+                child: Text(
+                  l10n.authContinueWithGoogle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: ext.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],

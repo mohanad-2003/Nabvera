@@ -1207,11 +1207,19 @@ class _SectionHeader extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return Row(
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: ext.textPrimary,
-            fontWeight: FontWeight.w800,
+        // Flexible so a long section title (longer locale strings, larger
+        // text scale) shrinks instead of pushing the action button off the
+        // narrowest supported screens — Spacer alone can't help once the
+        // title's own natural width already exceeds the row.
+        Flexible(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: ext.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
         const Spacer(),

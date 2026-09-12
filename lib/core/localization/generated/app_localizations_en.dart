@@ -2906,6 +2906,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminAddRecipeTitle => 'Add Recipe';
 
   @override
+  String get adminEditArticleTitle => 'Edit Article';
+
+  @override
   String get adminAddArticleTitle => 'Add Article';
 
   @override
@@ -2970,6 +2973,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminFieldSteps => 'Steps';
+
+  @override
+  String get adminFieldIngredientsAr => 'Ingredients (Arabic)';
+
+  @override
+  String get adminFieldStepsAr => 'Steps (Arabic)';
 
   @override
   String get adminFieldOnePerLine => 'One per line';

@@ -25,28 +25,36 @@ class GenderPage extends ConsumerWidget {
       title: l10n.onboardingGenderTitle,
       description: l10n.onboardingGenderBody,
       footerMessage: canContinue ? null : l10n.onboardingGenderRequired,
+      // Each option is Expanded (was a bare fixed-width child) so the pair
+      // shrinks to fit a narrow screen — 130 + 20 + 130 doesn't fit the
+      // ~272pt of body width a 320pt-wide phone actually has — instead of
+      // overflowing; _GenderOption itself caps at its original 130 width
+      // so nothing changes visually anywhere that width already fit.
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _GenderOption(
-            icon: Icons.male_rounded,
-            label: l10n.onboardingMale,
-            isSelected: selected == Gender.male,
-            onTap: () => controller.selectGender(Gender.male),
+          Expanded(
+            child: _GenderOption(
+              icon: Icons.male_rounded,
+              label: l10n.onboardingMale,
+              isSelected: selected == Gender.male,
+              onTap: () => controller.selectGender(Gender.male),
+            ),
           ),
           const SizedBox(width: 20),
-          _GenderOption(
-            icon: Icons.female_rounded,
-            label: l10n.onboardingFemale,
-            isSelected: selected == Gender.female,
-            onTap: () => controller.selectGender(Gender.female),
+          Expanded(
+            child: _GenderOption(
+              icon: Icons.female_rounded,
+              label: l10n.onboardingFemale,
+              isSelected: selected == Gender.female,
+              onTap: () => controller.selectGender(Gender.female),
+            ),
           ),
         ],
       ),
       button: PrimaryButton(
         label: l10n.actionContinue,
-        onPressed:
-            canContinue ? () => context.push(AppRoutes.setupAge) : null,
+        onPressed: canContinue ? () => context.push(AppRoutes.setupAge) : null,
       ),
     );
   }
@@ -80,80 +88,87 @@ class _GenderOption extends StatelessWidget {
           scale: isSelected ? 1.0 : 0.94,
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutBack,
-          child: SizedBox(
-            width: 130,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // The unselected medallion keeps the fixed violet→aqua
-                        // brand gradient; its white glyph stays readable on it
-                        // in both light and dark mode.
-                        gradient:
-                            isSelected
-                                ? ext.accentGradient
-                                : const LinearGradient(
-                                  colors: [
-                                    AppColors.seedViolet,
-                                    AppColors.aquaBlue,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                        border: Border.all(
-                          color: isSelected ? ext.onAccent : Colors.transparent,
-                          width: 3,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 130),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        width: 96,
+                        height: 96,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          // The unselected medallion keeps the fixed violet→aqua
+                          // brand gradient; its white glyph stays readable on it
+                          // in both light and dark mode.
+                          gradient:
+                              isSelected
+                                  ? ext.accentGradient
+                                  : const LinearGradient(
+                                    colors: [
+                                      AppColors.seedViolet,
+                                      AppColors.aquaBlue,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                          border: Border.all(
+                            color:
+                                isSelected ? ext.onAccent : Colors.transparent,
+                            width: 3,
+                          ),
+                          boxShadow: [
+                            if (isSelected)
+                              BoxShadow(
+                                color: ext.accentGlow.withValues(alpha: 0.4),
+                                blurRadius: 24,
+                                offset: const Offset(0, 12),
+                              ),
+                          ],
                         ),
-                        boxShadow: [
-                          if (isSelected)
-                            BoxShadow(
-                              color: ext.accentGlow.withValues(alpha: 0.4),
-                              blurRadius: 24,
-                              offset: const Offset(0, 12),
+                        child: Icon(icon, size: 52, color: Colors.white),
+                      ),
+                      if (isSelected)
+                        PositionedDirectional(
+                          end: -4,
+                          bottom: -4,
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: ext.onAccent,
+                              border: Border.all(
+                                color: ext.accentGlow,
+                                width: 2,
+                              ),
                             ),
-                        ],
-                      ),
-                      child: Icon(icon, size: 52, color: Colors.white),
-                    ),
-                    if (isSelected)
-                      PositionedDirectional(
-                        end: -4,
-                        bottom: -4,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: ext.onAccent,
-                            border: Border.all(color: ext.accentGlow, width: 2),
-                          ),
-                          child: Icon(
-                            Icons.check_rounded,
-                            color: ext.accentGlow,
-                            size: 16,
+                            child: Icon(
+                              Icons.check_rounded,
+                              color: ext.accentGlow,
+                              size: 16,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected ? ext.textPrimary : ext.textMuted,
-                    fontSize: 17,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 14),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: isSelected ? ext.textPrimary : ext.textMuted,
+                      fontSize: 17,
+                      fontWeight:
+                          isSelected ? FontWeight.w800 : FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

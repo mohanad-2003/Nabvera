@@ -37,8 +37,8 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: radius,
             gradient: disabled ? null : ext.accentGradient,
             boxShadow:
-                disabled
-                    || !showShadow ? const []
+                disabled || !showShadow
+                    ? const []
                     : [
                       BoxShadow(
                         color: ext.accentGlow.withValues(alpha: 0.28),
@@ -73,7 +73,21 @@ class PrimaryButton extends StatelessWidget {
                           Icon(icon, size: 20),
                           const SizedBox(width: 8),
                         ],
-                        Text(label),
+                        // Flexible (not Expanded — the Row hugs its content
+                        // via MainAxisSize.min, it shouldn't stretch a short
+                        // label) lets a long label shrink to the button's
+                        // actual width instead of overflowing past it on a
+                        // narrow screen; the ellipsis is a real last resort
+                        // here, not a stand-in for the fix — a button's
+                        // label wrapping to a second line would blow out
+                        // its fixed 56px height instead.
+                        Flexible(
+                          child: Text(
+                            label,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
                       ],
                     ),
           ),

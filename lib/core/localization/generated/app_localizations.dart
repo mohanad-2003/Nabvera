@@ -5366,6 +5366,12 @@ abstract class AppLocalizations {
   /// **'Add Recipe'**
   String get adminAddRecipeTitle;
 
+  /// No description provided for @adminEditArticleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Article'**
+  String get adminEditArticleTitle;
+
   /// No description provided for @adminAddArticleTitle.
   ///
   /// In en, this message translates to:
@@ -5497,6 +5503,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Steps'**
   String get adminFieldSteps;
+
+  /// No description provided for @adminFieldIngredientsAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredients (Arabic)'**
+  String get adminFieldIngredientsAr;
+
+  /// No description provided for @adminFieldStepsAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps (Arabic)'**
+  String get adminFieldStepsAr;
 
   /// No description provided for @adminFieldOnePerLine.
   ///
