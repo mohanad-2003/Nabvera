@@ -92,6 +92,23 @@ class UserRepository {
     final response = await _client.delete('/users/me');
     _client.decode(response);
   }
+
+  /// Every piece of data this user owns — the read-only "right to access"
+  /// counterpart to [deleteAccount] (see `GET /api/users/me/export` /
+  /// `backend/src/controllers/userController.js`'s `exportMyData`). Returns
+  /// the raw JSON so the caller can hand it straight to a file/share sheet
+  /// without this layer guessing what to do with it.
+  Future<Map<String, dynamic>> exportData() async {
+    final response = await _client.get(
+      '/users/me/export',
+      // The default 15s timeout is tuned for small JSON payloads — an
+      // export aggregates across every collection a long-time user owns,
+      // so it can legitimately take longer.
+      timeout: const Duration(seconds: 45),
+    );
+    final body = _client.decode(response);
+    return body['data'] as Map<String, dynamic>;
+  }
 }
 
 @Riverpod(keepAlive: true)
