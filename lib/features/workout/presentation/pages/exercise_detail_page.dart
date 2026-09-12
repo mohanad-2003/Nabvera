@@ -154,7 +154,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    data.description,
+                    data.localizedDescription(context),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: ext.textMuted,
                       height: 1.5,

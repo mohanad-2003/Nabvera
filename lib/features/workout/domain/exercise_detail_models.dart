@@ -7,12 +7,18 @@ import '../../../core/theme/app_colors.dart';
 /// video_advance, details_page, details_dumple_setup) that only differed
 /// by these values.
 class ExerciseDetailData {
+  /// Shown for a curated/mock exercise with no [description] of its own,
+  /// and reused by [RoundExerciseItem]-building code (see
+  /// `_roundItemFromEntry`) as the fallback when a real `Exercise` simply
+  /// hasn't had a description written for it yet.
+  static const defaultDescription =
+      'Keep your core braced and move through the full range of motion with control. Focus on steady breathing and stop if you feel sharp pain.';
+
   const ExerciseDetailData({
     required this.headerTitle,
     required this.heroImage,
     required this.title,
-    this.description =
-        'Keep your core braced and move through the full range of motion with control. Focus on steady breathing and stop if you feel sharp pain.',
+    this.description = defaultDescription,
     this.duration = '30 seconds',
     this.reps = '3 Rep',
     this.level = 'Beginner',
@@ -20,6 +26,7 @@ class ExerciseDetailData {
     this.equipment = 'Bodyweight',
     this.videoUrl,
     this.titleAr = '',
+    this.descriptionAr = '',
   });
 
   final String headerTitle;
@@ -41,10 +48,20 @@ class ExerciseDetailData {
   /// back to [title] (same pattern as `ArticleTip.localizedTitle`).
   final String titleAr;
 
+  /// Arabic translation of [description], from `Exercise.descriptionAr` —
+  /// same fallback contract as [titleAr].
+  final String descriptionAr;
+
   String localizedTitle(BuildContext context) =>
       Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
           ? titleAr
           : title;
+
+  String localizedDescription(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'ar' &&
+              descriptionAr.isNotEmpty
+          ? descriptionAr
+          : description;
 }
 
 /// A single tappable round entry inside a [CategoryDetailData] round group.
@@ -193,6 +210,11 @@ class CategoryDetailData {
     final sets = (entry['sets'] as num?) ?? (exercise['defaultSets'] as num?) ?? 3;
     final reps = (entry['reps'] as num?) ?? (exercise['defaultReps'] as num?) ?? 12;
     final image = (exercise['imageUrl'] as String?) ?? 'assets/workout.png';
+    // Only override the constructor's generic-tip default when the
+    // backend actually has real copy for this exercise — an empty string
+    // would otherwise blank out that fallback instead of using it.
+    final description = exercise['description'] as String?;
+    final descriptionAr = exercise['descriptionAr'] as String?;
 
     return RoundExerciseItem(
       name: name,
@@ -205,6 +227,16 @@ class CategoryDetailData {
         heroImage: image,
         title: name,
         titleAr: nameAr,
+        // Was never wired at all — every exercise fell back to
+        // ExerciseDetailData's hardcoded generic default regardless of
+        // its real Exercise.description (see the class doc comment).
+        // Falls back to that same default (rather than blank text) for an
+        // exercise that doesn't have one written yet.
+        description:
+            description == null || description.isEmpty
+                ? ExerciseDetailData.defaultDescription
+                : description,
+        descriptionAr: descriptionAr ?? '',
         duration: '$sets sets',
         reps: '${reps}x Reps',
         muscleGroup:

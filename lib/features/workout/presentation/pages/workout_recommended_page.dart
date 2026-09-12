@@ -38,6 +38,11 @@ class WorkoutRecommendedPage extends ConsumerWidget {
               heroImage: firstPopular.image,
               title: firstPopular.name,
               titleAr: firstPopular.nameAr,
+              description:
+                  firstPopular.description.isNotEmpty
+                      ? firstPopular.description
+                      : ExerciseDetailData.defaultDescription,
+              descriptionAr: firstPopular.descriptionAr,
               duration: firstPopular.time,
               reps: firstPopular.calories,
               level: exerciseDifficultyLabel(l10n, firstPopular.difficulty),
@@ -128,6 +133,12 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                                   heroImage: item.image,
                                   title: item.name,
                                   titleAr: item.nameAr,
+                                  description:
+                                      item.description.isNotEmpty
+                                          ? item.description
+                                          : ExerciseDetailData
+                                              .defaultDescription,
+                                  descriptionAr: item.descriptionAr,
                                   duration: item.time,
                                   reps: item.calories,
                                   level: exerciseDifficultyLabel(
