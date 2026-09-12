@@ -1274,6 +1274,7 @@
   "adminAddRecipeTitle": "Add Recipe",
   "adminEditArticleTitle": "Edit Article",
   "adminAddArticleTitle": "Add Article",
+  "adminEditChallengeTitle": "Edit Challenge",
   "adminAddChallengeTitle": "Add Challenge",
   "adminFieldTitle": "Title",
   "adminFieldName": "Name",

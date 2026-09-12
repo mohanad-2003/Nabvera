@@ -5378,6 +5378,12 @@ abstract class AppLocalizations {
   /// **'Add Article'**
   String get adminAddArticleTitle;
 
+  /// No description provided for @adminEditChallengeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Challenge'**
+  String get adminEditChallengeTitle;
+
   /// No description provided for @adminAddChallengeTitle.
   ///
   /// In en, this message translates to:

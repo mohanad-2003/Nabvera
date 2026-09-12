@@ -2912,6 +2912,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminAddArticleTitle => 'Add Article';
 
   @override
+  String get adminEditChallengeTitle => 'Edit Challenge';
+
+  @override
   String get adminAddChallengeTitle => 'Add Challenge';
 
   @override

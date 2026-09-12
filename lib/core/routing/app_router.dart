@@ -169,7 +169,10 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.adminChallengeEditor,
-        builder: (context, state) => const AdminChallengeEditorPage(),
+        builder:
+            (context, state) => AdminChallengeEditorPage(
+              existing: state.extra as Map<String, dynamic>?,
+            ),
       ),
       GoRoute(
         path: AppRoutes.adminProfile,

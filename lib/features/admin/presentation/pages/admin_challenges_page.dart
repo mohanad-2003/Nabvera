@@ -10,9 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// List → search → add/delete, using only `/api/challenges` — like
-/// Articles, the backend never added an update endpoint (see
-/// `backend/src/routes/challengeRoutes.js`), so there's no edit action.
+/// List → search → add/edit/delete, using `/api/challenges`.
 class AdminChallengesPage extends ConsumerWidget {
   const AdminChallengesPage({super.key});
 
@@ -50,6 +48,11 @@ class AdminChallengesPage extends ConsumerWidget {
                     if (item['isFeatured'] == true) l10n.adminFeaturedBadge,
                   ],
               onRefresh: controller.refresh,
+              onEdit:
+                  (item) => context.push(
+                    AppRoutes.adminChallengeEditor,
+                    extra: item,
+                  ),
               onDelete: (item) async {
                 final confirmed = await showDangerConfirmationSheet(
                   context,

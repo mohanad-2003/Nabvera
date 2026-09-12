@@ -2868,6 +2868,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminAddArticleTitle => 'إضافة مقالة';
 
   @override
+  String get adminEditChallengeTitle => 'تعديل التحدي';
+
+  @override
   String get adminAddChallengeTitle => 'إضافة تحدٍ';
 
   @override
