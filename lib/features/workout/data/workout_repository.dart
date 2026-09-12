@@ -16,11 +16,13 @@ class WorkoutRepository {
 
   Future<List<Map<String, dynamic>>> fetchWorkouts({
     String? difficulty,
+    String? category,
     bool? featured,
     bool? popular,
   }) async {
     final params = <String, String>{
       if (difficulty != null) 'difficulty': difficulty,
+      if (category != null) 'category': category,
       if (featured != null) 'featured': '$featured',
       if (popular != null) 'popular': '$popular',
     };

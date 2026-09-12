@@ -17,14 +17,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+/// `null` is "All"; the rest are `Workout.category`'s raw backend values.
+const _kWorkoutCategories = <String?>[
+  null,
+  'strength',
+  'cardio',
+  'yoga',
+  'hiit',
+  'stretching',
+  'full_body',
+];
+
 class WorkoutPage extends ConsumerWidget {
   const WorkoutPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final level = ref.watch(workoutTabProvider);
+    final category = ref.watch(workoutCategoryFilterProvider);
     final items = ref.watch(workoutListByLevelProvider(level));
-    final request = ref.watch(workoutRequestProvider(level));
+    final request = ref.watch(
+      workoutRequestProvider((level: level, category: category)),
+    );
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < 720;
@@ -78,6 +92,34 @@ class WorkoutPage extends ConsumerWidget {
                             () => ref
                                 .read(workoutTabProvider.notifier)
                                 .select(tabLevel),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: spacing),
+                // Was level-only before — a "Chest"-focused and a
+                // "Yoga"-focused workout sat in the exact same
+                // undifferentiated list with nothing to tell them apart
+                // beyond scrolling and reading titles. This narrows by
+                // Workout.category (the backend already supported
+                // ?category=, nothing on this screen ever queried it).
+                SizedBox(
+                  height: 36,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _kWorkoutCategories.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final value = _kWorkoutCategories[index];
+                      final isSelected = value == category;
+                      return WorkoutPill(
+                        label: _categoryLabel(l10n, value),
+                        selected: isSelected,
+                        appearance: WorkoutPillAppearance.filter,
+                        onTap:
+                            () => ref
+                                .read(workoutCategoryFilterProvider.notifier)
+                                .select(value),
                       );
                     },
                   ),
@@ -142,7 +184,9 @@ class WorkoutPage extends ConsumerWidget {
                 loading: request.isLoading,
                 error: request.error,
                 onRetry: () {
-                  ref.invalidate(workoutRequestProvider(level));
+                  ref.invalidate(
+                    workoutRequestProvider((level: level, category: category)),
+                  );
                   ref.invalidate(workoutListByLevelProvider(level));
                 },
               ),
@@ -176,6 +220,18 @@ class WorkoutPage extends ConsumerWidget {
     WorkoutLevel.intermediate => l10n.workoutLevelIntermediate,
     WorkoutLevel.advanced => l10n.workoutLevelAdvanced,
   };
+
+  String _categoryLabel(AppLocalizations l10n, String? category) =>
+      switch (category) {
+        null => l10n.workoutCategoryAll,
+        'strength' => l10n.workoutCategoryStrength,
+        'cardio' => l10n.workoutCategoryCardio,
+        'yoga' => l10n.workoutCategoryYoga,
+        'hiit' => l10n.workoutCategoryHiit,
+        'stretching' => l10n.workoutCategoryStretching,
+        'full_body' => l10n.workoutCategoryFullBody,
+        _ => category,
+      };
 
   /// Fetches the full workout (with populated exercises) and opens it as a
   /// real [CategoryDetailData] — each round item then carries a real

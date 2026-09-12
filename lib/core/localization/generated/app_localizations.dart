@@ -2012,6 +2012,30 @@ abstract class AppLocalizations {
   /// **'Strength'**
   String get workoutCategoryStrength;
 
+  /// No description provided for @workoutCategoryYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga'**
+  String get workoutCategoryYoga;
+
+  /// No description provided for @workoutCategoryHiit.
+  ///
+  /// In en, this message translates to:
+  /// **'HIIT'**
+  String get workoutCategoryHiit;
+
+  /// No description provided for @workoutCategoryStretching.
+  ///
+  /// In en, this message translates to:
+  /// **'Stretching'**
+  String get workoutCategoryStretching;
+
+  /// No description provided for @workoutCategoryFullBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get workoutCategoryFullBody;
+
   /// No description provided for @workoutBannerTitle.
   ///
   /// In en, this message translates to:

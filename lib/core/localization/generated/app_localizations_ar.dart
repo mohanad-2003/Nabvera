@@ -1061,6 +1061,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutCategoryStrength => 'القوة';
 
   @override
+  String get workoutCategoryYoga => 'يوجا';
+
+  @override
+  String get workoutCategoryHiit => 'هيت';
+
+  @override
+  String get workoutCategoryStretching => 'تمدد';
+
+  @override
+  String get workoutCategoryFullBody => 'الجسم الكامل';
+
+  @override
   String get workoutBannerTitle => '🔥 حافظ على استمراريتك';
 
   @override

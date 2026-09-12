@@ -1074,6 +1074,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutCategoryStrength => 'Strength';
 
   @override
+  String get workoutCategoryYoga => 'Yoga';
+
+  @override
+  String get workoutCategoryHiit => 'HIIT';
+
+  @override
+  String get workoutCategoryStretching => 'Stretching';
+
+  @override
+  String get workoutCategoryFullBody => 'Full Body';
+
+  @override
   String get workoutBannerTitle => '🔥 Keep your consistency';
 
   @override

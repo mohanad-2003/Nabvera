@@ -157,7 +157,7 @@ final class CommunityForumsProvider
   }
 }
 
-String _$communityForumsHash() => r'5c23e002e3fc4e1110bbbe2c8029c6d1b9ddebae';
+String _$communityForumsHash() => r'c79a8387dee907601e5381981c57cd16c51f8873';
 
 /// Loads the real community feed from `/api/posts`.
 
@@ -376,7 +376,7 @@ final class ForumCommentsProvider
   }
 }
 
-String _$forumCommentsHash() => r'9dc16b3d3d541d3fd27895f5ba9a105f4cd83757';
+String _$forumCommentsHash() => r'09b7af524d52debeeab54eaa2d22cc16fea43e44';
 
 /// Loads `/api/posts/:id/comments` for one thread.
 

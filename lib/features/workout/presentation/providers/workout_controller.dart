@@ -14,22 +14,40 @@ class WorkoutTab extends _$WorkoutTab {
   void select(WorkoutLevel level) => state = level;
 }
 
-/// Loads `/api/workouts?difficulty=<level>` for the selected tab. Starts
-/// empty and fills in once the fetch resolves — matches the pattern used by
-/// `CurrentUserProfile` so the page never needs an `AsyncValue` branch.
+/// The selected category chip on the Workout tab's list (raw backend
+/// `Workout.category` value, or `null` for "All") — kept separate from
+/// [WorkoutTab] since the two filters are independent (level always
+/// applies; category narrows further).
+@riverpod
+class WorkoutCategoryFilter extends _$WorkoutCategoryFilter {
+  @override
+  String? build() => null;
+
+  void select(String? category) => state = category;
+}
+
+/// Loads `/api/workouts?difficulty=<level>&category=<category>` for the
+/// selected tab + category chip. Starts empty and fills in once the fetch
+/// resolves — matches the pattern used by `CurrentUserProfile` so the page
+/// never needs an `AsyncValue` branch.
 @riverpod
 class WorkoutListByLevel extends _$WorkoutListByLevel {
   @override
   List<WorkoutListItem> build(WorkoutLevel level) {
-    Future.microtask(_load);
+    // Watched (not read) so picking a different category chip rebuilds
+    // this provider and re-fetches — see WorkoutCategoryFilter.
+    final category = ref.watch(workoutCategoryFilterProvider);
+    Future.microtask(() => _load(category));
     return const [];
   }
 
-  Future<void> _load() async {
+  Future<void> _load(String? category) async {
     try {
       final favoriteIds =
           ref.read(currentUserProfileProvider).favoriteWorkoutIds.toSet();
-      final docs = await ref.read(workoutRequestProvider(level).future);
+      final docs = await ref.read(
+        workoutRequestProvider((level: level, category: category)).future,
+      );
       if (!ref.mounted) return;
       state = [
         for (final doc in docs)

@@ -41,7 +41,7 @@ final class PopularExercisesProvider
   }
 }
 
-String _$popularExercisesHash() => r'bfba3ec21987295c79ec61a03ccaf1299a5b84dc';
+String _$popularExercisesHash() => r'f6e36218962ed2360aabbd98d03c07b4cba37d2f';
 
 abstract class _$PopularExercises extends $Notifier<List<PopularExerciseItem>> {
   List<PopularExerciseItem> build();
