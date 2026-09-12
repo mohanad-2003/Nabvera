@@ -1122,6 +1122,8 @@
   "communityTabForum": "Discussion Forum",
   "communityTabChallenges": "Challenges",
   "communityForums": "Forums",
+  "communityForumsEmptyTitle": "Be the first to post",
+  "communityForumsEmptyMessage": "Share a workout win, a question, or a tip — your post could be the first thing someone else sees here.",
   "communityChallengesAndCompetitions": "Challenges and competitions",
   "communityStartNow": "Start Now",
   "communityFeaturedChallengeName": "Cycling Challenge",

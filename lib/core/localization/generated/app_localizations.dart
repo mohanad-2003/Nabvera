@@ -4820,6 +4820,18 @@ abstract class AppLocalizations {
   /// **'Forums'**
   String get communityForums;
 
+  /// No description provided for @communityForumsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to post'**
+  String get communityForumsEmptyTitle;
+
+  /// No description provided for @communityForumsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a workout win, a question, or a tip — your post could be the first thing someone else sees here.'**
+  String get communityForumsEmptyMessage;
+
   /// No description provided for @communityChallengesAndCompetitions.
   ///
   /// In en, this message translates to:

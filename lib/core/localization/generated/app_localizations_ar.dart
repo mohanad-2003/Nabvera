@@ -2557,6 +2557,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityForums => 'المنتديات';
 
   @override
+  String get communityForumsEmptyTitle => 'كن أول من ينشر';
+
+  @override
+  String get communityForumsEmptyMessage =>
+      'شارك إنجاز تمرين، سؤال، أو نصيحة — منشورك ممكن يكون أول حاجة حد تاني يشوفها هنا.';
+
+  @override
   String get communityChallengesAndCompetitions => 'التحديات والمسابقات';
 
   @override

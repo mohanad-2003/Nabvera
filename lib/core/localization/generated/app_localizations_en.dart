@@ -2594,6 +2594,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityForums => 'Forums';
 
   @override
+  String get communityForumsEmptyTitle => 'Be the first to post';
+
+  @override
+  String get communityForumsEmptyMessage =>
+      'Share a workout win, a question, or a tip — your post could be the first thing someone else sees here.';
+
+  @override
   String get communityChallengesAndCompetitions =>
       'Challenges and competitions';
 

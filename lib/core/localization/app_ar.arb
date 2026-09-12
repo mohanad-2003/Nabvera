@@ -826,6 +826,8 @@
   "communityTabForum": "منتدى النقاش",
   "communityTabChallenges": "التحديات",
   "communityForums": "المنتديات",
+  "communityForumsEmptyTitle": "كن أول من ينشر",
+  "communityForumsEmptyMessage": "شارك إنجاز تمرين، سؤال، أو نصيحة — منشورك ممكن يكون أول حاجة حد تاني يشوفها هنا.",
   "communityChallengesAndCompetitions": "التحديات والمسابقات",
   "communityStartNow": "ابدأ الآن",
   "communityFeaturedChallengeName": "تحدي ركوب الدراجات",
