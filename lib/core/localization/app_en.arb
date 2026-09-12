@@ -1199,6 +1199,8 @@
     }
   },
   "communityChallengeGoalHeading": "Your goal",
+  "communityChallengeGoalHint": "Any workout you log counts toward this goal — no specific routine required.",
+  "communityBrowseWorkouts": "Browse Workouts",
   "communityChallengeTimeLeftDays": "{days} days left",
   "@communityChallengeTimeLeftDays": {
     "placeholders": {

@@ -2691,6 +2691,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityChallengeGoalHeading => 'هدفك';
 
   @override
+  String get communityChallengeGoalHint =>
+      'أي تمرين تسجّله بيتحسب في الهدف ده — مفيش برنامج معيّن مطلوب.';
+
+  @override
+  String get communityBrowseWorkouts => 'تصفّح التمارين';
+
+  @override
   String communityChallengeTimeLeftDays(int days) {
     return 'متبقٍ $days أيام';
   }

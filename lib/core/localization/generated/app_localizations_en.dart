@@ -2734,6 +2734,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityChallengeGoalHeading => 'Your goal';
 
   @override
+  String get communityChallengeGoalHint =>
+      'Any workout you log counts toward this goal — no specific routine required.';
+
+  @override
+  String get communityBrowseWorkouts => 'Browse Workouts';
+
+  @override
   String communityChallengeTimeLeftDays(int days) {
     return '$days days left';
   }

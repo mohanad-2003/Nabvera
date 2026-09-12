@@ -5054,6 +5054,18 @@ abstract class AppLocalizations {
   /// **'Your goal'**
   String get communityChallengeGoalHeading;
 
+  /// No description provided for @communityChallengeGoalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Any workout you log counts toward this goal — no specific routine required.'**
+  String get communityChallengeGoalHint;
+
+  /// No description provided for @communityBrowseWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Workouts'**
+  String get communityBrowseWorkouts;
+
   /// No description provided for @communityChallengeTimeLeftDays.
   ///
   /// In en, this message translates to:

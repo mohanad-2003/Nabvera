@@ -4,7 +4,6 @@ import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/glow_orb.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
-import 'package:nabvera/core/widgets/top_icon_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -56,8 +55,6 @@ class MealIdeaDiscoverPage extends StatelessWidget {
                       size: 22,
                     ),
                   ),
-                  const Spacer(),
-                  TopIconActions(color: theme.colorScheme.primary),
                 ],
               ),
             ),

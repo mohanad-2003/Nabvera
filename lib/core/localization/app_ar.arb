@@ -871,6 +871,8 @@
   "communityChallengeGoalWeeklyConsistency": "أكمل {count} تمارين هذا الأسبوع",
   "@communityChallengeGoalWeeklyConsistency": {"placeholders": {"count": {"type": "int"}}},
   "communityChallengeGoalHeading": "هدفك",
+  "communityChallengeGoalHint": "أي تمرين تسجّله بيتحسب في الهدف ده — مفيش برنامج معيّن مطلوب.",
+  "communityBrowseWorkouts": "تصفّح التمارين",
   "communityChallengeTimeLeftDays": "متبقٍ {days} أيام",
   "@communityChallengeTimeLeftDays": {"placeholders": {"days": {"type": "int"}}},
   "communityChallengeTimeLeftHours": "متبقٍ {hours} ساعة",
