@@ -59,6 +59,23 @@ class CommunityForums extends _$CommunityForums {
     }
   }
 
+  /// Publishes a new post and reloads the feed so it appears immediately
+  /// at the top (matching the backend's newest-first sort) — no manual
+  /// prepend, since that would have to guess at every server-assigned
+  /// field (`_id`, `createdAt`, the populated `author`) that
+  /// [ForumThread.fromJson] needs. Rethrows on failure so the composer UI
+  /// can show a real error instead of silently discarding the post.
+  Future<void> create(String content) async {
+    await ref.read(communityRepositoryProvider).createPost(content);
+    await _load();
+  }
+
+  /// Deletes one of the current user's own posts and reloads the feed.
+  Future<void> delete(String postId) async {
+    await ref.read(communityRepositoryProvider).deletePost(postId);
+    await _load();
+  }
+
   Future<void> toggleLike(String postId) async {
     final index = state.indexWhere((t) => t.id == postId);
     if (index == -1) return;

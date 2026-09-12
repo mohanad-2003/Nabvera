@@ -16,6 +16,7 @@ import 'package:nabvera/features/community/domain/challenge_badges.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:nabvera/features/community/presentation/widgets/challenge_progress_card.dart';
+import 'package:nabvera/features/community/presentation/widgets/new_post_sheet.dart';
 
 import 'forum_detail_page.dart';
 
@@ -37,6 +38,13 @@ class CommunityPage extends ConsumerWidget {
           PremiumHeader(
             title: l10n.navCommunityTitle,
             subtitle: l10n.communitySubtitle,
+            trailing:
+                tab == CommunityTab.forum
+                    ? PremiumIconButton(
+                      icon: Icons.add_rounded,
+                      onTap: () => showNewPostSheet(context, ref),
+                    )
+                    : null,
           ),
           SizedBox(height: compact ? 10 : 14),
           Row(
@@ -180,11 +188,11 @@ class _ForumTab extends StatelessWidget {
 /// `removeDemoCommunityContent.js`), so a fresh launch reads as "no posts
 /// yet" rather than a broken-looking bare section header with nothing
 /// under it.
-class _ForumsEmptyState extends StatelessWidget {
+class _ForumsEmptyState extends ConsumerWidget {
   const _ForumsEmptyState();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     return Padding(
@@ -203,6 +211,12 @@ class _ForumsEmptyState extends StatelessWidget {
             l10n.communityForumsEmptyMessage,
             textAlign: TextAlign.center,
             style: TextStyle(color: ext.textMuted, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () => showNewPostSheet(context, ref),
+            icon: const Icon(Icons.add_rounded),
+            label: Text(l10n.communityForumsEmptyAction),
           ),
         ],
       ),

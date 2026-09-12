@@ -4886,6 +4886,54 @@ abstract class AppLocalizations {
   /// **'Write a reply…'**
   String get communityReplyHint;
 
+  /// No description provided for @communityNewPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Post'**
+  String get communityNewPostTitle;
+
+  /// No description provided for @communityNewPostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a workout win, a question, or a tip…'**
+  String get communityNewPostHint;
+
+  /// No description provided for @communityPostAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get communityPostAction;
+
+  /// No description provided for @communityPostFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t publish your post. Please try again.'**
+  String get communityPostFailed;
+
+  /// No description provided for @communityForumsEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Post'**
+  String get communityForumsEmptyAction;
+
+  /// No description provided for @communityDeletePostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete post?'**
+  String get communityDeletePostTitle;
+
+  /// No description provided for @communityDeletePostBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes it for everyone and can\'t be undone.'**
+  String get communityDeletePostBody;
+
+  /// No description provided for @communityDeletePostFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your post. Please try again.'**
+  String get communityDeletePostFailed;
+
   /// No description provided for @communityPost1.
   ///
   /// In en, this message translates to:

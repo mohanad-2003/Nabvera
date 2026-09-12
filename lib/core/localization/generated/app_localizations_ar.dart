@@ -2591,6 +2591,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityReplyHint => 'اكتب ردًا…';
 
   @override
+  String get communityNewPostTitle => 'منشور جديد';
+
+  @override
+  String get communityNewPostHint => 'شارك إنجاز تمرين، سؤال، أو نصيحة…';
+
+  @override
+  String get communityPostAction => 'نشر';
+
+  @override
+  String get communityPostFailed => 'تعذّر نشر منشورك. حاول مرة أخرى.';
+
+  @override
+  String get communityForumsEmptyAction => 'منشور جديد';
+
+  @override
+  String get communityDeletePostTitle => 'حذف المنشور؟';
+
+  @override
+  String get communityDeletePostBody => 'هيتشال للجميع ومش هيرجع تاني.';
+
+  @override
+  String get communityDeletePostFailed => 'تعذّر حذف المنشور. حاول مرة أخرى.';
+
+  @override
   String get communityPost1 =>
       'أنهيت للتو الأسبوع الثالث من خطة القوة — تمارين الجلوس على المقعد المائل بدأت تصبح أسهل أخيرًا! هل يوجد أحد آخر في مسار المبتدئين؟';
 

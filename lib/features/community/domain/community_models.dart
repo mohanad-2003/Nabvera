@@ -196,6 +196,7 @@ class ForumThread {
     required this.likesCount,
     required this.liked,
     required this.commentsCount,
+    this.isOwnPost = false,
   });
 
   final String id;
@@ -213,6 +214,12 @@ class ForumThread {
   final bool liked;
   final int commentsCount;
 
+  /// Whether the signed-in user authored this post — gates showing a
+  /// delete action (`DELETE /posts/:id` refuses anyone else's post
+  /// anyway; this just keeps the option from being offered at all instead
+  /// of failing when tapped).
+  final bool isOwnPost;
+
   String displayAuthorName(AppLocalizations l10n) =>
       subtitle.trim().isEmpty ? l10n.communityMember : subtitle.trim();
 
@@ -226,6 +233,7 @@ class ForumThread {
     likesCount: likesCount ?? this.likesCount,
     liked: liked ?? this.liked,
     commentsCount: commentsCount,
+    isOwnPost: isOwnPost,
   );
 
   /// Builds a thread card from a `/api/posts` JSON document.
@@ -239,6 +247,7 @@ class ForumThread {
     final author = json['author'] as Map<String, dynamic>?;
     final content = (json['content'] as String?) ?? '';
     final likes = (json['likes'] as List? ?? const []).cast<String>();
+    final authorId = author?['_id'] as String?;
     return ForumThread(
       id: json['_id'] as String? ?? '',
       title: content.length > 60 ? '${content.substring(0, 60)}…' : content,
@@ -249,6 +258,7 @@ class ForumThread {
       likesCount: likes.length,
       liked: currentUserId.isNotEmpty && likes.contains(currentUserId),
       commentsCount: (json['commentsCount'] as int?) ?? 0,
+      isOwnPost: currentUserId.isNotEmpty && authorId == currentUserId,
     );
   }
 

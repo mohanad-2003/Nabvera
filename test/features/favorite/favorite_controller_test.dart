@@ -161,6 +161,8 @@ class FakeUserRepository implements UserRepository {
   Future<void> unregisterFcmToken(String token) async {}
   @override
   Future<void> deleteAccount() async => throw UnimplementedError();
+  @override
+  Future<Map<String, dynamic>> exportData() async => throw UnimplementedError();
 }
 
 UserProfile _profileWithFavorites({
@@ -223,7 +225,8 @@ void main() {
   test(
     'a favorite that no longer resolves (deleted item) is silently skipped, not shown as broken/fake data',
     () async {
-      final fakeWorkouts = FakeWorkoutRepository(); // 'gone' resolves to nothing
+      final fakeWorkouts =
+          FakeWorkoutRepository(); // 'gone' resolves to nothing
       final fakeUsers =
           FakeUserRepository()
             ..profile = _profileWithFavorites(workoutIds: ['gone']);
@@ -246,28 +249,34 @@ void main() {
     },
   );
 
-  test('remove() calls the real toggle-favorite API, not just local state', () async {
-    final fakeWorkouts =
-        FakeWorkoutRepository()
-          ..workoutsById['w1'] = {'_id': 'w1', 'title': 'Leg Day'};
-    final fakeUsers =
-        FakeUserRepository()..profile = _profileWithFavorites(workoutIds: ['w1']);
-    final container = ProviderContainer(
-      overrides: [
-        workoutRepositoryProvider.overrideWithValue(fakeWorkouts),
-        nutritionRepositoryProvider.overrideWithValue(FakeNutritionRepository()),
-        userRepositoryProvider.overrideWithValue(fakeUsers),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.listen(filteredFavoritesProvider, (_, _) {});
-    await container.read(currentUserProfileProvider.notifier).refresh();
-    await pumpEventQueue();
+  test(
+    'remove() calls the real toggle-favorite API, not just local state',
+    () async {
+      final fakeWorkouts =
+          FakeWorkoutRepository()
+            ..workoutsById['w1'] = {'_id': 'w1', 'title': 'Leg Day'};
+      final fakeUsers =
+          FakeUserRepository()
+            ..profile = _profileWithFavorites(workoutIds: ['w1']);
+      final container = ProviderContainer(
+        overrides: [
+          workoutRepositoryProvider.overrideWithValue(fakeWorkouts),
+          nutritionRepositoryProvider.overrideWithValue(
+            FakeNutritionRepository(),
+          ),
+          userRepositoryProvider.overrideWithValue(fakeUsers),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.listen(filteredFavoritesProvider, (_, _) {});
+      await container.read(currentUserProfileProvider.notifier).refresh();
+      await pumpEventQueue();
 
-    final item = container.read(filteredFavoritesProvider).first;
-    await container.read(filteredFavoritesProvider.notifier).remove(item);
+      final item = container.read(filteredFavoritesProvider).first;
+      await container.read(filteredFavoritesProvider.notifier).remove(item);
 
-    expect(fakeUsers.toggleWorkoutCallCount, 1);
-    expect(container.read(filteredFavoritesProvider), isEmpty);
-  });
+      expect(fakeUsers.toggleWorkoutCallCount, 1);
+      expect(container.read(filteredFavoritesProvider), isEmpty);
+    },
+  );
 }

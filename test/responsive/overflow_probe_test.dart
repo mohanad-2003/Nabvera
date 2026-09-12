@@ -57,6 +57,8 @@ class _FakeUserRepository implements UserRepository {
   Future<void> unregisterFcmToken(String token) async {}
   @override
   Future<void> deleteAccount() async => throw UnimplementedError();
+  @override
+  Future<Map<String, dynamic>> exportData() async => throw UnimplementedError();
 }
 
 /// Every size from the audit brief: small/normal/large phones, tablets,

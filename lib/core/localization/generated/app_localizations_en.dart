@@ -2629,6 +2629,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityReplyHint => 'Write a reply…';
 
   @override
+  String get communityNewPostTitle => 'New Post';
+
+  @override
+  String get communityNewPostHint =>
+      'Share a workout win, a question, or a tip…';
+
+  @override
+  String get communityPostAction => 'Post';
+
+  @override
+  String get communityPostFailed =>
+      'Couldn\'t publish your post. Please try again.';
+
+  @override
+  String get communityForumsEmptyAction => 'New Post';
+
+  @override
+  String get communityDeletePostTitle => 'Delete post?';
+
+  @override
+  String get communityDeletePostBody =>
+      'This removes it for everyone and can\'t be undone.';
+
+  @override
+  String get communityDeletePostFailed =>
+      'Couldn\'t delete your post. Please try again.';
+
+  @override
   String get communityPost1 =>
       'Just finished week 3 of the strength plan — the incline bench sit-ups are finally starting to feel manageable! Anyone else on the beginner track?';
 
