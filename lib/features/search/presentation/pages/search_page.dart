@@ -368,10 +368,8 @@ class _AllResultsSection extends StatelessWidget {
         if (featured.isNotEmpty) ...[
           LayoutBuilder(
             builder: (context, constraints) {
-              final itemWidth = (constraints.maxWidth * .72).clamp(
-                220.0,
-                290.0,
-              ).toDouble();
+              final itemWidth =
+                  (constraints.maxWidth * .72).clamp(220.0, 290.0).toDouble();
               return SizedBox(
                 height: 238,
                 child: ListView.separated(
