@@ -3146,4 +3146,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileMenuSubscriptionSubtitlePro => 'إدارة خطتك';
+
+  @override
+  String get mealPlanUpgradeRequiredTitle => 'استخدمت خطتك المجانية اليوم';
+
+  @override
+  String get mealPlanUpgradeRequiredBody =>
+      'الحساب المجاني بياخد خطة طعام واحدة بالذكاء الاصطناعي يومياً. رقّي لـ Nabvera Pro للحصول على خطط غير محدودة، بأي وقت.';
+
+  @override
+  String get mealPlanUpgradeRequiredCta => 'الترقية إلى Pro';
+
+  @override
+  String get subscriptionActiveTitle => 'أنت عضو Pro';
+
+  @override
+  String get subscriptionActiveTierMonthly => 'خطة شهرية';
+
+  @override
+  String get subscriptionActiveTierYearly => 'خطة سنوية';
+
+  @override
+  String subscriptionActiveRenewsOn(String date) {
+    return 'يتجدد بتاريخ $date';
+  }
+
+  @override
+  String subscriptionActiveExpiresOn(String date) {
+    return 'ينتهي الوصول بتاريخ $date';
+  }
+
+  @override
+  String get subscriptionActiveGracePeriod =>
+      'في مشكلة بآخر عملية دفع — رجاءً حدّثها للحفاظ على وصولك لـ Pro.';
+
+  @override
+  String get subscriptionManageSubscriptionFailed =>
+      'تعذّر فتح إدارة الاشتراك. حاول مرة أخرى.';
 }

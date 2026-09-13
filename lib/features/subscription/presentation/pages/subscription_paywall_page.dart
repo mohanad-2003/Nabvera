@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/features/subscription/data/subscription_repository.dart';
-import 'package:nabvera/features/subscription/presentation/providers/subscription_providers.dart';
+import 'package:nabvera/features/subscription/domain/subscription_models.dart';
+import 'package:nabvera/features/subscription/presentation/providers/subscription_providers.dart'
+    hide SubscriptionStatus;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// The "upgrade to Pro" screen — pushed from a Profile menu tile, or (once
@@ -77,6 +80,20 @@ class _SubscriptionPaywallPageState
     }
   }
 
+  /// Called from [_PurchaseFlow] (a separate widget, so it can't touch
+  /// this State's `setState` directly — that's `@protected`).
+  void selectPackage(Package package) => setState(() => _selectedPackage = package);
+
+  Future<void> _manageSubscription() async {
+    try {
+      await ref.read(subscriptionRepositoryProvider).openManageSubscriptions();
+    } catch (_) {
+      if (mounted) {
+        _showError(AppLocalizations.of(context).subscriptionManageSubscriptionFailed);
+      }
+    }
+  }
+
   void _showError(String message) => _showMessage(message);
 
   void _showMessage(String message) {
@@ -89,8 +106,12 @@ class _SubscriptionPaywallPageState
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
-    final offerings = ref.watch(offeringsProvider);
-    final busy = _purchasing || _restoring;
+    final subscriptionStatus = ref.watch(subscriptionStatusProvider);
+    // An in-flight fetch/refresh error is treated the same as "not
+    // subscribed" (falls through to the normal purchase flow below)
+    // rather than blocking the whole screen — a transient network hiccup
+    // reading status shouldn't stop someone from being able to buy.
+    final isActive = subscriptionStatus.value?.isActive ?? false;
 
     return PremiumScaffold(
       child: SingleChildScrollView(
@@ -105,65 +126,27 @@ class _SubscriptionPaywallPageState
             const SizedBox(height: 26),
             const _FeatureList(),
             const SizedBox(height: 26),
-            offerings.when(
-              loading:
-                  () => const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-              error:
-                  (_, _) => _OfferingsUnavailable(
-                    message: l10n.subscriptionOfferingsUnavailable,
-                  ),
-              data: (offeringsResult) {
-                final packages =
-                    offeringsResult.current?.availablePackages ?? const [];
-                if (packages.isEmpty) {
-                  return _OfferingsUnavailable(
-                    message: l10n.subscriptionOfferingsUnavailable,
-                  );
-                }
-                _selectedPackage ??= packages.first;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var i = 0; i < packages.length; i++) ...[
-                      if (i > 0) Divider(height: 1, color: ext.glassBorder),
-                      _PlanCard(
-                        package: packages[i],
-                        selected:
-                            _selectedPackage?.identifier ==
-                            packages[i].identifier,
-                        onTap:
-                            busy
-                                ? null
-                                : () => setState(
-                                  () => _selectedPackage = packages[i],
-                                ),
-                      ),
-                    ],
-                    const SizedBox(height: 22),
-                    _ContinueButton(
-                      loading: _purchasing,
-                      enabled: !busy && _selectedPackage != null,
-                      label: l10n.subscriptionContinueButton,
-                      onTap:
-                          () =>
-                              _selectedPackage == null
-                                  ? null
-                                  : _purchase(_selectedPackage!),
-                    ),
-                  ],
-                );
-              },
-            ),
+            if (subscriptionStatus.isLoading && !subscriptionStatus.hasValue)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (isActive)
+              _ActiveSubscriptionCard(
+                info: subscriptionStatus.value!,
+                l10n: l10n,
+                ext: ext,
+                onManage: _manageSubscription,
+              )
+            else
+              _PurchaseFlow(state: this),
             const SizedBox(height: 16),
-            Center(
-              child: TextButton(
-                onPressed: busy ? null : _restore,
-                child:
-                    _restoring
-                        ? SizedBox(
+            if (!isActive)
+              Center(
+                child: TextButton(
+                  onPressed: _purchasing || _restoring ? null : _restore,
+                  child: _restoring
+                      ? SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
@@ -171,17 +154,171 @@ class _SubscriptionPaywallPageState
                             color: ext.textMuted,
                           ),
                         )
-                        : Text(
+                      : Text(
                           l10n.subscriptionRestorePurchases,
                           style: TextStyle(color: ext.textMuted),
                         ),
+                ),
               ),
-            ),
             const SizedBox(height: 8),
             _LegalFooter(l10n: l10n, ext: ext),
             const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The normal purchase flow (offerings -> plan picker -> Continue) — split
+/// out of [_SubscriptionPaywallPageState.build] so that method can branch
+/// cleanly between this and [_ActiveSubscriptionCard] without one giant
+/// nested nullable nightmare of a widget tree.
+class _PurchaseFlow extends ConsumerWidget {
+  const _PurchaseFlow({required this.state});
+
+  final _SubscriptionPaywallPageState state;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    final offerings = ref.watch(offeringsProvider);
+    final busy = state._purchasing || state._restoring;
+
+    return offerings.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 40),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => _OfferingsUnavailable(
+        message: l10n.subscriptionOfferingsUnavailable,
+      ),
+      data: (offeringsResult) {
+        final packages = offeringsResult.current?.availablePackages ?? const [];
+        if (packages.isEmpty) {
+          return _OfferingsUnavailable(
+            message: l10n.subscriptionOfferingsUnavailable,
+          );
+        }
+        state._selectedPackage ??= packages.first;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < packages.length; i++) ...[
+              if (i > 0) Divider(height: 1, color: ext.glassBorder),
+              _PlanCard(
+                package: packages[i],
+                selected:
+                    state._selectedPackage?.identifier == packages[i].identifier,
+                onTap: busy ? null : () => state.selectPackage(packages[i]),
+              ),
+            ],
+            const SizedBox(height: 22),
+            _ContinueButton(
+              loading: state._purchasing,
+              enabled: !busy && state._selectedPackage != null,
+              label: l10n.subscriptionContinueButton,
+              onTap: () => state._selectedPackage == null
+                  ? null
+                  : state._purchase(state._selectedPackage!),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Shown instead of [_PurchaseFlow] once the backend confirms an active
+/// subscription — the whole point being that a Pro user opening this
+/// screen (e.g. from the Profile menu tile) sees their own plan status
+/// and a way to manage it, not the same purchase pitch a free user gets.
+class _ActiveSubscriptionCard extends StatelessWidget {
+  const _ActiveSubscriptionCard({
+    required this.info,
+    required this.l10n,
+    required this.ext,
+    required this.onManage,
+  });
+
+  final SubscriptionInfo info;
+  final AppLocalizations l10n;
+  final AppThemeExtension ext;
+  final VoidCallback onManage;
+
+  String get _tierLabel => switch (info.tier) {
+        SubscriptionTier.yearly => l10n.subscriptionActiveTierYearly,
+        SubscriptionTier.monthly => l10n.subscriptionActiveTierMonthly,
+        SubscriptionTier.free => '',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final endsAt = info.currentPeriodEndsAt;
+    final dateLabel = endsAt == null ? null : DateFormat.yMMMd().format(endsAt);
+
+    return PremiumGlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(shape: BoxShape.circle, gradient: ext.accentGradient),
+                child: Icon(Icons.workspace_premium_rounded, color: ext.onAccent, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.subscriptionActiveTitle,
+                      style: TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800,
+                        color: ext.textPrimary,
+                      ),
+                    ),
+                    if (_tierLabel.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(_tierLabel, style: TextStyle(color: ext.textMuted, fontSize: 13)),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (dateLabel != null) ...[
+            const SizedBox(height: 14),
+            Divider(height: 1, color: ext.glassBorder),
+            const SizedBox(height: 14),
+            Text(
+              info.status == SubscriptionStatus.gracePeriod
+                  ? l10n.subscriptionActiveGracePeriod
+                  : info.willRenew
+                      ? l10n.subscriptionActiveRenewsOn(dateLabel)
+                      : l10n.subscriptionActiveExpiresOn(dateLabel),
+              style: TextStyle(
+                color: info.status == SubscriptionStatus.gracePeriod
+                    ? ext.warning
+                    : ext.textMuted,
+                fontSize: 13,
+              ),
+            ),
+          ],
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onManage,
+              child: Text(l10n.subscriptionManageSubscriptionCta),
+            ),
+          ),
+        ],
       ),
     );
   }

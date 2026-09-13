@@ -1,4 +1,5 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/network/api_client.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
@@ -8,6 +9,14 @@ import 'package:nabvera/features/workout/presentation/widgets/workout_header.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+/// True for the specific 403 the backend sends when a free-tier account
+/// hits its daily AI meal-plan limit (see `mealPlanQuotaService.js`
+/// `consumeGenerationQuota`) — distinct from every other failure (network,
+/// 429 abuse ceiling, AI provider error), which "retry" can plausibly fix
+/// and this can't.
+bool _isUpgradeRequired(Object? error) =>
+    error is ApiException && error.statusCode == 403;
 
 /// Shows real generation progress — no fixed-duration fake animation (see
 /// the Phase 6 brief's explicit requirement). The spinner just reflects
@@ -52,7 +61,9 @@ class _MealPlanGeneratingPageState extends ConsumerState<MealPlanGeneratingPage>
           Expanded(
             child: Center(
               child: state.hasError
-                  ? _ErrorContent(l10n: l10n, ext: ext)
+                  ? (_isUpgradeRequired(state.error)
+                      ? _UpgradeRequiredContent(l10n: l10n, ext: ext)
+                      : _ErrorContent(l10n: l10n, ext: ext))
                   : _ProgressContent(l10n: l10n, ext: ext),
             ),
           ),
@@ -151,6 +162,52 @@ class _ErrorContent extends ConsumerWidget {
           child: PrimaryButton(
             label: l10n.actionRetry,
             onPressed: () => ref.read(mealPlanControllerProvider.notifier).generate(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Shown instead of [_ErrorContent] specifically for [_isUpgradeRequired]
+/// — a free-tier account that already used today's one AI generation. A
+/// plain "retry" here would just fail again with the same 403, so this
+/// offers the one action that actually resolves it: upgrading.
+class _UpgradeRequiredContent extends StatelessWidget {
+  const _UpgradeRequiredContent({required this.l10n, required this.ext});
+  final AppLocalizations l10n;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(shape: BoxShape.circle, gradient: ext.accentGradient),
+          child: Icon(Icons.workspace_premium_rounded, size: 34, color: ext.onAccent),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          l10n.mealPlanUpgradeRequiredTitle,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleLarge?.copyWith(color: ext.textPrimary, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.mealPlanUpgradeRequiredBody,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: 220,
+          child: PrimaryButton(
+            label: l10n.mealPlanUpgradeRequiredCta,
+            onPressed: () => context.push(AppRoutes.subscriptionPaywall),
           ),
         ),
       ],

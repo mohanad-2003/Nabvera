@@ -1026,5 +1026,29 @@
   "subscriptionManageSubscriptionCta": "إدارة الاشتراك",
   "profileMenuSubscription": "Nabvera Pro",
   "profileMenuSubscriptionSubtitleFree": "قم بالترقية للوصول الكامل",
-  "profileMenuSubscriptionSubtitlePro": "إدارة خطتك"
+  "profileMenuSubscriptionSubtitlePro": "إدارة خطتك",
+  "mealPlanUpgradeRequiredTitle": "استخدمت خطتك المجانية اليوم",
+  "mealPlanUpgradeRequiredBody": "الحساب المجاني بياخد خطة طعام واحدة بالذكاء الاصطناعي يومياً. رقّي لـ Nabvera Pro للحصول على خطط غير محدودة، بأي وقت.",
+  "mealPlanUpgradeRequiredCta": "الترقية إلى Pro",
+  "subscriptionActiveTitle": "أنت عضو Pro",
+  "subscriptionActiveTierMonthly": "خطة شهرية",
+  "subscriptionActiveTierYearly": "خطة سنوية",
+  "subscriptionActiveRenewsOn": "يتجدد بتاريخ {date}",
+  "@subscriptionActiveRenewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionActiveExpiresOn": "ينتهي الوصول بتاريخ {date}",
+  "@subscriptionActiveExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionActiveGracePeriod": "في مشكلة بآخر عملية دفع — رجاءً حدّثها للحفاظ على وصولك لـ Pro.",
+  "subscriptionManageSubscriptionFailed": "تعذّر فتح إدارة الاشتراك. حاول مرة أخرى."
 }

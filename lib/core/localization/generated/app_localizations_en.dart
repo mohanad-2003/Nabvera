@@ -3195,4 +3195,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMenuSubscriptionSubtitlePro => 'Manage your plan';
+
+  @override
+  String get mealPlanUpgradeRequiredTitle => 'You\'ve used today\'s free plan';
+
+  @override
+  String get mealPlanUpgradeRequiredBody =>
+      'Free accounts get one AI meal plan per day. Upgrade to Nabvera Pro for unlimited plans, any time.';
+
+  @override
+  String get mealPlanUpgradeRequiredCta => 'Upgrade to Pro';
+
+  @override
+  String get subscriptionActiveTitle => 'You\'re a Pro member';
+
+  @override
+  String get subscriptionActiveTierMonthly => 'Monthly plan';
+
+  @override
+  String get subscriptionActiveTierYearly => 'Yearly plan';
+
+  @override
+  String subscriptionActiveRenewsOn(String date) {
+    return 'Renews on $date';
+  }
+
+  @override
+  String subscriptionActiveExpiresOn(String date) {
+    return 'Access ends on $date';
+  }
+
+  @override
+  String get subscriptionActiveGracePeriod =>
+      'There\'s a problem with your last payment — please update it to keep your Pro access.';
+
+  @override
+  String get subscriptionManageSubscriptionFailed =>
+      'Couldn\'t open subscription management. Please try again.';
 }

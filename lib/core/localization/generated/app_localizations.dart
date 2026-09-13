@@ -5911,6 +5911,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage your plan'**
   String get profileMenuSubscriptionSubtitlePro;
+
+  /// No description provided for @mealPlanUpgradeRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used today\'s free plan'**
+  String get mealPlanUpgradeRequiredTitle;
+
+  /// No description provided for @mealPlanUpgradeRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Free accounts get one AI meal plan per day. Upgrade to Nabvera Pro for unlimited plans, any time.'**
+  String get mealPlanUpgradeRequiredBody;
+
+  /// No description provided for @mealPlanUpgradeRequiredCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro'**
+  String get mealPlanUpgradeRequiredCta;
+
+  /// No description provided for @subscriptionActiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re a Pro member'**
+  String get subscriptionActiveTitle;
+
+  /// No description provided for @subscriptionActiveTierMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly plan'**
+  String get subscriptionActiveTierMonthly;
+
+  /// No description provided for @subscriptionActiveTierYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly plan'**
+  String get subscriptionActiveTierYearly;
+
+  /// No description provided for @subscriptionActiveRenewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews on {date}'**
+  String subscriptionActiveRenewsOn(String date);
+
+  /// No description provided for @subscriptionActiveExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Access ends on {date}'**
+  String subscriptionActiveExpiresOn(String date);
+
+  /// No description provided for @subscriptionActiveGracePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s a problem with your last payment — please update it to keep your Pro access.'**
+  String get subscriptionActiveGracePeriod;
+
+  /// No description provided for @subscriptionManageSubscriptionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open subscription management. Please try again.'**
+  String get subscriptionManageSubscriptionFailed;
 }
 
 class _AppLocalizationsDelegate

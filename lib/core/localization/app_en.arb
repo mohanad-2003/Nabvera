@@ -1363,5 +1363,29 @@
   "subscriptionManageSubscriptionCta": "Manage Subscription",
   "profileMenuSubscription": "Nabvera Pro",
   "profileMenuSubscriptionSubtitleFree": "Upgrade for full access",
-  "profileMenuSubscriptionSubtitlePro": "Manage your plan"
+  "profileMenuSubscriptionSubtitlePro": "Manage your plan",
+  "mealPlanUpgradeRequiredTitle": "You've used today's free plan",
+  "mealPlanUpgradeRequiredBody": "Free accounts get one AI meal plan per day. Upgrade to Nabvera Pro for unlimited plans, any time.",
+  "mealPlanUpgradeRequiredCta": "Upgrade to Pro",
+  "subscriptionActiveTitle": "You're a Pro member",
+  "subscriptionActiveTierMonthly": "Monthly plan",
+  "subscriptionActiveTierYearly": "Yearly plan",
+  "subscriptionActiveRenewsOn": "Renews on {date}",
+  "@subscriptionActiveRenewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionActiveExpiresOn": "Access ends on {date}",
+  "@subscriptionActiveExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionActiveGracePeriod": "There's a problem with your last payment — please update it to keep your Pro access.",
+  "subscriptionManageSubscriptionFailed": "Couldn't open subscription management. Please try again."
 }

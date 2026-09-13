@@ -1,7 +1,10 @@
+import 'dart:io' show Platform;
+
 import 'package:nabvera/core/network/api_client.dart';
 import 'package:nabvera/features/subscription/domain/subscription_models.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'subscription_repository.g.dart';
 
@@ -43,6 +46,21 @@ class SubscriptionRepository {
     final response = await _client.get('/users/me/subscription');
     final body = _client.decode(response);
     return SubscriptionInfo.fromJson(body['data'] as Map<String, dynamic>);
+  }
+
+  /// Opens the store's own subscription-management page — the one place
+  /// that can actually change/cancel a subscription (this app never
+  /// touches billing directly, and neither RevenueCat's dashboard nor our
+  /// backend can cancel on the user's behalf). No `purchases_ui_flutter`
+  /// dependency needed for this alone: both stores expose it as a plain
+  /// URL.
+  Future<void> openManageSubscriptions() async {
+    final uri = Uri.parse(
+      Platform.isIOS
+          ? 'https://apps.apple.com/account/subscriptions'
+          : 'https://play.google.com/store/account/subscriptions',
+    );
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
 
