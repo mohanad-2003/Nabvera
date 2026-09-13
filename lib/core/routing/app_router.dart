@@ -62,6 +62,7 @@ import 'package:nabvera/features/profile/presentation/pages/privacy_page.dart';
 import 'package:nabvera/features/profile/presentation/pages/profile_page.dart';
 import 'package:nabvera/features/profile/presentation/pages/settings_page.dart';
 import 'package:nabvera/features/search/presentation/pages/search_page.dart';
+import 'package:nabvera/features/subscription/presentation/pages/subscription_paywall_page.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/presentation/pages/category_charts_page.dart';
 import 'package:nabvera/features/workout/presentation/pages/category_detail_page.dart';
@@ -286,6 +287,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.manageData,
         builder: (context, state) => const ManageDataPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.subscriptionPaywall,
+        builder: (context, state) => const SubscriptionPaywallPage(),
       ),
       GoRoute(
         path: AppRoutes.settings,

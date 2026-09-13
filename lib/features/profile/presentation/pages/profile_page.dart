@@ -9,6 +9,7 @@ import 'package:nabvera/features/profile/presentation/widgets/delete_account_she
 import 'package:nabvera/features/profile/presentation/widgets/profile_menu_tile.dart';
 import 'package:nabvera/features/profile/presentation/widgets/profile_header.dart';
 import 'package:nabvera/features/profile/presentation/widgets/profile_stat_row.dart';
+import 'package:nabvera/features/subscription/presentation/providers/subscription_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -123,11 +124,30 @@ class ProfilePage extends ConsumerWidget {
             // control: `adminRouteGuard` in app_router.dart is what
             // structurally blocks a non-admin from every /admin route,
             // regardless of whether this tile is shown.
-            itemCount: profile.isAdmin ? 4 : 3,
+            itemCount: profile.isAdmin ? 5 : 4,
             separatorBuilder: (_, _) => Divider(color: ext.glassBorder),
             itemBuilder: (context, index) {
               switch (index) {
                 case 0:
+                  // Backend-confirmed state (see SubscriptionRepository) —
+                  // `.value` is null while it's still loading/erroring, in
+                  // which case this defaults to the free-tier copy rather
+                  // than momentarily claiming "Manage your plan" for an
+                  // account that isn't actually subscribed.
+                  final isPro =
+                      ref.watch(subscriptionStatusProvider).value?.isActive ??
+                      false;
+                  return ProfileMenuTile(
+                    icon: Icons.workspace_premium_rounded,
+                    title: l10n.profileMenuSubscription,
+                    subtitle: isPro
+                        ? l10n.profileMenuSubscriptionSubtitlePro
+                        : l10n.profileMenuSubscriptionSubtitleFree,
+                    iconColor: ext.accentGlow,
+                    flat: true,
+                    onTap: () => context.push(AppRoutes.subscriptionPaywall),
+                  );
+                case 1:
                   return ProfileMenuTile(
                     icon: Icons.person_outline_rounded,
                     title: l10n.profileMenuProfile,
@@ -135,7 +155,7 @@ class ProfilePage extends ConsumerWidget {
                     flat: true,
                     onTap: () => context.push(AppRoutes.editProfile),
                   );
-                case 1:
+                case 2:
                   return ProfileMenuTile(
                     icon: Icons.star_border_rounded,
                     title: l10n.profileMenuFavorite,
@@ -143,7 +163,7 @@ class ProfilePage extends ConsumerWidget {
                     flat: true,
                     onTap: () => context.push(AppRoutes.favorite),
                   );
-                case 2:
+                case 3:
                   return ProfileMenuTile(
                     icon: Icons.lock_outline_rounded,
                     title: l10n.profileMenuPrivacyPolicy,

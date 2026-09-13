@@ -3114,4 +3114,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get favoriteTitle => 'Add to favorites';
+
+  @override
+  String get subscriptionPaywallTitle => 'Nabvera Pro';
+
+  @override
+  String get subscriptionPaywallSubtitle =>
+      'Unlock your full training & nutrition potential';
+
+  @override
+  String get subscriptionFeatureAiMealPlanTitle => 'Unlimited AI Meal Plans';
+
+  @override
+  String get subscriptionFeatureAiMealPlanBody =>
+      'Generate a fresh personalized plan any day, no daily limit';
+
+  @override
+  String get subscriptionFeatureWorkoutsTitle => 'Full Workout Library';
+
+  @override
+  String get subscriptionFeatureWorkoutsBody =>
+      'Every routine and difficulty level, unlocked';
+
+  @override
+  String get subscriptionFeatureRecoveryTitle => 'Recovery & Progress Insights';
+
+  @override
+  String get subscriptionFeatureRecoveryBody =>
+      'Track your recovery map and long-term trends';
+
+  @override
+  String get subscriptionFeatureSupportTitle => 'Priority Support';
+
+  @override
+  String get subscriptionFeatureSupportBody => 'Get help from our team, faster';
+
+  @override
+  String get subscriptionPlanBestValue => 'Best Value';
+
+  @override
+  String get subscriptionContinueButton => 'Continue';
+
+  @override
+  String get subscriptionRestorePurchases => 'Restore Purchases';
+
+  @override
+  String get subscriptionRestoreSuccess =>
+      'Your subscription has been restored';
+
+  @override
+  String get subscriptionRestoreNothingFound =>
+      'No previous purchase found for this account';
+
+  @override
+  String get subscriptionRestoreFailed =>
+      'Couldn\'t restore purchases. Please try again.';
+
+  @override
+  String get subscriptionPurchaseFailed => 'Purchase failed. Please try again.';
+
+  @override
+  String get subscriptionAlreadySubscribed => 'You\'re already a Pro member';
+
+  @override
+  String get subscriptionOfferingsUnavailable =>
+      'Subscriptions aren\'t available right now. Please try again later.';
+
+  @override
+  String get subscriptionLegalFooterPrefix =>
+      'Recurring billing, cancel anytime. By continuing you agree to our ';
+
+  @override
+  String get subscriptionManageSubscriptionCta => 'Manage Subscription';
+
+  @override
+  String get profileMenuSubscription => 'Nabvera Pro';
+
+  @override
+  String get profileMenuSubscriptionSubtitleFree => 'Upgrade for full access';
+
+  @override
+  String get profileMenuSubscriptionSubtitlePro => 'Manage your plan';
 }

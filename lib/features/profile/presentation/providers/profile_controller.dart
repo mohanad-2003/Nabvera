@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:nabvera/core/notifications/push_notification_service.dart';
+import 'package:nabvera/core/purchases/revenue_cat_service.dart';
 import 'package:nabvera/core/storage/preferences_service.dart';
+import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
 import 'package:nabvera/features/profile/data/user_repository.dart';
 import 'package:nabvera/features/profile/domain/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,6 +46,18 @@ class CurrentUserProfile extends _$CurrentUserProfile {
         // would silently re-register the device regardless of that choice.
         unawaited(
           ref.read(pushNotificationServiceProvider).initializeIfNeeded(),
+        );
+      }
+      // Also fire-and-forget, and independent of the notification toggle
+      // above — this only logs the RevenueCat SDK in as this account's
+      // `firebaseUid` (see RevenueCatService), it registers nothing and
+      // sends no push. Read directly off FirebaseAuth rather than `state`:
+      // `UserProfile` carries the Mongo `_id`, not the Firebase uid that
+      // RevenueCat/the backend webhook match on.
+      final firebaseUid = ref.read(firebaseAuthServiceProvider).currentUser?.uid;
+      if (firebaseUid != null) {
+        unawaited(
+          ref.read(revenueCatServiceProvider).initializeIfNeeded(firebaseUid),
         );
       }
     } catch (_) {
