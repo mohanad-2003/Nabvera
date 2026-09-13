@@ -47,7 +47,9 @@ class _SubscriptionPaywallPageState
           PurchasesErrorCode.purchaseCancelledError) {
         return;
       }
-      if (mounted) _showError(AppLocalizations.of(context).subscriptionPurchaseFailed);
+      if (mounted) {
+        _showError(AppLocalizations.of(context).subscriptionPurchaseFailed);
+      }
     } finally {
       if (mounted) setState(() => _purchasing = false);
     }
@@ -78,7 +80,9 @@ class _SubscriptionPaywallPageState
   void _showError(String message) => _showMessage(message);
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -102,15 +106,18 @@ class _SubscriptionPaywallPageState
             const _FeatureList(),
             const SizedBox(height: 26),
             offerings.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.symmetric(vertical: 40),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (_, _) => _OfferingsUnavailable(
-                message: l10n.subscriptionOfferingsUnavailable,
-              ),
+              loading:
+                  () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+              error:
+                  (_, _) => _OfferingsUnavailable(
+                    message: l10n.subscriptionOfferingsUnavailable,
+                  ),
               data: (offeringsResult) {
-                final packages = offeringsResult.current?.availablePackages ?? const [];
+                final packages =
+                    offeringsResult.current?.availablePackages ?? const [];
                 if (packages.isEmpty) {
                   return _OfferingsUnavailable(
                     message: l10n.subscriptionOfferingsUnavailable,
@@ -120,24 +127,31 @@ class _SubscriptionPaywallPageState
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (final package in packages)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _PlanCard(
-                          package: package,
-                          selected: _selectedPackage?.identifier == package.identifier,
-                          onTap: busy
-                              ? null
-                              : () => setState(() => _selectedPackage = package),
-                        ),
+                    for (var i = 0; i < packages.length; i++) ...[
+                      if (i > 0) Divider(height: 1, color: ext.glassBorder),
+                      _PlanCard(
+                        package: packages[i],
+                        selected:
+                            _selectedPackage?.identifier ==
+                            packages[i].identifier,
+                        onTap:
+                            busy
+                                ? null
+                                : () => setState(
+                                  () => _selectedPackage = packages[i],
+                                ),
                       ),
-                    const SizedBox(height: 10),
+                    ],
+                    const SizedBox(height: 22),
                     _ContinueButton(
                       loading: _purchasing,
                       enabled: !busy && _selectedPackage != null,
                       label: l10n.subscriptionContinueButton,
-                      onTap: () =>
-                          _selectedPackage == null ? null : _purchase(_selectedPackage!),
+                      onTap:
+                          () =>
+                              _selectedPackage == null
+                                  ? null
+                                  : _purchase(_selectedPackage!),
                     ),
                   ],
                 );
@@ -147,19 +161,20 @@ class _SubscriptionPaywallPageState
             Center(
               child: TextButton(
                 onPressed: busy ? null : _restore,
-                child: _restoring
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: ext.textMuted,
+                child:
+                    _restoring
+                        ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: ext.textMuted,
+                          ),
+                        )
+                        : Text(
+                          l10n.subscriptionRestorePurchases,
+                          style: TextStyle(color: ext.textMuted),
                         ),
-                      )
-                    : Text(
-                        l10n.subscriptionRestorePurchases,
-                        style: TextStyle(color: ext.textMuted),
-                      ),
               ),
             ),
             const SizedBox(height: 8),
@@ -179,31 +194,54 @@ class _FeatureList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final features = [
-      (Icons.restaurant_menu_rounded, l10n.subscriptionFeatureAiMealPlanTitle, l10n.subscriptionFeatureAiMealPlanBody),
-      (Icons.fitness_center_rounded, l10n.subscriptionFeatureWorkoutsTitle, l10n.subscriptionFeatureWorkoutsBody),
-      (Icons.monitor_heart_rounded, l10n.subscriptionFeatureRecoveryTitle, l10n.subscriptionFeatureRecoveryBody),
-      (Icons.support_agent_rounded, l10n.subscriptionFeatureSupportTitle, l10n.subscriptionFeatureSupportBody),
+      (
+        Icons.restaurant_menu_rounded,
+        l10n.subscriptionFeatureAiMealPlanTitle,
+        l10n.subscriptionFeatureAiMealPlanBody,
+      ),
+      (
+        Icons.fitness_center_rounded,
+        l10n.subscriptionFeatureWorkoutsTitle,
+        l10n.subscriptionFeatureWorkoutsBody,
+      ),
+      (
+        Icons.monitor_heart_rounded,
+        l10n.subscriptionFeatureRecoveryTitle,
+        l10n.subscriptionFeatureRecoveryBody,
+      ),
+      (
+        Icons.support_agent_rounded,
+        l10n.subscriptionFeatureSupportTitle,
+        l10n.subscriptionFeatureSupportBody,
+      ),
     ];
 
-    return PremiumGlassCard(
-      child: Column(
-        children: [
-          for (var i = 0; i < features.length; i++) ...[
-            if (i > 0) const SizedBox(height: 14),
-            _FeatureRow(
-              icon: features[i].$1,
-              title: features[i].$2,
-              body: features[i].$3,
-            ),
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Column(
+      children: [
+        for (var i = 0; i < features.length; i++) ...[
+          if (i > 0) ...[
+            const SizedBox(height: 16),
+            Divider(height: 1, color: ext.glassBorder),
+            const SizedBox(height: 16),
           ],
+          _FeatureRow(
+            icon: features[i].$1,
+            title: features[i].$2,
+            body: features[i].$3,
+          ),
         ],
-      ),
+      ],
     );
   }
 }
 
 class _FeatureRow extends StatelessWidget {
-  const _FeatureRow({required this.icon, required this.title, required this.body});
+  const _FeatureRow({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
 
   final IconData icon;
   final String title;
@@ -216,15 +254,15 @@ class _FeatureRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: ext.accentGlow.withValues(alpha: 0.16),
           ),
-          child: Icon(icon, color: ext.accentGlow, size: 20),
+          child: Icon(icon, color: ext.accentGlow, size: 22),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,13 +270,21 @@ class _FeatureRow extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w800,
                   color: ext.textPrimary,
+                  height: 1.25,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(body, style: TextStyle(fontSize: 12.5, color: ext.textMuted)),
+              const SizedBox(height: 3),
+              Text(
+                body,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: ext.textMuted,
+                  height: 1.35,
+                ),
+              ),
             ],
           ),
         ),
@@ -248,7 +294,11 @@ class _FeatureRow extends StatelessWidget {
 }
 
 class _PlanCard extends StatelessWidget {
-  const _PlanCard({required this.package, required this.selected, required this.onTap});
+  const _PlanCard({
+    required this.package,
+    required this.selected,
+    required this.onTap,
+  });
 
   final Package package;
   final bool selected;
@@ -265,61 +315,78 @@ class _PlanCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final product = package.storeProduct;
 
-    return PremiumGlassCard(
-      onTap: onTap,
-      color: selected ? ext.accentGlow.withValues(alpha: 0.12) : null,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Icon(
-            selected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-            color: selected ? ext.accentGlow : ext.textMuted,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Row(
+            children: [
+              Icon(
+                selected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_off_rounded,
+                color: selected ? ext.accentGlow : ext.textMuted,
+                size: 24,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        product.title.isNotEmpty ? product.title : product.identifier,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: ext.textPrimary,
-                        ),
-                      ),
-                    ),
-                    if (_isBestValue) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          gradient: ext.accentGradient,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          l10n.subscriptionPlanBestValue,
-                          style: TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: ext.onAccent,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            product.title.isNotEmpty
+                                ? product.title
+                                : product.identifier,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w800,
+                              color:
+                                  selected ? ext.accentGlow : ext.textPrimary,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        if (_isBestValue) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: ext.accentGradient,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              l10n.subscriptionPlanBestValue,
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                color: ext.onAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      product.priceString,
+                      style: TextStyle(color: ext.textMuted, fontSize: 13),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(product.priceString, style: TextStyle(color: ext.textMuted, fontSize: 13)),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -356,23 +423,24 @@ class _ContinueButton extends StatelessWidget {
             onTap: enabled ? onTap : null,
             borderRadius: BorderRadius.circular(18),
             child: Center(
-              child: loading
-                  ? SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.4,
-                        color: ext.onAccent,
+              child:
+                  loading
+                      ? SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: ext.onAccent,
+                        ),
+                      )
+                      : Text(
+                        label,
+                        style: TextStyle(
+                          color: enabled ? ext.onAccent : ext.textMuted,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                        ),
                       ),
-                    )
-                  : Text(
-                      label,
-                      style: TextStyle(
-                        color: enabled ? ext.onAccent : ext.textMuted,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                      ),
-                    ),
             ),
           ),
         ),
@@ -415,15 +483,17 @@ class _LegalFooter extends StatelessWidget {
           TextSpan(
             text: l10n.privacyTerms,
             style: const TextStyle(fontWeight: FontWeight.w700),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () => context.push(AppRoutes.termsAndConditions),
+            recognizer:
+                TapGestureRecognizer()
+                  ..onTap = () => context.push(AppRoutes.termsAndConditions),
           ),
           TextSpan(text: l10n.authAgreeTermsAnd),
           TextSpan(
             text: l10n.privacyPolicy,
             style: const TextStyle(fontWeight: FontWeight.w700),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () => context.push(AppRoutes.privacyPolicy),
+            recognizer:
+                TapGestureRecognizer()
+                  ..onTap = () => context.push(AppRoutes.privacyPolicy),
           ),
         ],
       ),
