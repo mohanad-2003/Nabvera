@@ -84,7 +84,7 @@ final class CurrentUserProfileProvider
 }
 
 String _$currentUserProfileHash() =>
-    r'084a9b7ce8105aeffb96ab2b8e708c4f05235735';
+    r'67f367ffcaefcccdd4c579865f5d6ff1817b1051';
 
 /// Loads the signed-in user's profile from the backend on first read.
 /// Exposes a plain [UserProfile] (not `AsyncValue`) so every existing

@@ -1976,6 +1976,18 @@ abstract class AppLocalizations {
   /// **'All'**
   String get workoutCategoryAll;
 
+  /// No description provided for @workoutIronSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron Training'**
+  String get workoutIronSectionLabel;
+
+  /// No description provided for @workoutFitnessSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'General Fitness'**
+  String get workoutFitnessSectionLabel;
+
   /// No description provided for @workoutCategoryChest.
   ///
   /// In en, this message translates to:
@@ -2011,6 +2023,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Strength'**
   String get workoutCategoryStrength;
+
+  /// No description provided for @workoutCategoryYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga'**
+  String get workoutCategoryYoga;
+
+  /// No description provided for @workoutCategoryHiit.
+  ///
+  /// In en, this message translates to:
+  /// **'HIIT'**
+  String get workoutCategoryHiit;
+
+  /// No description provided for @workoutCategoryStretching.
+  ///
+  /// In en, this message translates to:
+  /// **'Stretching'**
+  String get workoutCategoryStretching;
+
+  /// No description provided for @workoutCategoryFullBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get workoutCategoryFullBody;
 
   /// No description provided for @workoutBannerTitle.
   ///
@@ -4934,6 +4970,24 @@ abstract class AppLocalizations {
   /// **'Couldn\'t delete your post. Please try again.'**
   String get communityDeletePostFailed;
 
+  /// No description provided for @communityDeleteCommentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete comment?'**
+  String get communityDeleteCommentTitle;
+
+  /// No description provided for @communityDeleteCommentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes it for everyone and can\'t be undone.'**
+  String get communityDeleteCommentBody;
+
+  /// No description provided for @communityDeleteCommentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your comment. Please try again.'**
+  String get communityDeleteCommentFailed;
+
   /// No description provided for @communityPost1.
   ///
   /// In en, this message translates to:
@@ -5713,6 +5767,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to favorites'**
   String get favoriteTitle;
+
+  /// No description provided for @subscriptionPaywallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nabvera Pro'**
+  String get subscriptionPaywallTitle;
+
+  /// No description provided for @subscriptionPaywallSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your full training & nutrition potential'**
+  String get subscriptionPaywallSubtitle;
+
+  /// No description provided for @subscriptionFeatureAiMealPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited AI Meal Plans'**
+  String get subscriptionFeatureAiMealPlanTitle;
+
+  /// No description provided for @subscriptionFeatureAiMealPlanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a fresh personalized plan any day, no daily limit'**
+  String get subscriptionFeatureAiMealPlanBody;
+
+  /// No description provided for @subscriptionFeatureWorkoutsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Workout Library'**
+  String get subscriptionFeatureWorkoutsTitle;
+
+  /// No description provided for @subscriptionFeatureWorkoutsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Every routine and difficulty level, unlocked'**
+  String get subscriptionFeatureWorkoutsBody;
+
+  /// No description provided for @subscriptionFeatureRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery & Progress Insights'**
+  String get subscriptionFeatureRecoveryTitle;
+
+  /// No description provided for @subscriptionFeatureRecoveryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your recovery map and long-term trends'**
+  String get subscriptionFeatureRecoveryBody;
+
+  /// No description provided for @subscriptionFeatureSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority Support'**
+  String get subscriptionFeatureSupportTitle;
+
+  /// No description provided for @subscriptionFeatureSupportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get help from our team, faster'**
+  String get subscriptionFeatureSupportBody;
+
+  /// No description provided for @subscriptionPlanBestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Value'**
+  String get subscriptionPlanBestValue;
+
+  /// No description provided for @subscriptionContinueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get subscriptionContinueButton;
+
+  /// No description provided for @subscriptionRestorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get subscriptionRestorePurchases;
+
+  /// No description provided for @subscriptionRestoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription has been restored'**
+  String get subscriptionRestoreSuccess;
+
+  /// No description provided for @subscriptionRestoreNothingFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous purchase found for this account'**
+  String get subscriptionRestoreNothingFound;
+
+  /// No description provided for @subscriptionRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t restore purchases. Please try again.'**
+  String get subscriptionRestoreFailed;
+
+  /// No description provided for @subscriptionPurchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed. Please try again.'**
+  String get subscriptionPurchaseFailed;
+
+  /// No description provided for @subscriptionAlreadySubscribed.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already a Pro member'**
+  String get subscriptionAlreadySubscribed;
+
+  /// No description provided for @subscriptionOfferingsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions aren\'t available right now. Please try again later.'**
+  String get subscriptionOfferingsUnavailable;
+
+  /// No description provided for @subscriptionLegalFooterPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring billing, cancel anytime. By continuing you agree to our '**
+  String get subscriptionLegalFooterPrefix;
+
+  /// No description provided for @subscriptionManageSubscriptionCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subscription'**
+  String get subscriptionManageSubscriptionCta;
+
+  /// No description provided for @profileMenuSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Nabvera Pro'**
+  String get profileMenuSubscription;
+
+  /// No description provided for @profileMenuSubscriptionSubtitleFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade for full access'**
+  String get profileMenuSubscriptionSubtitleFree;
+
+  /// No description provided for @profileMenuSubscriptionSubtitlePro.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your plan'**
+  String get profileMenuSubscriptionSubtitlePro;
 }
 
 class _AppLocalizationsDelegate

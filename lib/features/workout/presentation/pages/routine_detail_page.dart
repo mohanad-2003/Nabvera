@@ -136,7 +136,19 @@ class RoutineDetailPage extends StatelessWidget {
                         headerTitle: routine['name'] as String? ?? '',
                         heroImage: exercise['imageUrl'] as String? ?? '',
                         title: exercise['name'] as String? ?? '',
-                        description: exercise['description'] as String? ?? '',
+                        // Falls back to the generic tip (not blank text)
+                        // for an exercise that has no description yet —
+                        // an explicitly-passed '' bypasses the
+                        // constructor's own default (see
+                        // ExerciseDetailData.defaultDescription).
+                        description:
+                            (exercise['description'] as String?)
+                                        ?.isNotEmpty ==
+                                    true
+                                ? exercise['description'] as String
+                                : ExerciseDetailData.defaultDescription,
+                        descriptionAr:
+                            exercise['descriptionAr'] as String? ?? '',
                         duration:
                             entries[i]['sets'] == null
                                 ? ''

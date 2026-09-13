@@ -23,6 +23,7 @@ class FakeWorkoutRepository implements WorkoutRepository {
   @override
   Future<List<Map<String, dynamic>>> fetchWorkouts({
     String? difficulty,
+    String? category,
     bool? featured,
     bool? popular,
   }) async => [];

@@ -17,14 +17,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+/// `Workout.category`'s raw backend values, grouped into the two labeled
+/// rows the category chips render as — "Iron Training" (equipment-heavy
+/// strength work) vs "General Fitness" (everything else). Purely a
+/// display grouping: both rows write to the same
+/// [WorkoutCategoryFilter]/`?category=` value, so there's only ever one
+/// classification system, not two competing ones.
+const _kIronCategories = <String>['strength'];
+const _kFitnessCategories = <String>[
+  'cardio',
+  'yoga',
+  'hiit',
+  'stretching',
+  'full_body',
+];
+
 class WorkoutPage extends ConsumerWidget {
   const WorkoutPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final level = ref.watch(workoutTabProvider);
+    final category = ref.watch(workoutCategoryFilterProvider);
     final items = ref.watch(workoutListByLevelProvider(level));
-    final request = ref.watch(workoutRequestProvider(level));
+    final request = ref.watch(
+      workoutRequestProvider((level: level, category: category)),
+    );
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < 720;
@@ -81,6 +99,64 @@ class WorkoutPage extends ConsumerWidget {
                       );
                     },
                   ),
+                ),
+                SizedBox(height: spacing),
+                // Was level-only before — a "Chest"-focused and a
+                // "Yoga"-focused workout sat in the exact same
+                // undifferentiated list with nothing to tell them apart
+                // beyond scrolling and reading titles. This narrows by
+                // Workout.category (the backend already supported
+                // ?category=, nothing on this screen ever queried it) —
+                // grouped into two labeled rows (equipment-heavy "Iron
+                // Training" vs everything else, "General Fitness") purely
+                // as a display grouping: both rows write to the same
+                // filter, so there's one classification system, not two.
+                WorkoutPill(
+                  label: l10n.workoutCategoryAll,
+                  selected: category == null,
+                  appearance: WorkoutPillAppearance.filter,
+                  onTap:
+                      () => ref
+                          .read(workoutCategoryFilterProvider.notifier)
+                          .select(null),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.workoutIronSectionLabel,
+                  style: TextStyle(
+                    color: ext.textMuted,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                _CategoryChipRow(
+                  categories: _kIronCategories,
+                  selected: category,
+                  labelOf: (value) => _categoryLabel(l10n, value),
+                  onSelect:
+                      (value) => ref
+                          .read(workoutCategoryFilterProvider.notifier)
+                          .select(value),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.workoutFitnessSectionLabel,
+                  style: TextStyle(
+                    color: ext.textMuted,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                _CategoryChipRow(
+                  categories: _kFitnessCategories,
+                  selected: category,
+                  labelOf: (value) => _categoryLabel(l10n, value),
+                  onSelect:
+                      (value) => ref
+                          .read(workoutCategoryFilterProvider.notifier)
+                          .select(value),
                 ),
                 SizedBox(height: spacing),
                 Row(
@@ -142,7 +218,9 @@ class WorkoutPage extends ConsumerWidget {
                 loading: request.isLoading,
                 error: request.error,
                 onRetry: () {
-                  ref.invalidate(workoutRequestProvider(level));
+                  ref.invalidate(
+                    workoutRequestProvider((level: level, category: category)),
+                  );
                   ref.invalidate(workoutListByLevelProvider(level));
                 },
               ),
@@ -177,6 +255,18 @@ class WorkoutPage extends ConsumerWidget {
     WorkoutLevel.advanced => l10n.workoutLevelAdvanced,
   };
 
+  String _categoryLabel(AppLocalizations l10n, String? category) =>
+      switch (category) {
+        null => l10n.workoutCategoryAll,
+        'strength' => l10n.workoutCategoryStrength,
+        'cardio' => l10n.workoutCategoryCardio,
+        'yoga' => l10n.workoutCategoryYoga,
+        'hiit' => l10n.workoutCategoryHiit,
+        'stretching' => l10n.workoutCategoryStretching,
+        'full_body' => l10n.workoutCategoryFullBody,
+        _ => category,
+      };
+
   /// Fetches the full workout (with populated exercises) and opens it as a
   /// real [CategoryDetailData] — each round item then carries a real
   /// [ExerciseDetailData], video included, instead of the static curated
@@ -201,6 +291,44 @@ class WorkoutPage extends ConsumerWidget {
       // Backend unreachable / workout deleted — silently do nothing rather
       // than fall back to unrelated curated content for this specific tap.
     }
+  }
+}
+
+/// One scrollable chip row for a group of `Workout.category` values — used
+/// twice (Iron/Fitness), each writing to the same [selected]/[onSelect]
+/// so both rows always agree on a single current filter value.
+class _CategoryChipRow extends StatelessWidget {
+  const _CategoryChipRow({
+    required this.categories,
+    required this.selected,
+    required this.labelOf,
+    required this.onSelect,
+  });
+
+  final List<String> categories;
+  final String? selected;
+  final String Function(String) labelOf;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final value = categories[index];
+          return WorkoutPill(
+            label: labelOf(value),
+            selected: value == selected,
+            appearance: WorkoutPillAppearance.filter,
+            onTap: () => onSelect(value),
+          );
+        },
+      ),
+    );
   }
 }
 

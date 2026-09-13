@@ -233,12 +233,21 @@ class PopularExerciseItem {
     this.difficulty = 'beginner',
     this.videoUrl,
     this.nameAr = '',
+    this.description = '',
+    this.descriptionAr = '',
   });
 
   final String image;
   final String name;
   final String time;
   final String calories;
+
+  /// From `Exercise.description`/`descriptionAr` — used to build the
+  /// "Overview" text when this item is opened as an [ExerciseDetailData]
+  /// (see workout_recommended_page.dart). Empty rather than a fallback
+  /// default here; [ExerciseDetailData] itself owns that fallback.
+  final String description;
+  final String descriptionAr;
 
   /// Raw backend value (`Exercise.difficulty`: `beginner`/`intermediate`/
   /// `advanced`) — the widget layer maps this to a localized label via

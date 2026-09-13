@@ -54,6 +54,9 @@ class _AdminExerciseEditorPageState
   late final _description = TextEditingController(
     text: widget.existing?['description'] as String?,
   );
+  late final _descriptionAr = TextEditingController(
+    text: widget.existing?['descriptionAr'] as String?,
+  );
   late final _imageUrl = TextEditingController(
     text: widget.existing?['imageUrl'] as String?,
   );
@@ -74,6 +77,7 @@ class _AdminExerciseEditorPageState
     _name.dispose();
     _nameAr.dispose();
     _description.dispose();
+    _descriptionAr.dispose();
     _imageUrl.dispose();
     _videoUrl.dispose();
     super.dispose();
@@ -89,6 +93,7 @@ class _AdminExerciseEditorPageState
       // the English name above (see `RoutineExercise.localizedName`).
       'nameAr': _nameAr.text.trim(),
       'description': _description.text.trim(),
+      'descriptionAr': _descriptionAr.text.trim(),
       'imageUrl': _imageUrl.text.trim(),
       'videoUrl': _videoUrl.text.trim(),
       'muscleGroup': _muscleGroup,
@@ -188,6 +193,14 @@ class _AdminExerciseEditorPageState
                   controller: _nameAr,
                   label: l10n.adminFieldNameAr,
                   flat: true,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: _descriptionAr,
+                  label: l10n.adminFieldDescriptionAr,
+                  flat: true,
+                  maxLines: 3,
                   textDirection: TextDirection.rtl,
                 ),
                 const SizedBox(height: AppSpacing.md),

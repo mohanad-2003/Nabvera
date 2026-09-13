@@ -94,6 +94,21 @@ class CommunityForums extends _$CommunityForums {
     ];
   }
 
+  /// The [incrementCommentCount] counterpart, called after
+  /// [ForumComments.delete] — never goes below zero even if the two
+  /// somehow drift (a defensive floor, not an expected path).
+  void decrementCommentCount(String postId) {
+    final index = state.indexWhere((t) => t.id == postId);
+    if (index == -1) return;
+    final updated = state[index].copyWith(
+      commentsCount: (state[index].commentsCount - 1).clamp(0, 1 << 31),
+    );
+    state = [
+      for (var i = 0; i < state.length; i++)
+        if (i == index) updated else state[i],
+    ];
+  }
+
   Future<void> toggleLike(String postId) async {
     final index = state.indexWhere((t) => t.id == postId);
     if (index == -1) return;
@@ -207,10 +222,14 @@ class ForumComments extends _$ForumComments {
 
   Future<void> _load() async {
     try {
+      final currentUserId = ref.read(currentUserProfileProvider).id;
       final docs = await ref
           .read(communityRepositoryProvider)
           .fetchComments(postId);
-      state = [for (final doc in docs) ForumComment.fromJson(doc)];
+      state = [
+        for (final doc in docs)
+          ForumComment.fromJson(doc, currentUserId: currentUserId),
+      ];
     } catch (_) {
       // Left empty — see WorkoutListByLevel for the same pattern.
     }
@@ -225,5 +244,14 @@ class ForumComments extends _$ForumComments {
     // otherwise, so without this the count only catches up on the next
     // full feed reload (pull-to-refresh, or leaving and coming back).
     ref.read(communityForumsProvider.notifier).incrementCommentCount(postId);
+  }
+
+  /// Deletes one of the current user's own comments and reloads this
+  /// thread's list, then decrements the feed card's count the same way
+  /// [add] increments it.
+  Future<void> delete(String commentId) async {
+    await ref.read(communityRepositoryProvider).deleteComment(postId, commentId);
+    await _load();
+    ref.read(communityForumsProvider.notifier).decrementCommentCount(postId);
   }
 }

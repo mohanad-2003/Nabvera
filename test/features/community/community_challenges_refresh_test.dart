@@ -66,6 +66,8 @@ class FakeCommunityRepository implements CommunityRepository {
   Future<Map<String, dynamic>> createPost(String content) async => {};
   @override
   Future<void> deletePost(String postId) async {}
+  @override
+  Future<void> deleteComment(String postId, String commentId) async {}
 }
 
 Map<String, dynamic> _challengeJson(String id) => {

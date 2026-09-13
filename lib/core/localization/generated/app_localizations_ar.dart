@@ -1043,6 +1043,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutCategoryAll => 'الكل';
 
   @override
+  String get workoutIronSectionLabel => 'تمارين حديد';
+
+  @override
+  String get workoutFitnessSectionLabel => 'لياقة بدنية';
+
+  @override
   String get workoutCategoryChest => 'الصدر';
 
   @override
@@ -1059,6 +1065,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workoutCategoryStrength => 'القوة';
+
+  @override
+  String get workoutCategoryYoga => 'يوجا';
+
+  @override
+  String get workoutCategoryHiit => 'هيت';
+
+  @override
+  String get workoutCategoryStretching => 'تمدد';
+
+  @override
+  String get workoutCategoryFullBody => 'الجسم الكامل';
 
   @override
   String get workoutBannerTitle => '🔥 حافظ على استمراريتك';
@@ -2615,6 +2633,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityDeletePostFailed => 'تعذّر حذف المنشور. حاول مرة أخرى.';
 
   @override
+  String get communityDeleteCommentTitle => 'حذف التعليق؟';
+
+  @override
+  String get communityDeleteCommentBody => 'هيتشال للجميع ومش هيرجع تاني.';
+
+  @override
+  String get communityDeleteCommentFailed =>
+      'تعذّر حذف التعليق. حاول مرة أخرى.';
+
+  @override
   String get communityPost1 =>
       'أنهيت للتو الأسبوع الثالث من خطة القوة — تمارين الجلوس على المقعد المائل بدأت تصبح أسهل أخيرًا! هل يوجد أحد آخر في مسار المبتدئين؟';
 
@@ -3036,4 +3064,86 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get favoriteTitle => 'إضافة إلى المفضلة';
+
+  @override
+  String get subscriptionPaywallTitle => 'Nabvera Pro';
+
+  @override
+  String get subscriptionPaywallSubtitle =>
+      'افتح كامل إمكانيات التمرين والتغذية';
+
+  @override
+  String get subscriptionFeatureAiMealPlanTitle =>
+      'خطط طعام ذكاء اصطناعي غير محدودة';
+
+  @override
+  String get subscriptionFeatureAiMealPlanBody =>
+      'أنشئ خطة جديدة مخصصة أي يوم، بدون حد يومي';
+
+  @override
+  String get subscriptionFeatureWorkoutsTitle => 'مكتبة تمارين كاملة';
+
+  @override
+  String get subscriptionFeatureWorkoutsBody =>
+      'كل روتين وكل مستوى صعوبة، مفتوح بالكامل';
+
+  @override
+  String get subscriptionFeatureRecoveryTitle => 'رؤى التعافي والتقدم';
+
+  @override
+  String get subscriptionFeatureRecoveryBody =>
+      'تابع خريطة التعافي والاتجاهات على المدى الطويل';
+
+  @override
+  String get subscriptionFeatureSupportTitle => 'دعم ذو أولوية';
+
+  @override
+  String get subscriptionFeatureSupportBody =>
+      'احصل على مساعدة فريقنا بشكل أسرع';
+
+  @override
+  String get subscriptionPlanBestValue => 'الأفضل قيمة';
+
+  @override
+  String get subscriptionContinueButton => 'متابعة';
+
+  @override
+  String get subscriptionRestorePurchases => 'استعادة المشتريات';
+
+  @override
+  String get subscriptionRestoreSuccess => 'تم استعادة اشتراكك';
+
+  @override
+  String get subscriptionRestoreNothingFound =>
+      'لا يوجد عملية شراء سابقة لهذا الحساب';
+
+  @override
+  String get subscriptionRestoreFailed =>
+      'تعذّرت استعادة المشتريات. حاول مرة أخرى.';
+
+  @override
+  String get subscriptionPurchaseFailed => 'فشلت عملية الشراء. حاول مرة أخرى.';
+
+  @override
+  String get subscriptionAlreadySubscribed => 'أنت مشترك بالفعل في Pro';
+
+  @override
+  String get subscriptionOfferingsUnavailable =>
+      'الاشتراكات غير متاحة حالياً. حاول مرة أخرى لاحقاً.';
+
+  @override
+  String get subscriptionLegalFooterPrefix =>
+      'فوترة متكررة، يمكنك الإلغاء في أي وقت. بالمتابعة أنت توافق على ';
+
+  @override
+  String get subscriptionManageSubscriptionCta => 'إدارة الاشتراك';
+
+  @override
+  String get profileMenuSubscription => 'Nabvera Pro';
+
+  @override
+  String get profileMenuSubscriptionSubtitleFree => 'قم بالترقية للوصول الكامل';
+
+  @override
+  String get profileMenuSubscriptionSubtitlePro => 'إدارة خطتك';
 }

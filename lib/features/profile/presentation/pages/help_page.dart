@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
@@ -227,16 +226,23 @@ class _HelpHero extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: ext.accentGradient,
+                  gradient: const LinearGradient(
+                    colors: [_helpBlue, _helpTeal],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: ext.accentGlow.withValues(alpha: 0.22),
+                      color: _helpBlue.withValues(alpha: 0.24),
                       blurRadius: 22,
                       offset: const Offset(0, 10),
                     ),
                   ],
                 ),
-                child: Icon(Icons.support_agent_rounded, color: ext.onAccent),
+                child: const Icon(
+                  Icons.support_agent_rounded,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
@@ -267,13 +273,13 @@ class _HelpHero extends StatelessWidget {
               _HelpMetric(
                 icon: Icons.quiz_outlined,
                 value: '$faqCount',
-                color: ext.accentGlow,
+                color: _helpAccent(context),
               ),
               const SizedBox(width: 10),
               _HelpMetric(
                 icon: Icons.forum_outlined,
                 value: '$contactCount',
-                color: theme.colorScheme.secondary,
+                color: _helpTeal,
               ),
             ],
           ),
@@ -390,7 +396,13 @@ class _ModeSegment extends StatelessWidget {
           duration: const Duration(milliseconds: 220),
           padding: const EdgeInsets.symmetric(vertical: 11),
           decoration: BoxDecoration(
-            gradient: selected ? ext.accentGradient : null,
+            gradient: selected
+                ? const LinearGradient(
+                    colors: [_helpBlue, _helpTeal],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           child: Row(
@@ -399,7 +411,7 @@ class _ModeSegment extends StatelessWidget {
               Icon(
                 icon,
                 size: 17,
-                color: selected ? ext.onAccent : ext.textMuted,
+                color: selected ? Colors.white : ext.textMuted,
               ),
               const SizedBox(width: 7),
               Flexible(
@@ -408,7 +420,7 @@ class _ModeSegment extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: selected ? ext.onAccent : ext.textPrimary,
+                    color: selected ? Colors.white : ext.textPrimary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -444,7 +456,7 @@ class _SearchField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: ext.textMuted),
-        prefixIcon: Icon(Icons.search_rounded, color: ext.accentGlow),
+        prefixIcon: Icon(Icons.search_rounded, color: _helpAccent(context)),
         suffixIcon: onClear == null
             ? null
             : IconButton(
@@ -455,7 +467,7 @@ class _SearchField extends StatelessWidget {
         fillColor: _surfaceTint(context, alpha: 0.82),
         border: _border(_borderTint(context)),
         enabledBorder: _border(_borderTint(context)),
-        focusedBorder: _border(ext.accentGlow, 1.4),
+        focusedBorder: _border(_helpAccent(context), 1.4),
       ),
     );
   }
@@ -494,13 +506,13 @@ class _CategoryTabs extends StatelessWidget {
             label: Text(labels[index]),
             selected: selected,
             onSelected: (_) => onSelected(index),
-            selectedColor: ext.accentGlow.withValues(alpha: 0.18),
+            selectedColor: _helpAccent(context).withValues(alpha: 0.14),
             backgroundColor: _surfaceTint(context, alpha: 0.7),
             side: BorderSide(
-              color: selected ? ext.accentGlow : _borderTint(context),
+              color: selected ? _helpAccent(context) : _borderTint(context),
             ),
             labelStyle: TextStyle(
-              color: selected ? ext.accentGlow : ext.textPrimary,
+              color: selected ? _helpAccent(context) : ext.textPrimary,
               fontWeight: FontWeight.w800,
             ),
           );
@@ -544,13 +556,13 @@ class _FaqCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.card),
               border: Border.all(
                 color: expanded
-                    ? ext.accentGlow.withValues(alpha: 0.56)
+                    ? _helpAccent(context).withValues(alpha: 0.56)
                     : _borderTint(context),
               ),
               boxShadow: expanded
                   ? [
                       BoxShadow(
-                        color: ext.accentGlow.withValues(alpha: 0.14),
+                        color: _helpAccent(context).withValues(alpha: 0.14),
                         blurRadius: 26,
                         offset: const Offset(0, 12),
                       ),
@@ -566,13 +578,13 @@ class _FaqCard extends StatelessWidget {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: ext.accentGlow.withValues(alpha: 0.14),
+                        color: _helpAccent(context).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         border: Border.all(
-                          color: ext.accentGlow.withValues(alpha: 0.16),
+                          color: _helpAccent(context).withValues(alpha: 0.18),
                         ),
                       ),
-                      child: Icon(icon, color: ext.accentGlow, size: 21),
+                      child: Icon(icon, color: _helpAccent(context), size: 21),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -582,7 +594,7 @@ class _FaqCard extends StatelessWidget {
                           Text(
                             categoryLabel,
                             style: TextStyle(
-                              color: ext.accentGlow,
+                              color: _helpAccent(context),
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                             ),
@@ -609,11 +621,11 @@ class _FaqCard extends StatelessWidget {
                         height: 30,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: ext.accentGlow.withValues(alpha: 0.12),
+                          color: _helpAccent(context).withValues(alpha: 0.12),
                         ),
                         child: Icon(
                           Icons.expand_more_rounded,
-                          color: ext.accentGlow,
+                          color: _helpAccent(context),
                         ),
                       ),
                     ),
@@ -679,7 +691,7 @@ class _ContactCard extends StatelessWidget {
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    color: ext.accentGlow.withValues(alpha: 0.14),
+                    color: _helpAccent(context).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: Center(
@@ -712,7 +724,7 @@ class _ContactCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.copy_rounded, color: ext.accentGlow, size: 19),
+                Icon(Icons.copy_rounded, color: _helpAccent(context), size: 19),
               ],
             ),
           ),
@@ -762,28 +774,38 @@ class _NoResults extends StatelessWidget {
 Color _surfaceTint(BuildContext context, {required double alpha}) {
   final theme = Theme.of(context);
   return theme.brightness == Brightness.dark
-      ? AppColors.graphite.withValues(alpha: alpha)
-      : const Color(0xFFEAF4E2).withValues(alpha: alpha);
+      ? const Color(0xFF151D2A).withValues(alpha: alpha)
+      : const Color(0xFFF7F9FD).withValues(alpha: alpha);
 }
 
 Color _faqFill(BuildContext context, bool expanded) {
   final theme = Theme.of(context);
   if (theme.brightness == Brightness.dark) {
     return expanded
-        ? const Color(0xFF14211C).withValues(alpha: 0.94)
-        : AppColors.graphite.withValues(alpha: 0.78);
+        ? const Color(0xFF1A2940).withValues(alpha: 0.96)
+        : const Color(0xFF151D2A).withValues(alpha: 0.82);
   }
   return expanded
-      ? const Color(0xFFE5F3D5).withValues(alpha: 0.96)
-      : const Color(0xFFEEF6E8).withValues(alpha: 0.9);
+      ? const Color(0xFFEAF1FC).withValues(alpha: 0.98)
+      : const Color(0xFFF9FAFD).withValues(alpha: 0.92);
 }
 
 Color _borderTint(BuildContext context) {
   final theme = Theme.of(context);
   return theme.brightness == Brightness.dark
-      ? Colors.white.withValues(alpha: 0.10)
-      : AppColors.accentOnLight.withValues(alpha: 0.14);
+      ? const Color(0xFFAEC6EE).withValues(alpha: 0.16)
+      : const Color(0xFF315C9C).withValues(alpha: 0.14);
 }
+
+/// A calm support palette: separate from the high-energy fitness accents
+/// used elsewhere, so help content remains easy to scan for long periods.
+const _helpBlue = Color(0xFF315C9C);
+const _helpTeal = Color(0xFF287C86);
+
+Color _helpAccent(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFF91B9FF)
+    : _helpBlue;
 
 class _HelpFaq {
   const _HelpFaq(this.question, this.answer, this.category);

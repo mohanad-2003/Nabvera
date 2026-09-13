@@ -101,6 +101,14 @@ class CommunityRepository {
     return body['data'] as Map<String, dynamic>;
   }
 
+  /// Deletes one of the current user's own comments
+  /// (`DELETE /posts/:postId/comments/:commentId`) — the backend refuses
+  /// to delete another user's comment regardless of what id is passed.
+  Future<void> deleteComment(String postId, String commentId) async {
+    final response = await _client.delete('/posts/$postId/comments/$commentId');
+    _client.decode(response);
+  }
+
   /// Returns `(likesCount, liked)` after toggling.
   Future<(int, bool)> toggleLike(String postId) async {
     final response = await _client.post('/posts/$postId/like');

@@ -58,6 +58,7 @@ abstract final class AppRoutes {
   static const help = '/profile/help';
   static const document = '/profile/document';
   static const favorite = '/favorite';
+  static const subscriptionPaywall = '/profile/subscription';
   static const articleDetail = '/home/article';
 
   // --- Admin console ----------------------------------------------------
