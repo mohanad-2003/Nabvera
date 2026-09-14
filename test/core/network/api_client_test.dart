@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:nabvera/core/network/api_client.dart';
 import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A token-issuing double for [FirebaseAuthService] — real behavior
 /// (Firebase plugin calls) is exactly what these tests must avoid, so this
@@ -180,5 +181,95 @@ void main() {
             .having((e) => e.type, 'type', ApiExceptionType.server),
       ),
     );
+  });
+
+  group('get caching', () {
+    Future<SharedPreferences> emptyPrefs() async {
+      SharedPreferences.setMockInitialValues({});
+      return SharedPreferences.getInstance();
+    }
+
+    test('a successful GET is cached, overwriting any earlier response for the same path', () async {
+      final auth = FakeFirebaseAuthService();
+      final cache = await emptyPrefs();
+      var callCount = 0;
+      final client = ApiClient(
+        auth,
+        baseUrl: baseUrl,
+        cache: cache,
+        httpClient: MockClient((request) async {
+          callCount++;
+          return http.Response(jsonEncode({'success': true, 'data': 'call-$callCount'}), 200);
+        }),
+      );
+
+      await client.get('/dashboard');
+      expect(cache.getString('api_cache:/dashboard'), jsonEncode({'success': true, 'data': 'call-1'}));
+
+      await client.get('/dashboard');
+      expect(
+        cache.getString('api_cache:/dashboard'),
+        jsonEncode({'success': true, 'data': 'call-2'}),
+        reason: 'the newer response replaces the previously cached one',
+      );
+    });
+
+    test('a network failure falls back to the last cached response for that path instead of throwing', () async {
+      final auth = FakeFirebaseAuthService();
+      final cache = await emptyPrefs();
+      await cache.setString('api_cache:/dashboard', jsonEncode({'success': true, 'data': 'stale'}));
+      final client = ApiClient(
+        auth,
+        baseUrl: baseUrl,
+        cache: cache,
+        httpClient: MockClient((request) async => throw http.ClientException('offline')),
+      );
+
+      final response = await client.get('/dashboard');
+      expect(client.decode(response)['data'], 'stale');
+    });
+
+    test('a network failure with nothing cached for that path still throws normally', () async {
+      final auth = FakeFirebaseAuthService();
+      final cache = await emptyPrefs();
+      final client = ApiClient(
+        auth,
+        baseUrl: baseUrl,
+        cache: cache,
+        httpClient: MockClient((request) async => throw http.ClientException('offline')),
+      );
+
+      await expectLater(
+        client.get('/never-loaded'),
+        throwsA(isA<ApiException>().having((e) => e.type, 'type', ApiExceptionType.network)),
+      );
+    });
+
+    test('a real 4xx/5xx from the server is returned as-is, never masked by a cached response', () async {
+      final auth = FakeFirebaseAuthService();
+      final cache = await emptyPrefs();
+      await cache.setString('api_cache:/dashboard', jsonEncode({'success': true, 'data': 'stale'}));
+      final client = ApiClient(
+        auth,
+        baseUrl: baseUrl,
+        cache: cache,
+        httpClient: MockClient(
+          (request) async => http.Response(jsonEncode({'success': false, 'message': 'boom'}), 500),
+        ),
+      );
+
+      final response = await client.get('/dashboard');
+      expect(response.statusCode, 500);
+    });
+
+    test('without a cache (the default), a network failure still throws normally', () async {
+      final auth = FakeFirebaseAuthService();
+      final client = buildClient(auth, (request) async => throw http.ClientException('offline'));
+
+      await expectLater(
+        client.get('/dashboard'),
+        throwsA(isA<ApiException>().having((e) => e.type, 'type', ApiExceptionType.network)),
+      );
+    });
   });
 }

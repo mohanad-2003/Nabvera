@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 const _smartImageFallback = 'assets/workout.png';
@@ -7,10 +8,12 @@ const _smartImageFallback = 'assets/workout.png';
 /// asset-vs-URL switch, but without a runtime fallback on load failure
 /// (`DecorationImage` has no error-widget hook; its `onError` callback
 /// fires without a way to swap the provider it's already attached to).
+/// Network URLs go through `CachedNetworkImageProvider` so they share the
+/// same on-disk cache as [SmartImage] instead of being re-fetched.
 /// Prefer [SmartImage] itself wherever a plain child widget will do.
 ImageProvider smartImageProvider(String path) {
   final isNetwork = path.startsWith('http://') || path.startsWith('https://');
-  if (isNetwork) return NetworkImage(path);
+  if (isNetwork) return CachedNetworkImageProvider(path);
   return AssetImage(path.isEmpty ? _smartImageFallback : path);
 }
 
@@ -21,6 +24,11 @@ ImageProvider smartImageProvider(String path) {
 /// when no URL is set) or a real `http(s)://` URL once content has a photo.
 /// Falls back to the generic placeholder asset on any load failure —
 /// broken link, offline, unsupported format.
+///
+/// Network images are cached to disk (via `cached_network_image`), not
+/// just held in the in-memory `ImageCache` — a photo already downloaded in
+/// a prior app session loads instantly and without a network request
+/// instead of being re-fetched every cold start.
 class SmartImage extends StatelessWidget {
   const SmartImage(
     this.path, {
@@ -51,23 +59,19 @@ class SmartImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (_isNetwork) {
-      return Image.network(
-        path,
+      return CachedNetworkImage(
+        imageUrl: path,
         fit: fit,
         width: width,
         height: height,
         color: color,
         colorBlendMode: colorBlendMode,
-        errorBuilder: (context, error, stackTrace) => _fallbackImage(),
-        // `progress` is non-null on every in-flight frame and only turns
-        // null once the image has fully decoded — returning the fallback
-        // asset while it's non-null showed the placeholder for the whole
-        // download instead of a brief loading state, then a same-frame
-        // swap to `child` once the file lands.
-        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-          if (wasSynchronouslyLoaded || frame != null) return child;
-          return _fallbackImage();
-        },
+        // Same fallback shown for both an in-flight fetch and a failed
+        // one, matching the old `Image.network` frameBuilder/errorBuilder
+        // pair — no spinner, just the placeholder swapped for the real
+        // photo once it lands (from cache or network).
+        placeholder: (context, url) => _fallbackImage(),
+        errorWidget: (context, url, error) => _fallbackImage(),
       );
     }
     return Image.asset(
