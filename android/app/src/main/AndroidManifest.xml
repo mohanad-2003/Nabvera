@@ -133,6 +133,16 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Required for url_launcher to find a handler for an https link
+             (e.g. SubscriptionRepository.openManageSubscriptions opening
+             the Play Store's subscription page) — without this, Android
+             11+'s package visibility restrictions hide even an installed
+             browser/Play Store from this app, and launchUrl throws
+             "no activity found to handle intent" despite one existing. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
         <!-- Lets the app detect whether the Health Connect app is
              installed (health_service.dart's isPlatformAvailable) and show
              its permissions-rationale flow — never blocks app usage if
