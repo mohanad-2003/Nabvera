@@ -95,19 +95,26 @@ class WorkoutPill extends StatelessWidget {
     final isFlat = appearance == WorkoutPillAppearance.flat;
     final isFilter = appearance == WorkoutPillAppearance.filter;
 
+    // `filter` used to render as its own little card — a shadow
+    // (`elevation`) and a border/fill even when unselected — which read as
+    // a stack of boxes sitting on top of the page rather than the filter
+    // data itself. It's flat like `flat` now: no shadow ever, no fill or
+    // border unless selected, so only the selected chip stands out and the
+    // rest sit directly on the screen background.
     return ChoiceChip(
       label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       selected: selected,
       onSelected: onTap == null ? null : (_) => onTap!(),
       showCheckmark: false,
-      selectedColor: ext.accentGlow.withValues(alpha: isFilter ? .18 : .12),
-      backgroundColor: isFlat ? Colors.transparent : ext.glassFill,
-      disabledColor: isFlat ? Colors.transparent : ext.glassFill,
-      elevation: isFilter && !selected ? 1 : 0,
-      pressElevation: isFilter ? 2 : 0,
+      selectedColor: ext.accentGlow.withValues(alpha: isFilter ? .16 : .12),
+      backgroundColor:
+          isFlat || isFilter ? Colors.transparent : ext.glassFill,
+      disabledColor: isFlat || isFilter ? Colors.transparent : ext.glassFill,
+      elevation: 0,
+      pressElevation: 0,
       padding:
           isFilter
-              ? const EdgeInsets.symmetric(horizontal: 14, vertical: 10)
+              ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
               : null,
       labelStyle: TextStyle(
         color: selected ? ext.accentGlow : ext.textMuted,
@@ -117,7 +124,7 @@ class WorkoutPill extends StatelessWidget {
         color:
             selected
                 ? ext.accentGlow.withValues(alpha: .85)
-                : isFlat
+                : isFlat || isFilter
                 ? Colors.transparent
                 : ext.glassBorder,
       ),
