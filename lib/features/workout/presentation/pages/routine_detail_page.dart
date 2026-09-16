@@ -5,7 +5,7 @@ import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
-import '../widgets/workout_surface.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 
 class RoutineSummary extends StatelessWidget {
   const RoutineSummary({super.key, required this.routine});

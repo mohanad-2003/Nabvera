@@ -95,6 +95,40 @@ class FirebaseAuthService {
     );
   }
 
+  /// Whether the signed-in account has a password to change at all — false
+  /// for a Google-only account, which [PasswordSettingsPage] uses to hide
+  /// its own "wrong password"/"weak password" errors behind a clearer
+  /// "this account signs in with Google" message instead.
+  bool get canChangePassword =>
+      _auth.currentUser?.providerData.any(
+        (p) => p.providerId == 'password',
+      ) ??
+      false;
+
+  /// Changes the signed-in user's password. Firebase requires a *recent*
+  /// sign-in for this — re-authenticating with [currentPassword] first is
+  /// what makes that requirement satisfied here rather than surfacing as a
+  /// confusing `requires-recent-login` error straight from `updatePassword`.
+  /// Throws [FirebaseAuthException]('wrong-password') if [currentPassword]
+  /// doesn't match, and lets `updatePassword`'s own `weak-password` etc.
+  /// propagate — both map to a message via `authErrorMessage`.
+  Future<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _auth.currentUser;
+    final email = user?.email;
+    if (user == null || email == null) {
+      throw FirebaseAuthException(code: 'user-not-found');
+    }
+    final credential = EmailAuthProvider.credential(
+      email: email,
+      password: currentPassword,
+    );
+    await user.reauthenticateWithCredential(credential);
+    await user.updatePassword(newPassword);
+  }
+
   Future<void> signOut() async {
     await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
   }

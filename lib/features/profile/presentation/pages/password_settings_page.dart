@@ -1,22 +1,29 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/app_text_field.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
+import 'package:nabvera/features/authentication/domain/auth_error_translator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 enum _PasswordStrength { weak, medium, strong }
 
-class PasswordSettingsPage extends StatefulWidget {
+class PasswordSettingsPage extends ConsumerStatefulWidget {
   const PasswordSettingsPage({super.key});
 
   @override
-  State<PasswordSettingsPage> createState() => _PasswordSettingsPageState();
+  ConsumerState<PasswordSettingsPage> createState() =>
+      _PasswordSettingsPageState();
 }
 
-class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
+class _PasswordSettingsPageState
+    extends ConsumerState<PasswordSettingsPage> {
   final _currentController = TextEditingController();
   final _newController = TextEditingController();
   final _confirmController = TextEditingController();
@@ -59,16 +66,33 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
       setState(() => _error = l10n.passwordMismatchValidation);
       return;
     }
+    final authService = ref.read(firebaseAuthServiceProvider);
+    if (!authService.canChangePassword) {
+      setState(() => _error = l10n.passwordGoogleAccountError);
+      return;
+    }
     setState(() {
       _error = null;
       _saving = true;
     });
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() => _saving = false);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.passwordUpdateSuccess)));
+    try {
+      await authService.updatePassword(
+        currentPassword: _currentController.text,
+        newPassword: _newController.text,
+      );
+      if (!mounted) return;
+      _currentController.clear();
+      _newController.clear();
+      _confirmController.clear();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.passwordUpdateSuccess)));
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() => _error = authErrorMessage(l10n, error));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -86,10 +110,7 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
               Row(
                 children: [
                   if (context.canPop())
-                    PremiumIconButton(
-                      icon: Icons.arrow_back_ios_new_rounded,
-                      onTap: () => context.pop(),
-                    ),
+                    PremiumBackButton(onTap: () => context.pop()),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -156,7 +177,7 @@ class _PasswordSettingsPageState extends State<PasswordSettingsPage> {
                     Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () => context.push(AppRoutes.forgotPassword),
                         child: Text(l10n.passwordForgot),
                       ),
                     ),

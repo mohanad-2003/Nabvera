@@ -105,10 +105,7 @@ class _NotificationSettingsPageState
               Row(
                 children: [
                   if (context.canPop())
-                    PremiumIconButton(
-                      icon: Icons.arrow_back_ios_new_rounded,
-                      onTap: () => context.pop(),
-                    ),
+                    PremiumBackButton(onTap: () => context.pop()),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(

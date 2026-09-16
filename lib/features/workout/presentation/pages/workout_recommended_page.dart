@@ -43,8 +43,8 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                       ? firstPopular.description
                       : ExerciseDetailData.defaultDescription,
               descriptionAr: firstPopular.descriptionAr,
-              duration: firstPopular.time,
-              reps: firstPopular.calories,
+              duration: firstPopular.localizedTime(context),
+              reps: firstPopular.localizedCalories(context),
               level: exerciseDifficultyLabel(l10n, firstPopular.difficulty),
               videoUrl: firstPopular.videoUrl,
             ));
@@ -119,8 +119,8 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                         return PopularWorkoutCard(
                           image: item.image,
                           name: item.localizedName(context),
-                          duration: item.time,
-                          calories: item.calories,
+                          duration: item.localizedTime(context),
+                          calories: item.localizedCalories(context),
                           difficulty: exerciseDifficultyLabel(
                             l10n,
                             item.difficulty,
@@ -139,8 +139,8 @@ class WorkoutRecommendedPage extends ConsumerWidget {
                                           : ExerciseDetailData
                                               .defaultDescription,
                                   descriptionAr: item.descriptionAr,
-                                  duration: item.time,
-                                  reps: item.calories,
+                                  duration: item.localizedTime(context),
+                                  reps: item.localizedCalories(context),
                                   level: exerciseDifficultyLabel(
                                     l10n,
                                     item.difficulty,

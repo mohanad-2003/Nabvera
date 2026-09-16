@@ -235,6 +235,18 @@
   "goalOthers": "Others",
   "unitKg": "Kg",
   "unitCm": "cm",
+  "profileWeightValue": "{weight} Kg",
+  "@profileWeightValue": {
+    "placeholders": {
+      "weight": {"type": "int"}
+    }
+  },
+  "profileHeightValue": "{height} m",
+  "@profileHeightValue": {
+    "placeholders": {
+      "height": {"type": "String"}
+    }
+  },
   "onboardingAgeValue": "Age: {value} years",
   "@onboardingAgeValue": {
     "placeholders": {
@@ -424,6 +436,22 @@
   "@homeHeroExercises": {
     "placeholders": {
       "count": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutExerciseSets": "{sets} Sets",
+  "@workoutExerciseSets": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutExerciseCalories": "{kcal} Kcal",
+  "@workoutExerciseCalories": {
+    "placeholders": {
+      "kcal": {
         "type": "int"
       }
     }
@@ -678,6 +706,8 @@
   "notificationWorkoutReminderBody": "A few minutes now still counts — pick up where you left off.",
   "notificationChallengeExpiringTitle": "Challenge ending soon",
   "notificationChallengeExpiringBody": "One of your challenges ends within 24 hours — finish strong!",
+  "notificationChallengeCompletedTitle": "Challenge completed!",
+  "notificationChallengeCompletedBody": "You finished a challenge. Great work!",
   "notificationsTitle": "Notifications",
   "notificationsSubtitle": "Stay motivated. Never miss your fitness journey.",
   "notificationsMarkAllRead": "Mark all as read",
@@ -914,6 +944,7 @@
   "passwordStrengthStrong": "Strong",
   "passwordUpdateAction": "Update Password",
   "passwordUpdateSuccess": "Password updated successfully!",
+  "passwordGoogleAccountError": "This account signs in with Google and has no password to change.",
   "documentsTitle": "Documents",
   "settingsTitle": "Settings",
   "settingsSubtitle": "Customize your experience",
@@ -949,6 +980,13 @@
   "nutritionFatLabel": "Fat",
   "nutritionWaterIntakeLabel": "Water Intake",
   "waterLogSheetTitle": "Log Water",
+  "waterCupsProgress": "{consumed} / {goal} cups",
+  "@waterCupsProgress": {
+    "placeholders": {
+      "consumed": {"type": "int"},
+      "goal": {"type": "int"}
+    }
+  },
   "waterLogAddCup": "+1 Cup (250ml)",
   "waterLogAddTwoCups": "+2 Cups (500ml)",
   "waterLogAdded": "Water logged",

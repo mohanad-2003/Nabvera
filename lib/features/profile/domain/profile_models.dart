@@ -1,3 +1,7 @@
+import 'package:flutter/widgets.dart' show BuildContext;
+
+import '../../../core/localization/generated/app_localizations.dart';
+
 class UserProfile {
   const UserProfile({
     this.id = '',
@@ -74,6 +78,23 @@ class UserProfile {
   final String role;
   bool get isAdmin => role == 'admin';
 
+  /// Weight formatted for [context]'s current locale — falls back to
+  /// [weightKg] only when [weightKgRaw] isn't known. Prefer this for
+  /// display: [weightKg] hardcodes the English "Kg" unit, which visually
+  /// reorders to "Kg 75" under RTL bidi instead of reading as untranslated.
+  String localizedWeight(BuildContext context) => weightKgRaw == null
+      ? weightKg
+      : AppLocalizations.of(context).profileWeightValue(weightKgRaw!.round());
+
+  /// Height formatted for [context]'s current locale — falls back to
+  /// [heightM] only when [heightCmRaw] isn't known. Same RTL-bidi reason
+  /// as [localizedWeight].
+  String localizedHeight(BuildContext context) => heightCmRaw == null
+      ? heightM
+      : AppLocalizations.of(
+        context,
+      ).profileHeightValue((heightCmRaw! / 100).toStringAsFixed(2));
+
   // --- Workout schedule & reminders (Phase 5) ---------------------------
   //
   // Backend day codes ('mon'..'sun', same convention as a Routine's own
@@ -98,7 +119,7 @@ class UserProfile {
     weightKg: '—',
     ageYears: '—',
     heightM: '—',
-    fitnessLevel: 'Beginner',
+    fitnessLevel: 'beginner',
     completedWorkouts: 0,
     caloriesBurned: 0,
     trainingDays: 0,
@@ -189,10 +210,14 @@ class UserProfile {
     return '${months[date.month - 1]} ${date.day}';
   }
 
+  /// Raw backend-style value ('beginner'/'intermediate'/'advanced', same
+  /// convention as `Exercise.difficulty`) — the widget layer localizes it
+  /// via [exerciseDifficultyLabel] instead of showing it verbatim, so it
+  /// doesn't show as a raw English word on an Arabic profile screen.
   static String _fitnessLevelFor(int workoutsCompleted) {
-    if (workoutsCompleted >= 100) return 'Advanced';
-    if (workoutsCompleted >= 30) return 'Intermediate';
-    return 'Beginner';
+    if (workoutsCompleted >= 100) return 'advanced';
+    if (workoutsCompleted >= 30) return 'intermediate';
+    return 'beginner';
   }
 }
 

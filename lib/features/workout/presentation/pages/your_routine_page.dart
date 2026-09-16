@@ -5,10 +5,10 @@ import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
-import '../providers/your_routine_controller.dart';
-import '../providers/workout_request_providers.dart';
-import '../widgets/workout_header.dart';
-import '../widgets/workout_surface.dart';
+import 'package:nabvera/features/workout/presentation/providers/workout_request_providers.dart';
+import 'package:nabvera/features/workout/presentation/providers/your_routine_controller.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'routine_detail_page.dart';
 
 class YourRoutinePage extends ConsumerStatefulWidget {
@@ -43,17 +43,15 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: Text(
-                  workoutCopy(dialogContext, 'إلغاء', 'Cancel'),
-                ),
+                child: Text(workoutCopy(dialogContext, 'إلغاء', 'Cancel')),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(dialogContext).pop(true),
                 style: FilledButton.styleFrom(
                   backgroundColor:
-                      Theme.of(dialogContext)
-                          .extension<AppThemeExtension>()!
-                          .danger,
+                      Theme.of(
+                        dialogContext,
+                      ).extension<AppThemeExtension>()!.danger,
                 ),
                 child: Text(workoutCopy(dialogContext, 'حذف', 'Delete')),
               ),
@@ -81,9 +79,9 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
       );
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(workoutError(context, error))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(workoutError(context, error))));
     } finally {
       if (mounted) setState(() => _deletingRoutineId = null);
     }
@@ -213,7 +211,8 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
                                       )
                                     else
                                       IconButton(
-                                        onPressed: () => _deleteRoutine(routine),
+                                        onPressed:
+                                            () => _deleteRoutine(routine),
                                         tooltip: workoutCopy(
                                           context,
                                           'حذف الروتين',

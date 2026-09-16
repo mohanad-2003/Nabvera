@@ -629,6 +629,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unitCm => 'سم';
 
   @override
+  String profileWeightValue(int weight) {
+    return '$weight كجم';
+  }
+
+  @override
+  String profileHeightValue(String height) {
+    return '$height م';
+  }
+
+  @override
   String onboardingAgeValue(int value) {
     return 'العمر: $value سنة';
   }
@@ -854,6 +864,16 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String homeHeroExercises(int count) {
     return '$count تمرين';
+  }
+
+  @override
+  String workoutExerciseSets(int sets) {
+    return '$sets مجموعة';
+  }
+
+  @override
+  String workoutExerciseCalories(int kcal) {
+    return '$kcal سعرة';
   }
 
   @override
@@ -1335,6 +1355,12 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get notificationChallengeExpiringBody =>
       'أحد تحدياتك سينتهي خلال 24 ساعة — أكمله بقوة!';
+
+  @override
+  String get notificationChallengeCompletedTitle => 'تم إنجاز التحدي!';
+
+  @override
+  String get notificationChallengeCompletedBody => 'أنجزت تحديًا. عمل رائع!';
 
   @override
   String get notificationsTitle => 'الإشعارات';
@@ -1980,6 +2006,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordUpdateSuccess => 'تم تحديث كلمة المرور بنجاح!';
 
   @override
+  String get passwordGoogleAccountError =>
+      'يسجّل هذا الحساب الدخول عبر جوجل، وليست له كلمة مرور لتغييرها.';
+
+  @override
   String get documentsTitle => 'المستندات';
 
   @override
@@ -2083,6 +2113,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get waterLogSheetTitle => 'تسجيل الماء';
+
+  @override
+  String waterCupsProgress(int consumed, int goal) {
+    return '$consumed / $goal كوب';
+  }
 
   @override
   String get waterLogAddCup => '+1 كوب (250 مل)';

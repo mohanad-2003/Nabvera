@@ -1,7 +1,9 @@
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/fade_slide_in.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/user_avatar.dart';
+import 'package:nabvera/features/workout/domain/workout_models.dart' show exerciseDifficultyLabel;
 import 'package:flutter/material.dart';
 
 /// Premium profile header: back/edit actions, gradient-ringed avatar with a
@@ -39,17 +41,15 @@ class ProfileHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (onBack != null)
-                PremiumIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: onBack,
-                ),
-              const Spacer(),
-              // Flexible so the title shrinks instead of overflowing past
-              // the two fixed 44px icon buttons on the narrowest screens —
-              // the Spacers on either side only redistribute leftover
-              // space, they can't rescue a title that's already too wide.
-              Flexible(
+              if (onBack != null) PremiumBackButton(onTap: onBack),
+              // Expanded so the title gets every pixel not used by the
+              // (optional) back/edit icons — a bare `Flexible` here used to
+              // sit between two `Spacer()`s of the same flex:1, so the
+              // three of them split the row into thirds and gave the title
+              // only a third of the available width regardless of how much
+              // room the icons actually left, clipping a title as short as
+              // "ملفي الشخصي" to "ملفي ال…".
+              Expanded(
                 child: Text(
                   title,
                   maxLines: 1,
@@ -61,7 +61,6 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
               if (onEdit != null)
                 PremiumIconButton(icon: Icons.edit_rounded, onTap: onEdit),
             ],
@@ -131,7 +130,7 @@ class ProfileHeader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
-                fitnessLevel,
+                exerciseDifficultyLabel(AppLocalizations.of(context), fitnessLevel),
                 style: TextStyle(
                   color: ext.accentGlow,
                   fontWeight: FontWeight.w800,

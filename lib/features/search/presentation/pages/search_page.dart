@@ -1,5 +1,7 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
+import 'package:nabvera/core/theme/app_radius_shadows.dart';
+import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
@@ -72,6 +74,10 @@ class SearchPage extends ConsumerWidget {
                       onTap: () => context.pop(),
                     ),
                   if (context.canPop()) const SizedBox(width: 8),
+                  // Notifications/profile used to sit here, but both are
+                  // one tap away from Home already — repeating them on a
+                  // screen whose whole job is a single text field just
+                  // crowded the title with icons nobody used to get here.
                   Expanded(
                     child: Text(
                       l10n.navSearch,
@@ -84,15 +90,6 @@ class SearchPage extends ConsumerWidget {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                  ),
-                  _SearchHeaderButton(
-                    icon: Icons.notifications_none_rounded,
-                    onTap: () => context.push(AppRoutes.notifications),
-                  ),
-                  const SizedBox(width: 4),
-                  _SearchHeaderButton(
-                    icon: Icons.person_outline_rounded,
-                    onTap: () => context.go(AppRoutes.profile),
                   ),
                 ],
               ),
@@ -244,15 +241,12 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
     });
 
     return Container(
-      height: 54,
+      height: 56,
       decoration: BoxDecoration(
-        // A faint tint of the page's own text color rather than
-        // [AppThemeExtension.glassFill] (near-opaque white in light mode,
-        // reading as a thick white card) — keeps the field visibly on top
-        // of the page background without boxing it in.
-        color: ext.textPrimary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
+        color: ext.glassFill,
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: ext.glassBorder),
+        boxShadow: AppShadows.floating(Theme.of(context).brightness),
       ),
       child: TextField(
         controller: _controller,
@@ -260,12 +254,15 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
         onChanged:
             (value) =>
                 ref.read(searchQueryControllerProvider.notifier).update(value),
-        style: TextStyle(color: ext.textPrimary),
+        style: TextStyle(
+          color: ext.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
         cursorColor: ext.accentGlow,
         decoration: InputDecoration(
           hintText: l10n.searchHint,
           hintStyle: TextStyle(color: ext.textMuted, fontSize: 14),
-          prefixIcon: Icon(Icons.search_rounded, color: ext.textMuted),
+          prefixIcon: Icon(Icons.search_rounded, color: ext.accentGlow),
           suffixIcon:
               hasText
                   ? IconButton(
@@ -404,7 +401,7 @@ class _AllResultsSection extends StatelessWidget {
         else
           for (final item in results.items) ...[
             _ResultTile(item: item, onTap: () => onTap(item)),
-            const Divider(height: 1),
+            const SizedBox(height: AppSpacing.md),
           ],
       ],
     );
@@ -481,44 +478,57 @@ class _SuggestionsSection extends StatelessWidget {
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 12),
         for (final s in suggestions) ...[
-          const Divider(height: 1),
-          InkWell(
-            onTap: () => onTap(s),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Row(
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      gradient: ext.accentGradient,
-                      shape: BoxShape.circle,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => onTap(s),
+              borderRadius: BorderRadius.circular(AppRadius.card),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: ext.glassFill,
+                  borderRadius: BorderRadius.circular(AppRadius.card),
+                  border: Border.all(color: ext.glassBorder),
+                  boxShadow: AppShadows.floating(Theme.of(context).brightness),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        gradient: ext.accentGradient,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon, color: ext.onAccent, size: 18),
                     ),
-                    child: Icon(icon, color: ext.onAccent, size: 18),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      s,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: ext.textPrimary,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        s,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: ext.textPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.north_east_rounded,
-                    color: ext.textMuted,
-                    size: 16,
-                  ),
-                ],
+                    Icon(
+                      Icons.north_east_rounded,
+                      color: ext.textMuted,
+                      size: 16,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
+          const SizedBox(height: AppSpacing.sm),
         ],
       ],
     );
@@ -626,8 +636,10 @@ class _FeaturedResult extends StatelessWidget {
   }
 }
 
-/// Flat, hairline-separated result row — replaces the previous boxed
-/// glass card, same on-background treatment as the rest of the app.
+/// Elevated result card — a soft glass surface with a floating shadow,
+/// matching the card language used elsewhere in the app (see
+/// `AdminContentCard`) instead of the flatter hairline-divider list this
+/// used to be.
 class _ResultTile extends StatelessWidget {
   const _ResultTile({required this.item, required this.onTap});
   final SearchResultItem item;
@@ -637,12 +649,21 @@ class _ResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: ext.glassFill,
+            borderRadius: BorderRadius.circular(AppRadius.card),
+            border: Border.all(color: ext.glassBorder),
+            boxShadow: AppShadows.floating(Theme.of(context).brightness),
+          ),
+          child: Row(
+            children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: SmartImage(item.image, width: 68, height: 68),
@@ -706,8 +727,14 @@ class _ResultTile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: ext.textMuted),
-          ],
+            Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.chevron_left_rounded
+                  : Icons.chevron_right_rounded,
+              color: ext.textMuted,
+            ),
+            ],
+          ),
         ),
       ),
     );

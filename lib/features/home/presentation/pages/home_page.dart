@@ -1118,9 +1118,7 @@ class _NextStepCard extends ConsumerWidget {
         ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
     ref.watch(weeklyActivityControllerProvider);
     final nutrition = ref.watch(dailyNutritionSummaryControllerProvider);
-    final waterParts = nutrition.waterIntake.split('/');
-    final waterCups =
-        waterParts.isEmpty ? 0 : int.tryParse(waterParts.first.trim()) ?? 0;
+    final waterCups = nutrition.waterCupsConsumed;
     final hour = DateTime.now().hour;
 
     late final String text;
@@ -1187,7 +1185,12 @@ class _NextStepCard extends ConsumerWidget {
               ),
             ),
             if (route != _NextStepRoute.none)
-              Icon(Icons.chevron_right_rounded, color: ext.textMuted),
+              Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left_rounded
+                    : Icons.chevron_right_rounded,
+                color: ext.textMuted,
+              ),
           ],
         ),
       ),
@@ -1565,7 +1568,7 @@ class _WorkoutCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      workout.duration,
+                      workout.localizedDuration(context),
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.70),
                       ),
@@ -1578,7 +1581,7 @@ class _WorkoutCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      workout.calories,
+                      workout.localizedCalories(context),
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.70),
                       ),

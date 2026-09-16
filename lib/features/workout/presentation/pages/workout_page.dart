@@ -158,17 +158,15 @@ class WorkoutPage extends ConsumerWidget {
                   FeaturedCard(
                     image: items.first.image,
                     badge: _label(l10n, level),
-                    title: items.first.name,
+                    title: items.first.localizedName(context),
                     metas: [
-                      if (items.first.time != null)
-                        FeaturedCardMeta(
-                          icon: AppIcons.time,
-                          label: items.first.time!,
-                        ),
-                      if (items.first.calories != null)
+                      if (items.first.localizedTime(context) case final time?)
+                        FeaturedCardMeta(icon: AppIcons.time, label: time),
+                      if (items.first.localizedCalories(context)
+                          case final calories?)
                         FeaturedCardMeta(
                           icon: AppIcons.calories,
-                          label: items.first.calories!,
+                          label: calories,
                         ),
                       FeaturedCardMeta(
                         icon: AppIcons.run,

@@ -1274,6 +1274,18 @@ abstract class AppLocalizations {
   /// **'cm'**
   String get unitCm;
 
+  /// No description provided for @profileWeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{weight} Kg'**
+  String profileWeightValue(int weight);
+
+  /// No description provided for @profileHeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{height} m'**
+  String profileHeightValue(String height);
+
   /// No description provided for @onboardingAgeValue.
   ///
   /// In en, this message translates to:
@@ -1651,6 +1663,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} exercises'**
   String homeHeroExercises(int count);
+
+  /// No description provided for @workoutExerciseSets.
+  ///
+  /// In en, this message translates to:
+  /// **'{sets} Sets'**
+  String workoutExerciseSets(int sets);
+
+  /// No description provided for @workoutExerciseCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} Kcal'**
+  String workoutExerciseCalories(int kcal);
 
   /// No description provided for @homeCaloriesConsumedOf.
   ///
@@ -2533,6 +2557,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One of your challenges ends within 24 hours — finish strong!'**
   String get notificationChallengeExpiringBody;
+
+  /// No description provided for @notificationChallengeCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge completed!'**
+  String get notificationChallengeCompletedTitle;
+
+  /// No description provided for @notificationChallengeCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You finished a challenge. Great work!'**
+  String get notificationChallengeCompletedBody;
 
   /// No description provided for @notificationsTitle.
   ///
@@ -3740,6 +3776,12 @@ abstract class AppLocalizations {
   /// **'Password updated successfully!'**
   String get passwordUpdateSuccess;
 
+  /// No description provided for @passwordGoogleAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'This account signs in with Google and has no password to change.'**
+  String get passwordGoogleAccountError;
+
   /// No description provided for @documentsTitle.
   ///
   /// In en, this message translates to:
@@ -3949,6 +3991,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log Water'**
   String get waterLogSheetTitle;
+
+  /// No description provided for @waterCupsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} / {goal} cups'**
+  String waterCupsProgress(int consumed, int goal);
 
   /// No description provided for @waterLogAddCup.
   ///

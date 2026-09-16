@@ -317,8 +317,10 @@ class _Hero extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.36),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                child: Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_ios_rounded
+                      : Icons.arrow_back_ios_new_rounded,
                   color: Colors.white,
                   size: 18,
                 ),

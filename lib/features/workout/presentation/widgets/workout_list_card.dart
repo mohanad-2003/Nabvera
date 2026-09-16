@@ -63,22 +63,22 @@ class WorkoutListCard extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 6,
                         children: [
-                          if (item.time != null)
+                          if (item.localizedTime(context) case final time?)
                             _MetaChip(
                               icon: Icons.schedule_rounded,
-                              label: item.time!,
+                              label: time,
                               ext: ext,
                             ),
-                          if (item.calories != null)
+                          if (item.localizedCalories(context) case final calories?)
                             _MetaChip(
                               icon: Icons.local_fire_department_rounded,
-                              label: item.calories!,
+                              label: calories,
                               ext: ext,
                             ),
-                          if (item.exercises != null)
+                          if (item.localizedExercises(context) case final exercises?)
                             _MetaChip(
                               icon: Icons.fitness_center_rounded,
-                              label: item.exercises!,
+                              label: exercises,
                               ext: ext,
                             ),
                         ],

@@ -25,7 +25,9 @@ class DocumentPage extends ConsumerWidget {
               GestureDetector(
                 onTap: () => context.canPop() ? context.pop() : null,
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_ios_rounded
+                      : Icons.arrow_back_ios_new_rounded,
                   color: theme.colorScheme.primary,
                   size: 28,
                 ),
@@ -98,7 +100,9 @@ class DocumentPage extends ConsumerWidget {
                         ),
                       ),
                       Icon(
-                        Icons.arrow_forward_ios_rounded,
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_back_ios_rounded
+                            : Icons.arrow_forward_ios_rounded,
                         color: theme.colorScheme.primary,
                         size: 20,
                       ),

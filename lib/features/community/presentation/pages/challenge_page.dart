@@ -132,8 +132,7 @@ class _ChallengePageState extends ConsumerState<ChallengePage> {
                 children: [
                   Row(
                     children: [
-                      PremiumIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
+                      PremiumBackButton(
                         onTap: () => context.canPop() ? context.pop() : null,
                       ),
                     ],

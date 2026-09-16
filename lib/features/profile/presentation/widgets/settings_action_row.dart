@@ -70,7 +70,13 @@ class SettingsActionRow extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: ext.textMuted, size: 22),
+            Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.chevron_left_rounded
+                  : Icons.chevron_right_rounded,
+              color: ext.textMuted,
+              size: 22,
+            ),
           ],
         ),
       ),

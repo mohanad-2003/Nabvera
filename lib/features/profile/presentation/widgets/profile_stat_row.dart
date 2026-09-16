@@ -19,7 +19,7 @@ class ProfileStatRow extends StatelessWidget {
       children: [
         _Stat(
           icon: Icons.monitor_weight_outlined,
-          label: profile.weightKg,
+          label: profile.localizedWeight(context),
           subLabel: l10n.workoutProfileWeight,
         ),
         const _Divider(),
@@ -31,7 +31,7 @@ class ProfileStatRow extends StatelessWidget {
         const _Divider(),
         _Stat(
           icon: Icons.height_rounded,
-          label: profile.heightM,
+          label: profile.localizedHeight(context),
           subLabel: l10n.workoutProfileHeight,
         ),
       ],
