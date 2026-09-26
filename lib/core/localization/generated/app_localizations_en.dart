@@ -2486,6 +2486,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealPlanViewShoppingList => 'Shopping List';
 
   @override
+  String get mealPlanGenerateNewTooltip => 'Generate new plan';
+
+  @override
+  String get mealPlanRegenerateConfirmTitle => 'Generate a new plan?';
+
+  @override
+  String get mealPlanRegenerateConfirmBody =>
+      'This replaces your current plan with a new one. Your existing plan stays available in history.';
+
+  @override
   String get mealPlanViewHistory => 'Past Plans';
 
   @override

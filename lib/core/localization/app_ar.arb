@@ -789,6 +789,9 @@
   "mealPlanShoppingListTitle": "قائمة التسوق",
   "mealPlanShoppingListEmpty": "ستظهر قائمة التسوق هنا بعد إنشاء خطة.",
   "mealPlanViewShoppingList": "قائمة التسوق",
+  "mealPlanGenerateNewTooltip": "توليد خطة جديدة",
+  "mealPlanRegenerateConfirmTitle": "توليد خطة جديدة؟",
+  "mealPlanRegenerateConfirmBody": "هذا بيستبدل خطتك الحالية بخطة جديدة. خطتك الحالية بتضل متاحة بسجل الخطط السابقة.",
   "mealPlanViewHistory": "الخطط السابقة",
   "mealPlanHistoryEmpty": "لا توجد خطط وجبات سابقة بعد.",
 

@@ -2456,6 +2456,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mealPlanViewShoppingList => 'قائمة التسوق';
 
   @override
+  String get mealPlanGenerateNewTooltip => 'توليد خطة جديدة';
+
+  @override
+  String get mealPlanRegenerateConfirmTitle => 'توليد خطة جديدة؟';
+
+  @override
+  String get mealPlanRegenerateConfirmBody =>
+      'هذا بيستبدل خطتك الحالية بخطة جديدة. خطتك الحالية بتضل متاحة بسجل الخطط السابقة.';
+
+  @override
   String get mealPlanViewHistory => 'الخطط السابقة';
 
   @override

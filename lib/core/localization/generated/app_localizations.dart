@@ -4622,6 +4622,24 @@ abstract class AppLocalizations {
   /// **'Shopping List'**
   String get mealPlanViewShoppingList;
 
+  /// No description provided for @mealPlanGenerateNewTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate new plan'**
+  String get mealPlanGenerateNewTooltip;
+
+  /// No description provided for @mealPlanRegenerateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a new plan?'**
+  String get mealPlanRegenerateConfirmTitle;
+
+  /// No description provided for @mealPlanRegenerateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This replaces your current plan with a new one. Your existing plan stays available in history.'**
+  String get mealPlanRegenerateConfirmBody;
+
   /// No description provided for @mealPlanViewHistory.
   ///
   /// In en, this message translates to:
