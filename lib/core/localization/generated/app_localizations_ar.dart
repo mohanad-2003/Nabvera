@@ -1793,11 +1793,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get privacyContactSupportSubtitle => 'احصل على مساعدة فريقنا';
 
   @override
-  String privacyComingSoon(String feature) {
-    return '$feature قريبًا';
-  }
-
-  @override
   String get privacyDeleteConfirmTitle => 'حذف حسابك؟';
 
   @override
@@ -2062,9 +2057,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpSearchHint => 'بحث';
-
-  @override
-  String get helpFaqPlaceholder => 'أسئلة شائعة نموذجية؟';
 
   @override
   String get nutritionSubtitle => 'غذِّ تدريبك بوجبات تناسب يومك فعليًا.';

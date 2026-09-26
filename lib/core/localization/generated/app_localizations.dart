@@ -3392,12 +3392,6 @@ abstract class AppLocalizations {
   /// **'Get help from our team'**
   String get privacyContactSupportSubtitle;
 
-  /// No description provided for @privacyComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'{feature} coming soon'**
-  String privacyComingSoon(String feature);
-
   /// No description provided for @privacyDeleteConfirmTitle.
   ///
   /// In en, this message translates to:
@@ -3889,12 +3883,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search'**
   String get helpSearchHint;
-
-  /// No description provided for @helpFaqPlaceholder.
-  ///
-  /// In en, this message translates to:
-  /// **'Lorem ipsum dolor sit amet?'**
-  String get helpFaqPlaceholder;
 
   /// No description provided for @nutritionSubtitle.
   ///

@@ -573,7 +573,6 @@
   "privacyDeleteAccountSubtitle": "إزالة حسابك نهائيًا",
   "privacyContactSupport": "التواصل مع الدعم",
   "privacyContactSupportSubtitle": "احصل على مساعدة فريقنا",
-  "privacyComingSoon": "{feature} قريبًا",
   "privacyDeleteConfirmTitle": "حذف حسابك؟",
   "privacyDeleteConfirmBody": "سيؤدي هذا إلى إزالة ملفك الشخصي وسجل تمارينك وبياناتك المحفوظة نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
   "privacyDelete": "حذف",
@@ -662,8 +661,6 @@
   "helpTabAccount": "الحساب",
   "helpTabServices": "الخدمات",
   "helpSearchHint": "بحث",
-  "helpFaqPlaceholder": "أسئلة شائعة نموذجية؟",
-
   "nutritionSubtitle": "غذِّ تدريبك بوجبات تناسب يومك فعليًا.",
   "nutritionTabMealPlans": "خطط الوجبات",
   "nutritionTabMealIdeas": "أفكار وجبات",
