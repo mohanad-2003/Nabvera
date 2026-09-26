@@ -1027,6 +1027,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutFinishWorkout => 'إنهاء التمرين';
 
   @override
+  String workoutSetNumber(int number) {
+    return 'المجموعة $number';
+  }
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    return '$done/$total مجموعات';
+  }
+
+  @override
+  String get workoutRestTitle => 'راحة';
+
+  @override
+  String get workoutRestSkip => 'تخطي';
+
+  @override
+  String get workoutRestAddSeconds => '+15 ثانية';
+
+  @override
   String get workoutRatingTitle => 'كيف كان هذا التمرين؟';
 
   @override

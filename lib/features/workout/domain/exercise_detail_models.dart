@@ -73,12 +73,22 @@ class RoundExerciseItem {
     required this.accent,
     this.exerciseDetail,
     this.nameAr = '',
+    this.setsCount = 3,
   });
 
   final String name;
   final String time;
   final String reps;
   final Color accent;
+
+  /// The real number of sets backing [time]'s "N sets" display text — used
+  /// to render one tappable set-completion pill per set during an active
+  /// workout session (see [CategoryDetailPage]/`_SessionExerciseTile`).
+  /// Defaults to 3 for curated/mock content and legacy call sites that
+  /// never populate it (weekly challenges, workout_category_data.dart's
+  /// static rounds) — those never reach an active session anyway, since
+  /// Start/Finish only ever appears for a real, workoutId-backed workout.
+  final int setsCount;
 
   /// When set, tapping this round item pushes [ExerciseDetailPage] with
   /// this data; otherwise the item is inert (matches legacy behavior where
@@ -222,6 +232,7 @@ class CategoryDetailData {
       time: '$sets sets',
       reps: '${reps}x Reps',
       accent: _accents[index % _accents.length],
+      setsCount: sets.toInt().clamp(1, 20),
       exerciseDetail: ExerciseDetailData(
         headerTitle: name,
         heroImage: image,
