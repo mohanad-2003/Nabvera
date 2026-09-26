@@ -180,6 +180,33 @@ void main() {
   );
 
   test(
+    'a query matching only the Arabic titleAr (not the English title) still returns the item',
+    () async {
+      final fakeWorkouts = FakeWorkoutRepository()
+        ..workouts = [
+          {'_id': 'w1', 'title': 'Cardio Blast', 'titleAr': 'كارديو مكثف'},
+        ];
+      final container = ProviderContainer(
+        overrides: [
+          workoutRepositoryProvider.overrideWithValue(fakeWorkouts),
+          nutritionRepositoryProvider.overrideWithValue(
+            FakeNutritionRepository(),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.listen(searchAllResultsProvider, (_, _) {});
+
+      container.read(searchQueryControllerProvider.notifier).update('كارديو');
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final results = container.read(searchAllResultsProvider);
+      expect(results.items, hasLength(1));
+      expect(results.items.first.id, 'w1');
+    },
+  );
+
+  test(
     'a matching query returns results carrying the real backend id (so a tap can open the real item)',
     () async {
       final fakeWorkouts = FakeWorkoutRepository()

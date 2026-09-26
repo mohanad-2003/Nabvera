@@ -112,15 +112,22 @@ class SearchAllResults extends _$SearchAllResults {
       // duplicate that, so instead this fetches the small demo catalog
       // and filters locally — swap for `search: query` once the catalog
       // is large enough that fetching everything stops being cheap.
+      //
+      // Matches both `title` and `titleAr` — an Arabic query (typed by
+      // hand, or filled in from an Arabic suggestion chip) previously
+      // only ever got checked against the English `title`, so it could
+      // never match anything: every workout/recipe in the demo catalog
+      // has an English title, and .contains() on unrelated scripts is
+      // never true.
       final lower = query.toLowerCase();
-      final workouts =
-          (results[0])
-              .where((w) => (w['title'] as String? ?? '').toLowerCase().contains(lower))
-              .map(_workoutToResult);
-      final recipes =
-          (results[1])
-              .where((r) => (r['title'] as String? ?? '').toLowerCase().contains(lower))
-              .map(_recipeToResult);
+      bool matches(Map<String, dynamic> doc) {
+        final title = (doc['title'] as String? ?? '').toLowerCase();
+        final titleAr = (doc['titleAr'] as String? ?? '').toLowerCase();
+        return title.contains(lower) || titleAr.contains(lower);
+      }
+
+      final workouts = (results[0]).where(matches).map(_workoutToResult);
+      final recipes = (results[1]).where(matches).map(_recipeToResult);
       state = SearchResults(
         items: [...workouts, ...recipes],
         hasSearched: true,
