@@ -1812,11 +1812,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyContactSupportSubtitle => 'Get help from our team';
 
   @override
-  String privacyComingSoon(String feature) {
-    return '$feature coming soon';
-  }
-
-  @override
   String get privacyDeleteConfirmTitle => 'Delete your account?';
 
   @override
@@ -2088,9 +2083,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpSearchHint => 'Search';
-
-  @override
-  String get helpFaqPlaceholder => 'Lorem ipsum dolor sit amet?';
 
   @override
   String get nutritionSubtitle =>

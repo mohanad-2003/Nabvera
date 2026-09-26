@@ -866,14 +866,6 @@
   "privacyDeleteAccountSubtitle": "Permanently remove your account",
   "privacyContactSupport": "Contact Support",
   "privacyContactSupportSubtitle": "Get help from our team",
-  "privacyComingSoon": "{feature} coming soon",
-  "@privacyComingSoon": {
-    "placeholders": {
-      "feature": {
-        "type": "String"
-      }
-    }
-  },
   "privacyDeleteConfirmTitle": "Delete your account?",
   "privacyDeleteConfirmBody": "This permanently removes your profile, workout history, and saved data. This action cannot be undone.",
   "privacyDelete": "Delete",
@@ -963,7 +955,6 @@
   "helpTabAccount": "Account",
   "helpTabServices": "Services",
   "helpSearchHint": "Search",
-  "helpFaqPlaceholder": "Lorem ipsum dolor sit amet?",
   "nutritionSubtitle": "Fuel your training with meals that actually fit your day.",
   "nutritionTabMealPlans": "Meal Plans",
   "nutritionTabMealIdeas": "Meal Ideas",
