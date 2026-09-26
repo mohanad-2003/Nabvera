@@ -339,12 +339,6 @@ class PremiumRecipeListTile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Directionality.of(context) == TextDirection.rtl
-                  ? Icons.chevron_left_rounded
-                  : Icons.chevron_right_rounded,
-              color: theme.colorScheme.primary,
-            ),
           ],
         ),
       ),
