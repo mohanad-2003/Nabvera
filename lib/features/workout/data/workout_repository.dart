@@ -80,6 +80,7 @@ class WorkoutRepository {
     String? workoutId,
     DifficultyRating? difficultyRating,
     int? actualDurationMinutes,
+    List<Map<String, dynamic>>? exerciseSets,
   }) async {
     final response = await _client.post(
       '/workout-logs',
@@ -92,6 +93,8 @@ class WorkoutRepository {
           'difficultyRating': difficultyRating.apiValue,
         if (actualDurationMinutes != null)
           'actualDurationMinutes': actualDurationMinutes,
+        if (exerciseSets != null && exerciseSets.isNotEmpty)
+          'exerciseSets': exerciseSets,
       },
     );
     final body = _client.decode(response);
@@ -139,6 +142,20 @@ class WorkoutRepository {
     final response = await _client.get('/recovery-map');
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
+  }
+
+  /// One entry per past session that logged at least one set of
+  /// [exerciseId] (newest first), each `{ completedAt, sets: [{ setNumber,
+  /// weightKg, reps }] }` — powers the "your progress" list on
+  /// [ExerciseDetailPage].
+  Future<List<Map<String, dynamic>>> fetchExerciseHistory(
+    String exerciseId,
+  ) async {
+    final response = await _client.get(
+      '/workout-logs/exercise-history/$exerciseId',
+    );
+    final body = _client.decode(response);
+    return (body['data'] as List).cast<Map<String, dynamic>>();
   }
 }
 

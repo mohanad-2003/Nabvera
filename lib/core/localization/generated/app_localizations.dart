@@ -1958,6 +1958,36 @@ abstract class AppLocalizations {
   /// **'+15s'**
   String get workoutRestAddSeconds;
 
+  /// No description provided for @workoutWeightKgLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg)'**
+  String get workoutWeightKgLabel;
+
+  /// No description provided for @workoutRepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get workoutRepsLabel;
+
+  /// No description provided for @workoutHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Progress'**
+  String get workoutHistoryTitle;
+
+  /// No description provided for @workoutHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a set to start tracking your progress on this exercise.'**
+  String get workoutHistoryEmpty;
+
+  /// No description provided for @workoutHistorySetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{weight} kg × {reps}'**
+  String workoutHistorySetSummary(String weight, int reps);
+
   /// No description provided for @workoutRatingTitle.
   ///
   /// In en, this message translates to:

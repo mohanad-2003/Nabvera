@@ -14,6 +14,7 @@ import 'package:nabvera/features/profile/presentation/providers/workout_schedule
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/presentation/widgets/log_set_sheet.dart';
 import 'package:nabvera/features/workout/presentation/widgets/rest_timer_bar.dart';
 import 'package:nabvera/features/workout/presentation/widgets/round_item_tile.dart';
 import 'package:nabvera/features/workout/presentation/widgets/session_exercise_tile.dart';
@@ -62,6 +63,15 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       [for (final _ in group.items) <int>{}],
   ];
 
+  // What was actually entered (weight/reps) for each checked-off set —
+  // same (groupIndex, itemIndex) indexing as `_completedSets`, keyed within
+  // by set number. Built alongside it so a set can be un-checked and
+  // re-logged without leaving stale data behind.
+  late final List<List<Map<int, LoggedSet>>> _loggedSets = [
+    for (final group in data.rounds)
+      [for (final _ in group.items) <int, LoggedSet>{}],
+  ];
+
   Timer? _restTimer;
   Duration _restRemaining = Duration.zero;
   Duration _restTotal = Duration.zero;
@@ -77,16 +87,43 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
     super.dispose();
   }
 
-  void _toggleSet(int groupIndex, int itemIndex, int setNumber) {
+  Future<void> _toggleSet(int groupIndex, int itemIndex, int setNumber) async {
     final sets = _completedSets[groupIndex][itemIndex];
-    setState(() {
-      if (sets.contains(setNumber)) {
+    if (sets.contains(setNumber)) {
+      setState(() {
         sets.remove(setNumber);
-      } else {
-        sets.add(setNumber);
-        _startRest(_kDefaultRestDuration);
-      }
+        _loggedSets[groupIndex][itemIndex].remove(setNumber);
+      });
+      return;
+    }
+
+    final item = data.rounds[groupIndex].items[itemIndex];
+    final logged = await showLogSetSheet(
+      context,
+      setNumber: setNumber,
+      initialWeightKg: _lastLoggedWeight(groupIndex, itemIndex),
+      initialReps: item.targetReps,
+    );
+    // Dismissed without confirming — leave the set unmarked rather than
+    // saving it with no data, matching the rest-timer/rating-sheet
+    // convention of "skippable, never forced".
+    if (logged == null || !mounted) return;
+
+    setState(() {
+      sets.add(setNumber);
+      _loggedSets[groupIndex][itemIndex][setNumber] = logged;
+      _startRest(_kDefaultRestDuration);
     });
+  }
+
+  /// The most recently logged weight for this exercise this session (by
+  /// set number, not by log order) — prefilled into the next set's sheet
+  /// so the common case (same weight across every set) needs no retyping.
+  double? _lastLoggedWeight(int groupIndex, int itemIndex) {
+    final logged = _loggedSets[groupIndex][itemIndex];
+    if (logged.isEmpty) return null;
+    final lastSetNumber = logged.keys.reduce((a, b) => a > b ? a : b);
+    return logged[lastSetNumber]?.weightKg;
   }
 
   void _startRest(Duration duration) {
@@ -180,6 +217,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
             workoutId: data.workoutId,
             difficultyRating: rating,
             actualDurationMinutes: actualMinutes,
+            exerciseSets: _buildExerciseSetsPayload(),
           );
       unawaited(
         analytics.logEvent(AnalyticsEvent.workoutCompleted, {
@@ -230,9 +268,42 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
               sets.clear();
             }
           }
+          for (final group in _loggedSets) {
+            for (final logged in group) {
+              logged.clear();
+            }
+          }
         });
       }
     }
+  }
+
+  /// Flattens every checked-off set across every exercise into the
+  /// `exerciseSets[]` shape `WorkoutRepository.createWorkoutLog` sends —
+  /// skipping any item with no real backing `Exercise` (curated/mock
+  /// content, which never reaches an active session anyway) since the
+  /// backend can't log a set against an exercise it can't identify.
+  /// Returns `null` (not `[]`) when there's nothing to send, so the
+  /// request body omits the field entirely rather than sending an empty
+  /// array for every plain "just started the timer" session.
+  List<Map<String, dynamic>>? _buildExerciseSetsPayload() {
+    final payload = <Map<String, dynamic>>[];
+    for (var g = 0; g < data.rounds.length; g++) {
+      final items = data.rounds[g].items;
+      for (var i = 0; i < items.length; i++) {
+        final exerciseId = items[i].exerciseDetail?.exerciseId;
+        if (exerciseId == null) continue;
+        for (final entry in _loggedSets[g][i].entries) {
+          payload.add({
+            'exercise': exerciseId,
+            'setNumber': entry.key,
+            if (entry.value.weightKg != null) 'weightKg': entry.value.weightKg,
+            if (entry.value.reps != null) 'reps': entry.value.reps,
+          });
+        }
+      }
+    }
+    return payload.isEmpty ? null : payload;
   }
 
   String _formatElapsed(Duration elapsed) {

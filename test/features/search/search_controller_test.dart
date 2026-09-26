@@ -39,7 +39,12 @@ class FakeWorkoutRepository implements WorkoutRepository {
     String? workoutId,
     DifficultyRating? difficultyRating,
     int? actualDurationMinutes,
+    List<Map<String, dynamic>>? exerciseSets,
   }) async => throw UnimplementedError();
+  @override
+  Future<List<Map<String, dynamic>>> fetchExerciseHistory(
+    String exerciseId,
+  ) async => [];
   @override
   Future<Map<String, dynamic>> updateWorkoutLogRating({
     required String logId,

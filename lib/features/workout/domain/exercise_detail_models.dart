@@ -27,6 +27,7 @@ class ExerciseDetailData {
     this.videoUrl,
     this.titleAr = '',
     this.descriptionAr = '',
+    this.exerciseId,
   });
 
   final String headerTitle;
@@ -52,6 +53,14 @@ class ExerciseDetailData {
   /// same fallback contract as [titleAr].
   final String descriptionAr;
 
+  /// The backing `Exercise._id` — null for curated/mock content that has
+  /// no real exercise behind it. Lets [ExerciseDetailPage] fetch this
+  /// exercise's own weight/reps history (see
+  /// `WorkoutRepository.fetchExerciseHistory`) and lets a workout session
+  /// tag each logged set with the right exercise (see
+  /// `CategoryDetailPage._finishWorkout`).
+  final String? exerciseId;
+
   String localizedTitle(BuildContext context) =>
       Localizations.localeOf(context).languageCode == 'ar' && titleAr.isNotEmpty
           ? titleAr
@@ -74,6 +83,7 @@ class RoundExerciseItem {
     this.exerciseDetail,
     this.nameAr = '',
     this.setsCount = 3,
+    this.targetReps,
   });
 
   final String name;
@@ -89,6 +99,11 @@ class RoundExerciseItem {
   /// static rounds) — those never reach an active session anyway, since
   /// Start/Finish only ever appears for a real, workoutId-backed workout.
   final int setsCount;
+
+  /// The backend's `entry.reps`/`Exercise.defaultReps` as a real number —
+  /// used to prefill the reps field when logging a set, instead of always
+  /// starting blank. Null for curated/mock content.
+  final int? targetReps;
 
   /// When set, tapping this round item pushes [ExerciseDetailPage] with
   /// this data; otherwise the item is inert (matches legacy behavior where
@@ -233,6 +248,7 @@ class CategoryDetailData {
       reps: '${reps}x Reps',
       accent: _accents[index % _accents.length],
       setsCount: sets.toInt().clamp(1, 20),
+      targetReps: reps.toInt(),
       exerciseDetail: ExerciseDetailData(
         headerTitle: name,
         heroImage: image,
@@ -254,6 +270,7 @@ class CategoryDetailData {
             _muscleGroupLabels[exercise['muscleGroup'] as String?] ??
             'Full Body',
         videoUrl: exercise['videoUrl'] as String?,
+        exerciseId: exercise['_id'] as String?,
       ),
     );
   }

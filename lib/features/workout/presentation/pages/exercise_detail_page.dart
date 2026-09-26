@@ -1,4 +1,5 @@
 import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
@@ -8,24 +9,41 @@ import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/presentation/widgets/exercise_video_player.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 /// Generic exercise video/detail screen — replaces the legacy squat_page,
 /// kettlball, video_advance, details_page, and details_dumple_setup, which
 /// were the same layout copy-pasted with different hardcoded strings.
-class ExerciseDetailPage extends StatefulWidget {
+class ExerciseDetailPage extends ConsumerStatefulWidget {
   const ExerciseDetailPage({super.key, required this.data});
 
   final ExerciseDetailData data;
 
   @override
-  State<ExerciseDetailPage> createState() => _ExerciseDetailPageState();
+  ConsumerState<ExerciseDetailPage> createState() =>
+      _ExerciseDetailPageState();
 }
 
-class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
+class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
   final _videoKey = GlobalKey<ExerciseVideoPlayerState>();
   final _scrollController = ScrollController();
+  Future<List<Map<String, dynamic>>>? _historyFuture;
 
   ExerciseDetailData get data => widget.data;
+
+  @override
+  void initState() {
+    super.initState();
+    // Only a real, backend-backed exercise has any history to show —
+    // curated/mock content (no exerciseId) never logged a set anywhere.
+    final exerciseId = data.exerciseId;
+    if (exerciseId != null) {
+      _historyFuture = ref
+          .read(workoutRepositoryProvider)
+          .fetchExerciseHistory(exerciseId);
+    }
+  }
 
   @override
   void dispose() {
@@ -214,12 +232,155 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 ],
               ),
             ),
+            if (_historyFuture != null) ...[
+              const SizedBox(height: 22),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _ExerciseHistorySection(future: _historyFuture!),
+              ),
+            ],
             const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
+}
+
+/// This exercise's own weight/reps progress across past sessions —
+/// answers "am I actually getting stronger at this?" for one specific
+/// exercise, which the app's existing workout-level history/charts never
+/// broke down to. Silently hides itself on a fetch failure, same as this
+/// screen's "no history yet" empty state — a progress nicety failing to
+/// load shouldn't read as an error on top of the exercise's own content.
+class _ExerciseHistorySection extends StatelessWidget {
+  const _ExerciseHistorySection({required this.future});
+
+  final Future<List<Map<String, dynamic>>> future;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+        }
+        if (snapshot.hasError) return const SizedBox.shrink();
+
+        final sessions = snapshot.data ?? const [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.workoutHistoryTitle,
+              style: TextStyle(
+                color: ext.accentGlow,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (sessions.isEmpty)
+              Text(
+                l10n.workoutHistoryEmpty,
+                style: TextStyle(color: ext.textMuted, height: 1.4),
+              )
+            else
+              for (final session in sessions) ...[
+                _SessionHistoryRow(session: session, l10n: l10n, ext: ext),
+                if (session != sessions.last) const SizedBox(height: 12),
+              ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _SessionHistoryRow extends StatelessWidget {
+  const _SessionHistoryRow({
+    required this.session,
+    required this.l10n,
+    required this.ext,
+  });
+
+  final Map<String, dynamic> session;
+  final AppLocalizations l10n;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    final completedAt = DateTime.tryParse(
+      (session['completedAt'] as String?) ?? '',
+    );
+    final sets = (session['sets'] as List? ?? const [])
+        .cast<Map<String, dynamic>>();
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 72,
+          child: Text(
+            completedAt == null ? '—' : DateFormat('MMM d').format(completedAt),
+            style: TextStyle(
+              color: ext.textMuted,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final set in sets)
+                if (set['weightKg'] != null && set['reps'] != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ext.accentGlow.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      l10n.workoutHistorySetSummary(
+                        _formatWeight(set['weightKg'] as num),
+                        (set['reps'] as num).toInt(),
+                      ),
+                      style: TextStyle(
+                        color: ext.accentGlow,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _formatWeight(num value) =>
+      value == value.roundToDouble() ? value.toInt().toString() : '$value';
 }
 
 class _InfoStat extends StatelessWidget {

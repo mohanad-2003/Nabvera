@@ -1046,6 +1046,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutRestAddSeconds => '+15 ثانية';
 
   @override
+  String get workoutWeightKgLabel => 'الوزن (كغم)';
+
+  @override
+  String get workoutRepsLabel => 'التكرارات';
+
+  @override
+  String get workoutHistoryTitle => 'تقدّمك';
+
+  @override
+  String get workoutHistoryEmpty =>
+      'سجّل مجموعة (set) لتبدأ بتتبع تقدّمك بهذا التمرين.';
+
+  @override
+  String workoutHistorySetSummary(String weight, int reps) {
+    return '$weight كغم × $reps';
+  }
+
+  @override
   String get workoutRatingTitle => 'كيف كان هذا التمرين؟';
 
   @override

@@ -1057,6 +1057,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutRestAddSeconds => '+15s';
 
   @override
+  String get workoutWeightKgLabel => 'Weight (kg)';
+
+  @override
+  String get workoutRepsLabel => 'Reps';
+
+  @override
+  String get workoutHistoryTitle => 'Your Progress';
+
+  @override
+  String get workoutHistoryEmpty =>
+      'Log a set to start tracking your progress on this exercise.';
+
+  @override
+  String workoutHistorySetSummary(String weight, int reps) {
+    return '$weight kg × $reps';
+  }
+
+  @override
   String get workoutRatingTitle => 'How was this workout?';
 
   @override

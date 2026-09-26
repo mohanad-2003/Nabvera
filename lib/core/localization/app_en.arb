@@ -585,6 +585,17 @@
   "workoutRestTitle": "Rest",
   "workoutRestSkip": "Skip",
   "workoutRestAddSeconds": "+15s",
+  "workoutWeightKgLabel": "Weight (kg)",
+  "workoutRepsLabel": "Reps",
+  "workoutHistoryTitle": "Your Progress",
+  "workoutHistoryEmpty": "Log a set to start tracking your progress on this exercise.",
+  "workoutHistorySetSummary": "{weight} kg × {reps}",
+  "@workoutHistorySetSummary": {
+    "placeholders": {
+      "weight": {"type": "String"},
+      "reps": {"type": "int"}
+    }
+  },
   "workoutRatingTitle": "How was this workout?",
   "workoutRatingSubtitle": "Your feedback helps tune tomorrow's suggestion.",
   "workoutRatingTooEasy": "Too Easy",
