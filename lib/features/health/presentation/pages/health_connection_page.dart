@@ -61,7 +61,14 @@ class _HealthConnectionPageState extends ConsumerState<HealthConnectionPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          WorkoutHeader(title: l10n.healthConnectionTitle),
+          // No search/notifications actions here — this is a secondary
+          // settings-style screen reached from Profile, not a main tab, so
+          // those two icons only ate into the title's width and clipped it
+          // (see WorkoutHeader.showActions's own doc comment).
+          WorkoutHeader(
+            title: l10n.healthConnectionTitle,
+            showActions: false,
+          ),
           const SizedBox(height: 20),
           Expanded(
             child: switch (_step) {

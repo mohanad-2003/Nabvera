@@ -510,9 +510,11 @@ class _ResultsSection extends StatelessWidget {
       );
     }
 
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return ListView.separated(
       itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder:
+          (_, _) => Divider(height: 1, color: ext.glassBorder),
       itemBuilder:
           (context, index) =>
               _ResultTile(item: items[index], onTap: () => onTap(items[index])),
@@ -698,6 +700,11 @@ class _FeaturedResult extends StatelessWidget {
 /// Elevated result card — a soft glass surface with a floating shadow,
 /// with a small type badge in the corner of the thumbnail so a mixed
 /// "All" list stays scannable without a column of repeated labels.
+/// A flat row — no card fill, border, or shadow, and no trailing chevron.
+/// The whole row is already the tap target (InkWell), so a chevron never
+/// added information; removing the card box lets the item's own image and
+/// text sit directly on the page background, matching the flat-list
+/// pattern used elsewhere (e.g. RoundItemTile).
 class _ResultTile extends StatelessWidget {
   const _ResultTile({required this.item, required this.onTap});
   final SearchResultItem item;
@@ -712,14 +719,8 @@ class _ResultTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: ext.glassFill,
-            borderRadius: BorderRadius.circular(AppRadius.card),
-            border: Border.all(color: ext.glassBorder),
-            boxShadow: AppShadows.floating(Theme.of(context).brightness),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
               Stack(
@@ -788,12 +789,6 @@ class _ResultTile extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              Icon(
-                Directionality.of(context) == TextDirection.rtl
-                    ? Icons.chevron_left_rounded
-                    : Icons.chevron_right_rounded,
-                color: ext.textMuted,
               ),
             ],
           ),
