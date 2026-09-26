@@ -563,6 +563,28 @@
   "workoutStartWorkout": "Start Workout",
   "workoutNoVideoAvailable": "No video available for this exercise yet",
   "workoutFinishWorkout": "Finish Workout",
+  "workoutSetNumber": "Set {number}",
+  "@workoutSetNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutSetsProgress": "{done}/{total} sets",
+  "@workoutSetsProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutRestTitle": "Rest",
+  "workoutRestSkip": "Skip",
+  "workoutRestAddSeconds": "+15s",
   "workoutRatingTitle": "How was this workout?",
   "workoutRatingSubtitle": "Your feedback helps tune tomorrow's suggestion.",
   "workoutRatingTooEasy": "Too Easy",

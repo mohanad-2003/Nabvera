@@ -1928,6 +1928,36 @@ abstract class AppLocalizations {
   /// **'Finish Workout'**
   String get workoutFinishWorkout;
 
+  /// No description provided for @workoutSetNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Set {number}'**
+  String workoutSetNumber(int number);
+
+  /// No description provided for @workoutSetsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} sets'**
+  String workoutSetsProgress(int done, int total);
+
+  /// No description provided for @workoutRestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get workoutRestTitle;
+
+  /// No description provided for @workoutRestSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get workoutRestSkip;
+
+  /// No description provided for @workoutRestAddSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'+15s'**
+  String get workoutRestAddSeconds;
+
   /// No description provided for @workoutRatingTitle.
   ///
   /// In en, this message translates to:

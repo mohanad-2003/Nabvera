@@ -1038,6 +1038,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutFinishWorkout => 'Finish Workout';
 
   @override
+  String workoutSetNumber(int number) {
+    return 'Set $number';
+  }
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    return '$done/$total sets';
+  }
+
+  @override
+  String get workoutRestTitle => 'Rest';
+
+  @override
+  String get workoutRestSkip => 'Skip';
+
+  @override
+  String get workoutRestAddSeconds => '+15s';
+
+  @override
   String get workoutRatingTitle => 'How was this workout?';
 
   @override

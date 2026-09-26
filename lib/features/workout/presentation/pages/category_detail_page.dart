@@ -14,7 +14,9 @@ import 'package:nabvera/features/profile/presentation/providers/workout_schedule
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/presentation/widgets/rest_timer_bar.dart';
 import 'package:nabvera/features/workout/presentation/widgets/round_item_tile.dart';
+import 'package:nabvera/features/workout/presentation/widgets/session_exercise_tile.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_rating_sheet.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,11 @@ import 'package:go_router/go_router.dart';
 /// the same second it started) can't produce a rejected or nonsensical log.
 const int _kMinLoggedMinutes = 1;
 const int _kMaxLoggedMinutes = 300;
+
+/// Default rest countdown started after checking off a set — a common
+/// default for most strength/hypertrophy work; adjustable per-rest via the
+/// "+15s" control on [RestTimerBar].
+const Duration _kDefaultRestDuration = Duration(seconds: 60);
 
 /// Generic workout-category screen — replaces the legacy AdvanceCategory,
 /// IntermediateCategory, and FunctionalPage, which shared this exact
@@ -46,13 +53,76 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
   Timer? _ticker;
   Duration _elapsed = Duration.zero;
 
+  // Which sets (1-indexed) are checked off, per exercise — indexed the same
+  // way as `data.rounds[groupIndex].items[itemIndex]`. Built once from the
+  // page's own data since `data.rounds` never changes after the page is
+  // pushed with a given workout.
+  late final List<List<Set<int>>> _completedSets = [
+    for (final group in data.rounds)
+      [for (final _ in group.items) <int>{}],
+  ];
+
+  Timer? _restTimer;
+  Duration _restRemaining = Duration.zero;
+  Duration _restTotal = Duration.zero;
+  bool get _resting => _restTimer != null;
+
   CategoryDetailData get data => widget.data;
   bool get _started => _startedAt != null;
 
   @override
   void dispose() {
     _ticker?.cancel();
+    _restTimer?.cancel();
     super.dispose();
+  }
+
+  void _toggleSet(int groupIndex, int itemIndex, int setNumber) {
+    final sets = _completedSets[groupIndex][itemIndex];
+    setState(() {
+      if (sets.contains(setNumber)) {
+        sets.remove(setNumber);
+      } else {
+        sets.add(setNumber);
+        _startRest(_kDefaultRestDuration);
+      }
+    });
+  }
+
+  void _startRest(Duration duration) {
+    _restTimer?.cancel();
+    setState(() {
+      _restTotal = duration;
+      _restRemaining = duration;
+    });
+    _restTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+      setState(() {
+        final next = _restRemaining - const Duration(seconds: 1);
+        if (next <= Duration.zero) {
+          _restRemaining = Duration.zero;
+          timer.cancel();
+          _restTimer = null;
+        } else {
+          _restRemaining = next;
+        }
+      });
+    });
+  }
+
+  void _skipRest() {
+    setState(() {
+      _restTimer?.cancel();
+      _restTimer = null;
+      _restRemaining = Duration.zero;
+    });
+  }
+
+  void _addRestSeconds() {
+    setState(() {
+      _restTotal += const Duration(seconds: 15);
+      _restRemaining += const Duration(seconds: 15);
+    });
   }
 
   void _startWorkout() {
@@ -147,11 +217,19 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.workoutLogSaveFailed)));
     } finally {
+      _restTimer?.cancel();
+      _restTimer = null;
       if (mounted) {
         setState(() {
           _submitting = false;
           _startedAt = null;
           _elapsed = Duration.zero;
+          _restRemaining = Duration.zero;
+          for (final group in _completedSets) {
+            for (final sets in group) {
+              sets.clear();
+            }
+          }
         });
       }
     }
@@ -192,6 +270,16 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                           onPressed: _startWorkout,
                         ),
                       if (data.workoutId != null && _started) ...[
+                        if (_resting)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: RestTimerBar(
+                              remaining: _restRemaining,
+                              total: _restTotal,
+                              onSkip: _skipRest,
+                              onAddSeconds: _addRestSeconds,
+                            ),
+                          ),
                         Center(
                           child: Text(
                             _formatElapsed(_elapsed),
@@ -261,7 +349,11 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (final group in data.rounds) ...[
+                        for (
+                          var groupIndex = 0;
+                          groupIndex < data.rounds.length;
+                          groupIndex++
+                        ) ...[
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -276,7 +368,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  group.title,
+                                  data.rounds[groupIndex].title,
                                   style: TextStyle(
                                     color: ext.textPrimary,
                                     fontSize: 18,
@@ -287,18 +379,55 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                             ],
                           ),
                           const SizedBox(height: 6),
-                          for (final item in group.items) ...[
-                            RoundItemTile(
-                              item: item,
-                              onTap:
-                                  item.exerciseDetail == null
-                                      ? null
-                                      : () => context.push(
-                                        AppRoutes.exerciseDetail,
-                                        extra: item.exerciseDetail,
-                                      ),
-                            ),
-                            if (item != group.items.last)
+                          for (
+                            var itemIndex = 0;
+                            itemIndex < data.rounds[groupIndex].items.length;
+                            itemIndex++
+                          ) ...[
+                            if (_started)
+                              SessionExerciseTile(
+                                item: data.rounds[groupIndex].items[itemIndex],
+                                completedSets:
+                                    _completedSets[groupIndex][itemIndex],
+                                onToggleSet:
+                                    (setNumber) => _toggleSet(
+                                      groupIndex,
+                                      itemIndex,
+                                      setNumber,
+                                    ),
+                                onOpenDetail:
+                                    data.rounds[groupIndex].items[itemIndex]
+                                                .exerciseDetail ==
+                                            null
+                                        ? null
+                                        : () => context.push(
+                                          AppRoutes.exerciseDetail,
+                                          extra:
+                                              data
+                                                  .rounds[groupIndex]
+                                                  .items[itemIndex]
+                                                  .exerciseDetail,
+                                        ),
+                              )
+                            else
+                              RoundItemTile(
+                                item: data.rounds[groupIndex].items[itemIndex],
+                                onTap:
+                                    data.rounds[groupIndex].items[itemIndex]
+                                                .exerciseDetail ==
+                                            null
+                                        ? null
+                                        : () => context.push(
+                                          AppRoutes.exerciseDetail,
+                                          extra:
+                                              data
+                                                  .rounds[groupIndex]
+                                                  .items[itemIndex]
+                                                  .exerciseDetail,
+                                        ),
+                              ),
+                            if (itemIndex <
+                                data.rounds[groupIndex].items.length - 1)
                               Divider(height: 1, color: ext.glassBorder),
                           ],
                           const SizedBox(height: 22),
