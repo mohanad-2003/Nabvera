@@ -113,17 +113,22 @@ class SearchAllResults extends _$SearchAllResults {
       // and filters locally — swap for `search: query` once the catalog
       // is large enough that fetching everything stops being cheap.
       //
-      // Matches both `title` and `titleAr` — an Arabic query (typed by
-      // hand, or filled in from an Arabic suggestion chip) previously
-      // only ever got checked against the English `title`, so it could
-      // never match anything: every workout/recipe in the demo catalog
-      // has an English title, and .contains() on unrelated scripts is
-      // never true.
+      // Matches title, titleAr, *and* category — the search page's own
+      // suggestion chips (see `_kSuggestionMatchTerms`) send a term like
+      // "cardio" or "breakfast" that's really a category name, not
+      // necessarily a literal word in every matching item's title (e.g.
+      // "Spinach & Tomato Omelette" is `category: 'breakfast'` but never
+      // contains the word "breakfast"). Checking category too means a
+      // suggestion still finds its content even when the title itself
+      // doesn't spell out the category in words.
       final lower = query.toLowerCase();
       bool matches(Map<String, dynamic> doc) {
         final title = (doc['title'] as String? ?? '').toLowerCase();
         final titleAr = (doc['titleAr'] as String? ?? '').toLowerCase();
-        return title.contains(lower) || titleAr.contains(lower);
+        final category = (doc['category'] as String? ?? '').toLowerCase();
+        return title.contains(lower) ||
+            titleAr.contains(lower) ||
+            category == lower;
       }
 
       final workouts = (results[0]).where(matches).map(_workoutToResult);

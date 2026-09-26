@@ -17,12 +17,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// One merged suggestion chip — tapping it fills the query and, for a
-/// typed term, pre-selects the matching results filter so the first
-/// frame of results is already narrowed to what the chip promised.
+/// One merged suggestion chip — [label] is what's shown on the chip
+/// (localized); [matchTerm] is what actually gets searched for. They're
+/// deliberately different: this small demo catalog's workouts/recipes are
+/// titled in English with no Arabic translation yet, so searching for the
+/// Arabic [label] itself would almost always turn up nothing. [matchTerm]
+/// is the English word (or, for a real backend category like "cardio"/
+/// "breakfast", its exact category name) that SearchAllResults checks
+/// against each item's title/titleAr/category — see its own doc comment.
 class _Suggestion {
-  const _Suggestion(this.label, this.type);
+  const _Suggestion(this.label, this.matchTerm, this.type);
   final String label;
+  final String matchTerm;
   final SearchResultType type;
 }
 
@@ -98,9 +104,11 @@ class SearchPage extends ConsumerWidget {
                     featured: featured,
                     onTapFeatured: (item) => _openResult(context, ref, item),
                     onTapSuggestion: (s) {
+                      // Searches by matchTerm, not the localized label
+                      // shown on the chip — see _Suggestion's doc comment.
                       ref
                           .read(searchQueryControllerProvider.notifier)
-                          .update(s.label);
+                          .update(s.matchTerm);
                       ref
                           .read(searchTabControllerProvider.notifier)
                           .select(
@@ -328,17 +336,24 @@ class _DiscoverSection extends StatelessWidget {
   final ValueChanged<SearchResultItem> onTapFeatured;
   final ValueChanged<_Suggestion> onTapSuggestion;
 
+  // matchTerm is the literal English word this catalog's seed titles
+  // actually use ("Iron Legs", "Fruit Smoothie", ...), or — for "cardio"/
+  // "breakfast" — an exact `category` value, checked by
+  // SearchAllResults._search regardless of what's shown on the chip. Not
+  // every term is guaranteed to have a match in a small demo catalog
+  // (there's no "Split" or "Challenge" workout yet); that's a real "no
+  // results", not a bug.
   static const _suggestionKeys = [
-    ('searchSuggestionCircuit', SearchResultType.workout),
-    ('searchSuggestionSplit', SearchResultType.workout),
-    ('searchSuggestionChallenge', SearchResultType.workout),
-    ('searchSuggestionLegs', SearchResultType.workout),
-    ('searchSuggestionCardio', SearchResultType.workout),
-    ('searchSuggestionBreakfast', SearchResultType.nutrition),
-    ('searchSuggestionYogurt', SearchResultType.nutrition),
-    ('searchSuggestionVegetarian', SearchResultType.nutrition),
-    ('searchSuggestionSmoothie', SearchResultType.nutrition),
-    ('searchSuggestionChicken', SearchResultType.nutrition),
+    ('searchSuggestionCircuit', 'Circuit', SearchResultType.workout),
+    ('searchSuggestionSplit', 'Split', SearchResultType.workout),
+    ('searchSuggestionChallenge', 'Challenge', SearchResultType.workout),
+    ('searchSuggestionLegs', 'Legs', SearchResultType.workout),
+    ('searchSuggestionCardio', 'cardio', SearchResultType.workout),
+    ('searchSuggestionBreakfast', 'breakfast', SearchResultType.nutrition),
+    ('searchSuggestionYogurt', 'Yogurt', SearchResultType.nutrition),
+    ('searchSuggestionVegetarian', 'Vegetarian', SearchResultType.nutrition),
+    ('searchSuggestionSmoothie', 'Smoothie', SearchResultType.nutrition),
+    ('searchSuggestionChicken', 'Chicken', SearchResultType.nutrition),
   ];
 
   @override
@@ -346,8 +361,8 @@ class _DiscoverSection extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final suggestions = [
-      for (final (key, type) in _suggestionKeys)
-        _Suggestion(_suggestionLabel(l10n, key), type),
+      for (final (key, matchTerm, type) in _suggestionKeys)
+        _Suggestion(_suggestionLabel(l10n, key), matchTerm, type),
     ];
 
     return ListView(

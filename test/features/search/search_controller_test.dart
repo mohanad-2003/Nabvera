@@ -207,6 +207,31 @@ void main() {
   );
 
   test(
+    'a query matching a workout\'s category (not its title) still returns the item — the "Breakfast" suggestion chip needs this since real recipe titles rarely contain the word itself',
+    () async {
+      final fakeRecipes = FakeNutritionRepository()
+        ..recipes = [
+          {'_id': 'r1', 'title': 'Spinach & Tomato Omelette', 'category': 'breakfast'},
+        ];
+      final container = ProviderContainer(
+        overrides: [
+          workoutRepositoryProvider.overrideWithValue(FakeWorkoutRepository()),
+          nutritionRepositoryProvider.overrideWithValue(fakeRecipes),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.listen(searchAllResultsProvider, (_, _) {});
+
+      container.read(searchQueryControllerProvider.notifier).update('breakfast');
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final results = container.read(searchAllResultsProvider);
+      expect(results.items, hasLength(1));
+      expect(results.items.first.id, 'r1');
+    },
+  );
+
+  test(
     'a matching query returns results carrying the real backend id (so a tap can open the real item)',
     () async {
       final fakeWorkouts = FakeWorkoutRepository()
