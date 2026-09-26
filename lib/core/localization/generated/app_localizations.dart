@@ -1274,6 +1274,18 @@ abstract class AppLocalizations {
   /// **'cm'**
   String get unitCm;
 
+  /// No description provided for @profileWeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{weight} Kg'**
+  String profileWeightValue(int weight);
+
+  /// No description provided for @profileHeightValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{height} m'**
+  String profileHeightValue(String height);
+
   /// No description provided for @onboardingAgeValue.
   ///
   /// In en, this message translates to:
@@ -1651,6 +1663,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} exercises'**
   String homeHeroExercises(int count);
+
+  /// No description provided for @workoutExerciseSets.
+  ///
+  /// In en, this message translates to:
+  /// **'{sets} Sets'**
+  String workoutExerciseSets(int sets);
+
+  /// No description provided for @workoutExerciseCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} Kcal'**
+  String workoutExerciseCalories(int kcal);
 
   /// No description provided for @homeCaloriesConsumedOf.
   ///
@@ -2533,6 +2557,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One of your challenges ends within 24 hours — finish strong!'**
   String get notificationChallengeExpiringBody;
+
+  /// No description provided for @notificationChallengeCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge completed!'**
+  String get notificationChallengeCompletedTitle;
+
+  /// No description provided for @notificationChallengeCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You finished a challenge. Great work!'**
+  String get notificationChallengeCompletedBody;
 
   /// No description provided for @notificationsTitle.
   ///
@@ -3740,6 +3776,12 @@ abstract class AppLocalizations {
   /// **'Password updated successfully!'**
   String get passwordUpdateSuccess;
 
+  /// No description provided for @passwordGoogleAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'This account signs in with Google and has no password to change.'**
+  String get passwordGoogleAccountError;
+
   /// No description provided for @documentsTitle.
   ///
   /// In en, this message translates to:
@@ -3949,6 +3991,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log Water'**
   String get waterLogSheetTitle;
+
+  /// No description provided for @waterCupsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} / {goal} cups'**
+  String waterCupsProgress(int consumed, int goal);
 
   /// No description provided for @waterLogAddCup.
   ///
@@ -5911,6 +5959,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage your plan'**
   String get profileMenuSubscriptionSubtitlePro;
+
+  /// No description provided for @mealPlanUpgradeRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used today\'s free plan'**
+  String get mealPlanUpgradeRequiredTitle;
+
+  /// No description provided for @mealPlanUpgradeRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Free accounts get one AI meal plan per day. Upgrade to Nabvera Pro for unlimited plans, any time.'**
+  String get mealPlanUpgradeRequiredBody;
+
+  /// No description provided for @mealPlanUpgradeRequiredCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro'**
+  String get mealPlanUpgradeRequiredCta;
+
+  /// No description provided for @subscriptionActiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re a Pro member'**
+  String get subscriptionActiveTitle;
+
+  /// No description provided for @subscriptionActiveTierMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly plan'**
+  String get subscriptionActiveTierMonthly;
+
+  /// No description provided for @subscriptionActiveTierYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly plan'**
+  String get subscriptionActiveTierYearly;
+
+  /// No description provided for @subscriptionActiveRenewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews on {date}'**
+  String subscriptionActiveRenewsOn(String date);
+
+  /// No description provided for @subscriptionActiveExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Access ends on {date}'**
+  String subscriptionActiveExpiresOn(String date);
+
+  /// No description provided for @subscriptionActiveGracePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s a problem with your last payment — please update it to keep your Pro access.'**
+  String get subscriptionActiveGracePeriod;
+
+  /// No description provided for @subscriptionManageSubscriptionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open subscription management. Please try again.'**
+  String get subscriptionManageSubscriptionFailed;
 }
 
 class _AppLocalizationsDelegate

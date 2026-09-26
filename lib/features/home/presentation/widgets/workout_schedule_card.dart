@@ -74,7 +74,9 @@ class WorkoutScheduleCard extends ConsumerWidget {
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
                     size: 18,
                     color: Theme.of(context).colorScheme.primary,
                   ),

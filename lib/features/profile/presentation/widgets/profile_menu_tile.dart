@@ -84,7 +84,13 @@ class ProfileMenuTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              Icon(Icons.chevron_right_rounded, color: ext.textMuted, size: 24),
+              Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left_rounded
+                    : Icons.chevron_right_rounded,
+                color: ext.textMuted,
+                size: 24,
+              ),
             ],
           ),
         ),

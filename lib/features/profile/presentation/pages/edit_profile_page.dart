@@ -125,7 +125,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       firstDate: DateTime(1930),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       _dobController.text =
           '${picked.day.toString().padLeft(2, '0')} / '
           '${picked.month.toString().padLeft(2, '0')} / ${picked.year}';
@@ -337,16 +337,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   Row(
                     children: [
                       if (context.canPop())
-                        PremiumIconButton(
-                          icon: Icons.arrow_back_ios_new_rounded,
-                          onTap: () => context.pop(),
-                        ),
-                      const Spacer(),
-                      // Flexible so the title shrinks instead of
-                      // overflowing past the back button + trailing 44px
-                      // spacer on the narrowest screens — same reasoning
-                      // as ProfileHeader's own title.
-                      Flexible(
+                        PremiumBackButton(onTap: () => context.pop()),
+                      // Expanded so the title gets every pixel not used by
+                      // the back button + trailing 44px spacer — a bare
+                      // `Flexible` here used to sit between two `Spacer()`s
+                      // of the same flex:1, so the three of them split the
+                      // row into thirds and gave the title only a third of
+                      // the available width regardless of how much room
+                      // the icons actually left (same bug fixed in
+                      // `ProfileHeader`).
+                      Expanded(
                         child: Text(
                           l10n.editProfileTitle,
                           maxLines: 1,
@@ -360,7 +360,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           ),
                         ),
                       ),
-                      const Spacer(),
                       const SizedBox(width: 44),
                     ],
                   ),

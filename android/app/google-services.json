@@ -88,6 +88,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "292142087269-as4krq9pl2jcke3tfdafplbcg0l78m4l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nabvera.app",
+            "certificate_hash": "e8176950d1de60a516b8d607d5fdf9f067417b42"
+          }
+        },
+        {
           "client_id": "292142087269-maknpm1b8ev099b3mibpo97fbprua113.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

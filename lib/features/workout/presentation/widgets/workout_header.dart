@@ -12,6 +12,7 @@ class WorkoutHeader extends StatelessWidget {
     this.subtitle,
     this.showProfileAction = false,
     this.showBack = true,
+    this.showActions = true,
   });
 
   final String title;
@@ -28,6 +29,13 @@ class WorkoutHeader extends StatelessWidget {
   /// reached via the nav bar, never pushed, so `context.canPop()` is
   /// meaningless there and a back arrow with nowhere to go is just noise.
   final bool showBack;
+
+  /// Set to `false` to hide the search/notifications pair — both are one
+  /// tap away from Home already, so a secondary screen that also needs
+  /// its own header actions (e.g. Meal Plans' shopping-list/home buttons)
+  /// ends up with too many icons crowding a title that's already sharing
+  /// the row with a back button.
+  final bool showActions;
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +76,18 @@ class WorkoutHeader extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: 10),
-        _WorkoutHeaderIconButton(
-          icon: Icons.search_rounded,
-          onTap: () => context.push(AppRoutes.search),
-        ),
-        const SizedBox(width: 10),
-        _WorkoutHeaderIconButton(
-          icon: Icons.notifications_none_rounded,
-          onTap: () => context.push(AppRoutes.notifications),
-        ),
+        if (showActions) ...[
+          const SizedBox(width: 10),
+          _WorkoutHeaderIconButton(
+            icon: Icons.search_rounded,
+            onTap: () => context.push(AppRoutes.search),
+          ),
+          const SizedBox(width: 10),
+          _WorkoutHeaderIconButton(
+            icon: Icons.notifications_none_rounded,
+            onTap: () => context.push(AppRoutes.notifications),
+          ),
+        ],
         if (showProfileAction) ...[
           const SizedBox(width: 10),
           _WorkoutHeaderIconButton(

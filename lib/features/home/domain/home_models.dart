@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart' show BuildContext, Localizations;
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 
 /// Fixed navigation tiles to the app's four main sections — always exactly
 /// these four, so unlike the rest of Home there's no backend "category"
@@ -18,11 +19,20 @@ class RecommendedWorkout {
     required this.duration,
     required this.calories,
     this.titleAr = '',
+    this.durationMinutes,
+    this.estimatedCalories,
   });
 
   final String id;
   final String image;
   final String title;
+
+  /// English-formatted fallback, used only when [durationMinutes] /
+  /// [estimatedCalories] aren't available (e.g. built outside
+  /// [RecommendedWorkout.fromJson]). Prefer [localizedDuration] /
+  /// [localizedCalories] for display — a raw "35 Minutes"/"320 Kcal"
+  /// string mixed into an Arabic layout doesn't just read as untranslated,
+  /// it visually reorders to "Minutes 35" under RTL bidi.
   final String duration;
   final String calories;
 
@@ -32,6 +42,9 @@ class RecommendedWorkout {
   /// `ArticleTip.localizedTitle`).
   final String titleAr;
 
+  final int? durationMinutes;
+  final int? estimatedCalories;
+
   /// The title to display for [context]'s current locale — Arabic when the
   /// app is in Arabic *and* this workout has an Arabic title, English
   /// otherwise.
@@ -40,15 +53,31 @@ class RecommendedWorkout {
           ? titleAr
           : title;
 
+  /// Duration formatted for [context]'s current locale — falls back to
+  /// [duration] only when the raw minute count isn't known.
+  String localizedDuration(BuildContext context) => durationMinutes == null
+      ? duration
+      : AppLocalizations.of(context).homeHeroDuration(durationMinutes!);
+
+  /// Calories formatted for [context]'s current locale — falls back to
+  /// [calories] only when the raw kcal count isn't known.
+  String localizedCalories(BuildContext context) => estimatedCalories == null
+      ? calories
+      : AppLocalizations.of(context).homeHeroCalories(estimatedCalories!);
+
   /// Builds a card from a `/api/workouts` JSON document.
   factory RecommendedWorkout.fromJson(Map<String, dynamic> json) {
+    final durationMinutes = (json['durationMinutes'] as num?)?.toInt();
+    final estimatedCalories = (json['estimatedCalories'] as num?)?.toInt();
     return RecommendedWorkout(
       id: json['_id'] as String? ?? '',
       image: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
       title: (json['title'] as String?) ?? '',
-      duration: '${json['durationMinutes'] ?? '—'} Minutes',
-      calories: '${json['estimatedCalories'] ?? '—'} Kcal',
+      duration: '${durationMinutes ?? '—'} Minutes',
+      calories: '${estimatedCalories ?? '—'} Kcal',
       titleAr: (json['titleAr'] as String?) ?? '',
+      durationMinutes: durationMinutes,
+      estimatedCalories: estimatedCalories,
     );
   }
 }

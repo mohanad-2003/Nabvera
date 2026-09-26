@@ -98,7 +98,12 @@ class _MoreTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: ext.textMuted),
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
+                  color: ext.textMuted,
+                ),
               ],
             ),
           ),

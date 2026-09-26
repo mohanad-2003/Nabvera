@@ -288,6 +288,8 @@ class DailyNutritionSummary {
     required this.carbsFraction,
     required this.fatFraction,
     required this.waterIntake,
+    this.waterCupsConsumed = 0,
+    this.waterCupsGoal = 0,
     this.goalSource = 'fallback',
     this.isLoading = false,
   });
@@ -300,10 +302,17 @@ class DailyNutritionSummary {
   final double carbsFraction;
   final double fatFraction;
 
-  /// Pre-formatted display string (e.g. "5 / 8 cups"), matching the rest of
-  /// the domain layer's convention of storing ready-to-render text rather
-  /// than raw numbers + ICU placeholders.
+  /// English-formatted fallback (e.g. "5 / 8 cups"), used only where
+  /// [waterCupsConsumed]/[waterCupsGoal] aren't available. Prefer
+  /// [localizedWaterIntake] for display — see `WorkoutListItem` for why a
+  /// raw number-plus-English-word string breaks under Arabic/RTL.
   final String waterIntake;
+  final int waterCupsConsumed;
+  final int waterCupsGoal;
+
+  /// Water progress formatted for [context]'s current locale.
+  String localizedWaterIntake(BuildContext context) =>
+      AppLocalizations.of(context).waterCupsProgress(waterCupsConsumed, waterCupsGoal);
 
   /// 'preferences' when [goalCalories] is the user's own manually-set
   /// target, 'estimate' when it's the rule-based suggestion, 'fallback'
@@ -327,6 +336,8 @@ class DailyNutritionSummary {
     carbsFraction: carbsFraction,
     fatFraction: fatFraction,
     waterIntake: waterIntake,
+    waterCupsConsumed: waterCupsConsumed,
+    waterCupsGoal: waterCupsGoal,
     goalSource: goalSource,
     isLoading: isLoading ?? this.isLoading,
   );
@@ -344,6 +355,8 @@ class DailyNutritionSummary {
     final waterConsumedMl = (entry['waterConsumedMl'] as num?) ?? 0;
     // ~250ml per "cup", matching the UI's original "X / 8 cups" copy.
     const mlPerCup = 250;
+    final waterCupsConsumed = (waterConsumedMl / mlPerCup).round();
+    final waterCupsGoal = (waterGoalMl / mlPerCup).round();
 
     return DailyNutritionSummary(
       consumedCalories: ((entry['caloriesConsumed'] as num?) ?? 0).round(),
@@ -351,7 +364,9 @@ class DailyNutritionSummary {
       proteinFraction: (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal).clamp(0, 1).toDouble(),
       carbsFraction: (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal).clamp(0, 1).toDouble(),
       fatFraction: (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal).clamp(0, 1).toDouble(),
-      waterIntake: '${(waterConsumedMl / mlPerCup).round()} / ${(waterGoalMl / mlPerCup).round()} cups',
+      waterIntake: '$waterCupsConsumed / $waterCupsGoal cups',
+      waterCupsConsumed: waterCupsConsumed,
+      waterCupsGoal: waterCupsGoal,
       goalSource: entry['goalSource'] as String? ?? 'fallback',
     );
   }

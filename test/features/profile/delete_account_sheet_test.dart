@@ -69,6 +69,11 @@ class FakeFirebaseAuthService implements FirebaseAuthService {
   @override
   Future<void> sendPasswordResetEmail(String email) async => throw UnimplementedError();
   @override
+  bool get canChangePassword => throw UnimplementedError();
+  @override
+  Future<void> updatePassword({required String currentPassword, required String newPassword}) async =>
+      throw UnimplementedError();
+  @override
   Future<String?> getIdToken({bool forceRefresh = false}) async => null;
 }
 

@@ -36,7 +36,10 @@ class NotificationHeader extends StatelessWidget {
             children: [
               if (canPop)
                 _HeaderIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
+                  icon:
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.arrow_forward_ios_rounded
+                          : Icons.arrow_back_ios_new_rounded,
                   onTap: onBack,
                 ),
               const Spacer(),

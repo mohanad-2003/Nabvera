@@ -124,6 +124,7 @@ class NotificationItem {
     'streak' when _streak != null => l10n.notificationStreakTitle(_streak!),
     'workout_reminder' => l10n.notificationWorkoutReminderTitle,
     'challenge_expiring' => l10n.notificationChallengeExpiringTitle,
+    'challenge' => l10n.notificationChallengeCompletedTitle,
     _ => title,
   };
 
@@ -133,6 +134,7 @@ class NotificationItem {
     'streak' when _streak != null => l10n.notificationStreakBody(_streak!),
     'workout_reminder' => l10n.notificationWorkoutReminderBody,
     'challenge_expiring' => l10n.notificationChallengeExpiringBody,
+    'challenge' => l10n.notificationChallengeCompletedBody,
     _ => body,
   };
 

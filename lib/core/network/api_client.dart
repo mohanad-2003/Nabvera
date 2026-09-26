@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:nabvera/core/storage/preferences_service.dart'
+    show sharedPreferencesProvider;
 import 'package:nabvera/features/authentication/data/firebase_auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'api_client.g.dart';
 
@@ -61,14 +64,21 @@ enum ApiExceptionType { network, timeout, invalidResponse, server }
 class ApiClient {
   /// [httpClient] is injectable purely for tests (a `MockClient` from
   /// `package:http/testing.dart`) — every real call site lets it default
-  /// to a normal [http.Client].
-  ApiClient(this._authService, {String? baseUrl, http.Client? httpClient})
-    : baseUrl =
+  /// to a normal [http.Client]. [cache] is likewise optional: `null` (the
+  /// default, and what every existing test gets) just means GET responses
+  /// are never persisted or served from a prior one — see [get].
+  ApiClient(
+    this._authService, {
+    String? baseUrl,
+    http.Client? httpClient,
+    SharedPreferences? cache,
+  }) : baseUrl =
           baseUrl ??
           (_apiBaseUrlOverride.isNotEmpty
               ? _apiBaseUrlOverride
               : '$_defaultOrigin/api'),
-      _client = httpClient ?? http.Client() {
+      _client = httpClient ?? http.Client(),
+      _cache = cache {
     // A release build must never talk to a plain-HTTP backend — that would
     // send the Firebase ID token (and every request body) in the clear.
     // Debug/profile builds are exempt so `http://10.0.2.2:5000/api`
@@ -86,6 +96,9 @@ class ApiClient {
   final FirebaseAuthService _authService;
   final String baseUrl;
   final http.Client _client;
+  final SharedPreferences? _cache;
+
+  static const _cacheKeyPrefix = 'api_cache:';
 
   Future<Map<String, String>> _headers({bool forceRefresh = false}) async {
     final token = await _authService.getIdToken(forceRefresh: forceRefresh);
@@ -175,8 +188,39 @@ class ApiClient {
     }
   }
 
-  Future<http.Response> get(String path, {Duration timeout = _defaultTimeout}) =>
-      _send('GET', path, timeout: timeout);
+  /// Like a plain GET, but backed by a one-slot-per-endpoint cache in
+  /// [SharedPreferences]: every successful (2xx) response is saved under
+  /// its path, overwriting whatever was cached for that path before; and
+  /// if the request itself fails purely because the device couldn't reach
+  /// the server ([ApiExceptionType.network] or [.timeout] — never on a
+  /// real 4xx/5xx from the backend, which is a genuine answer, not an
+  /// outage), the last cached response for that path is returned instead
+  /// of the failure, so a screen that already loaded once can still show
+  /// that (possibly stale) data offline rather than an error state.
+  ///
+  /// Pass `useCache: false` for a GET that should always reflect the live
+  /// server or fail outright (nothing currently needs this, but it keeps
+  /// the escape hatch available).
+  Future<http.Response> get(
+    String path, {
+    Duration timeout = _defaultTimeout,
+    bool useCache = true,
+  }) async {
+    final cache = useCache ? _cache : null;
+    try {
+      final response = await _send('GET', path, timeout: timeout);
+      if (cache != null && response.statusCode >= 200 && response.statusCode < 300) {
+        unawaited(cache.setString('$_cacheKeyPrefix$path', response.body));
+      }
+      return response;
+    } on ApiException catch (e) {
+      final isOffline =
+          e.type == ApiExceptionType.network || e.type == ApiExceptionType.timeout;
+      final cached = isOffline ? cache?.getString('$_cacheKeyPrefix$path') : null;
+      if (cached == null) rethrow;
+      return http.Response(cached, 200);
+    }
+  }
 
   Future<http.Response> post(
     String path, {
@@ -313,7 +357,10 @@ class ApiException implements Exception {
 
 @Riverpod(keepAlive: true)
 ApiClient apiClient(Ref ref) {
-  final client = ApiClient(ref.watch(firebaseAuthServiceProvider));
+  final client = ApiClient(
+    ref.watch(firebaseAuthServiceProvider),
+    cache: ref.watch(sharedPreferencesProvider),
+  );
   ref.onDispose(client.dispose);
   return client;
 }

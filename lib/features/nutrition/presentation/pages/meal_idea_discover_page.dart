@@ -50,7 +50,9 @@ class MealIdeaDiscoverPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () => context.canPop() ? context.pop() : null,
                     child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.arrow_forward_ios_rounded
+                          : Icons.arrow_back_ios_new_rounded,
                       color: ext.textPrimary,
                       size: 22,
                     ),

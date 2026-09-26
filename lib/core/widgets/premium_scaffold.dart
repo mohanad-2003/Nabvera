@@ -95,8 +95,7 @@ class PremiumHeader extends StatelessWidget {
     return Row(
       children: [
         if (showBack) ...[
-          PremiumIconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
+          PremiumBackButton(
             onTap: () => context.canPop() ? context.pop() : null,
           ),
           const SizedBox(width: 12),

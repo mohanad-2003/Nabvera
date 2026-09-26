@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -56,18 +57,17 @@ class UserAvatar extends StatelessWidget {
               )
               : hasPhoto
                   ? ClipOval(
-                child: Image.network(
-                  imageUrl!,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl!,
                   width: radius * 2,
                   height: radius * 2,
                   fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) =>
+                  placeholder:
+                      (context, url) =>
                           Icon(icon, color: ext.onAccent, size: radius),
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Icon(icon, color: ext.onAccent, size: radius);
-                  },
+                  errorWidget:
+                      (context, url, error) =>
+                          Icon(icon, color: ext.onAccent, size: radius),
                 ),
               )
               : Icon(icon, color: ext.onAccent, size: radius),

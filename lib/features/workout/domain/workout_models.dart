@@ -39,6 +39,9 @@ class WorkoutListItem {
     this.exercises,
     this.isFavorite = false,
     this.nameAr = '',
+    this.durationMinutes,
+    this.estimatedCalories,
+    this.exerciseCount,
   });
 
   /// Backend `Workout._id` — empty for the few remaining pieces of curated
@@ -46,6 +49,14 @@ class WorkoutListItem {
   final String id;
   final String image;
   final String name;
+
+  /// English-formatted fallback, used only when [durationMinutes] /
+  /// [estimatedCalories] / [exerciseCount] aren't available (e.g. built
+  /// outside [WorkoutListItem.fromJson]). Prefer [localizedTime] /
+  /// [localizedCalories] / [localizedExercises] for display — a raw
+  /// "35 Minutes"/"320 Kcal" string mixed into an Arabic layout doesn't
+  /// just read as untranslated, it visually reorders to "Minutes 35"
+  /// under RTL bidi.
   final String? time;
   final String? calories;
   final String? exercises;
@@ -56,10 +67,32 @@ class WorkoutListItem {
   /// to [name] (same pattern as `ArticleTip.localizedTitle`).
   final String nameAr;
 
+  final int? durationMinutes;
+  final int? estimatedCalories;
+  final int? exerciseCount;
+
   String localizedName(BuildContext context) =>
       Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
           ? nameAr
           : name;
+
+  /// Duration formatted for [context]'s current locale — falls back to
+  /// [time] only when the raw minute count isn't known.
+  String? localizedTime(BuildContext context) => durationMinutes == null
+      ? time
+      : AppLocalizations.of(context).homeHeroDuration(durationMinutes!);
+
+  /// Calories formatted for [context]'s current locale — falls back to
+  /// [calories] only when the raw kcal count isn't known.
+  String? localizedCalories(BuildContext context) => estimatedCalories == null
+      ? calories
+      : AppLocalizations.of(context).homeHeroCalories(estimatedCalories!);
+
+  /// Exercise count formatted for [context]'s current locale — falls back
+  /// to [exercises] only when the raw count isn't known.
+  String? localizedExercises(BuildContext context) => exerciseCount == null
+      ? exercises
+      : AppLocalizations.of(context).homeHeroExercises(exerciseCount!);
 
   WorkoutListItem copyWith({bool? isFavorite}) => WorkoutListItem(
     id: id,
@@ -70,6 +103,9 @@ class WorkoutListItem {
     exercises: exercises,
     isFavorite: isFavorite ?? this.isFavorite,
     nameAr: nameAr,
+    durationMinutes: durationMinutes,
+    estimatedCalories: estimatedCalories,
+    exerciseCount: exerciseCount,
   );
 
   /// Builds a display item from a `/api/workouts` JSON document — falls
@@ -80,15 +116,20 @@ class WorkoutListItem {
     required bool isFavorite,
   }) {
     final exerciseCount = (json['exercises'] as List?)?.length ?? 0;
+    final durationMinutes = (json['durationMinutes'] as num?)?.toInt();
+    final estimatedCalories = (json['estimatedCalories'] as num?)?.toInt();
     return WorkoutListItem(
       id: json['_id'] as String? ?? '',
       image: (json['coverImageUrl'] as String?) ?? 'assets/workout.png',
       name: (json['title'] as String?) ?? '',
       nameAr: (json['titleAr'] as String?) ?? '',
-      time: '${json['durationMinutes'] ?? '—'} Minutes',
-      calories: '${json['estimatedCalories'] ?? '—'} Kcal',
+      time: '${durationMinutes ?? '—'} Minutes',
+      calories: '${estimatedCalories ?? '—'} Kcal',
       exercises: exerciseCount == 0 ? null : '$exerciseCount exercises',
       isFavorite: isFavorite,
+      durationMinutes: durationMinutes,
+      estimatedCalories: estimatedCalories,
+      exerciseCount: exerciseCount == 0 ? null : exerciseCount,
     );
   }
 }
@@ -235,12 +276,23 @@ class PopularExerciseItem {
     this.nameAr = '',
     this.description = '',
     this.descriptionAr = '',
+    this.sets,
+    this.caloriesValue,
   });
 
   final String image;
   final String name;
+
+  /// English-formatted fallback, used only when [sets] / [caloriesValue]
+  /// aren't available. Prefer [localizedTime] / [localizedCalories] for
+  /// display — a raw "3 sets"/"50 Kcal" string mixed into an Arabic layout
+  /// doesn't just read as untranslated, it can visually reorder under RTL
+  /// bidi (same issue fixed for `WorkoutListItem`/`RecommendedWorkout`).
   final String time;
   final String calories;
+
+  final int? sets;
+  final int? caloriesValue;
 
   /// From `Exercise.description`/`descriptionAr` — used to build the
   /// "Overview" text when this item is opened as an [ExerciseDetailData]
@@ -267,6 +319,17 @@ class PopularExerciseItem {
       Localizations.localeOf(context).languageCode == 'ar' && nameAr.isNotEmpty
           ? nameAr
           : name;
+
+  /// Sets formatted for [context]'s current locale — falls back to [time]
+  /// only when the raw set count isn't known.
+  String localizedTime(BuildContext context) =>
+      sets == null ? time : AppLocalizations.of(context).workoutExerciseSets(sets!);
+
+  /// Calories formatted for [context]'s current locale — falls back to
+  /// [calories] only when the raw kcal value isn't known.
+  String localizedCalories(BuildContext context) => caloriesValue == null
+      ? calories
+      : AppLocalizations.of(context).workoutExerciseCalories(caloriesValue!);
 }
 
 class WeeklyRound {

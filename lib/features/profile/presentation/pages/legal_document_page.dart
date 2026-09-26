@@ -41,10 +41,7 @@ class LegalDocumentPage extends StatelessWidget {
             child: Row(
               children: [
                 if (Navigator.of(context).canPop())
-                  PremiumIconButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    onTap: () => Navigator.of(context).pop(),
-                  ),
+                  PremiumBackButton(onTap: () => Navigator.of(context).pop()),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

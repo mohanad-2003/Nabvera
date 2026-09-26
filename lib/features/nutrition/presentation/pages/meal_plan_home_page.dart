@@ -68,14 +68,26 @@ class _MealPlanHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: WorkoutHeader(title: l10n.nutritionTabMealPlans)),
+        Expanded(
+          child: WorkoutHeader(
+            title: l10n.nutritionTabMealPlans,
+            showActions: false,
+          ),
+        ),
         if (showShoppingList)
           IconButton(
             tooltip: l10n.mealPlanViewShoppingList,
             onPressed: () => context.push(AppRoutes.mealPlanShoppingList),
             icon: const Icon(Icons.shopping_bag_outlined),
           ),
-        PremiumIconButton(icon: Icons.home_outlined, onTap: () => context.go(AppRoutes.home)),
+        // Only when there's no back button to fall back on — this page can
+        // be reached via `context.go` (replaces the stack, no back
+        // destination), where this is the one reliable way back to the
+        // dashboard; when it's reached by a normal push, WorkoutHeader
+        // already shows a back button and a second way back is just more
+        // clutter next to an already-narrow title.
+        if (!context.canPop())
+          PremiumIconButton(icon: Icons.home_outlined, onTap: () => context.go(AppRoutes.home)),
       ],
     );
   }

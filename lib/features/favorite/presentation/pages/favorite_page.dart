@@ -364,21 +364,21 @@ class _FavoriteCardState extends State<_FavoriteCard> {
                     spacing: 12,
                     runSpacing: 6,
                     children: [
-                      if (item.duration != null)
+                      if (item.localizedDuration(context) case final duration?)
                         _MetaChip(
                           icon: Icons.timer_outlined,
-                          label: item.duration!,
+                          label: duration,
                         ),
-                      if (item.calories != null)
+                      if (item.localizedCalories(context) case final calories?)
                         _MetaChip(
                           icon: Icons.local_fire_department_outlined,
-                          label: item.calories!,
+                          label: calories,
                           color: AppColors.electricOrange,
                         ),
-                      if (item.exercises != null)
+                      if (item.localizedExercises(context) case final exercises?)
                         _MetaChip(
                           icon: Icons.repeat_rounded,
-                          label: item.exercises!,
+                          label: exercises,
                         ),
                     ],
                   ),

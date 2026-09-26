@@ -78,7 +78,7 @@ class _WorkoutScheduleFormState extends State<WorkoutScheduleForm> {
       context: context,
       initialTime: _reminderTime ?? const TimeOfDay(hour: 18, minute: 0),
     );
-    if (picked != null) setState(() => _reminderTime = picked);
+    if (picked != null && mounted) setState(() => _reminderTime = picked);
   }
 
   Future<void> _pickQuietTime({required bool isStart}) async {
@@ -88,7 +88,7 @@ class _WorkoutScheduleFormState extends State<WorkoutScheduleForm> {
           (isStart ? _quietStart : _quietEnd) ??
           const TimeOfDay(hour: 22, minute: 0),
     );
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
     setState(() {
       if (isStart) {
         _quietStart = picked;

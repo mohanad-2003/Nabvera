@@ -152,7 +152,7 @@ class NutritionSummaryCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  summary.waterIntake,
+                  summary.localizedWaterIntake(context),
                   style: TextStyle(
                     color: ext.textPrimary,
                     fontWeight: FontWeight.w800,
@@ -187,7 +187,13 @@ class NutritionSummaryCard extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(color: ext.textPrimary, fontWeight: FontWeight.w700),
                     ),
                   ),
-                  Icon(Icons.chevron_right_rounded, color: ext.textMuted, size: 18),
+                  Icon(
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
+                    color: ext.textMuted,
+                    size: 18,
+                  ),
                 ],
               ),
             ),

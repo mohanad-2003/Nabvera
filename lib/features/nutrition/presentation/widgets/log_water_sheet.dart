@@ -86,7 +86,7 @@ class _LogWaterSheetState extends ConsumerState<_LogWaterSheet> {
               ],
             ),
             const SizedBox(height: 8),
-            Text(summary.waterIntake, style: TextStyle(color: ext.textMuted)),
+            Text(summary.localizedWaterIntake(context), style: TextStyle(color: ext.textMuted)),
             const SizedBox(height: 20),
             Row(
               children: [

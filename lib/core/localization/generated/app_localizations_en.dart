@@ -637,6 +637,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitCm => 'cm';
 
   @override
+  String profileWeightValue(int weight) {
+    return '$weight Kg';
+  }
+
+  @override
+  String profileHeightValue(String height) {
+    return '$height m';
+  }
+
+  @override
   String onboardingAgeValue(int value) {
     return 'Age: $value years';
   }
@@ -864,6 +874,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String homeHeroExercises(int count) {
     return '$count exercises';
+  }
+
+  @override
+  String workoutExerciseSets(int sets) {
+    return '$sets Sets';
+  }
+
+  @override
+  String workoutExerciseCalories(int kcal) {
+    return '$kcal Kcal';
   }
 
   @override
@@ -1349,6 +1369,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationChallengeExpiringBody =>
       'One of your challenges ends within 24 hours — finish strong!';
+
+  @override
+  String get notificationChallengeCompletedTitle => 'Challenge completed!';
+
+  @override
+  String get notificationChallengeCompletedBody =>
+      'You finished a challenge. Great work!';
 
   @override
   String get notificationsTitle => 'Notifications';
@@ -2005,6 +2032,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordUpdateSuccess => 'Password updated successfully!';
 
   @override
+  String get passwordGoogleAccountError =>
+      'This account signs in with Google and has no password to change.';
+
+  @override
   String get documentsTitle => 'Documents';
 
   @override
@@ -2109,6 +2140,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get waterLogSheetTitle => 'Log Water';
+
+  @override
+  String waterCupsProgress(int consumed, int goal) {
+    return '$consumed / $goal cups';
+  }
 
   @override
   String get waterLogAddCup => '+1 Cup (250ml)';
@@ -3195,4 +3231,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMenuSubscriptionSubtitlePro => 'Manage your plan';
+
+  @override
+  String get mealPlanUpgradeRequiredTitle => 'You\'ve used today\'s free plan';
+
+  @override
+  String get mealPlanUpgradeRequiredBody =>
+      'Free accounts get one AI meal plan per day. Upgrade to Nabvera Pro for unlimited plans, any time.';
+
+  @override
+  String get mealPlanUpgradeRequiredCta => 'Upgrade to Pro';
+
+  @override
+  String get subscriptionActiveTitle => 'You\'re a Pro member';
+
+  @override
+  String get subscriptionActiveTierMonthly => 'Monthly plan';
+
+  @override
+  String get subscriptionActiveTierYearly => 'Yearly plan';
+
+  @override
+  String subscriptionActiveRenewsOn(String date) {
+    return 'Renews on $date';
+  }
+
+  @override
+  String subscriptionActiveExpiresOn(String date) {
+    return 'Access ends on $date';
+  }
+
+  @override
+  String get subscriptionActiveGracePeriod =>
+      'There\'s a problem with your last payment — please update it to keep your Pro access.';
+
+  @override
+  String get subscriptionManageSubscriptionFailed =>
+      'Couldn\'t open subscription management. Please try again.';
 }

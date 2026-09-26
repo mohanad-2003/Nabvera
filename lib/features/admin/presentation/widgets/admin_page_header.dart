@@ -36,10 +36,7 @@ class AdminPageHeader extends StatelessWidget {
       child: Row(
         children: [
           if (showBack && context.canPop()) ...[
-            PremiumIconButton(
-              icon: Icons.arrow_back_ios_new_rounded,
-              onTap: () => context.pop(),
-            ),
+            PremiumBackButton(onTap: () => context.pop()),
             const SizedBox(width: AppSpacing.md),
           ],
           Expanded(
