@@ -540,6 +540,10 @@ class _InlineEmptyMessage extends StatelessWidget {
   }
 }
 
+/// A full-bleed photo card — name and meta sit directly on the image over
+/// a bottom scrim (always dark regardless of theme, matching the workout
+/// hero cards elsewhere) instead of in a separate text block below it, so
+/// the whole card reads as one image rather than a photo plus a caption.
 class _FeaturedResult extends StatelessWidget {
   const _FeaturedResult({
     required this.item,
@@ -556,79 +560,120 @@ class _FeaturedResult extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(22),
       child: SizedBox(
         width: width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: SmartImage(
-                      item.image,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                  PositionedDirectional(
-                    bottom: 10,
-                    end: 10,
-                    child: Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        gradient: ext.accentGradient,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.play_arrow_rounded,
-                        color: ext.onAccent,
-                      ),
-                    ),
-                  ),
-                ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              SmartImage(
+                item.image,
+                width: double.infinity,
+                height: double.infinity,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 2, right: 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.localizedName(context),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: ext.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 6,
-                    children: [
-                      _SearchMeta(
-                        icon: Icons.timer_outlined,
-                        label: _durationLabel(l10n, item),
-                      ),
-                      _SearchMeta(
-                        icon: Icons.local_fire_department_outlined,
-                        label: _calorieLabel(l10n, item),
-                        color: ext.accentGlow,
-                      ),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0x00111213),
+                      Color(0x00111213),
+                      Color(0xCC111213),
+                      Color(0xF2111213),
                     ],
+                    stops: [0, 0.42, 0.78, 1],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+              PositionedDirectional(
+                top: 12,
+                start: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: ext.accentGradient,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  child: Text(
+                    l10n.workoutMostPopular,
+                    style: TextStyle(
+                      color: ext.onAccent,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ),
+              PositionedDirectional(
+                top: 10,
+                end: 10,
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+              PositionedDirectional(
+                bottom: 12,
+                start: 12,
+                end: 12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      item.localizedName(context),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
+                      children: [
+                        _SearchMeta(
+                          icon: Icons.timer_outlined,
+                          label: _durationLabel(l10n, item),
+                          color: Colors.white.withValues(alpha: 0.82),
+                          labelColor: Colors.white.withValues(alpha: 0.82),
+                        ),
+                        _SearchMeta(
+                          icon: Icons.local_fire_department_rounded,
+                          label: _calorieLabel(l10n, item),
+                          color: ext.accentGlow,
+                          labelColor: Colors.white.withValues(alpha: 0.82),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -744,11 +789,21 @@ class _ResultTile extends StatelessWidget {
 }
 
 class _SearchMeta extends StatelessWidget {
-  const _SearchMeta({required this.icon, required this.label, this.color});
+  const _SearchMeta({
+    required this.icon,
+    required this.label,
+    this.color,
+    this.labelColor,
+  });
 
   final IconData icon;
   final String label;
   final Color? color;
+
+  /// Overrides the label's own color — needed on [_FeaturedResult], where
+  /// this sits on a dark photo scrim regardless of theme rather than on
+  /// the normal card surface [AppThemeExtension.textMuted] assumes.
+  final Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
@@ -762,7 +817,7 @@ class _SearchMeta extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 12, color: ext.textMuted),
+          style: TextStyle(fontSize: 12, color: labelColor ?? ext.textMuted),
         ),
       ],
     );
