@@ -7,7 +7,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_controller.g.dart';
 
-enum SearchTab { all, workoutSuggestions, nutritionSuggestions }
+/// A client-side filter over `SearchAllResults.items` by
+/// [SearchResultType] — purely a display filter over results already
+/// fetched for the current query, not a separate fetch of its own.
+enum SearchTab { all, workouts, nutrition }
 
 @riverpod
 class SearchTabController extends _$SearchTabController {

@@ -2807,26 +2807,26 @@ abstract class AppLocalizations {
   /// No description provided for @searchTabWorkout.
   ///
   /// In en, this message translates to:
-  /// **'Workout'**
+  /// **'Workouts'**
   String get searchTabWorkout;
 
   /// No description provided for @searchTabNutrition.
   ///
   /// In en, this message translates to:
-  /// **'Nutrition'**
+  /// **'Meals'**
   String get searchTabNutrition;
 
-  /// No description provided for @searchWorkoutSuggestions.
+  /// No description provided for @searchPopularNow.
   ///
   /// In en, this message translates to:
-  /// **'Workout Suggestions'**
-  String get searchWorkoutSuggestions;
+  /// **'Popular now'**
+  String get searchPopularNow;
 
-  /// No description provided for @searchNutritionSuggestions.
+  /// No description provided for @searchTrySearching.
   ///
   /// In en, this message translates to:
-  /// **'Nutrition Suggestions'**
-  String get searchNutritionSuggestions;
+  /// **'Try searching'**
+  String get searchTrySearching;
 
   /// No description provided for @searchNoResultsTitle.
   ///
@@ -2851,6 +2851,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find workouts and meals by name — start typing above.'**
   String get searchStartTypingBody;
+
+  /// No description provided for @searchSuggestionCircuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Circuit'**
+  String get searchSuggestionCircuit;
+
+  /// No description provided for @searchSuggestionSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Split'**
+  String get searchSuggestionSplit;
+
+  /// No description provided for @searchSuggestionChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get searchSuggestionChallenge;
+
+  /// No description provided for @searchSuggestionLegs.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get searchSuggestionLegs;
+
+  /// No description provided for @searchSuggestionCardio.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get searchSuggestionCardio;
+
+  /// No description provided for @searchSuggestionBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get searchSuggestionBreakfast;
+
+  /// No description provided for @searchSuggestionYogurt.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogurt'**
+  String get searchSuggestionYogurt;
+
+  /// No description provided for @searchSuggestionVegetarian.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
+  String get searchSuggestionVegetarian;
+
+  /// No description provided for @searchSuggestionSmoothie.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoothie'**
+  String get searchSuggestionSmoothie;
+
+  /// No description provided for @searchSuggestionChicken.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken'**
+  String get searchSuggestionChicken;
 
   /// No description provided for @navFavorites.
   ///

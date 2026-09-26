@@ -1510,16 +1510,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTabAll => 'All';
 
   @override
-  String get searchTabWorkout => 'Workout';
+  String get searchTabWorkout => 'Workouts';
 
   @override
-  String get searchTabNutrition => 'Nutrition';
+  String get searchTabNutrition => 'Meals';
 
   @override
-  String get searchWorkoutSuggestions => 'Workout Suggestions';
+  String get searchPopularNow => 'Popular now';
 
   @override
-  String get searchNutritionSuggestions => 'Nutrition Suggestions';
+  String get searchTrySearching => 'Try searching';
 
   @override
   String get searchNoResultsTitle => 'No results found';
@@ -1534,6 +1534,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get searchStartTypingBody =>
       'Find workouts and meals by name — start typing above.';
+
+  @override
+  String get searchSuggestionCircuit => 'Circuit';
+
+  @override
+  String get searchSuggestionSplit => 'Split';
+
+  @override
+  String get searchSuggestionChallenge => 'Challenge';
+
+  @override
+  String get searchSuggestionLegs => 'Legs';
+
+  @override
+  String get searchSuggestionCardio => 'Cardio';
+
+  @override
+  String get searchSuggestionBreakfast => 'Breakfast';
+
+  @override
+  String get searchSuggestionYogurt => 'Yogurt';
+
+  @override
+  String get searchSuggestionVegetarian => 'Vegetarian';
+
+  @override
+  String get searchSuggestionSmoothie => 'Smoothie';
+
+  @override
+  String get searchSuggestionChicken => 'Chicken';
 
   @override
   String get navFavorites => 'Favorites';

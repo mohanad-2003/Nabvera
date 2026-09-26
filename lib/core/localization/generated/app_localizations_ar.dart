@@ -1498,13 +1498,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchTabWorkout => 'تمارين';
 
   @override
-  String get searchTabNutrition => 'تغذية';
+  String get searchTabNutrition => 'وجبات';
 
   @override
-  String get searchWorkoutSuggestions => 'اقتراحات تمارين';
+  String get searchPopularNow => 'الأكثر رواجاً الآن';
 
   @override
-  String get searchNutritionSuggestions => 'اقتراحات تغذية';
+  String get searchTrySearching => 'جرّب البحث عن';
 
   @override
   String get searchNoResultsTitle => 'لا توجد نتائج';
@@ -1518,6 +1518,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get searchStartTypingBody =>
       'اعثر على التمارين والوجبات بالاسم — ابدأ الكتابة أعلاه.';
+
+  @override
+  String get searchSuggestionCircuit => 'تمارين دائرية';
+
+  @override
+  String get searchSuggestionSplit => 'تقسيم عضلي';
+
+  @override
+  String get searchSuggestionChallenge => 'تحدي';
+
+  @override
+  String get searchSuggestionLegs => 'أرجل';
+
+  @override
+  String get searchSuggestionCardio => 'كارديو';
+
+  @override
+  String get searchSuggestionBreakfast => 'فطور';
+
+  @override
+  String get searchSuggestionYogurt => 'زبادي';
+
+  @override
+  String get searchSuggestionVegetarian => 'نباتي';
+
+  @override
+  String get searchSuggestionSmoothie => 'سموذي';
+
+  @override
+  String get searchSuggestionChicken => 'دجاج';
 
   @override
   String get navFavorites => 'المفضلة';

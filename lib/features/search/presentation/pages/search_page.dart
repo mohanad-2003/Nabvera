@@ -11,9 +11,20 @@ import 'package:nabvera/features/search/domain/search_models.dart';
 import 'package:nabvera/features/search/presentation/providers/search_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart'
+    show WorkoutPill, WorkoutPillAppearance;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+/// One merged suggestion chip — tapping it fills the query and, for a
+/// typed term, pre-selects the matching results filter so the first
+/// frame of results is already narrowed to what the chip promised.
+class _Suggestion {
+  const _Suggestion(this.label, this.type);
+  final String label;
+  final SearchResultType type;
+}
 
 /// Opens the real workout/recipe a [SearchResultItem] points to — same
 /// fetch-by-id-then-push pattern as Home's `_openWorkout`/Nutrition's
@@ -53,11 +64,24 @@ class SearchPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final query = ref.watch(searchQueryControllerProvider);
     final tab = ref.watch(searchTabControllerProvider);
     final featured = ref.watch(searchFeaturedWorkoutsProvider);
     final results = ref.watch(searchAllResultsProvider);
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
+
+    final visibleItems =
+        tab == SearchTab.all
+            ? results.items
+            : results.items
+                .where(
+                  (item) =>
+                      item.type ==
+                      (tab == SearchTab.workouts
+                          ? SearchResultType.workout
+                          : SearchResultType.nutrition),
+                )
+                .toList();
 
     return PremiumScaffold(
       child: Center(
@@ -66,127 +90,105 @@ class SearchPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  if (context.canPop())
-                    _SearchHeaderButton(
-                      isBack: true,
-                      onTap: () => context.pop(),
-                    ),
-                  if (context.canPop()) const SizedBox(width: 8),
-                  // Notifications/profile used to sit here, but both are
-                  // one tap away from Home already — repeating them on a
-                  // screen whose whole job is a single text field just
-                  // crowded the title with icons nobody used to get here.
-                  Expanded(
-                    child: Text(
-                      l10n.navSearch,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall?.copyWith(
-                        color: ext.textPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+              _SearchHeader(query: query),
+              const SizedBox(height: 16),
+              if (query.isEmpty)
+                Expanded(
+                  child: _DiscoverSection(
+                    featured: featured,
+                    onTapFeatured: (item) => _openResult(context, ref, item),
+                    onTapSuggestion: (s) {
+                      ref
+                          .read(searchQueryControllerProvider.notifier)
+                          .update(s.label);
+                      ref
+                          .read(searchTabControllerProvider.notifier)
+                          .select(
+                            s.type == SearchResultType.workout
+                                ? SearchTab.workouts
+                                : SearchTab.nutrition,
+                          );
+                    },
                   ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              _SearchField(),
-              const SizedBox(height: 18),
-              SizedBox(
-                height: 42,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: SearchTab.values.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 10),
-                  itemBuilder: (context, index) {
-                    final t = SearchTab.values[index];
-                    return _SearchTabPill(
-                      label: _label(l10n, t),
-                      selected: tab == t,
+                )
+              else ...[
+                Row(
+                  children: [
+                    WorkoutPill(
+                      label: l10n.searchTabAll,
+                      selected: tab == SearchTab.all,
+                      appearance: WorkoutPillAppearance.filter,
                       onTap:
                           () => ref
                               .read(searchTabControllerProvider.notifier)
-                              .select(t),
-                    );
-                  },
+                              .select(SearchTab.all),
+                    ),
+                    const SizedBox(width: 8),
+                    WorkoutPill(
+                      label: l10n.searchTabWorkout,
+                      selected: tab == SearchTab.workouts,
+                      appearance: WorkoutPillAppearance.filter,
+                      onTap:
+                          () => ref
+                              .read(searchTabControllerProvider.notifier)
+                              .select(SearchTab.workouts),
+                    ),
+                    const SizedBox(width: 8),
+                    WorkoutPill(
+                      label: l10n.searchTabNutrition,
+                      selected: tab == SearchTab.nutrition,
+                      appearance: WorkoutPillAppearance.filter,
+                      onTap:
+                          () => ref
+                              .read(searchTabControllerProvider.notifier)
+                              .select(SearchTab.nutrition),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: switch (tab) {
-                  SearchTab.all => _AllResultsSection(
-                    featured: featured,
+                const SizedBox(height: 16),
+                Expanded(
+                  child: _ResultsSection(
                     results: results,
+                    items: visibleItems,
                     onTap: (item) => _openResult(context, ref, item),
                   ),
-                  SearchTab.workoutSuggestions => _SuggestionsSection(
-                    title: l10n.searchWorkoutSuggestions,
-                    icon: Icons.fitness_center_rounded,
-                    suggestions: const [
-                      'Circuit',
-                      'Split',
-                      'Challenge',
-                      'Legs',
-                      'Cardio',
-                    ],
-                    onTap: (s) {
-                      ref
-                          .read(searchQueryControllerProvider.notifier)
-                          .update(s);
-                      ref
-                          .read(searchTabControllerProvider.notifier)
-                          .select(SearchTab.all);
-                    },
-                  ),
-                  SearchTab.nutritionSuggestions => _SuggestionsSection(
-                    title: l10n.searchNutritionSuggestions,
-                    icon: Icons.restaurant_rounded,
-                    suggestions: const [
-                      'Breakfast',
-                      'Yogurt',
-                      'Vegetarian',
-                      'Smoothie',
-                      'Chicken',
-                    ],
-                    onTap: (s) {
-                      ref
-                          .read(searchQueryControllerProvider.notifier)
-                          .update(s);
-                      ref
-                          .read(searchTabControllerProvider.notifier)
-                          .select(SearchTab.all);
-                    },
-                  ),
-                },
-              ),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
   }
-
-  String _label(AppLocalizations l10n, SearchTab tab) => switch (tab) {
-    SearchTab.all => l10n.searchTabAll,
-    SearchTab.workoutSuggestions => l10n.searchTabWorkout,
-    SearchTab.nutritionSuggestions => l10n.searchTabNutrition,
-  };
 }
 
-/// Flat header action: a full-size tap target without a surrounding card.
-class _SearchHeaderButton extends StatelessWidget {
-  const _SearchHeaderButton({
-    required this.onTap,
-    this.icon,
-    this.isBack = false,
-  }) : assert(isBack || icon != null);
+/// Back button (when there's somewhere to go back to) plus the search
+/// field itself — no separate page title. The field is the page's one
+/// job, so it's the largest, first thing on screen instead of competing
+/// with a headline above it.
+class _SearchHeader extends StatelessWidget {
+  const _SearchHeader({required this.query});
 
-  final IconData? icon;
-  final bool isBack;
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (context.canPop())
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _BackButton(onTap: () => context.pop()),
+          ),
+        const _SearchField(),
+      ],
+    );
+  }
+}
+
+class _BackButton extends StatelessWidget {
+  const _BackButton({required this.onTap});
   final VoidCallback onTap;
 
   @override
@@ -196,20 +198,23 @@ class _SearchHeaderButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: SizedBox.square(
-        dimension: 44,
+        dimension: 40,
         child: IconTheme(
-          data: IconThemeData(color: ext.textPrimary, size: 22),
-          child: isBack ? const BackButtonIcon() : Icon(icon),
+          data: IconThemeData(color: ext.textPrimary, size: 20),
+          child: const BackButtonIcon(),
         ),
       ),
     );
   }
 }
 
-/// The search box itself — a clear (×) button appears once there's text to
-/// clear, and the field autofocuses so a user landing here can start
-/// typing immediately, the way a dedicated search screen should.
+/// The search box — a clear (×) button appears once there's text to clear,
+/// autofocuses so typing can start immediately, and its border/icon glow
+/// amber while focused so the one field on this page visibly announces
+/// when it's ready for input.
 class _SearchField extends ConsumerStatefulWidget {
+  const _SearchField();
+
   @override
   ConsumerState<_SearchField> createState() => _SearchFieldState();
 }
@@ -218,10 +223,21 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   late final _controller = TextEditingController(
     text: ref.read(searchQueryControllerProvider),
   );
+  final _focusNode = FocusNode();
+  bool _focused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() => _focused = _focusNode.hasFocus);
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -240,29 +256,43 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
       );
     });
 
-    return Container(
-      height: 56,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      height: 60,
       decoration: BoxDecoration(
         color: ext.glassFill,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: ext.glassBorder),
-        boxShadow: AppShadows.floating(Theme.of(context).brightness),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        border: Border.all(
+          color: _focused ? ext.accentGlow : ext.glassBorder,
+          width: _focused ? 1.6 : 1,
+        ),
+        boxShadow:
+            _focused
+                ? [
+                  BoxShadow(
+                    color: ext.accentGlow.withValues(alpha: 0.22),
+                    blurRadius: 22,
+                    spreadRadius: 1,
+                  ),
+                ]
+                : AppShadows.floating(Theme.of(context).brightness),
       ),
       child: TextField(
         controller: _controller,
+        focusNode: _focusNode,
         autofocus: true,
         onChanged:
             (value) =>
                 ref.read(searchQueryControllerProvider.notifier).update(value),
-        style: TextStyle(
-          color: ext.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w600),
         cursorColor: ext.accentGlow,
         decoration: InputDecoration(
           hintText: l10n.searchHint,
           hintStyle: TextStyle(color: ext.textMuted, fontSize: 14),
-          prefixIcon: Icon(Icons.search_rounded, color: ext.accentGlow),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: _focused ? ext.accentGlow : ext.textMuted,
+          ),
           suffixIcon:
               hasText
                   ? IconButton(
@@ -275,7 +305,7 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
                     },
                   )
                   : null,
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
           border: InputBorder.none,
         ),
       ),
@@ -283,92 +313,61 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   }
 }
 
-class _SearchTabPill extends StatelessWidget {
-  const _SearchTabPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
+/// Shown while the query box is empty — two featured workouts to jump
+/// straight into, plus a single merged cloud of quick-search terms
+/// (workouts and meals together, each with its own icon) instead of the
+/// old three-way tab split.
+class _DiscoverSection extends StatelessWidget {
+  const _DiscoverSection({
+    required this.featured,
+    required this.onTapFeatured,
+    required this.onTapSuggestion,
   });
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+  final List<SearchResultItem> featured;
+  final ValueChanged<SearchResultItem> onTapFeatured;
+  final ValueChanged<_Suggestion> onTapSuggestion;
+
+  static const _suggestionKeys = [
+    ('searchSuggestionCircuit', SearchResultType.workout),
+    ('searchSuggestionSplit', SearchResultType.workout),
+    ('searchSuggestionChallenge', SearchResultType.workout),
+    ('searchSuggestionLegs', SearchResultType.workout),
+    ('searchSuggestionCardio', SearchResultType.workout),
+    ('searchSuggestionBreakfast', SearchResultType.nutrition),
+    ('searchSuggestionYogurt', SearchResultType.nutrition),
+    ('searchSuggestionVegetarian', SearchResultType.nutrition),
+    ('searchSuggestionSmoothie', SearchResultType.nutrition),
+    ('searchSuggestionChicken', SearchResultType.nutrition),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-        decoration: BoxDecoration(
-          // Solid accentGlow rather than the fixed lime→orange gradient:
-          // accentGlow already swaps to a deep, readable tone in light mode
-          // (accentOnLight) instead of the washed-out neon the gradient
-          // produced there, while staying the familiar lime in dark mode.
-          color: selected ? ext.accentGlow : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? Colors.transparent : ext.glassBorder,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? ext.onAccentGlow : ext.textPrimary,
-            fontWeight: FontWeight.w800,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AllResultsSection extends StatelessWidget {
-  const _AllResultsSection({
-    required this.featured,
-    required this.results,
-    required this.onTap,
-  });
-
-  final List<SearchResultItem> featured;
-  final SearchResults results;
-  final ValueChanged<SearchResultItem> onTap;
-
-  @override
-  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    // "No results" only ever appears for a search that actually ran and
-    // came back empty — never just because the query box is still empty
-    // (that used to show under the featured strip on the very first
-    // frame, before the user had typed anything at all).
-    final showNoResultsMessage =
-        results.hasSearched && !results.isLoading && results.items.isEmpty;
-
-    if (featured.isEmpty && showNoResultsMessage) {
-      return _SearchEmptyState(
-        title: l10n.searchNoResultsTitle,
-        body: l10n.searchNoResultsBody,
-      );
-    }
-    if (featured.isEmpty && results.items.isEmpty && !results.isLoading) {
-      return _SearchEmptyState(
-        title: l10n.searchStartTypingTitle,
-        body: l10n.searchStartTypingBody,
-      );
-    }
+    final suggestions = [
+      for (final (key, type) in _suggestionKeys)
+        _Suggestion(_suggestionLabel(l10n, key), type),
+    ];
 
     return ListView(
       children: [
         if (featured.isNotEmpty) ...[
+          Text(
+            l10n.searchPopularNow,
+            style: TextStyle(
+              color: ext.textPrimary,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
           LayoutBuilder(
             builder: (context, constraints) {
               final itemWidth =
                   (constraints.maxWidth * .72).clamp(220.0, 290.0).toDouble();
               return SizedBox(
-                height: 238,
+                height: 220,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: featured.length,
@@ -377,46 +376,132 @@ class _AllResultsSection extends StatelessWidget {
                       (context, index) => _FeaturedResult(
                         item: featured[index],
                         width: itemWidth,
-                        onTap: () => onTap(featured[index]),
+                        onTap: () => onTapFeatured(featured[index]),
                       ),
                 ),
               );
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
         ],
-        if (results.isLoading)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 24),
-            child: Center(child: CircularProgressIndicator()),
-          )
-        else if (showNoResultsMessage)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: _InlineEmptyMessage(
-              title: l10n.searchNoResultsTitle,
-              body: l10n.searchNoResultsBody,
-            ),
-          )
-        else
-          for (final item in results.items) ...[
-            _ResultTile(item: item, onTap: () => onTap(item)),
-            const SizedBox(height: AppSpacing.md),
+        Text(
+          l10n.searchTrySearching,
+          style: TextStyle(
+            color: ext.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final s in suggestions)
+              _SuggestionChip(suggestion: s, onTap: () => onTapSuggestion(s)),
           ],
+        ),
       ],
+    );
+  }
+
+  static String _suggestionLabel(AppLocalizations l10n, String key) =>
+      switch (key) {
+        'searchSuggestionCircuit' => l10n.searchSuggestionCircuit,
+        'searchSuggestionSplit' => l10n.searchSuggestionSplit,
+        'searchSuggestionChallenge' => l10n.searchSuggestionChallenge,
+        'searchSuggestionLegs' => l10n.searchSuggestionLegs,
+        'searchSuggestionCardio' => l10n.searchSuggestionCardio,
+        'searchSuggestionBreakfast' => l10n.searchSuggestionBreakfast,
+        'searchSuggestionYogurt' => l10n.searchSuggestionYogurt,
+        'searchSuggestionVegetarian' => l10n.searchSuggestionVegetarian,
+        'searchSuggestionSmoothie' => l10n.searchSuggestionSmoothie,
+        'searchSuggestionChicken' => l10n.searchSuggestionChicken,
+        _ => key,
+      };
+}
+
+class _SuggestionChip extends StatelessWidget {
+  const _SuggestionChip({required this.suggestion, required this.onTap});
+
+  final _Suggestion suggestion;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final icon =
+        suggestion.type == SearchResultType.workout
+            ? Icons.fitness_center_rounded
+            : Icons.restaurant_rounded;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: ext.glassFill,
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            border: Border.all(color: ext.glassBorder),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 15, color: ext.accentGlow),
+              const SizedBox(width: 7),
+              Text(
+                suggestion.label,
+                style: TextStyle(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
-class _SearchEmptyState extends StatelessWidget {
-  const _SearchEmptyState({required this.title, required this.body});
+class _ResultsSection extends StatelessWidget {
+  const _ResultsSection({
+    required this.results,
+    required this.items,
+    required this.onTap,
+  });
 
-  final String title;
-  final String body;
+  final SearchResults results;
+  final List<SearchResultItem> items;
+  final ValueChanged<SearchResultItem> onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: _InlineEmptyMessage(title: title, body: body));
+    final l10n = AppLocalizations.of(context);
+    final showNoResultsMessage =
+        results.hasSearched && !results.isLoading && results.items.isEmpty;
+
+    if (results.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (showNoResultsMessage) {
+      return _InlineEmptyMessage(
+        title: l10n.searchNoResultsTitle,
+        body: l10n.searchNoResultsBody,
+      );
+    }
+
+    return ListView.separated(
+      itemCount: items.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+      itemBuilder:
+          (context, index) =>
+              _ResultTile(item: items[index], onTap: () => onTap(items[index])),
+    );
   }
 }
 
@@ -429,108 +514,28 @@ class _InlineEmptyMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.search_off_rounded, color: ext.textMuted, size: 40),
-        const SizedBox(height: 16),
-        Text(
-          title,
-          style: TextStyle(
-            color: ext.textPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          body,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: ext.textMuted, fontSize: 13),
-        ),
-      ],
-    );
-  }
-}
-
-class _SuggestionsSection extends StatelessWidget {
-  const _SuggestionsSection({
-    required this.title,
-    required this.icon,
-    required this.suggestions,
-    required this.onTap,
-  });
-  final String title;
-  final IconData icon;
-  final List<String> suggestions;
-  final ValueChanged<String> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final ext = Theme.of(context).extension<AppThemeExtension>()!;
-    return ListView(
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: ext.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 12),
-        for (final s in suggestions) ...[
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => onTap(s),
-              borderRadius: BorderRadius.circular(AppRadius.card),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: ext.glassFill,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                  border: Border.all(color: ext.glassBorder),
-                  boxShadow: AppShadows.floating(Theme.of(context).brightness),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        gradient: ext.accentGradient,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(icon, color: ext.onAccent, size: 18),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        s,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: ext.textPrimary,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.north_east_rounded,
-                      color: ext.textMuted,
-                      size: 16,
-                    ),
-                  ],
-                ),
-              ),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.search_off_rounded, color: ext.textMuted, size: 40),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: TextStyle(
+              color: ext.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: 6),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: ext.textMuted, fontSize: 13),
+          ),
         ],
-      ],
+      ),
     );
   }
 }
@@ -551,7 +556,7 @@ class _FeaturedResult extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       child: SizedBox(
         width: width,
         child: Column(
@@ -563,7 +568,7 @@ class _FeaturedResult extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                     child: SmartImage(
                       item.image,
                       width: double.infinity,
@@ -571,16 +576,11 @@ class _FeaturedResult extends StatelessWidget {
                     ),
                   ),
                   PositionedDirectional(
-                    top: 8,
-                    end: 8,
-                    child: Icon(Icons.star, color: ext.accentGlow),
-                  ),
-                  PositionedDirectional(
                     bottom: 10,
                     end: 10,
                     child: Container(
-                      width: 32,
-                      height: 32,
+                      width: 34,
+                      height: 34,
                       decoration: BoxDecoration(
                         gradient: ext.accentGradient,
                         shape: BoxShape.circle,
@@ -617,7 +617,6 @@ class _FeaturedResult extends StatelessWidget {
                       _SearchMeta(
                         icon: Icons.timer_outlined,
                         label: _durationLabel(l10n, item),
-                        color: ext.textMuted,
                       ),
                       _SearchMeta(
                         icon: Icons.local_fire_department_outlined,
@@ -637,9 +636,8 @@ class _FeaturedResult extends StatelessWidget {
 }
 
 /// Elevated result card — a soft glass surface with a floating shadow,
-/// matching the card language used elsewhere in the app (see
-/// `AdminContentCard`) instead of the flatter hairline-divider list this
-/// used to be.
+/// with a small type badge in the corner of the thumbnail so a mixed
+/// "All" list stays scannable without a column of repeated labels.
 class _ResultTile extends StatelessWidget {
   const _ResultTile({required this.item, required this.onTap});
   final SearchResultItem item;
@@ -664,75 +662,79 @@ class _ResultTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: SmartImage(item.image, width: 68, height: 68),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
                 children: [
-                  Text(
-                    item.localizedName(context),
-                    style: TextStyle(
-                      color: ext.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: SmartImage(item.image, width: 68, height: 68),
                   ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 6,
-                    children: [
-                      _SearchMeta(
-                        icon: Icons.timer_outlined,
-                        label: _durationLabel(l10n, item),
-                        color: ext.textMuted,
+                  PositionedDirectional(
+                    bottom: -2,
+                    end: -2,
+                    child: Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: ext.cardColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: ext.glassBorder),
                       ),
-                      _SearchMeta(
-                        icon: Icons.local_fire_department_outlined,
-                        label: _calorieLabel(l10n, item),
+                      child: Icon(
+                        item.type == SearchResultType.workout
+                            ? Icons.fitness_center_rounded
+                            : Icons.restaurant_rounded,
+                        size: 12,
                         color: ext.accentGlow,
                       ),
-                    ],
+                    ),
                   ),
-                  if (item.exerciseCount != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
+                ],
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.localizedName(context),
+                      style: TextStyle(
+                        color: ext.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 6,
                       children: [
-                        Icon(
-                          Icons.repeat_rounded,
-                          size: 14,
-                          color: ext.textMuted,
+                        _SearchMeta(
+                          icon: Icons.timer_outlined,
+                          label: _durationLabel(l10n, item),
                         ),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            l10n.homeHeroExercises(item.exerciseCount!),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: ext.textMuted,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        _SearchMeta(
+                          icon: Icons.local_fire_department_outlined,
+                          label: _calorieLabel(l10n, item),
+                          color: ext.accentGlow,
+                        ),
+                        if (item.exerciseCount != null)
+                          _SearchMeta(
+                            icon: Icons.repeat_rounded,
+                            label: l10n.homeHeroExercises(item.exerciseCount!),
                           ),
-                        ),
                       ],
                     ),
                   ],
-                ],
+                ),
               ),
-            ),
-            Icon(
-              Directionality.of(context) == TextDirection.rtl
-                  ? Icons.chevron_left_rounded
-                  : Icons.chevron_right_rounded,
-              color: ext.textMuted,
-            ),
+              Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left_rounded
+                    : Icons.chevron_right_rounded,
+                color: ext.textMuted,
+              ),
             ],
           ),
         ),
@@ -742,31 +744,25 @@ class _ResultTile extends StatelessWidget {
 }
 
 class _SearchMeta extends StatelessWidget {
-  const _SearchMeta({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _SearchMeta({required this.icon, required this.label, this.color});
 
   final IconData icon;
   final String label;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: color),
+        Icon(icon, size: 14, color: color ?? ext.textMuted),
         const SizedBox(width: 4),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).extension<AppThemeExtension>()!.textMuted,
-          ),
+          style: TextStyle(fontSize: 12, color: ext.textMuted),
         ),
       ],
     );
