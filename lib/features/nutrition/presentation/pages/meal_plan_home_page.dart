@@ -239,9 +239,11 @@ class _MealSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800, fontSize: 16)),
-          const SizedBox(height: 8),
-          for (final item in items)
+          const SizedBox(height: 4),
+          for (final item in items) ...[
             _MealItemCard(item: item, mealType: mealType, dayIndex: dayIndex),
+            if (item != items.last) Divider(height: 1, color: ext.glassBorder),
+          ],
         ],
       ),
     );
@@ -260,14 +262,8 @@ class _MealItemCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ext.glassBorder),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
