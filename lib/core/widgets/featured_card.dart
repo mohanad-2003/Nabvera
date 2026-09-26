@@ -229,7 +229,7 @@ class _Badge extends StatelessWidget {
             ? ext.onAccent
             : (ThemeData.estimateBrightnessForColor(color!) == Brightness.dark
                 ? Colors.white
-                : const Color(0xFF080D12));
+                : const Color(0xFF111213));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),

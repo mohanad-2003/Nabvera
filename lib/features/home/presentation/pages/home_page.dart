@@ -463,16 +463,21 @@ class _TodayHeroCard extends ConsumerWidget {
     final todayMinutes =
         ref.watch(weeklyActivityControllerProvider.notifier).todayMinutes;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // A deliberately dark card regardless of theme (white text/icon overlay
+    // throughout) — warm charcoal-bronze now, replacing the old navy/teal
+    // pair left over from the previous blue-black brand identity.
     final heroGradient = LinearGradient(
       colors:
           isDark
-              ? const [Color(0xFF1B3442), Color(0xFF112630), Color(0xFF0B171F)]
-              : const [Color(0xFF345576), Color(0xFF244369), Color(0xFF173E42)],
+              ? const [Color(0xFF241A0F), Color(0xFF1B1512), Color(0xFF120F0D)]
+              : const [Color(0xFF2E2013), Color(0xFF241A10), Color(0xFF17120C)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
+    // Same amber duo as ext.accentGradient — kept as its own constant since
+    // this button wants a horizontal (not diagonal) sweep.
     const ctaGradient = LinearGradient(
-      colors: [Color(0xFFB6E85C), Color(0xFFF6AE45)],
+      colors: [AppColors.seedLime, AppColors.electricOrange],
       begin: AlignmentDirectional.centerStart,
       end: AlignmentDirectional.centerEnd,
     );
@@ -516,7 +521,7 @@ class _TodayHeroCard extends ConsumerWidget {
                     ? const []
                     : [
                       BoxShadow(
-                        color: const Color(0xFF173E42).withValues(alpha: 0.18),
+                        color: const Color(0xFF17120C).withValues(alpha: 0.18),
                         blurRadius: 24,
                         offset: const Offset(0, 12),
                       ),

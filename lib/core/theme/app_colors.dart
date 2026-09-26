@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
 
-/// Premium fitness palette used across the product surfaces.
+/// "Graphite Amber" palette — a neutral graphite base (no blue/green tint)
+/// with amber as the one primary accent, teal reserved for streaks/success
+/// states only. Replaced the earlier near-black/neon-lime identity; kept
+/// the same field names as that palette (`seedLime`, `electricOrange`,
+/// `aquaBlue`, ...) since every call site already reads them by role
+/// (primary accent / gradient partner / cool decorative accent) rather
+/// than by literal hue — only the values below define the actual look.
 abstract final class AppColors {
-  static const Color seedInk = Color(0xFF080D12);
-  static const Color seedLime = Color(0xFFBFFF3C);
+  static const Color seedInk = Color(0xFF111213);
+
+  /// Primary accent — amber. Was neon lime.
+  static const Color seedLime = Color(0xFFFFB020);
   static const Color seedViolet = Color(0xFF6C5CE7);
-  static const Color electricOrange = Color(0xFFFF7A1A);
-  static const Color aquaBlue = Color(0xFF33D6FF);
-  static const Color midnight = Color(0xFF0D141C);
-  static const Color graphite = Color(0xFF141C24);
+
+  /// Gradient partner for [seedLime] (buttons, hero badges) and the dark
+  /// theme's ColorScheme.secondary — a deeper burnt-amber, not orange.
+  static const Color electricOrange = Color(0xFFE8951A);
+
+  /// Cool decorative accent (round-item variety colors, streak highlight)
+  /// — teal. Was a brighter cyan/"aqua".
+  static const Color aquaBlue = Color(0xFF29D9C0);
+  static const Color midnight = Color(0xFF17181A);
+  static const Color graphite = Color(0xFF1A1B1B);
   static const Color glass = Color(0x1FFFFFFF);
 
-  // A cool neutral base keeps the light theme clean and lets lime accents
-  // remain readable without tinting every screen green.
-  static const Color lightSurface = Color(0xFFF6F8FC);
-  static const Color lightSurfaceVariant = Color(0xFFEAF0F6);
-  static const Color lightOutline = Color(0xFFD3D9C7);
+  // A warm neutral base — matches the graphite dark base's own neutrality
+  // instead of the old cool blue-tinted light surface.
+  static const Color lightSurface = Color(0xFFF7F6F3);
+  static const Color lightSurfaceVariant = Color(0xFFEFEDE7);
+  static const Color lightOutline = Color(0xFFD9D6CE);
 
   // Dark surfaces deliberately avoid pure black per design-system requirements.
-  static const Color darkSurface = Color(0xFF080D12);
-  static const Color darkSurfaceVariant = Color(0xFF121A22);
-  static const Color darkOutline = Color(0xFF2A3744);
+  static const Color darkSurface = Color(0xFF111213);
+  static const Color darkSurfaceVariant = Color(0xFF1A1B1B);
+  static const Color darkOutline = Color(0xFF2B2C2C);
 
   // Dark-mode semantic accents: bright/saturated so they read clearly
   // against the near-black surfaces.
-  static const Color success = Color(0xFF4DFF8D);
+  static const Color success = Color(0xFF29D9C0);
   static const Color warning = Color(0xFFFFB84D);
   static const Color danger = Color(0xFFFF4D67);
 
@@ -38,12 +52,12 @@ abstract final class AppColors {
   // filled button in these colors — meet accessible contrast against the
   // light, near-white surfaces (the dark-mode values above are too bright
   // for that role in Light Mode).
-  static const Color successOnLight = Color(0xFF1E8E5A);
+  static const Color successOnLight = Color(0xFF0E8C7B);
   static const Color warningOnLight = Color(0xFF9A6400);
   static const Color dangerOnLight = Color(0xFFB3261E);
 
-  /// Darker olive-green counterpart to [seedLime] for icons, labels, and
-  /// progress indicators on the light background. The neon original stays
-  /// reserved for dark surfaces where it has the intended contrast.
-  static const Color accentOnLight = Color(0xFF527B13);
+  /// Darker bronze counterpart to [seedLime] (amber) for icons, labels, and
+  /// progress indicators on the light background — the vivid dark-mode
+  /// amber is too light/low-contrast for text on a near-white surface.
+  static const Color accentOnLight = Color(0xFF8A5A00);
 }

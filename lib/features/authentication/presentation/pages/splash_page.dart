@@ -241,14 +241,14 @@ class _SplashBackdrop extends StatelessWidget {
           colors: isDark
               ? const [
                   AppColors.seedInk,
-                  Color(0xFF061B1A),
-                  Color(0xFF11101D),
+                  Color(0xFF1D1608),
+                  Color(0xFF17140F),
                   AppColors.seedInk,
                 ]
               : const [
-                  Color(0xFFF8FBF4),
-                  Color(0xFFEFF8EA),
-                  Color(0xFFF6F8FC),
+                  Color(0xFFFBF6EC),
+                  Color(0xFFF6EEDD),
+                  AppColors.lightSurface,
                 ],
         ),
       ),
