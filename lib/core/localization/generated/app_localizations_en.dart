@@ -1672,9 +1672,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileFullName => 'Full Name';
 
   @override
-  String get editProfileMobileNumber => 'Mobile Number';
-
-  @override
   String get editProfileDateOfBirth => 'Date of Birth';
 
   @override

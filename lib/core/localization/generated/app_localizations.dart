@@ -3122,12 +3122,6 @@ abstract class AppLocalizations {
   /// **'Full Name'**
   String get editProfileFullName;
 
-  /// No description provided for @editProfileMobileNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Mobile Number'**
-  String get editProfileMobileNumber;
-
   /// No description provided for @editProfileDateOfBirth.
   ///
   /// In en, this message translates to:

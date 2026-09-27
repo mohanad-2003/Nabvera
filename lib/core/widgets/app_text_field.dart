@@ -17,6 +17,7 @@ class AppTextField extends StatelessWidget {
     this.flat = false,
     this.maxLines = 1,
     this.textDirection,
+    this.enabled = true,
   });
 
   final TextEditingController? controller;
@@ -29,6 +30,12 @@ class AppTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final Widget? suffixIcon;
   final bool flat;
+
+  /// False for a field that's shown but not editable here (e.g. the
+  /// account email, which is tied to sign-in and isn't part of the
+  /// profile-update request) — greyed out rather than silently discarding
+  /// whatever the user types into it.
+  final bool enabled;
 
   /// Forces the typed text's direction regardless of the app's current
   /// locale — e.g. an Arabic-content field on an otherwise LTR (English)
@@ -55,7 +62,10 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
       maxLines: maxLines,
       textDirection: textDirection,
-      style: Theme.of(context).textTheme.bodyLarge,
+      enabled: enabled,
+      style: Theme.of(
+        context,
+      ).textTheme.bodyLarge?.copyWith(color: enabled ? null : ext.textMuted),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

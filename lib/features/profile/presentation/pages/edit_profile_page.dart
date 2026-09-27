@@ -68,7 +68,6 @@ class EditProfilePage extends ConsumerStatefulWidget {
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
-  late final TextEditingController _mobileController;
   late final TextEditingController _dobController;
   late final TextEditingController _weightController;
   late final TextEditingController _heightController;
@@ -94,7 +93,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     super.initState();
     _nameController = TextEditingController();
     _emailController = TextEditingController();
-    _mobileController = TextEditingController(text: '+123 567 89000');
     _dobController = TextEditingController();
     _weightController = TextEditingController();
     _heightController = TextEditingController();
@@ -104,7 +102,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _mobileController.dispose();
     _dobController.dispose();
     _weightController.dispose();
     _heightController.dispose();
@@ -460,14 +457,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     prefixIcon: Icons.alternate_email_rounded,
                     flat: true,
                     keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 15),
-                  AppTextField(
-                    controller: _mobileController,
-                    label: l10n.editProfileMobileNumber,
-                    prefixIcon: Icons.phone_outlined,
-                    flat: true,
-                    keyboardType: TextInputType.phone,
+                    // Tied to sign-in, not part of the profile-update
+                    // request — shown for reference, greyed out instead of
+                    // accepting edits that would silently go nowhere.
+                    enabled: false,
                   ),
                   const SizedBox(height: 15),
                   GestureDetector(

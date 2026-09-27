@@ -1657,9 +1657,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfileFullName => 'الاسم الكامل';
 
   @override
-  String get editProfileMobileNumber => 'رقم الجوال';
-
-  @override
   String get editProfileDateOfBirth => 'تاريخ الميلاد';
 
   @override
