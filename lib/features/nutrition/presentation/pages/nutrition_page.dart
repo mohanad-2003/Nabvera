@@ -100,7 +100,11 @@ class NutritionPage extends ConsumerWidget {
                 ),
                 SizedBox(height: spacing),
                 FeaturedCard(
-                  image: 'assets/carrot.png',
+                  // A real photo (carrot + fresh orange juice) replacing the
+                  // old bundled asset — Pexels, free license, no attribution
+                  // required.
+                  image:
+                      'https://images.pexels.com/photos/4443459/pexels-photo-4443459.jpeg?cs=srgb&dl=pexels-polina-tankilevitch-4443459.jpg&fm=jpg',
                   badge: l10n.nutritionRecipeOfTheDay,
                   // Nutrition's secondary accent per the design system.
                   badgeColor: AppColors.seedViolet,

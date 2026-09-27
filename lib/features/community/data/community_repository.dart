@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:nabvera/core/network/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -71,11 +73,39 @@ class CommunityRepository {
   /// composer this repository never had, despite the backend supporting
   /// it since before the feed screen existed (see `createPost` in
   /// `backend/src/controllers/postController.js`). 1-2000 characters,
-  /// enforced server-side.
-  Future<Map<String, dynamic>> createPost(String content) async {
-    final response = await _client.post('/posts', body: {'content': content});
+  /// enforced server-side. [imageUrl] is optional — pass the URL
+  /// [uploadPostImage] returned, if the user attached a photo.
+  Future<Map<String, dynamic>> createPost(
+    String content, {
+    String? imageUrl,
+  }) async {
+    final response = await _client.post(
+      '/posts',
+      body: {'content': content, if (imageUrl != null) 'imageUrl': imageUrl},
+    );
     final body = _client.decode(response);
     return body['data'] as Map<String, dynamic>;
+  }
+
+  /// Uploads a photo for a new post through the same generic `/uploads`
+  /// endpoint the profile avatar uses (see `UserRepository.uploadAvatar`)
+  /// — returns the URL to then pass as [createPost]'s `imageUrl`. Doesn't
+  /// create the post itself, so backing out of the composer after picking
+  /// a photo never leaves an orphaned post behind.
+  Future<String> uploadPostImage({
+    required Uint8List bytes,
+    required String filename,
+    String? contentType,
+  }) async {
+    final response = await _client.uploadImage(
+      '/uploads',
+      bytes: bytes,
+      filename: filename,
+      contentType: contentType,
+    );
+    final body = _client.decode(response);
+    final path = (body['data'] as Map<String, dynamic>)['url'] as String;
+    return resolveBackendUrl(path);
   }
 
   /// Deletes one of the current user's own posts (`DELETE /posts/:id`) —

@@ -1046,6 +1046,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutRestAddSeconds => '+15 ثانية';
 
   @override
+  String get workoutWeightKgLabel => 'الوزن (كغم)';
+
+  @override
+  String get workoutRepsLabel => 'التكرارات';
+
+  @override
+  String get workoutHistoryTitle => 'تقدّمك';
+
+  @override
+  String get workoutHistoryEmpty =>
+      'سجّل مجموعة (set) لتبدأ بتتبع تقدّمك بهذا التمرين.';
+
+  @override
+  String workoutHistorySetSummary(String weight, int reps) {
+    return '$weight كغم × $reps';
+  }
+
+  @override
   String get workoutRatingTitle => 'كيف كان هذا التمرين؟';
 
   @override
@@ -1480,13 +1498,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchTabWorkout => 'تمارين';
 
   @override
-  String get searchTabNutrition => 'تغذية';
+  String get searchTabNutrition => 'وجبات';
 
   @override
-  String get searchWorkoutSuggestions => 'اقتراحات تمارين';
+  String get searchPopularNow => 'الأكثر رواجاً الآن';
 
   @override
-  String get searchNutritionSuggestions => 'اقتراحات تغذية';
+  String get searchTrySearching => 'جرّب البحث عن';
 
   @override
   String get searchNoResultsTitle => 'لا توجد نتائج';
@@ -1500,6 +1518,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get searchStartTypingBody =>
       'اعثر على التمارين والوجبات بالاسم — ابدأ الكتابة أعلاه.';
+
+  @override
+  String get searchSuggestionCircuit => 'تمارين دائرية';
+
+  @override
+  String get searchSuggestionSplit => 'تقسيم عضلي';
+
+  @override
+  String get searchSuggestionChallenge => 'تحدي';
+
+  @override
+  String get searchSuggestionLegs => 'أرجل';
+
+  @override
+  String get searchSuggestionCardio => 'كارديو';
+
+  @override
+  String get searchSuggestionBreakfast => 'فطور';
+
+  @override
+  String get searchSuggestionYogurt => 'زبادي';
+
+  @override
+  String get searchSuggestionVegetarian => 'نباتي';
+
+  @override
+  String get searchSuggestionSmoothie => 'سموذي';
+
+  @override
+  String get searchSuggestionChicken => 'دجاج';
 
   @override
   String get navFavorites => 'المفضلة';
@@ -2408,6 +2456,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mealPlanViewShoppingList => 'قائمة التسوق';
 
   @override
+  String get mealPlanGenerateNewTooltip => 'توليد خطة جديدة';
+
+  @override
+  String get mealPlanRegenerateConfirmTitle => 'توليد خطة جديدة؟';
+
+  @override
+  String get mealPlanRegenerateConfirmBody =>
+      'هذا بيستبدل خطتك الحالية بخطة جديدة. خطتك الحالية بتضل متاحة بسجل الخطط السابقة.';
+
+  @override
   String get mealPlanViewHistory => 'الخطط السابقة';
 
   @override
@@ -2665,6 +2723,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityPostFailed => 'تعذّر نشر منشورك. حاول مرة أخرى.';
+
+  @override
+  String get communityAddPhoto => 'إضافة صورة';
+
+  @override
+  String get communityRemovePhoto => 'إزالة الصورة';
+
+  @override
+  String get communityPhotoPickFailed => 'تعذّر فتح معرض الصور. حاول مرة أخرى.';
 
   @override
   String get communityForumsEmptyAction => 'منشور جديد';

@@ -1057,6 +1057,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutRestAddSeconds => '+15s';
 
   @override
+  String get workoutWeightKgLabel => 'Weight (kg)';
+
+  @override
+  String get workoutRepsLabel => 'Reps';
+
+  @override
+  String get workoutHistoryTitle => 'Your Progress';
+
+  @override
+  String get workoutHistoryEmpty =>
+      'Log a set to start tracking your progress on this exercise.';
+
+  @override
+  String workoutHistorySetSummary(String weight, int reps) {
+    return '$weight kg × $reps';
+  }
+
+  @override
   String get workoutRatingTitle => 'How was this workout?';
 
   @override
@@ -1492,16 +1510,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTabAll => 'All';
 
   @override
-  String get searchTabWorkout => 'Workout';
+  String get searchTabWorkout => 'Workouts';
 
   @override
-  String get searchTabNutrition => 'Nutrition';
+  String get searchTabNutrition => 'Meals';
 
   @override
-  String get searchWorkoutSuggestions => 'Workout Suggestions';
+  String get searchPopularNow => 'Popular now';
 
   @override
-  String get searchNutritionSuggestions => 'Nutrition Suggestions';
+  String get searchTrySearching => 'Try searching';
 
   @override
   String get searchNoResultsTitle => 'No results found';
@@ -1516,6 +1534,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get searchStartTypingBody =>
       'Find workouts and meals by name — start typing above.';
+
+  @override
+  String get searchSuggestionCircuit => 'Circuit';
+
+  @override
+  String get searchSuggestionSplit => 'Split';
+
+  @override
+  String get searchSuggestionChallenge => 'Challenge';
+
+  @override
+  String get searchSuggestionLegs => 'Legs';
+
+  @override
+  String get searchSuggestionCardio => 'Cardio';
+
+  @override
+  String get searchSuggestionBreakfast => 'Breakfast';
+
+  @override
+  String get searchSuggestionYogurt => 'Yogurt';
+
+  @override
+  String get searchSuggestionVegetarian => 'Vegetarian';
+
+  @override
+  String get searchSuggestionSmoothie => 'Smoothie';
+
+  @override
+  String get searchSuggestionChicken => 'Chicken';
 
   @override
   String get navFavorites => 'Favorites';
@@ -2438,6 +2486,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealPlanViewShoppingList => 'Shopping List';
 
   @override
+  String get mealPlanGenerateNewTooltip => 'Generate new plan';
+
+  @override
+  String get mealPlanRegenerateConfirmTitle => 'Generate a new plan?';
+
+  @override
+  String get mealPlanRegenerateConfirmBody =>
+      'This replaces your current plan with a new one. Your existing plan stays available in history.';
+
+  @override
   String get mealPlanViewHistory => 'Past Plans';
 
   @override
@@ -2706,6 +2764,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityPostFailed =>
       'Couldn\'t publish your post. Please try again.';
+
+  @override
+  String get communityAddPhoto => 'Add photo';
+
+  @override
+  String get communityRemovePhoto => 'Remove photo';
+
+  @override
+  String get communityPhotoPickFailed =>
+      'Couldn\'t open the photo picker. Please try again.';
 
   @override
   String get communityForumsEmptyAction => 'New Post';

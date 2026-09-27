@@ -39,7 +39,12 @@ class FakeWorkoutRepository implements WorkoutRepository {
     String? workoutId,
     DifficultyRating? difficultyRating,
     int? actualDurationMinutes,
+    List<Map<String, dynamic>>? exerciseSets,
   }) async => throw UnimplementedError();
+  @override
+  Future<List<Map<String, dynamic>>> fetchExerciseHistory(
+    String exerciseId,
+  ) async => [];
   @override
   Future<Map<String, dynamic>> updateWorkoutLogRating({
     required String logId,
@@ -171,6 +176,58 @@ void main() {
       expect(results.hasSearched, isTrue);
       expect(results.isLoading, isFalse);
       expect(results.items, isEmpty);
+    },
+  );
+
+  test(
+    'a query matching only the Arabic titleAr (not the English title) still returns the item',
+    () async {
+      final fakeWorkouts = FakeWorkoutRepository()
+        ..workouts = [
+          {'_id': 'w1', 'title': 'Cardio Blast', 'titleAr': 'كارديو مكثف'},
+        ];
+      final container = ProviderContainer(
+        overrides: [
+          workoutRepositoryProvider.overrideWithValue(fakeWorkouts),
+          nutritionRepositoryProvider.overrideWithValue(
+            FakeNutritionRepository(),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.listen(searchAllResultsProvider, (_, _) {});
+
+      container.read(searchQueryControllerProvider.notifier).update('كارديو');
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final results = container.read(searchAllResultsProvider);
+      expect(results.items, hasLength(1));
+      expect(results.items.first.id, 'w1');
+    },
+  );
+
+  test(
+    'a query matching a workout\'s category (not its title) still returns the item — the "Breakfast" suggestion chip needs this since real recipe titles rarely contain the word itself',
+    () async {
+      final fakeRecipes = FakeNutritionRepository()
+        ..recipes = [
+          {'_id': 'r1', 'title': 'Spinach & Tomato Omelette', 'category': 'breakfast'},
+        ];
+      final container = ProviderContainer(
+        overrides: [
+          workoutRepositoryProvider.overrideWithValue(FakeWorkoutRepository()),
+          nutritionRepositoryProvider.overrideWithValue(fakeRecipes),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.listen(searchAllResultsProvider, (_, _) {});
+
+      container.read(searchQueryControllerProvider.notifier).update('breakfast');
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final results = container.read(searchAllResultsProvider);
+      expect(results.items, hasLength(1));
+      expect(results.items.first.id, 'r1');
     },
   );
 

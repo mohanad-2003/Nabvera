@@ -33,7 +33,9 @@ void main() {
       // theme in MyApp.build below (see the AnnotatedRegion there) — this
       // call only makes the system bars capable of being transparent.
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
       // Only report crashes from real (release/profile) runs — a `flutter
       // run` debug session crashing on a work-in-progress change shouldn't
@@ -41,7 +43,8 @@ void main() {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
         !kDebugMode,
       );
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
       PlatformDispatcher.instance.onError = (error, stack) {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;

@@ -7,7 +7,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_controller.g.dart';
 
-enum SearchTab { all, workoutSuggestions, nutritionSuggestions }
+/// A client-side filter over `SearchAllResults.items` by
+/// [SearchResultType] — purely a display filter over results already
+/// fetched for the current query, not a separate fetch of its own.
+enum SearchTab { all, workouts, nutrition }
 
 @riverpod
 class SearchTabController extends _$SearchTabController {
@@ -109,15 +112,27 @@ class SearchAllResults extends _$SearchAllResults {
       // duplicate that, so instead this fetches the small demo catalog
       // and filters locally — swap for `search: query` once the catalog
       // is large enough that fetching everything stops being cheap.
+      //
+      // Matches title, titleAr, *and* category — the search page's own
+      // suggestion chips (see `_kSuggestionMatchTerms`) send a term like
+      // "cardio" or "breakfast" that's really a category name, not
+      // necessarily a literal word in every matching item's title (e.g.
+      // "Spinach & Tomato Omelette" is `category: 'breakfast'` but never
+      // contains the word "breakfast"). Checking category too means a
+      // suggestion still finds its content even when the title itself
+      // doesn't spell out the category in words.
       final lower = query.toLowerCase();
-      final workouts =
-          (results[0])
-              .where((w) => (w['title'] as String? ?? '').toLowerCase().contains(lower))
-              .map(_workoutToResult);
-      final recipes =
-          (results[1])
-              .where((r) => (r['title'] as String? ?? '').toLowerCase().contains(lower))
-              .map(_recipeToResult);
+      bool matches(Map<String, dynamic> doc) {
+        final title = (doc['title'] as String? ?? '').toLowerCase();
+        final titleAr = (doc['titleAr'] as String? ?? '').toLowerCase();
+        final category = (doc['category'] as String? ?? '').toLowerCase();
+        return title.contains(lower) ||
+            titleAr.contains(lower) ||
+            category == lower;
+      }
+
+      final workouts = (results[0]).where(matches).map(_workoutToResult);
+      final recipes = (results[1]).where(matches).map(_recipeToResult);
       state = SearchResults(
         items: [...workouts, ...recipes],
         hasSearched: true,

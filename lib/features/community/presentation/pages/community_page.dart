@@ -12,6 +12,7 @@ import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/featured_card.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/community/domain/challenge_badges.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
@@ -281,6 +282,18 @@ class _ForumThreadCard extends StatelessWidget {
                       context,
                     ).textTheme.bodySmall?.copyWith(color: ext.textMuted),
                   ),
+                  if (thread.imageUrl != null) ...[
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: SmartImage(
+                        thread.imageUrl!,
+                        width: double.infinity,
+                        height: 160,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 6),
                   Row(
                     children: [

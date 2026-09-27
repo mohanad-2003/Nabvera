@@ -4,6 +4,7 @@ import 'package:nabvera/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/core/widgets/user_avatar.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
@@ -161,6 +162,7 @@ class _ForumDetailPageState extends ConsumerState<ForumDetailPage> {
                   authorName: widget.thread.displayAuthorName(l10n),
                   body: widget.thread.content,
                   isTopContribution: true,
+                  imageUrl: widget.thread.imageUrl,
                 ),
                 for (final comment in comments) ...[
                   Divider(height: 1, color: ext.glassBorder),
@@ -221,12 +223,17 @@ class _DiscussionCard extends StatelessWidget {
     required this.isTopContribution,
     this.onDelete,
     this.isDeleting = false,
+    this.imageUrl,
   });
 
   final AppThemeExtension ext;
   final String authorName;
   final String body;
   final bool isTopContribution;
+
+  /// The post's attached photo, if any — comments never have one, so this
+  /// is only ever passed for the top-of-thread post itself.
+  final String? imageUrl;
 
   /// Non-null only for the current user's own comment — gates showing a
   /// delete action instead of offering one that would just 404.
@@ -294,6 +301,18 @@ class _DiscussionCard extends StatelessWidget {
             body,
             style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted),
           ),
+          if (imageUrl != null) ...[
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SmartImage(
+                imageUrl!,
+                width: double.infinity,
+                height: 220,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
         ],
       ),
     );

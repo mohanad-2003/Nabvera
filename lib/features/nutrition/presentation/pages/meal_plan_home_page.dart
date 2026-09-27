@@ -1,4 +1,5 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/network/api_client.dart';
 import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
@@ -43,7 +44,52 @@ class _MealPlanHomePageState extends ConsumerState<MealPlanHomePage> {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: asyncPlan.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('$error', style: TextStyle(color: ext.textMuted))),
+        // A failed generate() attempt (e.g. today's free-tier quota
+        // already used) landed its error on this same provider — the one
+        // that also serves "fetch the current plan" — so without this,
+        // simply reopening this tab afterwards got stuck showing that
+        // stale error forever, with no header and no way back except
+        // leaving the tab. This tells the two cases apart and always
+        // offers a way out: reload (recovers to whatever plan already
+        // exists) for a generic failure, or the same upgrade prompt
+        // MealPlanGeneratingPage shows for the quota case specifically.
+        error:
+            (error, _) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _MealPlanHeader(l10n: l10n),
+                Expanded(
+                  child: Center(
+                    child:
+                        error is ApiException && error.statusCode == 403
+                            ? _MealPlanErrorContent(
+                              l10n: l10n,
+                              ext: ext,
+                              icon: Icons.workspace_premium_rounded,
+                              title: l10n.mealPlanUpgradeRequiredTitle,
+                              body: l10n.mealPlanUpgradeRequiredBody,
+                              actionLabel: l10n.mealPlanUpgradeRequiredCta,
+                              onAction:
+                                  () => context.push(
+                                    AppRoutes.subscriptionPaywall,
+                                  ),
+                            )
+                            : _MealPlanErrorContent(
+                              l10n: l10n,
+                              ext: ext,
+                              icon: Icons.error_outline_rounded,
+                              title: l10n.mealPlanGenerationFailedTitle,
+                              body: l10n.mealPlanGenerationFailedBody,
+                              actionLabel: l10n.actionRetry,
+                              onAction:
+                                  () => ref.invalidate(
+                                    mealPlanControllerProvider,
+                                  ),
+                            ),
+                  ),
+                ),
+              ],
+            ),
         data: (plan) {
           if (plan == null) return _EmptyState(l10n: l10n, ext: ext);
           return _PlanView(plan: plan, dayIndex: _dayIndex, onDaySelected: (i) => setState(() => _dayIndex = i));
@@ -59,10 +105,50 @@ class _MealPlanHomePageState extends ConsumerState<MealPlanHomePage> {
 /// reliable way back to the main dashboard. Optionally also shows a
 /// shopping-list shortcut once a plan exists.
 class _MealPlanHeader extends StatelessWidget {
-  const _MealPlanHeader({required this.l10n, this.showShoppingList = false});
+  const _MealPlanHeader({
+    required this.l10n,
+    this.showShoppingList = false,
+    this.showGenerateNew = false,
+  });
 
   final AppLocalizations l10n;
   final bool showShoppingList;
+
+  /// Only when a plan already exists — the empty state has its own,
+  /// larger "Generate" CTA in the body, so this would just be a
+  /// redundant second entry point there.
+  final bool showGenerateNew;
+
+  /// Confirms (generating overwrites today's active plan — the old one
+  /// stays reachable from history, but this isn't obviously reversible
+  /// from this screen) then opens the same generating screen the empty
+  /// state uses. Previously only reachable from the empty state, so a
+  /// plan with a data issue (e.g. an item with no recipe attached) had no
+  /// in-app way to get a fresh one without deleting/losing the existing
+  /// plan first.
+  Future<void> _regenerate(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text(l10n.mealPlanRegenerateConfirmTitle),
+            content: Text(l10n.mealPlanRegenerateConfirmBody),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(l10n.actionCancel),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(l10n.mealPlanGenerateNewTooltip),
+              ),
+            ],
+          ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.push(AppRoutes.mealPlanGenerating);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +160,12 @@ class _MealPlanHeader extends StatelessWidget {
             showActions: false,
           ),
         ),
+        if (showGenerateNew)
+          IconButton(
+            tooltip: l10n.mealPlanGenerateNewTooltip,
+            onPressed: () => _regenerate(context),
+            icon: const Icon(Icons.auto_awesome_outlined),
+          ),
         if (showShoppingList)
           IconButton(
             tooltip: l10n.mealPlanViewShoppingList,
@@ -151,6 +243,55 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
+/// Shared content for the meal-plan-provider error state — either the
+/// generic "something went wrong, retry" case or (distinguished by a 403
+/// ApiException) the same "upgrade required" messaging
+/// MealPlanGeneratingPage shows for a free-tier account that already used
+/// today's generation.
+class _MealPlanErrorContent extends StatelessWidget {
+  const _MealPlanErrorContent({
+    required this.l10n,
+    required this.ext,
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  final AppLocalizations l10n;
+  final AppThemeExtension ext;
+  final IconData icon;
+  final String title;
+  final String body;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 56, color: ext.textMuted),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleLarge?.copyWith(color: ext.textPrimary, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 8),
+          Text(body, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium?.copyWith(color: ext.textMuted)),
+          const SizedBox(height: 24),
+          SizedBox(width: 220, child: PrimaryButton(label: actionLabel, onPressed: onAction)),
+        ],
+      ),
+    );
+  }
+}
+
 class _PlanView extends ConsumerWidget {
   const _PlanView({required this.plan, required this.dayIndex, required this.onDaySelected});
 
@@ -167,7 +308,7 @@ class _PlanView extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _MealPlanHeader(l10n: l10n, showShoppingList: true),
+        _MealPlanHeader(l10n: l10n, showShoppingList: true, showGenerateNew: true),
         if (plan.generationSource == 'fallback')
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -239,9 +380,11 @@ class _MealSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w800, fontSize: 16)),
-          const SizedBox(height: 8),
-          for (final item in items)
+          const SizedBox(height: 4),
+          for (final item in items) ...[
             _MealItemCard(item: item, mealType: mealType, dayIndex: dayIndex),
+            if (item != items.last) Divider(height: 1, color: ext.glassBorder),
+          ],
         ],
       ),
     );
@@ -260,14 +403,8 @@ class _MealItemCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: ext.glassFill,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ext.glassBorder),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

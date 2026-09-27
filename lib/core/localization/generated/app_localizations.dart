@@ -1958,6 +1958,36 @@ abstract class AppLocalizations {
   /// **'+15s'**
   String get workoutRestAddSeconds;
 
+  /// No description provided for @workoutWeightKgLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg)'**
+  String get workoutWeightKgLabel;
+
+  /// No description provided for @workoutRepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get workoutRepsLabel;
+
+  /// No description provided for @workoutHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Progress'**
+  String get workoutHistoryTitle;
+
+  /// No description provided for @workoutHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a set to start tracking your progress on this exercise.'**
+  String get workoutHistoryEmpty;
+
+  /// No description provided for @workoutHistorySetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{weight} kg × {reps}'**
+  String workoutHistorySetSummary(String weight, int reps);
+
   /// No description provided for @workoutRatingTitle.
   ///
   /// In en, this message translates to:
@@ -2777,26 +2807,26 @@ abstract class AppLocalizations {
   /// No description provided for @searchTabWorkout.
   ///
   /// In en, this message translates to:
-  /// **'Workout'**
+  /// **'Workouts'**
   String get searchTabWorkout;
 
   /// No description provided for @searchTabNutrition.
   ///
   /// In en, this message translates to:
-  /// **'Nutrition'**
+  /// **'Meals'**
   String get searchTabNutrition;
 
-  /// No description provided for @searchWorkoutSuggestions.
+  /// No description provided for @searchPopularNow.
   ///
   /// In en, this message translates to:
-  /// **'Workout Suggestions'**
-  String get searchWorkoutSuggestions;
+  /// **'Popular now'**
+  String get searchPopularNow;
 
-  /// No description provided for @searchNutritionSuggestions.
+  /// No description provided for @searchTrySearching.
   ///
   /// In en, this message translates to:
-  /// **'Nutrition Suggestions'**
-  String get searchNutritionSuggestions;
+  /// **'Try searching'**
+  String get searchTrySearching;
 
   /// No description provided for @searchNoResultsTitle.
   ///
@@ -2821,6 +2851,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find workouts and meals by name — start typing above.'**
   String get searchStartTypingBody;
+
+  /// No description provided for @searchSuggestionCircuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Circuit'**
+  String get searchSuggestionCircuit;
+
+  /// No description provided for @searchSuggestionSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Split'**
+  String get searchSuggestionSplit;
+
+  /// No description provided for @searchSuggestionChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get searchSuggestionChallenge;
+
+  /// No description provided for @searchSuggestionLegs.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get searchSuggestionLegs;
+
+  /// No description provided for @searchSuggestionCardio.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get searchSuggestionCardio;
+
+  /// No description provided for @searchSuggestionBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get searchSuggestionBreakfast;
+
+  /// No description provided for @searchSuggestionYogurt.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogurt'**
+  String get searchSuggestionYogurt;
+
+  /// No description provided for @searchSuggestionVegetarian.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
+  String get searchSuggestionVegetarian;
+
+  /// No description provided for @searchSuggestionSmoothie.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoothie'**
+  String get searchSuggestionSmoothie;
+
+  /// No description provided for @searchSuggestionChicken.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken'**
+  String get searchSuggestionChicken;
 
   /// No description provided for @navFavorites.
   ///
@@ -4532,6 +4622,24 @@ abstract class AppLocalizations {
   /// **'Shopping List'**
   String get mealPlanViewShoppingList;
 
+  /// No description provided for @mealPlanGenerateNewTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate new plan'**
+  String get mealPlanGenerateNewTooltip;
+
+  /// No description provided for @mealPlanRegenerateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a new plan?'**
+  String get mealPlanRegenerateConfirmTitle;
+
+  /// No description provided for @mealPlanRegenerateConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This replaces your current plan with a new one. Your existing plan stays available in history.'**
+  String get mealPlanRegenerateConfirmBody;
+
   /// No description provided for @mealPlanViewHistory.
   ///
   /// In en, this message translates to:
@@ -5011,6 +5119,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t publish your post. Please try again.'**
   String get communityPostFailed;
+
+  /// No description provided for @communityAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get communityAddPhoto;
+
+  /// No description provided for @communityRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get communityRemovePhoto;
+
+  /// No description provided for @communityPhotoPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the photo picker. Please try again.'**
+  String get communityPhotoPickFailed;
 
   /// No description provided for @communityForumsEmptyAction.
   ///
