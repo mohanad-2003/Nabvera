@@ -160,92 +160,140 @@ class _YourRoutinePageState extends ConsumerState<YourRoutinePage> {
                               action: createButton,
                             ),
                           )
-                          : SliverList.separated(
-                            itemCount: routines.length,
-                            separatorBuilder:
-                                (_, _) => Divider(
-                                  height: 1,
-                                  thickness: .5,
-                                  color: ext.glassBorder,
-                                ),
-                            itemBuilder: (context, index) {
-                              final routine = routines[index];
-                              return ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                leading: Text(
-                                  '${index + 1}'.padLeft(2, '0'),
-                                  style: TextStyle(
-                                    color: ext.accentGlow,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                title: Text(
-                                  routine['name'] as String? ?? '',
-                                  style: TextStyle(
-                                    color: ext.textPrimary,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: RoutineSummary(routine: routine),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (_deletingRoutineId == routine['_id'])
-                                      SizedBox.square(
-                                        dimension: 40,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: ext.danger,
+                          : SliverPadding(
+                            padding: const EdgeInsets.only(top: 4),
+                            sliver: SliverList.separated(
+                              itemCount: routines.length,
+                              separatorBuilder:
+                                  (_, _) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final routine = routines[index];
+                                final deleting =
+                                    _deletingRoutineId == routine['_id'];
+                                return _RoutineCard(
+                                  index: index,
+                                  routine: routine,
+                                  deleting: deleting,
+                                  onDelete: () => _deleteRoutine(routine),
+                                  onTap:
+                                      deleting
+                                          ? null
+                                          : () => Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                              builder:
+                                                  (_) => RoutineDetailPage(
+                                                    routine: routine,
+                                                  ),
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    else
-                                      IconButton(
-                                        onPressed:
-                                            () => _deleteRoutine(routine),
-                                        tooltip: workoutCopy(
-                                          context,
-                                          'حذف الروتين',
-                                          'Delete routine',
-                                        ),
-                                        icon: Icon(
-                                          Icons.delete_outline_rounded,
-                                          color: ext.danger,
-                                        ),
-                                      ),
-                                    Icon(
-                                      Directionality.of(context) ==
-                                              TextDirection.rtl
-                                          ? Icons.chevron_left_rounded
-                                          : Icons.chevron_right_rounded,
-                                      color: ext.textMuted,
-                                    ),
-                                  ],
-                                ),
-                                onTap:
-                                    _deletingRoutineId == routine['_id']
-                                        ? null
-                                        : () => Navigator.of(context).push(
-                                          MaterialPageRoute<void>(
-                                            builder:
-                                                (_) => RoutineDetailPage(
-                                                  routine: routine,
-                                                ),
-                                          ),
-                                        ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One routine row, as a bordered card rather than a bare [ListTile] — the
+/// whole card is already tappable, so it carries no trailing chevron (that
+/// was pure redundant noise once the card itself signals "tap me").
+class _RoutineCard extends StatelessWidget {
+  const _RoutineCard({
+    required this.index,
+    required this.routine,
+    required this.deleting,
+    required this.onDelete,
+    required this.onTap,
+  });
+
+  final int index;
+  final Map<String, dynamic> routine;
+  final bool deleting;
+  final VoidCallback onDelete;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: ext.glassFill,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: ext.glassBorder),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: ext.accentGradient,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '${index + 1}'.padLeft(2, '0'),
+                    style: TextStyle(
+                      color: ext.onAccent,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      routine['name'] as String? ?? '',
+                      style: TextStyle(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    RoutineSummary(routine: routine),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (deleting)
+                SizedBox.square(
+                  dimension: 40,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: ext.danger,
+                    ),
+                  ),
+                )
+              else
+                IconButton(
+                  onPressed: onDelete,
+                  tooltip: workoutCopy(
+                    context,
+                    'حذف الروتين',
+                    'Delete routine',
+                  ),
+                  icon: Icon(Icons.delete_outline_rounded, color: ext.danger),
+                ),
+            ],
+          ),
         ),
       ),
     );
