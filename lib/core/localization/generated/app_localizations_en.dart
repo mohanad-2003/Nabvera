@@ -1280,6 +1280,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createRoutineChooseExercises => 'Choose Exercises';
 
   @override
+  String get createRoutineSearchExercisesHint => 'Search exercises by name…';
+
+  @override
   String get createRoutineMyRoutineTitle => 'My Routine';
 
   @override

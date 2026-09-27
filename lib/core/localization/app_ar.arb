@@ -394,6 +394,7 @@
   "weekdaySaturdayShort": "سبت",
   "weekdaySundayShort": "أحد",
   "createRoutineChooseExercises": "اختر التمارين",
+  "createRoutineSearchExercisesHint": "ابحث عن تمرين بالاسم...",
   "createRoutineMyRoutineTitle": "روتيني",
   "createRoutineMyRoutineEmpty": "لم تُضِف أي تمرين بعد. اضغط على + عند أي تمرين لإضافته هنا.",
   "createRoutineSetsLabel": "المجموعات",

@@ -1266,6 +1266,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createRoutineChooseExercises => 'اختر التمارين';
 
   @override
+  String get createRoutineSearchExercisesHint => 'ابحث عن تمرين بالاسم...';
+
+  @override
   String get createRoutineMyRoutineTitle => 'روتيني';
 
   @override

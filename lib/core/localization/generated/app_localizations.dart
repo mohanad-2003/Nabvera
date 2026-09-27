@@ -2384,6 +2384,12 @@ abstract class AppLocalizations {
   /// **'Choose Exercises'**
   String get createRoutineChooseExercises;
 
+  /// No description provided for @createRoutineSearchExercisesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search exercises by name…'**
+  String get createRoutineSearchExercisesHint;
+
   /// No description provided for @createRoutineMyRoutineTitle.
   ///
   /// In en, this message translates to:

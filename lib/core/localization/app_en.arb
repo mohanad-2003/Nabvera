@@ -669,6 +669,7 @@
   "weekdaySaturdayShort": "Sat",
   "weekdaySundayShort": "Sun",
   "createRoutineChooseExercises": "Choose Exercises",
+  "createRoutineSearchExercisesHint": "Search exercises by name…",
   "createRoutineMyRoutineTitle": "My Routine",
   "createRoutineMyRoutineEmpty": "No exercises added yet. Tap + on any exercise to add it here.",
   "createRoutineSetsLabel": "Sets",
