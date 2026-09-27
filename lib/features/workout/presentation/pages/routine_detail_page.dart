@@ -10,7 +10,7 @@ import 'package:nabvera/features/workout/presentation/widgets/workout_surface.da
 class RoutineSummary extends StatelessWidget {
   const RoutineSummary({super.key, required this.routine});
   final Map<String, dynamic> routine;
-
+  
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -22,6 +22,7 @@ class RoutineSummary extends StatelessWidget {
       'advanced' => l10n.workoutLevelAdvanced,
       _ => null,
     };
+
     final goal = switch (routine['goal']) {
       'gain_muscle' => l10n.routineGoalMuscleGain,
       'lose_weight' => l10n.routineGoalFatLoss,
@@ -68,9 +69,7 @@ class RoutineDetailPage extends StatelessWidget {
         children: [
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: WorkoutBackButton(
-              onTap: () => Navigator.of(context).pop(),
-            ),
+            child: WorkoutBackButton(onTap: () => Navigator.of(context).pop()),
           ),
           const SizedBox(height: 12),
           Text(
@@ -142,8 +141,7 @@ class RoutineDetailPage extends StatelessWidget {
                         // constructor's own default (see
                         // ExerciseDetailData.defaultDescription).
                         description:
-                            (exercise['description'] as String?)
-                                        ?.isNotEmpty ==
+                            (exercise['description'] as String?)?.isNotEmpty ==
                                     true
                                 ? exercise['description'] as String
                                 : ExerciseDetailData.defaultDescription,
