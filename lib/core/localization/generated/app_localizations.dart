@@ -2744,6 +2744,12 @@ abstract class AppLocalizations {
   /// **'Start Workout'**
   String get notificationsStartWorkout;
 
+  /// No description provided for @notificationsLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get notificationsLoadMore;
+
   /// No description provided for @notificationsSwipeDeleted.
   ///
   /// In en, this message translates to:

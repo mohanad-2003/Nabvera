@@ -760,6 +760,7 @@
   "notificationsEmptyTitle": "No Notifications Yet",
   "notificationsEmptyBody": "Your workout reminders, achievements, nutrition updates, and progress will appear here.",
   "notificationsStartWorkout": "Start Workout",
+  "notificationsLoadMore": "Load more",
   "notificationsSwipeDeleted": "Notification deleted",
   "notificationsSwipeMarkedRead": "Marked as read",
   "notificationsUndo": "Undo",

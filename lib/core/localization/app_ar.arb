@@ -458,6 +458,7 @@
   "notificationsEmptyTitle": "لا توجد إشعارات بعد",
   "notificationsEmptyBody": "ستظهر هنا تذكيرات تمارينك وإنجازاتك وتحديثات التغذية وتقدمك.",
   "notificationsStartWorkout": "ابدأ التمرين",
+  "notificationsLoadMore": "عرض المزيد",
   "notificationsSwipeDeleted": "تم حذف الإشعار",
   "notificationsSwipeMarkedRead": "تم التعليم كمقروء",
   "notificationsUndo": "تراجع",

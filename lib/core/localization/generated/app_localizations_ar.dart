@@ -1459,6 +1459,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsStartWorkout => 'ابدأ التمرين';
 
   @override
+  String get notificationsLoadMore => 'عرض المزيد';
+
+  @override
   String get notificationsSwipeDeleted => 'تم حذف الإشعار';
 
   @override

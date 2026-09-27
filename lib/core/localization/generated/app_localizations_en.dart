@@ -1474,6 +1474,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsStartWorkout => 'Start Workout';
 
   @override
+  String get notificationsLoadMore => 'Load more';
+
+  @override
   String get notificationsSwipeDeleted => 'Notification deleted';
 
   @override
