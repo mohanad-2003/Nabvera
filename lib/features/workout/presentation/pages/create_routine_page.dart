@@ -113,6 +113,158 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
     }
   }
 
+  /// One row of the "My Routine" list — shared by the inline sliver (below
+  /// the exercise library) and [_openMyRoutineSheet]'s quick-access modal,
+  /// so the two never drift out of sync.
+  Widget _selectedExerciseRow({
+    required BuildContext context,
+    required CreateRoutineState state,
+    required CreateRoutineController controller,
+    required AppLocalizations l10n,
+    required AppThemeExtension ext,
+    required int index,
+  }) {
+    final selection = state.selected[index];
+    final entry = state.libraryEntry(selection.exerciseId);
+    return Container(
+      key: ValueKey(selection.exerciseId),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom:
+              index == state.selected.length - 1
+                  ? BorderSide.none
+                  : BorderSide(color: ext.glassBorder),
+        ),
+      ),
+      child: SelectedExerciseItem(
+        image: entry.image,
+        name: '${index + 1}. ${entry.localizedName(context)}',
+        sets: selection.sets,
+        reps: selection.reps,
+        setsLabel: l10n.createRoutineSetsLabel,
+        repsLabel: l10n.createRoutineRepsLabel,
+        onSetsChanged:
+            (delta) => controller.updateSets(selection.exerciseId, delta),
+        onRepsChanged:
+            (delta) => controller.updateReps(selection.exerciseId, delta),
+        onRemove: () => controller.removeExercise(selection.exerciseId),
+        dragHandle: ReorderableDragStartListener(
+          index: index,
+          child: Icon(Icons.drag_handle_rounded, color: ext.textMuted),
+        ),
+      ),
+    );
+  }
+
+  /// Quick-access bottom sheet for reviewing/reordering the routine built
+  /// so far — reached by tapping the bottom bar's exercise-count stat,
+  /// instead of scrolling back down past the whole exercise library.
+  Future<void> _openMyRoutineSheet(AppLocalizations l10n) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.4,
+          maxChildSize: 0.92,
+          expand: false,
+          builder: (context, scrollController) {
+            return Consumer(
+              builder: (context, ref, _) {
+                final ext = Theme.of(context).extension<AppThemeExtension>()!;
+                final state = ref.watch(createRoutineControllerProvider);
+                final controller = ref.read(
+                  createRoutineControllerProvider.notifier,
+                );
+                return DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: ext.cardColor,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: ext.glassBorder,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                l10n.createRoutineMyRoutineTitle,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleLarge?.copyWith(
+                                  color: ext.textPrimary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                color: ext.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child:
+                            state.selected.isEmpty
+                                ? Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                    ),
+                                    child: Text(
+                                      l10n.createRoutineMyRoutineEmpty,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: ext.textMuted),
+                                    ),
+                                  ),
+                                )
+                                : ReorderableListView.builder(
+                                  scrollController: scrollController,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  itemCount: state.selected.length,
+                                  onReorderItem: controller.reorder,
+                                  itemBuilder:
+                                      (context, index) => _selectedExerciseRow(
+                                        context: context,
+                                        state: state,
+                                        controller: controller,
+                                        l10n: l10n,
+                                        ext: ext,
+                                        index: index,
+                                      ),
+                                ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _handleCreate(
     CreateRoutineController controller,
     CreateRoutineState state,
@@ -190,6 +342,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
         isLoading: _creating,
         errorText: _validationError,
         onPressed: () => _handleCreate(controller, state, l10n),
+        onTapStats: () => _openMyRoutineSheet(l10n),
       ),
       child: AbsorbPointer(
         absorbing: _creating,
@@ -459,49 +612,15 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                 SliverReorderableList(
                   itemCount: state.selected.length,
                   onReorderItem: controller.reorder,
-                  itemBuilder: (context, index) {
-                    final selection = state.selected[index];
-                    final entry = state.libraryEntry(selection.exerciseId);
-                    return Container(
-                      key: ValueKey(selection.exerciseId),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom:
-                              index == state.selected.length - 1
-                                  ? BorderSide.none
-                                  : BorderSide(color: ext.glassBorder),
-                        ),
+                  itemBuilder:
+                      (context, index) => _selectedExerciseRow(
+                        context: context,
+                        state: state,
+                        controller: controller,
+                        l10n: l10n,
+                        ext: ext,
+                        index: index,
                       ),
-                      child: SelectedExerciseItem(
-                        image: entry.image,
-                        name: '${index + 1}. ${entry.localizedName(context)}',
-                        sets: selection.sets,
-                        reps: selection.reps,
-                        setsLabel: l10n.createRoutineSetsLabel,
-                        repsLabel: l10n.createRoutineRepsLabel,
-                        onSetsChanged:
-                            (delta) => controller.updateSets(
-                              selection.exerciseId,
-                              delta,
-                            ),
-                        onRepsChanged:
-                            (delta) => controller.updateReps(
-                              selection.exerciseId,
-                              delta,
-                            ),
-                        onRemove:
-                            () =>
-                                controller.removeExercise(selection.exerciseId),
-                        dragHandle: ReorderableDragStartListener(
-                          index: index,
-                          child: Icon(
-                            Icons.drag_handle_rounded,
-                            color: ext.textMuted,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
