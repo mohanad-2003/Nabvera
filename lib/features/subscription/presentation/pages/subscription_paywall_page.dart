@@ -82,14 +82,17 @@ class _SubscriptionPaywallPageState
 
   /// Called from [_PurchaseFlow] (a separate widget, so it can't touch
   /// this State's `setState` directly — that's `@protected`).
-  void selectPackage(Package package) => setState(() => _selectedPackage = package);
+  void selectPackage(Package package) =>
+      setState(() => _selectedPackage = package);
 
   Future<void> _manageSubscription() async {
     try {
       await ref.read(subscriptionRepositoryProvider).openManageSubscriptions();
     } catch (_) {
       if (mounted) {
-        _showError(AppLocalizations.of(context).subscriptionManageSubscriptionFailed);
+        _showError(
+          AppLocalizations.of(context).subscriptionManageSubscriptionFailed,
+        );
       }
     }
   }
@@ -145,19 +148,20 @@ class _SubscriptionPaywallPageState
               Center(
                 child: TextButton(
                   onPressed: _purchasing || _restoring ? null : _restore,
-                  child: _restoring
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: ext.textMuted,
+                  child:
+                      _restoring
+                          ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: ext.textMuted,
+                            ),
+                          )
+                          : Text(
+                            l10n.subscriptionRestorePurchases,
+                            style: TextStyle(color: ext.textMuted),
                           ),
-                        )
-                      : Text(
-                          l10n.subscriptionRestorePurchases,
-                          style: TextStyle(color: ext.textMuted),
-                        ),
                 ),
               ),
             const SizedBox(height: 8),
@@ -187,18 +191,22 @@ class _PurchaseFlow extends ConsumerWidget {
     final busy = state._purchasing || state._restoring;
 
     return offerings.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 40),
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (_, _) => _OfferingsUnavailable(
-        message: l10n.subscriptionOfferingsUnavailable,
-      ),
+      loading:
+          () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+      error:
+          (_, _) => _OfferingsUnavailable(
+            message: l10n.subscriptionOfferingsUnavailable,
+            onRetry: () => ref.invalidate(offeringsProvider),
+          ),
       data: (offeringsResult) {
         final packages = offeringsResult.current?.availablePackages ?? const [];
         if (packages.isEmpty) {
           return _OfferingsUnavailable(
             message: l10n.subscriptionOfferingsUnavailable,
+            onRetry: () => ref.invalidate(offeringsProvider),
           );
         }
         state._selectedPackage ??= packages.first;
@@ -210,7 +218,8 @@ class _PurchaseFlow extends ConsumerWidget {
               _PlanCard(
                 package: packages[i],
                 selected:
-                    state._selectedPackage?.identifier == packages[i].identifier,
+                    state._selectedPackage?.identifier ==
+                    packages[i].identifier,
                 onTap: busy ? null : () => state.selectPackage(packages[i]),
               ),
             ],
@@ -219,9 +228,11 @@ class _PurchaseFlow extends ConsumerWidget {
               loading: state._purchasing,
               enabled: !busy && state._selectedPackage != null,
               label: l10n.subscriptionContinueButton,
-              onTap: () => state._selectedPackage == null
-                  ? null
-                  : state._purchase(state._selectedPackage!),
+              onTap:
+                  () =>
+                      state._selectedPackage == null
+                          ? null
+                          : state._purchase(state._selectedPackage!),
             ),
           ],
         );
@@ -248,10 +259,10 @@ class _ActiveSubscriptionCard extends StatelessWidget {
   final VoidCallback onManage;
 
   String get _tierLabel => switch (info.tier) {
-        SubscriptionTier.yearly => l10n.subscriptionActiveTierYearly,
-        SubscriptionTier.monthly => l10n.subscriptionActiveTierMonthly,
-        SubscriptionTier.free => '',
-      };
+    SubscriptionTier.yearly => l10n.subscriptionActiveTierYearly,
+    SubscriptionTier.monthly => l10n.subscriptionActiveTierMonthly,
+    SubscriptionTier.free => '',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -267,8 +278,15 @@ class _ActiveSubscriptionCard extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(shape: BoxShape.circle, gradient: ext.accentGradient),
-                child: Icon(Icons.workspace_premium_rounded, color: ext.onAccent, size: 22),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: ext.accentGradient,
+                ),
+                child: Icon(
+                  Icons.workspace_premium_rounded,
+                  color: ext.onAccent,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -285,7 +303,10 @@ class _ActiveSubscriptionCard extends StatelessWidget {
                     ),
                     if (_tierLabel.isNotEmpty) ...[
                       const SizedBox(height: 2),
-                      Text(_tierLabel, style: TextStyle(color: ext.textMuted, fontSize: 13)),
+                      Text(
+                        _tierLabel,
+                        style: TextStyle(color: ext.textMuted, fontSize: 13),
+                      ),
                     ],
                   ],
                 ),
@@ -300,12 +321,13 @@ class _ActiveSubscriptionCard extends StatelessWidget {
               info.status == SubscriptionStatus.gracePeriod
                   ? l10n.subscriptionActiveGracePeriod
                   : info.willRenew
-                      ? l10n.subscriptionActiveRenewsOn(dateLabel)
-                      : l10n.subscriptionActiveExpiresOn(dateLabel),
+                  ? l10n.subscriptionActiveRenewsOn(dateLabel)
+                  : l10n.subscriptionActiveExpiresOn(dateLabel),
               style: TextStyle(
-                color: info.status == SubscriptionStatus.gracePeriod
-                    ? ext.warning
-                    : ext.textMuted,
+                color:
+                    info.status == SubscriptionStatus.gracePeriod
+                        ? ext.warning
+                        : ext.textMuted,
                 fontSize: 13,
               ),
             ),
@@ -587,18 +609,32 @@ class _ContinueButton extends StatelessWidget {
 }
 
 class _OfferingsUnavailable extends StatelessWidget {
-  const _OfferingsUnavailable({required this.message});
+  const _OfferingsUnavailable({required this.message, this.onRetry});
 
   final String message;
+
+  /// Null only when there's genuinely nothing to retry (kept optional so
+  /// this widget doesn't assume a retry is always possible).
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
     return PremiumGlassCard(
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: ext.textMuted),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: ext.textMuted),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 14),
+            TextButton(onPressed: onRetry, child: Text(l10n.actionRetry)),
+          ],
+        ],
       ),
     );
   }
