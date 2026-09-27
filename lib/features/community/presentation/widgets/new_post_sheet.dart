@@ -122,99 +122,101 @@ class _NewPostSheetState extends ConsumerState<_NewPostSheet> {
           border: Border.all(color: ext.glassBorder),
         ),
         padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.communityNewPostTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: ext.textPrimary,
-                fontWeight: FontWeight.w900,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.communityNewPostTitle,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: ext.textPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            AppTextField(
-              controller: _controller,
-              hint: l10n.communityNewPostHint,
-              maxLines: 5,
-            ),
-            const SizedBox(height: 12),
-            if (_imagePreviewBytes != null)
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.memory(
-                      _imagePreviewBytes!,
-                      width: double.infinity,
-                      height: 160,
-                      fit: BoxFit.cover,
-                      // A picked file that fails to decode (corrupt, or a
-                      // format Flutter's built-in codecs don't support)
-                      // should never leave a mysterious blank box with no
-                      // explanation — this at least tells the user their
-                      // photo didn't load rather than silently no-op'ing.
-                      errorBuilder:
-                          (context, error, stackTrace) => Container(
-                            width: double.infinity,
-                            height: 160,
-                            color: ext.glassFill,
-                            alignment: Alignment.center,
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: ext.textMuted,
-                              size: 32,
+              const SizedBox(height: 14),
+              AppTextField(
+                controller: _controller,
+                hint: l10n.communityNewPostHint,
+                maxLines: 5,
+              ),
+              const SizedBox(height: 12),
+              if (_imagePreviewBytes != null)
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.memory(
+                        _imagePreviewBytes!,
+                        width: double.infinity,
+                        height: 160,
+                        fit: BoxFit.cover,
+                        // A picked file that fails to decode (corrupt, or a
+                        // format Flutter's built-in codecs don't support)
+                        // should never leave a mysterious blank box with no
+                        // explanation — this at least tells the user their
+                        // photo didn't load rather than silently no-op'ing.
+                        errorBuilder:
+                            (context, error, stackTrace) => Container(
+                              width: double.infinity,
+                              height: 160,
+                              color: ext.glassFill,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: ext.textMuted,
+                                size: 32,
+                              ),
                             ),
-                          ),
+                      ),
                     ),
-                  ),
-                  PositionedDirectional(
-                    top: 8,
-                    end: 8,
-                    child: GestureDetector(
-                      onTap:
-                          () => setState(() {
-                            _pendingImage = null;
-                            _imagePreviewBytes = null;
-                          }),
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: Colors.white,
-                          size: 18,
+                    PositionedDirectional(
+                      top: 8,
+                      end: 8,
+                      child: GestureDetector(
+                        onTap:
+                            () => setState(() {
+                              _pendingImage = null;
+                              _imagePreviewBytes = null;
+                            }),
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            else
-              OutlinedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.image_outlined, size: 18),
-                label: Text(l10n.communityAddPhoto),
-              ),
-            if (_error != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: TextStyle(color: ext.danger, fontSize: 12.5),
+                  ],
+                )
+              else
+                OutlinedButton.icon(
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.image_outlined, size: 18),
+                  label: Text(l10n.communityAddPhoto),
+                ),
+              if (_error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _error!,
+                  style: TextStyle(color: ext.danger, fontSize: 12.5),
+                ),
+              ],
+              const SizedBox(height: 16),
+              PrimaryButton(
+                label: l10n.communityPostAction,
+                isLoading: _posting,
+                onPressed: _submit,
               ),
             ],
-            const SizedBox(height: 16),
-            PrimaryButton(
-              label: l10n.communityPostAction,
-              isLoading: _posting,
-              onPressed: _submit,
-            ),
-          ],
+          ),
         ),
       ),
     );

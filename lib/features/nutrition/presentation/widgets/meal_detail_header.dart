@@ -120,23 +120,29 @@ class MealDetailHeader extends StatelessWidget {
                     children: [
                       if (meal.protein != null)
                         Expanded(
-                          child: _MacroStat(
+                          child: _MacroRing(
                             label: l10n.nutritionProteinLabel,
-                            value: meal.protein!,
+                            grams: meal.protein!,
+                            dailyValueGrams: 50,
+                            color: const Color(0xFF29D9C0),
                           ),
                         ),
                       if (meal.carbs != null)
                         Expanded(
-                          child: _MacroStat(
+                          child: _MacroRing(
                             label: l10n.nutritionCarbsLabel,
-                            value: meal.carbs!,
+                            grams: meal.carbs!,
+                            dailyValueGrams: 275,
+                            color: const Color(0xFFFFB020),
                           ),
                         ),
                       if (meal.fat != null)
                         Expanded(
-                          child: _MacroStat(
+                          child: _MacroRing(
                             label: l10n.nutritionFatLabel,
-                            value: meal.fat!,
+                            grams: meal.fat!,
+                            dailyValueGrams: 78,
+                            color: const Color(0xFFE8951A),
                           ),
                         ),
                     ],
@@ -150,8 +156,10 @@ class MealDetailHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final ingredient in meal.localizedIngredients(context))
-                        _Bullet(text: ingredient),
+                      for (final ingredient in meal.localizedIngredients(
+                        context,
+                      ))
+                        _IngredientRow(text: ingredient),
                     ],
                   ),
                 ),
@@ -163,11 +171,14 @@ class MealDetailHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final (i, step) in meal.localizedPreparation(context).indexed)
+                      for (final (i, step)
+                          in meal.localizedPreparation(context).indexed)
                         _StepRow(
                           index: i + 1,
                           text: step,
-                          isLast: i == meal.localizedPreparation(context).length - 1,
+                          isLast:
+                              i ==
+                              meal.localizedPreparation(context).length - 1,
                         ),
                     ],
                   ),
@@ -181,7 +192,8 @@ class MealDetailHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final tip in meal.localizedTips(context)) _Bullet(text: tip),
+                      for (final tip in meal.localizedTips(context))
+                        _Bullet(text: tip),
                     ],
                   ),
                 ),
@@ -442,27 +454,85 @@ class _SectionCard extends StatelessWidget {
   }
 }
 
-class _MacroStat extends StatelessWidget {
-  const _MacroStat({required this.label, required this.value});
+/// A single macro's share of a standard daily reference intake, drawn as a
+/// filled ring with the percentage centered inside — the recipe only ever
+/// carries an absolute gram amount, so [dailyValueGrams] (FDA %DV-style
+/// reference: 50g protein / 275g carbs / 78g fat) is what turns that into a
+/// meaningful ring fraction instead of an arbitrary bar length.
+class _MacroRing extends StatelessWidget {
+  const _MacroRing({
+    required this.label,
+    required this.grams,
+    required this.dailyValueGrams,
+    required this.color,
+  });
 
   final String label;
-  final String value;
+
+  /// e.g. `"12g"` — parsed back to a number for the ring fraction.
+  final String grams;
+  final double dailyValueGrams;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final value =
+        double.tryParse(RegExp(r'[\d.]+').stringMatch(grams) ?? '') ?? 0;
+    final fraction = (value / dailyValueGrams).clamp(0.0, 1.0);
+    final percent = (fraction * 100).round();
+
     return Column(
       children: [
+        SizedBox(
+          width: 56,
+          height: 56,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 56,
+                height: 56,
+                child: CircularProgressIndicator(
+                  value: 1,
+                  strokeWidth: 5,
+                  strokeCap: StrokeCap.round,
+                  color: ext.glassBorder,
+                ),
+              ),
+              SizedBox(
+                width: 56,
+                height: 56,
+                child: CircularProgressIndicator(
+                  value: fraction,
+                  strokeWidth: 5,
+                  strokeCap: StrokeCap.round,
+                  backgroundColor: Colors.transparent,
+                  color: color,
+                ),
+              ),
+              Text(
+                '$percent%',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: ext.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
-          value,
+          grams,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
             color: ext.textPrimary,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: ext.textMuted)),
+        const SizedBox(height: 2),
+        Text(label, style: TextStyle(fontSize: 11.5, color: ext.textMuted)),
       ],
     );
   }
@@ -503,6 +573,87 @@ class _Bullet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One ingredient line, split into a leading quantity chip (when the string
+/// starts with a recognizable amount, e.g. `"250g Steel-Cut Oats"`) and the
+/// ingredient name — `MealDetail.ingredients` only ever hands over that one
+/// combined string, so the split happens here rather than upstream.
+class _IngredientRow extends StatelessWidget {
+  const _IngredientRow({required this.text});
+
+  final String text;
+
+  static final _leadingAmount = RegExp(
+    r'^([\d./]+\s?(?:g|kg|ml|l|cup|cups|tbsp|tsp|oz|pcs|piece|pieces|clove|cloves|slice|slices|كوب|ملعقة|جرام|غرام|جم|غم|كغم|حبة|حبات)?)\s+(.+)$',
+    caseSensitive: false,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final ext = theme.extension<AppThemeExtension>()!;
+    final match = _leadingAmount.firstMatch(text);
+    final amount = match?.group(1)?.trim();
+    final name = match?.group(2)?.trim() ?? text;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: ext.glassFill,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: ext.glassBorder),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                name,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: ext.textPrimary,
+                  height: 1.3,
+                ),
+              ),
+            ),
+            if (amount != null && amount.isNotEmpty) ...[
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  gradient: ext.accentGradient,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Text(
+                  amount,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w900,
+                    color: ext.onAccent,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
