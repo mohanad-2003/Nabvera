@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:nabvera/features/community/data/community_repository.dart';
 import 'package:nabvera/features/community/presentation/providers/community_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,7 +65,16 @@ class FakeCommunityRepository implements CommunityRepository {
   @override
   Future<(int, bool)> toggleLike(String postId) async => (0, false);
   @override
-  Future<Map<String, dynamic>> createPost(String content) async => {};
+  Future<Map<String, dynamic>> createPost(
+    String content, {
+    String? imageUrl,
+  }) async => {};
+  @override
+  Future<String> uploadPostImage({
+    required Uint8List bytes,
+    required String filename,
+    String? contentType,
+  }) async => '';
   @override
   Future<void> deletePost(String postId) async {}
   @override

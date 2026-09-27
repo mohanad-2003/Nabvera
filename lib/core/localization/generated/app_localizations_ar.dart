@@ -2725,6 +2725,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get communityPostFailed => 'تعذّر نشر منشورك. حاول مرة أخرى.';
 
   @override
+  String get communityAddPhoto => 'إضافة صورة';
+
+  @override
+  String get communityRemovePhoto => 'إزالة الصورة';
+
+  @override
+  String get communityPhotoPickFailed => 'تعذّر فتح معرض الصور. حاول مرة أخرى.';
+
+  @override
   String get communityForumsEmptyAction => 'منشور جديد';
 
   @override

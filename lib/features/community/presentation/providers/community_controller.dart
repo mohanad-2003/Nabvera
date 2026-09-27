@@ -65,8 +65,10 @@ class CommunityForums extends _$CommunityForums {
   /// field (`_id`, `createdAt`, the populated `author`) that
   /// [ForumThread.fromJson] needs. Rethrows on failure so the composer UI
   /// can show a real error instead of silently discarding the post.
-  Future<void> create(String content) async {
-    await ref.read(communityRepositoryProvider).createPost(content);
+  Future<void> create(String content, {String? imageUrl}) async {
+    await ref
+        .read(communityRepositoryProvider)
+        .createPost(content, imageUrl: imageUrl);
     await _load();
   }
 

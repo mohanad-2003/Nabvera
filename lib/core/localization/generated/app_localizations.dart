@@ -5120,6 +5120,24 @@ abstract class AppLocalizations {
   /// **'Couldn\'t publish your post. Please try again.'**
   String get communityPostFailed;
 
+  /// No description provided for @communityAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get communityAddPhoto;
+
+  /// No description provided for @communityRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get communityRemovePhoto;
+
+  /// No description provided for @communityPhotoPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the photo picker. Please try again.'**
+  String get communityPhotoPickFailed;
+
   /// No description provided for @communityForumsEmptyAction.
   ///
   /// In en, this message translates to:

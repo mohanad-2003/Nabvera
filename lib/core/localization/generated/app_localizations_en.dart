@@ -2766,6 +2766,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t publish your post. Please try again.';
 
   @override
+  String get communityAddPhoto => 'Add photo';
+
+  @override
+  String get communityRemovePhoto => 'Remove photo';
+
+  @override
+  String get communityPhotoPickFailed =>
+      'Couldn\'t open the photo picker. Please try again.';
+
+  @override
   String get communityForumsEmptyAction => 'New Post';
 
   @override

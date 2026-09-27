@@ -197,6 +197,7 @@ class ForumThread {
     required this.liked,
     required this.commentsCount,
     this.isOwnPost = false,
+    this.imageUrl,
   });
 
   final String id;
@@ -213,6 +214,11 @@ class ForumThread {
   final int likesCount;
   final bool liked;
   final int commentsCount;
+
+  /// An optional photo attached to the post (`Post.imageUrl`) — null for
+  /// every post made before this existed, and for a text-only post made
+  /// after.
+  final String? imageUrl;
 
   /// Whether the signed-in user authored this post — gates showing a
   /// delete action (`DELETE /posts/:id` refuses anyone else's post
@@ -235,6 +241,7 @@ class ForumThread {
         liked: liked ?? this.liked,
         commentsCount: commentsCount ?? this.commentsCount,
         isOwnPost: isOwnPost,
+        imageUrl: imageUrl,
       );
 
   /// Builds a thread card from a `/api/posts` JSON document.
@@ -260,6 +267,7 @@ class ForumThread {
       liked: currentUserId.isNotEmpty && likes.contains(currentUserId),
       commentsCount: (json['commentsCount'] as int?) ?? 0,
       isOwnPost: currentUserId.isNotEmpty && authorId == currentUserId,
+      imageUrl: json['imageUrl'] as String?,
     );
   }
 
