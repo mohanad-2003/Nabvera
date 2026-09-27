@@ -3,7 +3,11 @@ import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class RoutineStat {
-  const RoutineStat({required this.icon, required this.value, required this.label});
+  const RoutineStat({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
 
   final IconData icon;
   final String value;
@@ -23,6 +27,7 @@ class RoutineBottomBar extends StatelessWidget {
     required this.isLoading,
     required this.onPressed,
     this.errorText,
+    this.onTapStats,
   });
 
   final List<RoutineStat> stats;
@@ -31,9 +36,29 @@ class RoutineBottomBar extends StatelessWidget {
   final VoidCallback onPressed;
   final String? errorText;
 
+  /// Opens a quick-access view of the exercises picked so far (reorder,
+  /// adjust sets/reps, remove) — without it, reviewing a selection made
+  /// long ago means scrolling back down past the entire exercise library.
+  final VoidCallback? onTapStats;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+
+    final statsRow = Row(
+      children: [
+        for (var i = 0; i < stats.length; i++) ...[
+          if (i != 0)
+            Container(
+              width: 1,
+              height: 28,
+              color: ext.glassBorder,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+            ),
+          Expanded(child: _StatItem(stat: stats[i], ext: ext)),
+        ],
+      ],
+    );
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -47,21 +72,34 @@ class RoutineBottomBar extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  for (var i = 0; i < stats.length; i++) ...[
-                    if (i != 0)
-                      Container(width: 1, height: 28, color: ext.glassBorder, margin: const EdgeInsets.symmetric(horizontal: 10)),
-                    Expanded(child: _StatItem(stat: stats[i], ext: ext)),
-                  ],
-                ],
-              ),
+              if (onTapStats != null) ...[
+                Icon(
+                  Icons.keyboard_arrow_up_rounded,
+                  color: ext.textMuted,
+                  size: 16,
+                ),
+                const SizedBox(height: 2),
+                InkWell(
+                  onTap: onTapStats,
+                  borderRadius: BorderRadius.circular(16),
+                  child: statsRow,
+                ),
+              ] else
+                statsRow,
               const SizedBox(height: 14),
               if (errorText != null) ...[
-                Text(errorText!, style: TextStyle(color: ext.danger, fontSize: 12.5)),
+                Text(
+                  errorText!,
+                  style: TextStyle(color: ext.danger, fontSize: 12.5),
+                ),
                 const SizedBox(height: 10),
               ],
-              PrimaryButton(showShadow: false, label: buttonLabel, isLoading: isLoading, onPressed: onPressed),
+              PrimaryButton(
+                showShadow: false,
+                label: buttonLabel,
+                isLoading: isLoading,
+                onPressed: onPressed,
+              ),
             ],
           ),
         ),
@@ -87,7 +125,11 @@ class _StatItem extends StatelessWidget {
           stat.value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w900, fontSize: 13),
+          style: TextStyle(
+            color: ext.textPrimary,
+            fontWeight: FontWeight.w900,
+            fontSize: 13,
+          ),
         ),
         Text(
           stat.label,
