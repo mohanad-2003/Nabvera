@@ -2384,6 +2384,12 @@ abstract class AppLocalizations {
   /// **'Choose Exercises'**
   String get createRoutineChooseExercises;
 
+  /// No description provided for @createRoutineSearchExercisesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search exercises by name…'**
+  String get createRoutineSearchExercisesHint;
+
   /// No description provided for @createRoutineMyRoutineTitle.
   ///
   /// In en, this message translates to:
@@ -2743,6 +2749,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start Workout'**
   String get notificationsStartWorkout;
+
+  /// No description provided for @notificationsLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get notificationsLoadMore;
 
   /// No description provided for @notificationsSwipeDeleted.
   ///
@@ -3121,12 +3133,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full Name'**
   String get editProfileFullName;
-
-  /// No description provided for @editProfileMobileNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Mobile Number'**
-  String get editProfileMobileNumber;
 
   /// No description provided for @editProfileDateOfBirth.
   ///

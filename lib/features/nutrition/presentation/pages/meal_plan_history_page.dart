@@ -1,6 +1,7 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/state_views.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/meal_plan_controller.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +28,23 @@ class MealPlanHistoryPage extends ConsumerWidget {
           const SizedBox(height: 12),
           Expanded(
             child: asyncHistory.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('$error', style: TextStyle(color: ext.textMuted))),
+              loading: () => const LoadingView(),
+              error:
+                  (error, _) => ErrorStateView(
+                    message: l10n.authErrorGeneric,
+                    onRetry: () => ref.invalidate(mealPlanHistoryProvider),
+                  ),
               data: (plans) {
                 if (plans.isEmpty) {
-                  return Center(child: Text(l10n.mealPlanHistoryEmpty, style: TextStyle(color: ext.textMuted)));
+                  return EmptyStateView(
+                    icon: Icons.history_rounded,
+                    title: l10n.mealPlanHistoryEmpty,
+                  );
                 }
                 return ListView.separated(
                   itemCount: plans.length,
-                  separatorBuilder: (_, _) => Divider(height: 1, color: ext.glassBorder),
+                  separatorBuilder:
+                      (_, _) => Divider(height: 1, color: ext.glassBorder),
                   itemBuilder: (context, index) {
                     final plan = plans[index];
                     return ListTile(

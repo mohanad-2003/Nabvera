@@ -370,7 +370,7 @@ class _CreateRoutinePageState extends ConsumerState<CreateRoutinePage> {
                       TextField(
                         onChanged: (value) => setState(() => _query = value),
                         decoration: InputDecoration(
-                          hintText: l10n.searchHint,
+                          hintText: l10n.createRoutineSearchExercisesHint,
                           prefixIcon: const Icon(Icons.search_rounded),
                         ),
                       ),

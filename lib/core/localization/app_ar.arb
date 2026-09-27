@@ -394,6 +394,7 @@
   "weekdaySaturdayShort": "سبت",
   "weekdaySundayShort": "أحد",
   "createRoutineChooseExercises": "اختر التمارين",
+  "createRoutineSearchExercisesHint": "ابحث عن تمرين بالاسم...",
   "createRoutineMyRoutineTitle": "روتيني",
   "createRoutineMyRoutineEmpty": "لم تُضِف أي تمرين بعد. اضغط على + عند أي تمرين لإضافته هنا.",
   "createRoutineSetsLabel": "المجموعات",
@@ -458,6 +459,7 @@
   "notificationsEmptyTitle": "لا توجد إشعارات بعد",
   "notificationsEmptyBody": "ستظهر هنا تذكيرات تمارينك وإنجازاتك وتحديثات التغذية وتقدمك.",
   "notificationsStartWorkout": "ابدأ التمرين",
+  "notificationsLoadMore": "عرض المزيد",
   "notificationsSwipeDeleted": "تم حذف الإشعار",
   "notificationsSwipeMarkedRead": "تم التعليم كمقروء",
   "notificationsUndo": "تراجع",
@@ -525,7 +527,6 @@
 
   "editProfileTitle": "تعديل الملف الشخصي",
   "editProfileFullName": "الاسم الكامل",
-  "editProfileMobileNumber": "رقم الجوال",
   "editProfileDateOfBirth": "تاريخ الميلاد",
   "editProfileWeight": "الوزن",
   "editProfileHeight": "الطول",

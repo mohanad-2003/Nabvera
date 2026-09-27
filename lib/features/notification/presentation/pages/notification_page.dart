@@ -151,19 +151,15 @@ class NotificationPage extends ConsumerWidget {
                                         )
                                         : TextButton(
                                           onPressed:
-                                              () => ref
-                                                  .read(
-                                                    notificationListControllerProvider
-                                                        .notifier,
-                                                  )
-                                                  .loadMore(),
+                                              () =>
+                                                  ref
+                                                      .read(
+                                                        notificationListControllerProvider
+                                                            .notifier,
+                                                      )
+                                                      .loadMore(),
                                           child: Text(
-                                            Localizations.localeOf(
-                                                          context,
-                                                        ).languageCode ==
-                                                        'ar'
-                                                    ? 'عرض المزيد'
-                                                    : 'Load more',
+                                            l10n.notificationsLoadMore,
                                           ),
                                         ),
                               ),

@@ -1266,6 +1266,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createRoutineChooseExercises => 'اختر التمارين';
 
   @override
+  String get createRoutineSearchExercisesHint => 'ابحث عن تمرين بالاسم...';
+
+  @override
   String get createRoutineMyRoutineTitle => 'روتيني';
 
   @override
@@ -1457,6 +1460,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationsStartWorkout => 'ابدأ التمرين';
+
+  @override
+  String get notificationsLoadMore => 'عرض المزيد';
 
   @override
   String get notificationsSwipeDeleted => 'تم حذف الإشعار';
@@ -1655,9 +1661,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileFullName => 'الاسم الكامل';
-
-  @override
-  String get editProfileMobileNumber => 'رقم الجوال';
 
   @override
   String get editProfileDateOfBirth => 'تاريخ الميلاد';

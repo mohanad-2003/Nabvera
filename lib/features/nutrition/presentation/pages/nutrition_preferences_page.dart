@@ -2,6 +2,7 @@ import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/core/widgets/state_views.dart';
 import 'package:nabvera/features/nutrition/domain/nutrition_preferences.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_preferences_controller.dart';
 import 'package:nabvera/features/nutrition/presentation/widgets/option_selector.dart';
@@ -18,11 +19,12 @@ String _dietLabel(AppLocalizations l10n, String value) => switch (value) {
   _ => value,
 };
 
-String _cookingTimeLabel(AppLocalizations l10n, String value) => switch (value) {
-  'quick' => l10n.mealPlanCookingQuick,
-  'flexible' => l10n.mealPlanCookingFlexible,
-  _ => l10n.mealPlanCookingStandard,
-};
+String _cookingTimeLabel(AppLocalizations l10n, String value) =>
+    switch (value) {
+      'quick' => l10n.mealPlanCookingQuick,
+      'flexible' => l10n.mealPlanCookingFlexible,
+      _ => l10n.mealPlanCookingStandard,
+    };
 
 /// Nutrition Preferences setup screen (Phase 6) — food/logistics only, no
 /// medical fields. Loads the user's saved preferences (or defaults) via
@@ -32,10 +34,12 @@ class NutritionPreferencesPage extends ConsumerStatefulWidget {
   const NutritionPreferencesPage({super.key});
 
   @override
-  ConsumerState<NutritionPreferencesPage> createState() => _NutritionPreferencesPageState();
+  ConsumerState<NutritionPreferencesPage> createState() =>
+      _NutritionPreferencesPageState();
 }
 
-class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesPage> {
+class _NutritionPreferencesPageState
+    extends ConsumerState<NutritionPreferencesPage> {
   NutritionPreferences? _draft;
   late final TextEditingController _allergiesController;
   late final TextEditingController _dislikedController;
@@ -85,10 +89,13 @@ class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesP
     return PremiumScaffold(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: asyncPrefs.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Text('$error', style: TextStyle(color: ext.textMuted)),
-        ),
+        loading: () => const LoadingView(),
+        error:
+            (error, _) => ErrorStateView(
+              message: l10n.authErrorGeneric,
+              onRetry:
+                  () => ref.invalidate(nutritionPreferencesControllerProvider),
+            ),
         data: (prefs) {
           _seedFrom(prefs);
           final draft = _draft!;
@@ -102,7 +109,10 @@ class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesP
                 const SizedBox(height: 18),
                 _SectionTitle(l10n.mealPlanDietaryPreferences),
                 const SizedBox(height: 12),
-                Text(l10n.mealPlanDietaryPreferencesQuestion, style: TextStyle(color: ext.textPrimary)),
+                Text(
+                  l10n.mealPlanDietaryPreferencesQuestion,
+                  style: TextStyle(color: ext.textPrimary),
+                ),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 10,
@@ -112,65 +122,103 @@ class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesP
                       FilterChip(
                         label: Text(_dietLabel(l10n, option)),
                         selected: draft.dietaryPreferences.contains(option),
-                        onSelected: (selected) => setState(() {
-                          final next = [...draft.dietaryPreferences];
-                          selected ? next.add(option) : next.remove(option);
-                          _draft = draft.copyWith(dietaryPreferences: next);
-                        }),
+                        onSelected:
+                            (selected) => setState(() {
+                              final next = [...draft.dietaryPreferences];
+                              selected ? next.add(option) : next.remove(option);
+                              _draft = draft.copyWith(dietaryPreferences: next);
+                            }),
                       ),
                   ],
                 ),
                 const SizedBox(height: 28),
                 _SectionTitle(l10n.mealPlanAllergies),
                 const SizedBox(height: 12),
-                Text(l10n.mealPlanAllergiesQuestion, style: TextStyle(color: ext.textPrimary)),
+                Text(
+                  l10n.mealPlanAllergiesQuestion,
+                  style: TextStyle(color: ext.textPrimary),
+                ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _allergiesController,
-                  decoration: InputDecoration(hintText: l10n.mealPlanAllergiesHint),
+                  decoration: InputDecoration(
+                    hintText: l10n.mealPlanAllergiesHint,
+                  ),
                 ),
                 const SizedBox(height: 28),
                 _SectionTitle(l10n.mealPlanDislikedIngredients),
                 const SizedBox(height: 12),
-                Text(l10n.mealPlanDislikedIngredientsQuestion, style: TextStyle(color: ext.textPrimary)),
+                Text(
+                  l10n.mealPlanDislikedIngredientsQuestion,
+                  style: TextStyle(color: ext.textPrimary),
+                ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _dislikedController,
-                  decoration: InputDecoration(hintText: l10n.mealPlanDislikedIngredientsHint),
+                  decoration: InputDecoration(
+                    hintText: l10n.mealPlanDislikedIngredientsHint,
+                  ),
                 ),
                 const SizedBox(height: 28),
                 _SectionTitle(l10n.mealPlanCookingTime),
                 const SizedBox(height: 12),
-                Text(l10n.mealPlanCookingTimeQuestion, style: TextStyle(color: ext.textPrimary)),
+                Text(
+                  l10n.mealPlanCookingTimeQuestion,
+                  style: TextStyle(color: ext.textPrimary),
+                ),
                 const SizedBox(height: 16),
                 OptionSelector(
-                  options: NutritionPreferences.cookingTimeOptions
-                      .map((o) => _cookingTimeLabel(l10n, o))
-                      .toList(),
-                  selected: _cookingTimeLabel(l10n, draft.cookingTimePreference),
+                  options:
+                      NutritionPreferences.cookingTimeOptions
+                          .map((o) => _cookingTimeLabel(l10n, o))
+                          .toList(),
+                  selected: _cookingTimeLabel(
+                    l10n,
+                    draft.cookingTimePreference,
+                  ),
                   onSelected: (label) {
-                    final value = NutritionPreferences.cookingTimeOptions.firstWhere(
-                      (o) => _cookingTimeLabel(l10n, o) == label,
+                    final value = NutritionPreferences.cookingTimeOptions
+                        .firstWhere((o) => _cookingTimeLabel(l10n, o) == label);
+                    setState(
+                      () =>
+                          _draft = draft.copyWith(cookingTimePreference: value),
                     );
-                    setState(() => _draft = draft.copyWith(cookingTimePreference: value));
                   },
                 ),
                 const SizedBox(height: 28),
                 _SectionTitle(l10n.mealPlanServings),
                 const SizedBox(height: 12),
-                Text(l10n.mealPlanServingsQuestion, style: TextStyle(color: ext.textPrimary)),
+                Text(
+                  l10n.mealPlanServingsQuestion,
+                  style: TextStyle(color: ext.textPrimary),
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     IconButton(
-                      onPressed: draft.servings > 1
-                          ? () => setState(() => _draft = draft.copyWith(servings: draft.servings - 1))
-                          : null,
+                      onPressed:
+                          draft.servings > 1
+                              ? () => setState(
+                                () =>
+                                    _draft = draft.copyWith(
+                                      servings: draft.servings - 1,
+                                    ),
+                              )
+                              : null,
                       icon: const Icon(Icons.remove_circle_outline),
                     ),
-                    Text('${draft.servings}', style: TextStyle(color: ext.textPrimary, fontSize: 18)),
+                    Text(
+                      '${draft.servings}',
+                      style: TextStyle(color: ext.textPrimary, fontSize: 18),
+                    ),
                     IconButton(
-                      onPressed: () => setState(() => _draft = draft.copyWith(servings: draft.servings + 1)),
+                      onPressed:
+                          () => setState(
+                            () =>
+                                _draft = draft.copyWith(
+                                  servings: draft.servings + 1,
+                                ),
+                          ),
                       icon: const Icon(Icons.add_circle_outline),
                     ),
                   ],
@@ -184,10 +232,11 @@ class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesP
                 ),
                 const SizedBox(height: 8),
                 _CalorieSuggestionHint(
-                  onApply: (calories, protein) => setState(() {
-                    _calorieController.text = calories.toString();
-                    _proteinController.text = protein.toString();
-                  }),
+                  onApply:
+                      (calories, protein) => setState(() {
+                        _calorieController.text = calories.toString();
+                        _proteinController.text = protein.toString();
+                      }),
                 ),
                 const SizedBox(height: 20),
                 _SectionTitle(l10n.mealPlanProteinTarget),
@@ -212,24 +261,40 @@ class _NutritionPreferencesPageState extends ConsumerState<NutritionPreferencesP
                 PrimaryButton(
                   label: l10n.mealPlanSavePreferences,
                   isLoading: saving,
-                  onPressed: saving
-                      ? null
-                      : () async {
-                          final updated = draft.copyWith(
-                            allergies: _parseList(_allergiesController.text),
-                            dislikedIngredients: _parseList(_dislikedController.text),
-                            dailyCalorieTarget: int.tryParse(_calorieController.text),
-                            proteinTargetGrams: int.tryParse(_proteinController.text),
-                            weeklyFoodBudget: num.tryParse(_budgetController.text),
-                            nutritionPlanEnabled: true,
-                          );
-                          await ref.read(nutritionPreferencesControllerProvider.notifier).save(updated);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(l10n.mealPlanPreferencesSaved)),
+                  onPressed:
+                      saving
+                          ? null
+                          : () async {
+                            final updated = draft.copyWith(
+                              allergies: _parseList(_allergiesController.text),
+                              dislikedIngredients: _parseList(
+                                _dislikedController.text,
+                              ),
+                              dailyCalorieTarget: int.tryParse(
+                                _calorieController.text,
+                              ),
+                              proteinTargetGrams: int.tryParse(
+                                _proteinController.text,
+                              ),
+                              weeklyFoodBudget: num.tryParse(
+                                _budgetController.text,
+                              ),
+                              nutritionPlanEnabled: true,
                             );
-                          }
-                        },
+                            await ref
+                                .read(
+                                  nutritionPreferencesControllerProvider
+                                      .notifier,
+                                )
+                                .save(updated);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.mealPlanPreferencesSaved),
+                                ),
+                              );
+                            }
+                          },
                 ),
               ],
             ),
@@ -256,11 +321,20 @@ class _CalorieSuggestionHint extends ConsumerWidget {
       error: (_, _) => const SizedBox.shrink(),
       data: (value) {
         if (value.estimatedCalories == null) {
-          return Text(l10n.mealPlanEstimateUnavailable, style: TextStyle(color: ext.textMuted, fontSize: 12));
+          return Text(
+            l10n.mealPlanEstimateUnavailable,
+            style: TextStyle(color: ext.textMuted, fontSize: 12),
+          );
         }
         return TextButton(
-          onPressed: () => onApply(value.estimatedCalories!, value.estimatedProteinGrams ?? 0),
-          child: Text('${l10n.mealPlanUseEstimate}: ${value.estimatedCalories} kcal / ${value.estimatedProteinGrams}g'),
+          onPressed:
+              () => onApply(
+                value.estimatedCalories!,
+                value.estimatedProteinGrams ?? 0,
+              ),
+          child: Text(
+            '${l10n.mealPlanUseEstimate}: ${value.estimatedCalories} kcal / ${value.estimatedProteinGrams}g',
+          ),
         );
       },
     );

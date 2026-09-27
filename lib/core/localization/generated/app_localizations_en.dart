@@ -1280,6 +1280,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createRoutineChooseExercises => 'Choose Exercises';
 
   @override
+  String get createRoutineSearchExercisesHint => 'Search exercises by name…';
+
+  @override
   String get createRoutineMyRoutineTitle => 'My Routine';
 
   @override
@@ -1472,6 +1475,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsStartWorkout => 'Start Workout';
+
+  @override
+  String get notificationsLoadMore => 'Load more';
 
   @override
   String get notificationsSwipeDeleted => 'Notification deleted';
@@ -1670,9 +1676,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileFullName => 'Full Name';
-
-  @override
-  String get editProfileMobileNumber => 'Mobile Number';
 
   @override
   String get editProfileDateOfBirth => 'Date of Birth';
