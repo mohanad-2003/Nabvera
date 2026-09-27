@@ -2141,15 +2141,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nutritionRecipeOfTheDay => 'وصفة اليوم';
 
   @override
-  String get nutritionFeaturedRecipeName => 'سموذي الجزر والبرتقال';
-
-  @override
-  String get nutritionFeaturedRecipeDuration => '10 دقائق';
-
-  @override
-  String get nutritionFeaturedRecipeCalories => '70 سعرة';
-
-  @override
   String get nutritionRecommended => 'موصى به';
 
   @override

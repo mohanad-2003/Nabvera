@@ -2168,15 +2168,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nutritionRecipeOfTheDay => 'Recipe of the day';
 
   @override
-  String get nutritionFeaturedRecipeName => 'Carrot and orange smoothie';
-
-  @override
-  String get nutritionFeaturedRecipeDuration => '10 Minutes';
-
-  @override
-  String get nutritionFeaturedRecipeCalories => '70 Cal';
-
-  @override
   String get nutritionRecommended => 'Recommended';
 
   @override
