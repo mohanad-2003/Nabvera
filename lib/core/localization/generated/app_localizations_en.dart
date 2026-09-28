@@ -748,6 +748,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeroTitle => 'Upper Body Strength';
 
   @override
+  String get homeHeroSuggestedForYou => 'Suggested for your level';
+
+  @override
   String homeHeroPersonalizedReason(int minutes) {
     return 'Picked for your goal, level, equipment, and $minutes-minute schedule.';
   }
@@ -874,6 +877,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String homeHeroExercises(int count) {
     return '$count exercises';
+  }
+
+  @override
+  String homeHeroExerciseProgress(int done, int total) {
+    return '$done / $total';
   }
 
   @override
@@ -2543,6 +2551,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mealPlanReasonFallbackRuleBasedPlan =>
       'Built with the rule-based planner';
+
+  @override
+  String get mealPlanRecipeNoLongerAvailable =>
+      'Recipe details are no longer available';
 
   @override
   String get healthConnectionTitle => 'Connect Health Data';

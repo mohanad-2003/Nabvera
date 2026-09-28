@@ -53,7 +53,7 @@ class WorkoutPage extends ConsumerWidget {
     // viewport on typical phones — CustomScrollView still lets the page
     // scroll naturally for the rest, and on unusually short viewports,
     // rather than overflowing.
-    final heroHeight = compact ? 200.0 : 230.0;
+    final heroHeight = compact ? 210.0 : 240.0;
     final listCardHeight = compact ? 104.0 : 117.0;
 
     return WorkoutScaffold(
@@ -174,13 +174,24 @@ class WorkoutPage extends ConsumerWidget {
                           icon: AppIcons.calories,
                           label: calories,
                         ),
-                      FeaturedCardMeta(
-                        icon: AppIcons.run,
-                        label: _label(l10n, level),
-                      ),
+                      if (items.first.localizedExercises(context)
+                          case final exercises?)
+                        FeaturedCardMeta(
+                          icon: AppIcons.workout,
+                          label: exercises,
+                        ),
                     ],
                     ctaLabel: l10n.workoutStartWorkout,
                     height: heroHeight,
+                    // Real, persisted favorite state (unlike this card's
+                    // default cosmetic-only local toggle) — same
+                    // `toggleFavorite` the list rows below already use, on
+                    // this list's first (featured) item.
+                    isFavorite: items.first.isFavorite,
+                    onFavoriteTap:
+                        () => ref
+                            .read(workoutListByLevelProvider(level).notifier)
+                            .toggleFavorite(0),
                     onTap: () => _openWorkout(context, ref, items.first.id),
                   ),
                 SizedBox(height: spacing),
@@ -340,3 +351,4 @@ class _WorkoutActionButton extends StatelessWidget {
     );
   }
 }
+

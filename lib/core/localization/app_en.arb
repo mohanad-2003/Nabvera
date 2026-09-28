@@ -349,6 +349,7 @@
     }
   },
   "homeHeroTitle": "Upper Body Strength",
+  "homeHeroSuggestedForYou": "Suggested for your level",
   "homeHeroPersonalizedReason": "Picked for your goal, level, equipment, and {minutes}-minute schedule.",
   "@homeHeroPersonalizedReason": {
     "placeholders": {
@@ -436,6 +437,17 @@
   "@homeHeroExercises": {
     "placeholders": {
       "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeHeroExerciseProgress": "{done} / {total}",
+  "@homeHeroExerciseProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
         "type": "int"
       }
     }
@@ -1145,6 +1157,7 @@
   "mealPlanReasonHigherProteinDay": "A higher-protein day",
   "mealPlanReasonLighterCalorieDay": "A lighter-calorie day",
   "mealPlanReasonFallbackRuleBasedPlan": "Built with the rule-based planner",
+  "mealPlanRecipeNoLongerAvailable": "Recipe details are no longer available",
   "healthConnectionTitle": "Connect Health Data",
   "healthConnectionIntroBody": "Optionally share steps, activity, and sleep from Health Connect or Apple Health to improve your progress stats and workout suggestions. This is never used for medical purposes, and you can disconnect at any time.",
   "healthConnectionDataStepsLabel": "Steps",

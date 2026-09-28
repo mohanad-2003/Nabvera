@@ -233,6 +233,7 @@
   "articleReadTimeMinutes": "{minutes} دقيقة قراءة",
   "@articleReadTimeMinutes": {"placeholders": {"minutes": {"type": "int"}}},
   "homeHeroTitle": "قوة الجزء العلوي",
+  "homeHeroSuggestedForYou": "مقترح لك بناءً على مستواك",
   "homeHeroPersonalizedReason": "اخترناه لهدفك ومستواك ومعداتك والوقت المتاح: {minutes} دقيقة.",
   "@homeHeroPersonalizedReason": {"placeholders": {"minutes": {"type": "int"}}},
   "homeHeroFallbackReason": "جلسة متوازنة اخترناها من مكتبة التمارين الحالية.",
@@ -270,6 +271,7 @@
   "homeCtaCompleted": "تم إنجاز التمرين",
   "homeHeroCompletionPercent": "اكتمل {percent}٪",
   "homeHeroExercises": "{count} تمرين",
+  "homeHeroExerciseProgress": "{done} / {total}",
   "workoutExerciseSets": "{sets} مجموعة",
   "@workoutExerciseSets": {"placeholders": {"sets": {"type": "int"}}},
   "workoutExerciseCalories": "{kcal} سعرة",
@@ -807,6 +809,7 @@
   "mealPlanReasonHigherProteinDay": "يوم أعلى بروتين",
   "mealPlanReasonLighterCalorieDay": "يوم أخف سعرات",
   "mealPlanReasonFallbackRuleBasedPlan": "تم إنشاؤه بواسطة المخطط القائم على القواعد",
+  "mealPlanRecipeNoLongerAvailable": "تفاصيل هذه الوصفة لم تعد متاحة",
 
   "healthConnectionTitle": "ربط بيانات الصحة",
   "healthConnectionIntroBody": "شارك اختياريًا الخطوات والنشاط والنوم من Health Connect أو Apple Health لتحسين إحصاءات تقدمك وتوصيات التمرين. لا يُستخدم هذا أبدًا لأغراض طبية، ويمكنك إلغاء الربط في أي وقت.",

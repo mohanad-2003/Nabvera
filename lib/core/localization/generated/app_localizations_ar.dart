@@ -740,6 +740,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeHeroTitle => 'قوة الجزء العلوي';
 
   @override
+  String get homeHeroSuggestedForYou => 'مقترح لك بناءً على مستواك';
+
+  @override
   String homeHeroPersonalizedReason(int minutes) {
     return 'اخترناه لهدفك ومستواك ومعداتك والوقت المتاح: $minutes دقيقة.';
   }
@@ -864,6 +867,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String homeHeroExercises(int count) {
     return '$count تمرين';
+  }
+
+  @override
+  String homeHeroExerciseProgress(int done, int total) {
+    return '$done / $total';
   }
 
   @override
@@ -2510,6 +2518,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get mealPlanReasonFallbackRuleBasedPlan =>
       'تم إنشاؤه بواسطة المخطط القائم على القواعد';
+
+  @override
+  String get mealPlanRecipeNoLongerAvailable =>
+      'تفاصيل هذه الوصفة لم تعد متاحة';
 
   @override
   String get healthConnectionTitle => 'ربط بيانات الصحة';
