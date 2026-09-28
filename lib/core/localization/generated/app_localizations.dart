@@ -4034,24 +4034,6 @@ abstract class AppLocalizations {
   /// **'Recipe of the day'**
   String get nutritionRecipeOfTheDay;
 
-  /// No description provided for @nutritionFeaturedRecipeName.
-  ///
-  /// In en, this message translates to:
-  /// **'Carrot and orange smoothie'**
-  String get nutritionFeaturedRecipeName;
-
-  /// No description provided for @nutritionFeaturedRecipeDuration.
-  ///
-  /// In en, this message translates to:
-  /// **'10 Minutes'**
-  String get nutritionFeaturedRecipeDuration;
-
-  /// No description provided for @nutritionFeaturedRecipeCalories.
-  ///
-  /// In en, this message translates to:
-  /// **'70 Cal'**
-  String get nutritionFeaturedRecipeCalories;
-
   /// No description provided for @nutritionRecommended.
   ///
   /// In en, this message translates to:

@@ -27,77 +27,87 @@ class WorkoutListCard extends StatelessWidget {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     return PressableScale(
       enabled: onTap != null,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: height),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: SmartImage(item.image, width: 76, height: 88),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        item.localizedName(context),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: ext.textPrimary,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15.5,
-                          height: 1.2,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: height),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ext.glassFill,
+                borderRadius: BorderRadius.circular(AppRadius.card),
+                border: Border.all(color: ext.glassBorder),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: SmartImage(item.image, width: 76, height: 88),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          item.localizedName(context),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: ext.textPrimary,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15.5,
+                            height: 1.2,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 6,
-                        children: [
-                          if (item.localizedTime(context) case final time?)
-                            _MetaChip(
-                              icon: Icons.schedule_rounded,
-                              label: time,
-                              ext: ext,
-                            ),
-                          if (item.localizedCalories(context) case final calories?)
-                            _MetaChip(
-                              icon: Icons.local_fire_department_rounded,
-                              label: calories,
-                              ext: ext,
-                            ),
-                          if (item.localizedExercises(context) case final exercises?)
-                            _MetaChip(
-                              icon: Icons.fitness_center_rounded,
-                              label: exercises,
-                              ext: ext,
-                            ),
-                        ],
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: [
+                            if (item.localizedTime(context) case final time?)
+                              _MetaChip(
+                                icon: Icons.schedule_rounded,
+                                label: time,
+                                ext: ext,
+                              ),
+                            if (item.localizedCalories(context)
+                                case final calories?)
+                              _MetaChip(
+                                icon: Icons.local_fire_department_rounded,
+                                label: calories,
+                                ext: ext,
+                              ),
+                            if (item.localizedExercises(context)
+                                case final exercises?)
+                              _MetaChip(
+                                icon: Icons.fitness_center_rounded,
+                                label: exercises,
+                                ext: ext,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: onToggleFavorite,
-                  tooltip: AppLocalizations.of(context).favoriteTitle,
-                  icon: Icon(
-                    item.isFavorite
-                        ? Icons.star_rounded
-                        : Icons.star_border_rounded,
-                    color: item.isFavorite ? ext.accentGlow : ext.textMuted,
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed: onToggleFavorite,
+                    tooltip: AppLocalizations.of(context).favoriteTitle,
+                    icon: Icon(
+                      item.isFavorite
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
+                      color: item.isFavorite ? ext.accentGlow : ext.textMuted,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

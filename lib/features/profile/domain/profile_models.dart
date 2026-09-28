@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart' show BuildContext;
-
-import '../../../core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 
 class UserProfile {
   const UserProfile({
@@ -82,18 +81,22 @@ class UserProfile {
   /// [weightKg] only when [weightKgRaw] isn't known. Prefer this for
   /// display: [weightKg] hardcodes the English "Kg" unit, which visually
   /// reorders to "Kg 75" under RTL bidi instead of reading as untranslated.
-  String localizedWeight(BuildContext context) => weightKgRaw == null
-      ? weightKg
-      : AppLocalizations.of(context).profileWeightValue(weightKgRaw!.round());
+  String localizedWeight(BuildContext context) =>
+      weightKgRaw == null
+          ? weightKg
+          : AppLocalizations.of(
+            context,
+          ).profileWeightValue(weightKgRaw!.round());
 
   /// Height formatted for [context]'s current locale — falls back to
   /// [heightM] only when [heightCmRaw] isn't known. Same RTL-bidi reason
   /// as [localizedWeight].
-  String localizedHeight(BuildContext context) => heightCmRaw == null
-      ? heightM
-      : AppLocalizations.of(
-        context,
-      ).profileHeightValue((heightCmRaw! / 100).toStringAsFixed(2));
+  String localizedHeight(BuildContext context) =>
+      heightCmRaw == null
+          ? heightM
+          : AppLocalizations.of(
+            context,
+          ).profileHeightValue((heightCmRaw! / 100).toStringAsFixed(2));
 
   // --- Workout schedule & reminders (Phase 5) ---------------------------
   //

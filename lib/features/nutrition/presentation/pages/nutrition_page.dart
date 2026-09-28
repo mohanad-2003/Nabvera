@@ -45,173 +45,191 @@ class NutritionPage extends ConsumerWidget {
         backgroundColor: ext.cardColor,
         onRefresh: () => _pullToRefresh(context, ref),
         child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                WorkoutHeader(title: l10n.navNutrition, showBack: false),
-                const SizedBox(height: 6),
-                Text(
-                  l10n.nutritionSubtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
-                ),
-                SizedBox(height: spacing),
-                NutritionSummaryCard(
-                  summary: summary,
-                  onLogWater: () => showLogWaterSheet(context, ref),
-                  onSetGoals: () => context.push(AppRoutes.mealPlanPreferences),
-                ),
-                SizedBox(height: spacing),
-                Row(
-                  children: [
-                    Expanded(
-                      child: PremiumPill(
-                        label: l10n.nutritionTabMealPlans,
-                        icon: Icons.calendar_month_rounded,
-                        selected: tab == NutritionTab.mealPlans,
-                        onTap: () {
-                          ref
-                              .read(nutritionTabControllerProvider.notifier)
-                              .select(NutritionTab.mealPlans);
-                          context.push(AppRoutes.mealPlanHome);
-                        },
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  WorkoutHeader(title: l10n.navNutrition, showBack: false),
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.nutritionSubtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
+                  ),
+                  SizedBox(height: spacing),
+                  NutritionSummaryCard(
+                    summary: summary,
+                    onLogWater: () => showLogWaterSheet(context, ref),
+                    onSetGoals:
+                        () => context.push(AppRoutes.mealPlanPreferences),
+                  ),
+                  SizedBox(height: spacing),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PremiumPill(
+                          label: l10n.nutritionTabMealPlans,
+                          icon: Icons.calendar_month_rounded,
+                          selected: tab == NutritionTab.mealPlans,
+                          onTap: () {
+                            ref
+                                .read(nutritionTabControllerProvider.notifier)
+                                .select(NutritionTab.mealPlans);
+                            context.push(AppRoutes.mealPlanHome);
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: PremiumPill(
-                        label: l10n.nutritionTabMealIdeas,
-                        icon: Icons.restaurant_menu_rounded,
-                        selected: tab == NutritionTab.mealIdeas,
-                        onTap: () {
-                          ref
-                              .read(nutritionTabControllerProvider.notifier)
-                              .select(NutritionTab.mealIdeas);
-                          context.push(AppRoutes.mealIdea);
-                        },
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: PremiumPill(
+                          label: l10n.nutritionTabMealIdeas,
+                          icon: Icons.restaurant_menu_rounded,
+                          selected: tab == NutritionTab.mealIdeas,
+                          onTap: () {
+                            ref
+                                .read(nutritionTabControllerProvider.notifier)
+                                .select(NutritionTab.mealIdeas);
+                            context.push(AppRoutes.mealIdea);
+                          },
+                        ),
                       ),
+                    ],
+                  ),
+                  SizedBox(height: spacing),
+                  if (recommended.isNotEmpty)
+                    FeaturedCard(
+                      // Was a hardcoded title/photo (l10n.nutritionFeatured*)
+                      // that never matched whatever tapping it actually
+                      // opened (recommended.first) — a real recipe deleted
+                      // or reordered on the backend would silently open a
+                      // different one than the card advertised. Now the
+                      // card's own content and its tap target are the same
+                      // recipe.
+                      image: recommended.first.image,
+                      badge: l10n.nutritionRecipeOfTheDay,
+                      // Nutrition's secondary accent per the design system.
+                      badgeColor: AppColors.seedViolet,
+                      title: recommended.first.localizedName(context),
+                      metas: [
+                        FeaturedCardMeta(
+                          icon: AppIcons.time,
+                          label: recipeMinutesLabel(
+                            l10n,
+                            recommended.first.prepTimeMinutes,
+                            recommended.first.time,
+                          ),
+                        ),
+                        FeaturedCardMeta(
+                          icon: AppIcons.calories,
+                          label: recipeCaloriesLabel(
+                            l10n,
+                            recommended.first.caloriesValue,
+                            recommended.first.calories,
+                          ),
+                        ),
+                      ],
+                      height: heroHeight,
+                      onTap:
+                          () => _openRecipe(context, ref, recommended.first.id),
                     ),
-                  ],
-                ),
-                SizedBox(height: spacing),
-                FeaturedCard(
-                  // A real photo (carrot + fresh orange juice) replacing the
-                  // old bundled asset — Pexels, free license, no attribution
-                  // required.
-                  image:
-                      'https://images.pexels.com/photos/4443459/pexels-photo-4443459.jpeg?cs=srgb&dl=pexels-polina-tankilevitch-4443459.jpg&fm=jpg',
-                  badge: l10n.nutritionRecipeOfTheDay,
-                  // Nutrition's secondary accent per the design system.
-                  badgeColor: AppColors.seedViolet,
-                  title: l10n.nutritionFeaturedRecipeName,
-                  metas: [
-                    FeaturedCardMeta(
-                      icon: AppIcons.time,
-                      label: l10n.nutritionFeaturedRecipeDuration,
-                    ),
-                    FeaturedCardMeta(
-                      icon: AppIcons.calories,
-                      label: l10n.nutritionFeaturedRecipeCalories,
-                    ),
-                  ],
-                  height: heroHeight,
-                  onTap:
-                      recommended.isEmpty
+                  SizedBox(height: compact ? 14 : 22),
+                  PremiumSectionHeader(title: l10n.nutritionRecommended),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 220,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                // Sized to the card's actual content (104 image + ~10 more
+                // lines of text/chips below it) — the previous 284 left a
+                // large empty gap under every card regardless of content.
+                mainAxisExtent: 220,
+              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final item = recommended[index];
+                return PremiumRecipeCard(
+                  image: item.image,
+                  name: item.localizedName(context),
+                  time: recipeMinutesLabel(
+                    l10n,
+                    item.prepTimeMinutes,
+                    item.time,
+                  ),
+                  calories: recipeCaloriesLabel(
+                    l10n,
+                    item.caloriesValue,
+                    item.calories,
+                  ),
+                  subtitle: item.localizedSubtitle(context),
+                  protein: item.protein,
+                  carbs: item.carbs,
+                  fat: item.fat,
+                  rating: item.rating,
+                  difficulty:
+                      item.difficulty == null
                           ? null
-                          : () =>
-                              _openRecipe(context, ref, recommended.first.id),
-                ),
-                SizedBox(height: compact ? 14 : 22),
-                PremiumSectionHeader(title: l10n.nutritionRecommended),
-                const SizedBox(height: 10),
-              ],
+                          : recipeDifficultyLabel(l10n, item.difficulty),
+                  imageHeight: 104,
+                  isFavorite: favorites.contains(item.id),
+                  onFavoriteTap:
+                      () => ref
+                          .read(mealIdeaFavoritesProvider.notifier)
+                          .toggle(item.id),
+                  onTap: () => _openRecipe(context, ref, item.id),
+                );
+              }, childCount: recommended.length),
             ),
-          ),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 220,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              // Sized to the card's actual content (104 image + ~10 more
-              // lines of text/chips below it) — the previous 284 left a
-              // large empty gap under every card regardless of content.
-              mainAxisExtent: 220,
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: compact ? 14 : 22),
+                  PremiumSectionHeader(title: l10n.nutritionRecipesForYou),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final item = recommended[index];
-              return PremiumRecipeCard(
-                image: item.image,
-                name: item.localizedName(context),
-                time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
-                calories: recipeCaloriesLabel(
-                  l10n,
-                  item.caloriesValue,
-                  item.calories,
-                ),
-                subtitle: item.localizedSubtitle(context),
-                protein: item.protein,
-                carbs: item.carbs,
-                fat: item.fat,
-                rating: item.rating,
-                difficulty:
-                    item.difficulty == null
-                        ? null
-                        : recipeDifficultyLabel(l10n, item.difficulty),
-                imageHeight: 104,
-                isFavorite: favorites.contains(item.id),
-                onFavoriteTap:
-                    () => ref
-                        .read(mealIdeaFavoritesProvider.notifier)
-                        .toggle(item.id),
-                onTap: () => _openRecipe(context, ref, item.id),
-              );
-            }, childCount: recommended.length),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: compact ? 14 : 22),
-                PremiumSectionHeader(title: l10n.nutritionRecipesForYou),
-                const SizedBox(height: 10),
-              ],
+            SliverList.separated(
+              itemCount: recipes.length,
+              separatorBuilder:
+                  (_, _) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Divider(height: 1, color: ext.glassBorder),
+                  ),
+              itemBuilder: (context, index) {
+                final item = recipes[index];
+                return PremiumRecipeListTile(
+                  image: item.image,
+                  name: item.localizedName(context),
+                  time: recipeMinutesLabel(
+                    l10n,
+                    item.prepTimeMinutes,
+                    item.time,
+                  ),
+                  calories: recipeCaloriesLabel(
+                    l10n,
+                    item.caloriesValue,
+                    item.calories,
+                  ),
+                  rating: item.rating,
+                  isFavorite: favorites.contains(item.id),
+                  onFavoriteTap:
+                      () => ref
+                          .read(mealIdeaFavoritesProvider.notifier)
+                          .toggle(item.id),
+                  onTap: () => _openRecipe(context, ref, item.id),
+                );
+              },
             ),
-          ),
-          SliverList.separated(
-            itemCount: recipes.length,
-            separatorBuilder:
-                (_, _) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Divider(height: 1, color: ext.glassBorder),
-                ),
-            itemBuilder: (context, index) {
-              final item = recipes[index];
-              return PremiumRecipeListTile(
-                image: item.image,
-                name: item.localizedName(context),
-                time: recipeMinutesLabel(l10n, item.prepTimeMinutes, item.time),
-                calories: recipeCaloriesLabel(
-                  l10n,
-                  item.caloriesValue,
-                  item.calories,
-                ),
-                rating: item.rating,
-                isFavorite: favorites.contains(item.id),
-                onFavoriteTap:
-                    () => ref
-                        .read(mealIdeaFavoritesProvider.notifier)
-                        .toggle(item.id),
-                onTap: () => _openRecipe(context, ref, item.id),
-              );
-            },
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-        ],
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          ],
         ),
       ),
     );

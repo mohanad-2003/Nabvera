@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart' show BuildContext, Localizations;
-
-import '../../../core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/localization/generated/app_localizations.dart';
 
 class ChallengeItem {
   const ChallengeItem({
@@ -144,13 +143,18 @@ class ChallengeProgressItem {
       challenge:
           challengeJson is Map<String, dynamic>
               ? ChallengeItem.fromJson(challengeJson)
-              : const ChallengeItem(image: 'assets/workout.png', name: '', details: ''),
+              : const ChallengeItem(
+                image: 'assets/workout.png',
+                name: '',
+                details: '',
+              ),
       type: (json['type'] as String?) ?? 'workouts_count',
       status: challengeStatusFromApi(json['status'] as String?),
       progressValue: (json['progressValue'] as num?)?.toInt() ?? 0,
       targetValue: (json['targetValue'] as num?)?.toInt() ?? 0,
       startedAt:
-          DateTime.tryParse(json['startedAt'] as String? ?? '') ?? DateTime.now(),
+          DateTime.tryParse(json['startedAt'] as String? ?? '') ??
+          DateTime.now(),
       completedAt:
           json['completedAt'] == null
               ? null
@@ -167,7 +171,10 @@ class ChallengeProgressItem {
 /// challenge paired with a `reasonCode` the UI translates locally (never a
 /// pre-rendered string from the backend).
 class ChallengeSuggestion {
-  const ChallengeSuggestion({required this.challenge, required this.reasonCode});
+  const ChallengeSuggestion({
+    required this.challenge,
+    required this.reasonCode,
+  });
 
   final ChallengeItem challenge;
   final String reasonCode;
@@ -178,7 +185,11 @@ class ChallengeSuggestion {
       challenge:
           challengeJson != null
               ? ChallengeItem.fromJson(challengeJson)
-              : const ChallengeItem(image: 'assets/workout.png', name: '', details: ''),
+              : const ChallengeItem(
+                image: 'assets/workout.png',
+                name: '',
+                details: '',
+              ),
       reasonCode: (json['reasonCode'] as String?) ?? '',
     );
   }

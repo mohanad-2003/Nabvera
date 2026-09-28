@@ -2,15 +2,16 @@ import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
+import 'package:nabvera/core/responsive/app_responsive.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/presentation/widgets/exercise_video_player.dart';
-import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart' as intl;
 
 /// Generic exercise video/detail screen — replaces the legacy squat_page,
 /// kettlball, video_advance, details_page, and details_dumple_setup, which
@@ -21,8 +22,7 @@ class ExerciseDetailPage extends ConsumerStatefulWidget {
   final ExerciseDetailData data;
 
   @override
-  ConsumerState<ExerciseDetailPage> createState() =>
-      _ExerciseDetailPageState();
+  ConsumerState<ExerciseDetailPage> createState() => _ExerciseDetailPageState();
 }
 
 class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
@@ -91,70 +91,7 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: WorkoutHeader(title: data.headerTitle),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: AspectRatio(
-                // The exercise demo clips (Pexels, orientation=portrait) are
-                // shot tall (~9:16) — a 16:10 landscape frame cropped the
-                // FittedBox.cover video down to a sliver of the person. 3:4
-                // keeps enough vertical room to show most of their body
-                // while staying a reasonable hero-card height.
-                aspectRatio: 3 / 4,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child:
-                          data.videoUrl == null
-                              ? Hero(
-                                tag: data.heroImage,
-                                child: SmartImage(data.heroImage),
-                              )
-                              : ExerciseVideoPlayer(
-                                key: _videoKey,
-                                videoUrl: data.videoUrl!,
-                                poster: SmartImage(data.heroImage),
-                              ),
-                    ),
-                    IgnorePointer(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.seedInk.withValues(alpha: 0),
-                              AppColors.seedInk.withValues(alpha: 0),
-                              AppColors.seedInk.withValues(alpha: 0.55),
-                            ],
-                            stops: const [0, 0.5, 1],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 16,
-                      bottom: 16,
-                      right: 16,
-                      child: Text(
-                        data.localizedTitle(context),
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          color: AppColors.lightSurface,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _Hero(data: data, videoKey: _videoKey),
             const SizedBox(height: 22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -247,6 +184,98 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
   }
 }
 
+/// Full-bleed hero — the video/image fills the entire screen width (no
+/// side margins, no rounded corners) with the back button and title
+/// floating on top, matching the pattern already used for a recipe's hero
+/// in `meal_detail_header.dart`. Replaces the old inset, rounded-card
+/// video box plus a separate header row (which also carried search/
+/// notifications icons that don't belong on a focused exercise screen).
+class _Hero extends StatelessWidget {
+  const _Hero({required this.data, required this.videoKey});
+
+  final ExerciseDetailData data;
+  final GlobalKey<ExerciseVideoPlayerState> videoKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final topInset = MediaQuery.paddingOf(context).top;
+    final height = context.responsive(
+      compact: 340.0,
+      standard: 380.0,
+      medium: 420.0,
+      expanded: 460.0,
+    );
+
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          data.videoUrl == null
+              ? Hero(tag: data.heroImage, child: SmartImage(data.heroImage))
+              : ExerciseVideoPlayer(
+                key: videoKey,
+                videoUrl: data.videoUrl!,
+                poster: SmartImage(data.heroImage),
+              ),
+          IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.seedInk.withValues(alpha: 0.32),
+                    AppColors.seedInk.withValues(alpha: 0),
+                    AppColors.seedInk.withValues(alpha: 0.6),
+                  ],
+                  stops: const [0, 0.4, 1],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+          ),
+          PositionedDirectional(
+            top: topInset + 10,
+            start: 14,
+            child: GestureDetector(
+              onTap: () => context.canPop() ? context.pop() : null,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.36),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_ios_rounded
+                      : Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            ),
+          ),
+          PositionedDirectional(
+            start: 16,
+            end: 16,
+            bottom: 16,
+            child: Text(
+              data.localizedTitle(context),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: AppColors.lightSurface,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// This exercise's own weight/reps progress across past sessions —
 /// answers "am I actually getting stronger at this?" for one specific
 /// exercise, which the app's existing workout-level history/charts never
@@ -327,8 +356,8 @@ class _SessionHistoryRow extends StatelessWidget {
     final completedAt = DateTime.tryParse(
       (session['completedAt'] as String?) ?? '',
     );
-    final sets = (session['sets'] as List? ?? const [])
-        .cast<Map<String, dynamic>>();
+    final sets =
+        (session['sets'] as List? ?? const []).cast<Map<String, dynamic>>();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,7 +365,9 @@ class _SessionHistoryRow extends StatelessWidget {
         SizedBox(
           width: 72,
           child: Text(
-            completedAt == null ? '—' : DateFormat('MMM d').format(completedAt),
+            completedAt == null
+                ? '—'
+                : intl.DateFormat('MMM d').format(completedAt),
             style: TextStyle(
               color: ext.textMuted,
               fontSize: 12,

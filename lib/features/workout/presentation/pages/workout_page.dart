@@ -148,6 +148,12 @@ class WorkoutPage extends ConsumerWidget {
                         icon: Icons.add_circle_outline_rounded,
                         label: l10n.workoutCreateRoutine,
                         compact: compact,
+                        // The one action that creates something new — a
+                        // filled primary button, so the row reads as one
+                        // primary + one secondary action instead of two
+                        // visually identical outlined pills competing for
+                        // attention.
+                        filled: true,
                         onTap: () => context.push(AppRoutes.createRoutine),
                       ),
                     ),
@@ -198,11 +204,7 @@ class WorkoutPage extends ConsumerWidget {
             ),
           SliverList.separated(
             itemCount: items.length,
-            separatorBuilder:
-                (_, _) => Padding(
-                  padding: EdgeInsets.symmetric(vertical: spacing / 2),
-                  child: Divider(height: 1, color: ext.glassBorder),
-                ),
+            separatorBuilder: (_, _) => SizedBox(height: spacing),
             itemBuilder:
                 (context, index) => WorkoutListCard(
                   item: items[index],
@@ -271,6 +273,7 @@ class _WorkoutActionButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.compact = false,
+    this.filled = false,
   });
 
   final IconData icon;
@@ -278,31 +281,54 @@ class _WorkoutActionButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool compact;
 
+  /// True for the row's one primary action — a solid accent-gradient pill
+  /// instead of the outline every other call site here uses, so the pair
+  /// reads as primary + secondary rather than two identical buttons.
+  final bool filled;
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final accent = ext.accentGlow;
-    // Pill outline button (design-system button shape) rather than a flat
-    // glass card, so these read as actions instead of content.
+    final iconColor = filled ? ext.onAccent : accent;
+    final textColor = filled ? ext.onAccent : ext.textPrimary;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: compact ? 10 : 13),
         decoration: BoxDecoration(
+          gradient: filled ? ext.accentGradient : null,
           borderRadius: BorderRadius.circular(AppRadius.pill),
-          border: Border.all(color: accent.withValues(alpha: 0.55), width: 1.3),
+          border:
+              filled
+                  ? null
+                  : Border.all(
+                    color: accent.withValues(alpha: 0.55),
+                    width: 1.3,
+                  ),
+          boxShadow:
+              filled
+                  ? [
+                    BoxShadow(
+                      color: accent.withValues(alpha: 0.32),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ]
+                  : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: accent),
+            Icon(icon, size: 18, color: iconColor),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 label,
                 style: TextStyle(
-                  color: ext.textPrimary,
+                  color: textColor,
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
