@@ -157,7 +157,7 @@ final class CommunityForumsProvider
   }
 }
 
-String _$communityForumsHash() => r'c79a8387dee907601e5381981c57cd16c51f8873';
+String _$communityForumsHash() => r'5a987adfb687551f378d3860a52597da54184f20';
 
 /// Loads the real community feed from `/api/posts`.
 

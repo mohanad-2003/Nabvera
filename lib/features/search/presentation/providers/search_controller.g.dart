@@ -241,7 +241,7 @@ final class SearchAllResultsProvider
   }
 }
 
-String _$searchAllResultsHash() => r'f6a557f58a6807c3977e76a37a6305bc319f628a';
+String _$searchAllResultsHash() => r'bafbb4496098ddf8c204f3fb81c4dccfbec245b9';
 
 /// Debounced live search across `/api/workouts?search=` and
 /// `/api/recipes?search=` — empty query means empty results (nothing

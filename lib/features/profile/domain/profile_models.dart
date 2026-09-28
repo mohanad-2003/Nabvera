@@ -48,8 +48,8 @@ class UserProfile {
 
   /// Display label for the user's current fitness level (e.g. "Intermediate").
   final String fitnessLevel;
+  // /// Lifetime achievement stats shown on the Profile Statistics grid.
 
-  /// Lifetime achievement stats shown on the Profile Statistics grid.
   final int completedWorkouts;
   final int caloriesBurned;
   final int trainingDays;

@@ -108,7 +108,7 @@ final class HomeRecommendationsProvider
 }
 
 String _$homeRecommendationsHash() =>
-    r'b014548bf2bfb487c808cccdcbb532878302b20a';
+    r'553561ef9a791bf10f302e29c187c38499e7eee2';
 
 /// Loads a few popular workouts from `/api/workouts?popular=true` for the
 /// "Recommended" row.
@@ -176,7 +176,7 @@ final class HomeArticlesProvider
   }
 }
 
-String _$homeArticlesHash() => r'95b71775c9acd312eb9b122c27f9d4c451162c05';
+String _$homeArticlesHash() => r'f692ded42e06d8f9c2a80ea24fc0706f34d404ad';
 
 /// Loads `/api/articles` for the "Articles & Tips" row.
 

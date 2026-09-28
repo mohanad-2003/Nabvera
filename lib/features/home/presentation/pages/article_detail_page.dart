@@ -9,13 +9,14 @@ import 'package:go_router/go_router.dart';
 /// Localized label for an `Article.category` value — a fixed backend enum
 /// (`nutrition`/`workout`/`recovery`/`mindset`), never rendered as its raw
 /// English key.
-String _categoryLabel(AppLocalizations l10n, String category) => switch (category) {
-  'nutrition' => l10n.articleCategoryNutrition,
-  'workout' => l10n.articleCategoryWorkout,
-  'recovery' => l10n.articleCategoryRecovery,
-  'mindset' => l10n.articleCategoryMindset,
-  _ => category,
-};
+String _categoryLabel(AppLocalizations l10n, String category) =>
+    switch (category) {
+      'nutrition' => l10n.articleCategoryNutrition,
+      'workout' => l10n.articleCategoryWorkout,
+      'recovery' => l10n.articleCategoryRecovery,
+      'mindset' => l10n.articleCategoryMindset,
+      _ => category,
+    };
 
 /// Full-content view for a Home "Articles & Tips" card — a `/api/articles`
 /// document, shown in full: hero photo, category/read-time, every
@@ -85,7 +86,10 @@ class ArticleDetailPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
-                                  _categoryLabel(l10n, article.category).toUpperCase(),
+                                  _categoryLabel(
+                                    l10n,
+                                    article.category,
+                                  ).toUpperCase(),
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w800,
@@ -103,7 +107,9 @@ class ArticleDetailPage extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              l10n.articleReadTimeMinutes(article.readTimeMinutes),
+                              l10n.articleReadTimeMinutes(
+                                article.readTimeMinutes,
+                              ),
                               style: TextStyle(
                                 color: ext.textMuted,
                                 fontSize: 12.5,
@@ -130,7 +136,9 @@ class ArticleDetailPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        for (final paragraph in article.localizedParagraphs(context)) ...[
+                        for (final paragraph in article.localizedParagraphs(
+                          context,
+                        )) ...[
                           Text(
                             paragraph,
                             style: theme.textTheme.bodyLarge?.copyWith(

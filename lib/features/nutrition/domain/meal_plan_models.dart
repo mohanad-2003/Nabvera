@@ -38,7 +38,20 @@ class MealPlanItem {
   final String? recipeImageUrl;
   final int? recipePrepTimeMinutes;
 
+  /// The name to show for this meal. Blank only when this item's `recipe`
+  /// ref pointed at a Recipe that no longer exists (deleted/reseeded after
+  /// this plan was generated — `isCustom` is false and `customName` is
+  /// null, unlike a genuine rule-based placeholder) — [localizedDisplayTitle]
+  /// is what call sites should actually render.
   String get displayTitle => recipeTitle ?? customName ?? '';
+
+  /// Same as [displayTitle], but never blank: falls back to a clear
+  /// "recipe details are no longer available" message for an orphaned
+  /// recipe reference, instead of leaving the meal's name empty.
+  String localizedDisplayTitle(AppLocalizations l10n) =>
+      recipeTitle ??
+      customName ??
+      l10n.mealPlanRecipeNoLongerAvailable;
 
   factory MealPlanItem.fromJson(Map<String, dynamic> json) {
     final recipe = json['recipe'];
