@@ -26,6 +26,7 @@ class UserProfile {
     this.avatarUrl,
     this.favoriteWorkoutIds = const [],
     this.favoriteRecipeIds = const [],
+    this.activeWorkoutSession,
     this.role = 'user',
     this.workoutDays = const [],
     this.workoutReminderTime,
@@ -69,6 +70,12 @@ class UserProfile {
   final String? avatarUrl;
   final List<String> favoriteWorkoutIds;
   final List<String> favoriteRecipeIds;
+
+  /// Raw `User.activeWorkoutSession` JSON, or null when nothing is in
+  /// progress — kept as a raw passthrough (not a typed model) so this
+  /// profile-feature file doesn't depend on the workout feature's domain
+  /// type; `WorkoutActiveSession` does the typed parsing.
+  final Map<String, dynamic>? activeWorkoutSession;
 
   /// Backend `User.role` — `'user'` or `'admin'` (see `backend/src/models/
   /// User.js`). Drives both the Admin Console entry point on Profile and
@@ -163,6 +170,8 @@ class UserProfile {
       avatarUrl: json['avatarUrl'] as String?,
       favoriteWorkoutIds: _idList(json['favoriteWorkouts']),
       favoriteRecipeIds: _idList(json['favoriteRecipes']),
+      activeWorkoutSession:
+          json['activeWorkoutSession'] as Map<String, dynamic>?,
       role: (json['role'] as String?) ?? 'user',
       workoutDays: _stringList(json['workoutDays']),
       workoutReminderTime: json['workoutReminderTime'] as String?,

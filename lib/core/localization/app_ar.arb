@@ -315,6 +315,16 @@
   "workoutSubtitle": "اختر مستواك وتحرّك بهدف.",
   "workoutYourRoutine": "روتينك",
   "workoutCreateRoutine": "إنشاء روتين",
+  "workoutContinueLabel": "استمر من حيث توقفت",
+  "workoutContinueRemaining": "متبقّي {remaining} تمرين",
+  "@workoutContinueRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutFeaturedTitle": "مقترح لك",
   "workoutTrainingOfTheDay": "تمرين اليوم",
   "workoutStartWorkout": "ابدأ التمرين",
   "workoutNoVideoAvailable": "لا يوجد فيديو لهذا التمرين حالياً",

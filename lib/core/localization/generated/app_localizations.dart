@@ -1916,6 +1916,24 @@ abstract class AppLocalizations {
   /// **'Create Routine'**
   String get workoutCreateRoutine;
 
+  /// No description provided for @workoutContinueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue where you left off'**
+  String get workoutContinueLabel;
+
+  /// No description provided for @workoutContinueRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} sets left'**
+  String workoutContinueRemaining(int remaining);
+
+  /// No description provided for @workoutFeaturedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured for you'**
+  String get workoutFeaturedTitle;
+
   /// No description provided for @workoutTrainingOfTheDay.
   ///
   /// In en, this message translates to:

@@ -1033,6 +1033,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutCreateRoutine => 'Create Routine';
 
   @override
+  String get workoutContinueLabel => 'Continue where you left off';
+
+  @override
+  String workoutContinueRemaining(int remaining) {
+    return '$remaining sets left';
+  }
+
+  @override
+  String get workoutFeaturedTitle => 'Featured for you';
+
+  @override
   String get workoutTrainingOfTheDay => 'training of the day';
 
   @override

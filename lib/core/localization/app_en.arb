@@ -571,6 +571,16 @@
   "workoutSubtitle": "Pick your level and move with purpose.",
   "workoutYourRoutine": "Your Routine",
   "workoutCreateRoutine": "Create Routine",
+  "workoutContinueLabel": "Continue where you left off",
+  "workoutContinueRemaining": "{remaining} sets left",
+  "@workoutContinueRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutFeaturedTitle": "Featured for you",
   "workoutTrainingOfTheDay": "training of the day",
   "workoutStartWorkout": "Start Workout",
   "workoutNoVideoAvailable": "No video available for this exercise yet",

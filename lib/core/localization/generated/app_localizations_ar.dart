@@ -1023,6 +1023,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workoutCreateRoutine => 'إنشاء روتين';
 
   @override
+  String get workoutContinueLabel => 'استمر من حيث توقفت';
+
+  @override
+  String workoutContinueRemaining(int remaining) {
+    return 'متبقّي $remaining تمرين';
+  }
+
+  @override
+  String get workoutFeaturedTitle => 'مقترح لك';
+
+  @override
   String get workoutTrainingOfTheDay => 'تمرين اليوم';
 
   @override

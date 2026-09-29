@@ -16,11 +16,17 @@ class WorkoutListCard extends StatelessWidget {
     required this.onToggleFavorite,
     this.onTap,
     this.height = 117,
+    this.progressFraction,
   });
   final WorkoutListItem item;
   final VoidCallback onToggleFavorite;
   final VoidCallback? onTap;
   final double height;
+
+  /// 0..1 completion of the real in-progress session for this workout (see
+  /// `WorkoutProgressEntry`) — null when this workout has no active
+  /// session, which hides the ring entirely (today's unchanged look).
+  final double? progressFraction;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +50,35 @@ class WorkoutListCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: SmartImage(item.image, width: 76, height: 88),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: SmartImage(item.image, width: 76, height: 88),
+                      ),
+                      if (progressFraction case final fraction?)
+                        PositionedDirectional(
+                          bottom: -4,
+                          end: -4,
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: ext.glassFill,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: ext.glassBorder),
+                            ),
+                            child: CircularProgressIndicator(
+                              value: fraction,
+                              strokeWidth: 2.5,
+                              color: ext.accentGlow,
+                              backgroundColor: ext.glassBorder,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(width: 14),
                   Expanded(

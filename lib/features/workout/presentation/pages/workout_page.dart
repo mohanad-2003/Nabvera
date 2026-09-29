@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:nabvera/features/workout/presentation/providers/workout_request_providers.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'package:nabvera/core/network/app_icons.dart';
@@ -7,10 +9,14 @@ import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/featured_card.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
+import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 import 'package:nabvera/features/workout/domain/workout_models.dart';
+import 'package:nabvera/features/workout/domain/workout_progress_entry.dart';
 import 'package:nabvera/features/workout/presentation/providers/workout_controller.dart';
+import 'package:nabvera/features/workout/presentation/providers/workout_active_session_provider.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_header.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_list_card.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +39,24 @@ const _kFitnessCategories = <String>[
 ];
 const _kAllCategories = <String>[..._kIronCategories, ..._kFitnessCategories];
 
+String _label(AppLocalizations l10n, WorkoutLevel level) => switch (level) {
+  WorkoutLevel.beginner => l10n.workoutLevelBeginner,
+  WorkoutLevel.intermediate => l10n.workoutLevelIntermediate,
+  WorkoutLevel.advanced => l10n.workoutLevelAdvanced,
+};
+
+String _categoryLabel(AppLocalizations l10n, String? category) =>
+    switch (category) {
+      null => l10n.workoutCategoryAll,
+      'strength' => l10n.workoutCategoryStrength,
+      'cardio' => l10n.workoutCategoryCardio,
+      'yoga' => l10n.workoutCategoryYoga,
+      'hiit' => l10n.workoutCategoryHiit,
+      'stretching' => l10n.workoutCategoryStretching,
+      'full_body' => l10n.workoutCategoryFullBody,
+      _ => category,
+    };
+
 class WorkoutPage extends ConsumerWidget {
   const WorkoutPage({super.key});
 
@@ -44,6 +68,7 @@ class WorkoutPage extends ConsumerWidget {
     final request = ref.watch(
       workoutRequestProvider((level: level, category: category)),
     );
+    final progress = ref.watch(workoutActiveSessionProvider);
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < 720;
@@ -80,45 +105,59 @@ class WorkoutPage extends ConsumerWidget {
                   ).textTheme.bodyMedium?.copyWith(color: ext.textMuted),
                 ),
                 SizedBox(height: spacing),
+                if (progress != null && !progress.isComplete) ...[
+                  _ContinueWorkoutCard(
+                    entry: progress,
+                    onTap: () => _openWorkout(context, ref, progress.workoutId),
+                  ),
+                  SizedBox(height: spacing),
+                ],
+                // Was a level row plus a separate category row (and before
+                // that, a level row plus two more rows each under their own
+                // "Iron Training"/"General Fitness" label) — three stacked
+                // filter rows before a single workout was visible. Now one
+                // scrollable row: level chips, a thin divider, then every
+                // category value ("All" first), equipment-heavy ones next.
+                // Both filters still write to the same two providers as
+                // before, just laid out together instead of stacked.
                 SizedBox(
                   height: 36,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: WorkoutLevel.values.length,
+                    itemCount:
+                        WorkoutLevel.values.length +
+                        1 +
+                        _kAllCategories.length +
+                        1,
                     separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
-                      final tabLevel = WorkoutLevel.values[index];
-                      final isSelected = tabLevel == level;
-                      return WorkoutPill(
-                        label: _label(l10n, tabLevel),
-                        selected: isSelected,
-                        appearance: WorkoutPillAppearance.filter,
-                        onTap:
-                            () => ref
-                                .read(workoutTabProvider.notifier)
-                                .select(tabLevel),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: spacing / 2),
-                // Was level-only before, then a level row plus two more
-                // rows (each under its own "Iron Training"/"General
-                // Fitness" label) for Workout.category — three stacked
-                // filter rows before a single workout was visible. Now one
-                // scrollable row: "All" followed by every category value,
-                // equipment-heavy ones first. Still one classification
-                // system writing to the same filter, just without the
-                // section labels and extra rows costing vertical space.
-                SizedBox(
-                  height: 34,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _kAllCategories.length + 1,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
-                    itemBuilder: (context, index) {
+                      if (index < WorkoutLevel.values.length) {
+                        final tabLevel = WorkoutLevel.values[index];
+                        return WorkoutPill(
+                          label: _label(l10n, tabLevel),
+                          selected: tabLevel == level,
+                          appearance: WorkoutPillAppearance.filter,
+                          onTap:
+                              () => ref
+                                  .read(workoutTabProvider.notifier)
+                                  .select(tabLevel),
+                        );
+                      }
+                      if (index == WorkoutLevel.values.length) {
+                        return Center(
+                          child: Container(
+                            width: 1,
+                            height: 18,
+                            color: ext.glassBorder,
+                          ),
+                        );
+                      }
+                      final categoryIndex =
+                          index - WorkoutLevel.values.length - 1;
                       final value =
-                          index == 0 ? null : _kAllCategories[index - 1];
+                          categoryIndex == 0
+                              ? null
+                              : _kAllCategories[categoryIndex - 1];
                       return WorkoutPill(
                         label: _categoryLabel(l10n, value),
                         selected: value == category,
@@ -159,41 +198,17 @@ class WorkoutPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: spacing),
-                if (items.isNotEmpty)
-                  FeaturedCard(
-                    image: items.first.image,
-                    badge: _label(l10n, level),
-                    title: items.first.localizedName(context),
-                    metas: [
-                      if (items.first.localizedTime(context) case final time?)
-                        FeaturedCardMeta(icon: AppIcons.time, label: time),
-                      if (items.first.localizedCalories(context)
-                          case final calories?)
-                        FeaturedCardMeta(
-                          icon: AppIcons.calories,
-                          label: calories,
-                        ),
-                      if (items.first.localizedExercises(context)
-                          case final exercises?)
-                        FeaturedCardMeta(
-                          icon: AppIcons.workout,
-                          label: exercises,
-                        ),
-                    ],
-                    ctaLabel: l10n.workoutStartWorkout,
+                if (items.isNotEmpty) ...[
+                  SizedBox(height: spacing),
+                  PremiumSectionHeader(title: l10n.workoutFeaturedTitle),
+                  SizedBox(height: compact ? 8 : 12),
+                  _WorkoutHeroCarousel(
+                    items: items,
+                    level: level,
                     height: heroHeight,
-                    // Real, persisted favorite state (unlike this card's
-                    // default cosmetic-only local toggle) — same
-                    // `toggleFavorite` the list rows below already use, on
-                    // this list's first (featured) item.
-                    isFavorite: items.first.isFavorite,
-                    onFavoriteTap:
-                        () => ref
-                            .read(workoutListByLevelProvider(level).notifier)
-                            .toggleFavorite(0),
-                    onTap: () => _openWorkout(context, ref, items.first.id),
+                    onOpen: (id) => _openWorkout(context, ref, id),
                   ),
+                ],
                 SizedBox(height: spacing),
                 PremiumSectionHeader(title: l10n.workoutTitle),
                 SizedBox(height: compact ? 8 : 12),
@@ -225,6 +240,12 @@ class WorkoutPage extends ConsumerWidget {
                       () => ref
                           .read(workoutListByLevelProvider(level).notifier)
                           .toggleFavorite(index),
+                  progressFraction:
+                      progress != null &&
+                              !progress.isComplete &&
+                              progress.workoutId == items[index].id
+                          ? progress.fraction
+                          : null,
                 ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
@@ -232,24 +253,6 @@ class WorkoutPage extends ConsumerWidget {
       ),
     );
   }
-
-  String _label(AppLocalizations l10n, WorkoutLevel level) => switch (level) {
-    WorkoutLevel.beginner => l10n.workoutLevelBeginner,
-    WorkoutLevel.intermediate => l10n.workoutLevelIntermediate,
-    WorkoutLevel.advanced => l10n.workoutLevelAdvanced,
-  };
-
-  String _categoryLabel(AppLocalizations l10n, String? category) =>
-      switch (category) {
-        null => l10n.workoutCategoryAll,
-        'strength' => l10n.workoutCategoryStrength,
-        'cardio' => l10n.workoutCategoryCardio,
-        'yoga' => l10n.workoutCategoryYoga,
-        'hiit' => l10n.workoutCategoryHiit,
-        'stretching' => l10n.workoutCategoryStretching,
-        'full_body' => l10n.workoutCategoryFullBody,
-        _ => category,
-      };
 
   /// Fetches the full workout (with populated exercises) and opens it as a
   /// real [CategoryDetailData] — each round item then carries a real
@@ -347,6 +350,219 @@ class _WorkoutActionButton extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The "continue where you left off" card — shown above the filters when
+/// [WorkoutLocalProgress] has a real, locally-tracked in-progress session
+/// (see `WorkoutProgressEntry`; never a fabricated percentage).
+class _ContinueWorkoutCard extends StatelessWidget {
+  const _ContinueWorkoutCard({required this.entry, required this.onTap});
+
+  final WorkoutProgressEntry entry;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final remaining = entry.totalSets - entry.completedSets;
+
+    return PressableScale(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                ext.accentGlow.withValues(alpha: 0.16),
+                ext.glassFill,
+              ],
+              begin: AlignmentDirectional.centerStart,
+              end: AlignmentDirectional.centerEnd,
+            ),
+            borderRadius: BorderRadius.circular(AppRadius.card),
+            border: Border.all(color: ext.glassBorder),
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: SmartImage(entry.image, width: 58, height: 58),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.workoutContinueLabel,
+                      style: TextStyle(
+                        color: ext.accentGlow,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      entry.localizedTitle(languageCode),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: LinearProgressIndicator(
+                        value: entry.fraction,
+                        minHeight: 6,
+                        backgroundColor: ext.glassBorder,
+                        valueColor: AlwaysStoppedAnimation(ext.accentGlow),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (remaining > 0) ...[
+                const SizedBox(width: 10),
+                Text(
+                  l10n.workoutContinueRemaining(remaining),
+                  style: TextStyle(
+                    color: ext.textMuted,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A swipeable carousel of up to 3 featured workouts, each an existing
+/// [FeaturedCard] with a real, backend-persisted favorite toggle (same
+/// `toggleFavorite` call the list below already uses). Falls back to a
+/// single static card with no swipe affordance when there's only one item.
+class _WorkoutHeroCarousel extends StatefulWidget {
+  const _WorkoutHeroCarousel({
+    required this.items,
+    required this.level,
+    required this.height,
+    required this.onOpen,
+  });
+
+  final List<WorkoutListItem> items;
+  final WorkoutLevel level;
+  final double height;
+  final void Function(String workoutId) onOpen;
+
+  @override
+  State<_WorkoutHeroCarousel> createState() => _WorkoutHeroCarouselState();
+}
+
+class _WorkoutHeroCarouselState extends State<_WorkoutHeroCarousel> {
+  late final PageController _controller = PageController();
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final count = math.min(widget.items.length, 3);
+
+    Widget cardFor(int index) {
+      final item = widget.items[index];
+      return Consumer(
+        builder: (context, ref, _) {
+          return FeaturedCard(
+            image: item.image,
+            badge: _label(l10n, widget.level),
+            title: item.localizedName(context),
+            metas: [
+              if (item.localizedTime(context) case final time?)
+                FeaturedCardMeta(icon: AppIcons.time, label: time),
+              if (item.localizedCalories(context) case final calories?)
+                FeaturedCardMeta(icon: AppIcons.calories, label: calories),
+              if (item.localizedExercises(context) case final exercises?)
+                FeaturedCardMeta(icon: AppIcons.workout, label: exercises),
+            ],
+            ctaLabel: l10n.workoutStartWorkout,
+            height: widget.height,
+            isFavorite: item.isFavorite,
+            onFavoriteTap:
+                () => ref
+                    .read(workoutListByLevelProvider(widget.level).notifier)
+                    .toggleFavorite(index),
+            onTap: () => widget.onOpen(item.id),
+          );
+        },
+      );
+    }
+
+    if (count < 2) {
+      return cardFor(0);
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: widget.height,
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: count,
+            onPageChanged: (page) => setState(() => _page = page),
+            itemBuilder: (context, index) => cardFor(index),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (var i = 0; i < count; i++) ...[
+              if (i != 0) const SizedBox(width: 6),
+              _CarouselDot(active: i == _page),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CarouselDot extends StatelessWidget {
+  const _CarouselDot({required this.active});
+
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      width: active ? 16 : 6,
+      height: 6,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        gradient: active ? ext.accentGradient : null,
+        color: active ? null : ext.glassBorder,
       ),
     );
   }

@@ -70,6 +70,36 @@ class UserRepository {
     return (body['data'] as List).map((e) => e.toString()).toList();
   }
 
+  /// Overwrites the current user's single "continue where you left off"
+  /// entry — real completed/total set counts from `CategoryDetailPage`,
+  /// never a fabricated percentage. See `WorkoutActiveSession`.
+  Future<void> setActiveWorkoutSession({
+    required String workoutId,
+    required String title,
+    required String titleAr,
+    required String image,
+    required int completedSets,
+    required int totalSets,
+  }) async {
+    await _client.patch(
+      '/users/me/active-workout-session',
+      body: {
+        'workoutId': workoutId,
+        'title': title,
+        'titleAr': titleAr,
+        'image': image,
+        'completedSets': completedSets,
+        'totalSets': totalSets,
+      },
+    );
+  }
+
+  /// Clears the active workout session — a finished session, or one undone
+  /// back to zero completed sets, has nothing left to "continue".
+  Future<void> clearActiveWorkoutSession() async {
+    await _client.delete('/users/me/active-workout-session');
+  }
+
   /// Registers this device for push notifications (see
   /// `PushNotificationService`). Safe to call repeatedly with the same
   /// token — the backend de-dupes.
