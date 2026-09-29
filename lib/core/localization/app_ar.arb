@@ -238,6 +238,7 @@
   "@homeHeroPersonalizedReason": {"placeholders": {"minutes": {"type": "int"}}},
   "homeHeroFallbackReason": "جلسة متوازنة اخترناها من مكتبة التمارين الحالية.",
   "homeHeroTooHard": "التمرين صعب؟ اعرض تمرينًا أسهل",
+  "homeHeroTooHardShort": "أسهل",
   "homeReasonLastWorkoutTooHard": "خفّفنا الصعوبة بعد ما حسّيت إن تمرينك الأخير كان صعب.",
   "homeReasonTwoEasyInARow": "كنت قوي بآخر تمرينين — رفعنا لك الصعوبة.",
   "homeReasonOnTrack": "بمستواك المناسب تمامًا — كمّل بنفس الإيقاع.",

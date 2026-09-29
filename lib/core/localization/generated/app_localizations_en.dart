@@ -763,6 +763,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeroTooHard => 'Too intense? Show an easier workout';
 
   @override
+  String get homeHeroTooHardShort => 'Easier';
+
+  @override
   String get homeReasonLastWorkoutTooHard =>
       'We eased up the difficulty after your last session felt tough.';
 

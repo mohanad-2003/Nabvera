@@ -1472,6 +1472,12 @@ abstract class AppLocalizations {
   /// **'Too intense? Show an easier workout'**
   String get homeHeroTooHard;
 
+  /// No description provided for @homeHeroTooHardShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Easier'**
+  String get homeHeroTooHardShort;
+
   /// No description provided for @homeReasonLastWorkoutTooHard.
   ///
   /// In en, this message translates to:

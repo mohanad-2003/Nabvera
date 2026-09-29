@@ -512,14 +512,53 @@ class _TodayHeroCard extends ConsumerWidget {
             ? ext.success.withValues(alpha: 0.16)
             : AppColors.electricOrange.withValues(alpha: 0.16);
 
+    final hasPhoto = hasFeatured && featured.image.isNotEmpty;
+    // A faint wash of the same two brand colors as this card's own
+    // badge/CTA gradient — instead of `ext.cardColor` flat (plain white in
+    // light mode), which read as a stark, disconnected slab under this
+    // card's own photo/badge/CTA accent color. Barely-there (5% alpha) so
+    // text contrast is unaffected; in dark mode it warms `ext.cardColor`'s
+    // graphite by the same small amount rather than looking untouched.
+    final surfaceStart = Color.alphaBlend(
+      AppColors.electricOrange.withValues(alpha: 0.05),
+      ext.cardColor,
+    );
+    final surfaceEnd = Color.alphaBlend(
+      AppColors.seedLime.withValues(alpha: 0.05),
+      ext.cardColor,
+    );
+    final badge = _HeroBadge(isCompleted: isCompleted, l10n: l10n, ext: ext);
+    // Built once, reused by whichever of the two header layouts below is
+    // active (never both) — `overlay` swaps its chrome between a solid
+    // low-contrast chip (flat header) and a translucent-dark pill (photo
+    // header, which needs real contrast against an arbitrary photo).
+    _HeroTuneButton? tuneButton({required bool overlay}) =>
+        hasFeatured && !isCompleted
+            ? _HeroTuneButton(
+              onTap:
+                  () =>
+                      ref
+                          .read(homeFeaturedWorkoutControllerProvider.notifier)
+                          .chooseEasierWorkout(),
+              tooltip: l10n.homeHeroTooHard,
+              label: l10n.homeHeroTooHardShort,
+              overlay: overlay,
+              ext: ext,
+            )
+            : null;
+
     return PressableScale(
       child: InkWell(
         onTap: onOpen,
         borderRadius: BorderRadius.circular(26),
         child: Container(
-          padding: const EdgeInsets.all(20),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: ext.cardColor,
+            gradient: LinearGradient(
+              colors: [surfaceStart, surfaceEnd],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(26),
             // A soft success-green ring once today's plan is done — a
             // clear "you're finished" signal at a glance, rather than the
@@ -536,268 +575,233 @@ class _TodayHeroCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  // A solid gradient-filled badge — same treatment as
-                  // FeaturedCard's badge/this card's own CTA — instead of a
-                  // low-alpha tinted pill, so it reads as the app's one
-                  // strong brand orange rather than a muted accent.
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 11,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: isCompleted ? null : ext.accentGradient,
-                      color: isCompleted ? ext.success : null,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isCompleted
-                              ? Icons.check_circle_rounded
-                              : Icons.local_fire_department_rounded,
-                          size: 15,
-                          color: isCompleted ? Colors.white : ext.onAccent,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          isCompleted
-                              ? l10n.homeHeroCompletionPercent(100)
-                              : l10n.homeTodayPlanLabel,
-                          style: TextStyle(
-                            color: isCompleted ? Colors.white : ext.onAccent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  // A directly-visible icon instead of tucking "too hard"
-                  // away inside a "⋮" menu nobody taps into by accident —
-                  // the whole point of this action is to be noticed exactly
-                  // when someone's staring at a workout they don't want.
-                  // The full explanation is still available via long-press.
-                  if (hasFeatured && !isCompleted)
-                    Tooltip(
-                      message: l10n.homeHeroTooHard,
-                      child: InkWell(
-                        onTap:
-                            () =>
-                                ref
-                                    .read(
-                                      homeFeaturedWorkoutControllerProvider
-                                          .notifier,
-                                    )
-                                    .chooseEasierWorkout(),
-                        borderRadius: BorderRadius.circular(999),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: ext.cardBorderColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.tune_rounded,
-                            size: 16,
-                            color: ext.textMuted,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.homeHeroSuggestedForYou,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: ext.textMuted,
-                  fontWeight: FontWeight.w600,
+              // The card's own cover photo, fading into its flat surface
+              // color below — gives the page's single most important card
+              // a visual identity instead of reading as flatter than every
+              // other (photo-backed) card on this page. Falls back to the
+              // original all-flat header row while there's no featured
+              // workout yet (nothing to show a photo of) or it has none.
+              if (hasPhoto)
+                _HeroPhotoBand(
+                  image: featured.image,
+                  // The photo fades into the same tinted surface the rest
+                  // of the card uses below, not raw `ext.cardColor` — a
+                  // visible seam otherwise where the photo meets the flat
+                  // content area.
+                  cardColor: surfaceEnd,
+                  badge: badge,
+                  tuneButton: tuneButton(overlay: true),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: ext.textPrimary,
-                  fontWeight: FontWeight.w800,
-                  height: 1.08,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                _recommendationReason(
-                  l10n,
-                  featured?.reasonCode,
-                  profile.availableMinutes,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: ext.textMuted,
-                  height: 1.35,
-                ),
-              ),
-              if (hasFeatured) ...[
-                const SizedBox(height: 16),
-                Row(
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, hasPhoto ? 18 : 20, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (duration != null)
-                      Expanded(
-                        child: _MetaChip(
-                          icon: Icons.timer_outlined,
-                          label: l10n.homeHeroDuration(duration),
-                          background: metaBg,
-                          iconColor: AppColors.electricOrange,
-                          textColor: ext.textPrimary,
+                    if (!hasPhoto)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          children: [
+                            badge,
+                            const Spacer(),
+                            if (tuneButton(overlay: false) case final btn?) btn,
+                          ],
                         ),
                       ),
-                    if (duration != null && calories != null)
-                      const SizedBox(width: 8),
-                    if (calories != null)
-                      Expanded(
-                        child: _MetaChip(
-                          icon: Icons.local_fire_department_outlined,
-                          label: l10n.homeHeroCalories(calories),
-                          background: metaBg,
-                          iconColor: AppColors.electricOrange,
-                          textColor: ext.textPrimary,
-                        ),
-                      ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _MetaChip(
-                        icon: Icons.signal_cellular_alt_rounded,
-                        label: level,
-                        background: metaBg,
-                        iconColor: AppColors.electricOrange,
-                        textColor: ext.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              if (featured?.alternative != null) ...[
-                const SizedBox(height: 16),
-                _AlternativeSuggestion(
-                  alternative: featured!.alternative!,
-                  onSwitchTo: onSwitchTo,
-                ),
-              ],
-              if (hasFeatured && exerciseCount != null) ...[
-                const SizedBox(height: 16),
-                Row(
-                  children: [
                     Text(
-                      l10n.homeHeroExercises(exerciseCount),
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(
-                        color: ext.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      l10n.homeHeroExerciseProgress(
-                        completedExercises,
-                        exerciseCount,
-                      ),
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(
+                      l10n.homeHeroSuggestedForYou,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: ext.textMuted,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: SizedBox(
-                    height: 8,
-                    child: Stack(
-                      children: [
-                        Container(color: trackColor),
-                        // Animates toward the new fraction whenever
-                        // `progress` changes instead of snapping instantly,
-                        // so logging a workout visibly fills the bar rather
-                        // than just appearing already-filled next rebuild.
-                        TweenAnimationBuilder<double>(
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeOutCubic,
-                          tween: Tween(
-                            begin: 0,
-                            end: progress <= 0 ? 0 : progress,
-                          ),
-                          builder:
-                              (context, value, _) => FractionallySizedBox(
-                                widthFactor: value,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient:
-                                        isCompleted ? null : ext.accentGradient,
-                                    color: isCompleted ? ext.success : null,
-                                  ),
-                                ),
-                              ),
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineMedium?.copyWith(
+                        color: ext.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        height: 1.08,
+                      ),
                     ),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: isCompleted ? null : ext.accentGradient,
-                    color: isCompleted ? ext.success : null,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: InkWell(
-                      onTap: onOpen,
-                      borderRadius: BorderRadius.circular(18),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    const SizedBox(height: 6),
+                    Text(
+                      _recommendationReason(
+                        l10n,
+                        featured?.reasonCode,
+                        profile.availableMinutes,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ext.textMuted,
+                        height: 1.35,
+                      ),
+                    ),
+                    if (hasFeatured) ...[
+                      const SizedBox(height: 16),
+                      Row(
                         children: [
-                          Icon(
-                            ctaIcon,
-                            color: isCompleted ? Colors.white : ext.onAccent,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              ctaLabel,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color:
-                                    isCompleted ? Colors.white : ext.onAccent,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 15,
+                          if (duration != null)
+                            Expanded(
+                              child: _MetaChip(
+                                icon: Icons.timer_outlined,
+                                label: l10n.homeHeroDuration(duration),
+                                background: metaBg,
+                                iconColor: AppColors.electricOrange,
+                                textColor: ext.textPrimary,
                               ),
+                            ),
+                          if (duration != null && calories != null)
+                            const SizedBox(width: 8),
+                          if (calories != null)
+                            Expanded(
+                              child: _MetaChip(
+                                icon: Icons.local_fire_department_outlined,
+                                label: l10n.homeHeroCalories(calories),
+                                background: metaBg,
+                                iconColor: AppColors.electricOrange,
+                                textColor: ext.textPrimary,
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _MetaChip(
+                              icon: Icons.signal_cellular_alt_rounded,
+                              label: level,
+                              background: metaBg,
+                              iconColor: AppColors.electricOrange,
+                              textColor: ext.textPrimary,
                             ),
                           ),
                         ],
                       ),
+                    ],
+                    if (featured?.alternative != null) ...[
+                      const SizedBox(height: 16),
+                      _AlternativeSuggestion(
+                        alternative: featured!.alternative!,
+                        onSwitchTo: onSwitchTo,
+                      ),
+                    ],
+                    if (hasFeatured && exerciseCount != null) ...[
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            l10n.homeHeroExercises(exerciseCount),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: ext.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            l10n.homeHeroExerciseProgress(
+                              completedExercises,
+                              exerciseCount,
+                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: ext.textMuted,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: SizedBox(
+                          height: 8,
+                          child: Stack(
+                            children: [
+                              Container(color: trackColor),
+                              // Animates toward the new fraction whenever
+                              // `progress` changes instead of snapping instantly,
+                              // so logging a workout visibly fills the bar rather
+                              // than just appearing already-filled next rebuild.
+                              TweenAnimationBuilder<double>(
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeOutCubic,
+                                tween: Tween(
+                                  begin: 0,
+                                  end: progress <= 0 ? 0 : progress,
+                                ),
+                                builder:
+                                    (context, value, _) => FractionallySizedBox(
+                                      widthFactor: value,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient:
+                                              isCompleted
+                                                  ? null
+                                                  : ext.accentGradient,
+                                          color:
+                                              isCompleted ? ext.success : null,
+                                        ),
+                                      ),
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: isCompleted ? null : ext.accentGradient,
+                          color: isCompleted ? ext.success : null,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: InkWell(
+                            onTap: onOpen,
+                            borderRadius: BorderRadius.circular(18),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  ctaIcon,
+                                  color:
+                                      isCompleted ? Colors.white : ext.onAccent,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    ctaLabel,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color:
+                                          isCompleted
+                                              ? Colors.white
+                                              : ext.onAccent,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -824,6 +828,186 @@ class _TodayHeroCard extends ConsumerWidget {
       'no_history' => l10n.homeHeroPersonalizedReason(availableMinutes ?? 30),
       _ => l10n.homeHeroFallbackReason,
     };
+  }
+}
+
+/// The hero card's "Today's Plan"/completion badge — split out of
+/// [_TodayHeroCard] so the exact same widget can sit either inline (flat
+/// header, no photo) or overlaid on [_HeroPhotoBand]'s cover photo.
+class _HeroBadge extends StatelessWidget {
+  const _HeroBadge({
+    required this.isCompleted,
+    required this.l10n,
+    required this.ext,
+  });
+
+  final bool isCompleted;
+  final AppLocalizations l10n;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+      decoration: BoxDecoration(
+        gradient: isCompleted ? null : ext.accentGradient,
+        color: isCompleted ? ext.success : null,
+        borderRadius: BorderRadius.circular(999),
+        boxShadow:
+            isCompleted
+                ? null
+                : [
+                  BoxShadow(
+                    color: ext.accentGlow.withValues(alpha: 0.3),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isCompleted
+                ? Icons.check_circle_rounded
+                : Icons.local_fire_department_rounded,
+            size: 15,
+            color: isCompleted ? Colors.white : ext.onAccent,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isCompleted
+                ? l10n.homeHeroCompletionPercent(100)
+                : l10n.homeTodayPlanLabel,
+            style: TextStyle(
+              color: isCompleted ? Colors.white : ext.onAccent,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The "this is too hard, suggest something easier" action. [overlay] picks
+/// between two chrome treatments: a quiet icon-only circle against the
+/// card's own flat surface (unchanged from before this card had a photo),
+/// or a labeled, translucent-dark pill with real contrast against an
+/// arbitrary cover photo — an icon alone read ambiguously there.
+class _HeroTuneButton extends StatelessWidget {
+  const _HeroTuneButton({
+    required this.onTap,
+    required this.tooltip,
+    required this.label,
+    required this.overlay,
+    required this.ext,
+  });
+
+  final VoidCallback onTap;
+  final String tooltip;
+  final String label;
+  final bool overlay;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!overlay) {
+      return Tooltip(
+        message: tooltip,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ext.cardBorderColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.tune_rounded, size: 16, color: ext.textMuted),
+          ),
+        ),
+      );
+    }
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.tune_rounded, size: 14, color: Colors.white),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The hero card's cover-photo band: the featured workout's real photo,
+/// fading into the card's own flat surface color at the bottom so the
+/// existing flat content below reads as one continuous card rather than a
+/// photo pasted on top of an unrelated surface. [badge]/[tuneButton]
+/// overlay it directly instead of sitting on their own row above it.
+class _HeroPhotoBand extends StatelessWidget {
+  const _HeroPhotoBand({
+    required this.image,
+    required this.cardColor,
+    required this.badge,
+    required this.tuneButton,
+  });
+
+  final String image;
+  final Color cardColor;
+  final Widget badge;
+  final Widget? tuneButton;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 148,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          SmartImage(image),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [cardColor, cardColor.withValues(alpha: 0.0)],
+                stops: const [0, 0.75],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
+          ),
+          PositionedDirectional(top: 14, start: 14, child: badge),
+          if (tuneButton != null)
+            PositionedDirectional(top: 12, end: 12, child: tuneButton!),
+        ],
+      ),
+    );
   }
 }
 
@@ -886,9 +1070,7 @@ class _AlternativeSuggestion extends StatelessWidget {
             onPressed: () => onSwitchTo(alternative.id),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.electricOrange,
-              backgroundColor: AppColors.electricOrange.withValues(
-                alpha: 0.12,
-              ),
+              backgroundColor: AppColors.electricOrange.withValues(alpha: 0.12),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(999),

@@ -755,6 +755,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeHeroTooHard => 'التمرين صعب؟ اعرض تمرينًا أسهل';
 
   @override
+  String get homeHeroTooHardShort => 'أسهل';
+
+  @override
   String get homeReasonLastWorkoutTooHard =>
       'خفّفنا الصعوبة بعد ما حسّيت إن تمرينك الأخير كان صعب.';
 
