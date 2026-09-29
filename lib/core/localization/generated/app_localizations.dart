@@ -1448,6 +1448,12 @@ abstract class AppLocalizations {
   /// **'Upper Body Strength'**
   String get homeHeroTitle;
 
+  /// No description provided for @homeHeroSuggestedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested for your level'**
+  String get homeHeroSuggestedForYou;
+
   /// No description provided for @homeHeroPersonalizedReason.
   ///
   /// In en, this message translates to:
@@ -1465,6 +1471,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Too intense? Show an easier workout'**
   String get homeHeroTooHard;
+
+  /// No description provided for @homeHeroTooHardShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Easier'**
+  String get homeHeroTooHardShort;
 
   /// No description provided for @homeReasonLastWorkoutTooHard.
   ///
@@ -1663,6 +1675,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} exercises'**
   String homeHeroExercises(int count);
+
+  /// No description provided for @homeHeroExerciseProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {total}'**
+  String homeHeroExerciseProgress(int done, int total);
 
   /// No description provided for @workoutExerciseSets.
   ///
@@ -1903,6 +1921,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Routine'**
   String get workoutCreateRoutine;
+
+  /// No description provided for @workoutContinueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue where you left off'**
+  String get workoutContinueLabel;
+
+  /// No description provided for @workoutContinueRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} sets left'**
+  String workoutContinueRemaining(int remaining);
+
+  /// No description provided for @workoutFeaturedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured for you'**
+  String get workoutFeaturedTitle;
 
   /// No description provided for @workoutTrainingOfTheDay.
   ///
@@ -4723,6 +4759,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Built with the rule-based planner'**
   String get mealPlanReasonFallbackRuleBasedPlan;
+
+  /// No description provided for @mealPlanRecipeNoLongerAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe details are no longer available'**
+  String get mealPlanRecipeNoLongerAvailable;
 
   /// No description provided for @healthConnectionTitle.
   ///

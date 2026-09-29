@@ -420,7 +420,7 @@ class _MealItemCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.displayTitle, style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w700)),
+                Text(item.localizedDisplayTitle(l10n), style: TextStyle(color: ext.textPrimary, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
                 Text(
                   '${l10n.nutritionCaloriesValue(item.calories)} • ${item.proteinG}g ${l10n.nutritionProteinLabel} '

@@ -44,7 +44,7 @@ final class HomeFeaturedWorkoutControllerProvider
 }
 
 String _$homeFeaturedWorkoutControllerHash() =>
-    r'fb74a97549ad254e83d889d74a5c3626cd965ef7';
+    r'65973c992cc06199e846948bfe250393a9e20cd3';
 
 abstract class _$HomeFeaturedWorkoutController
     extends $Notifier<HomeFeaturedWorkout?> {

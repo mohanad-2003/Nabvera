@@ -748,6 +748,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeroTitle => 'Upper Body Strength';
 
   @override
+  String get homeHeroSuggestedForYou => 'Suggested for your level';
+
+  @override
   String homeHeroPersonalizedReason(int minutes) {
     return 'Picked for your goal, level, equipment, and $minutes-minute schedule.';
   }
@@ -758,6 +761,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeHeroTooHard => 'Too intense? Show an easier workout';
+
+  @override
+  String get homeHeroTooHardShort => 'Easier';
 
   @override
   String get homeReasonLastWorkoutTooHard =>
@@ -874,6 +880,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String homeHeroExercises(int count) {
     return '$count exercises';
+  }
+
+  @override
+  String homeHeroExerciseProgress(int done, int total) {
+    return '$done / $total';
   }
 
   @override
@@ -1023,6 +1034,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutCreateRoutine => 'Create Routine';
+
+  @override
+  String get workoutContinueLabel => 'Continue where you left off';
+
+  @override
+  String workoutContinueRemaining(int remaining) {
+    return '$remaining sets left';
+  }
+
+  @override
+  String get workoutFeaturedTitle => 'Featured for you';
 
   @override
   String get workoutTrainingOfTheDay => 'training of the day';
@@ -2543,6 +2565,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mealPlanReasonFallbackRuleBasedPlan =>
       'Built with the rule-based planner';
+
+  @override
+  String get mealPlanRecipeNoLongerAvailable =>
+      'Recipe details are no longer available';
 
   @override
   String get healthConnectionTitle => 'Connect Health Data';

@@ -1,6 +1,9 @@
 import 'package:nabvera/core/routing/admin_route_guard.dart';
 import 'package:nabvera/core/routing/password_reset_redirect.dart';
+import 'package:nabvera/core/theme/app_colors.dart';
+import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/app_bottom_nav.dart';
+import 'package:nabvera/core/widgets/pressable_scale.dart';
 import 'package:nabvera/features/admin/presentation/pages/admin_article_editor_page.dart';
 import 'package:nabvera/features/admin/presentation/pages/admin_articles_page.dart';
 import 'package:nabvera/features/admin/presentation/pages/admin_challenge_editor_page.dart';
@@ -22,6 +25,7 @@ import 'package:nabvera/features/authentication/presentation/pages/login_page.da
 import 'package:nabvera/features/authentication/presentation/pages/onboarding_carousel_page.dart';
 import 'package:nabvera/features/authentication/presentation/pages/signup_page.dart';
 import 'package:nabvera/features/authentication/presentation/pages/splash_page.dart';
+import 'package:nabvera/features/coach/presentation/pages/coach_chat_page.dart';
 import 'package:nabvera/features/community/domain/community_models.dart';
 import 'package:nabvera/features/community/presentation/pages/challenge_page.dart';
 import 'package:nabvera/features/community/presentation/pages/community_page.dart';
@@ -326,6 +330,10 @@ GoRouter appRouter(Ref ref) {
                 ArticleDetailPage(article: state.extra as ArticleTip),
       ),
       GoRoute(
+        path: AppRoutes.aiCoach,
+        builder: (context, state) => const CoachChatPage(),
+      ),
+      GoRoute(
         path: AppRoutes.workoutCategoryDetail,
         builder:
             (context, state) =>
@@ -468,9 +476,33 @@ class _AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The AI coach lives outside the 5 equal-width bottom-nav tabs (6 was
+    // one too many, and its label needs more room than a tab slot gives)
+    // as a raised, distinct floating button instead — docked on top of the
+    // pill nav bar rather than competing for a slot in it. `extendBody`
+    // lets this sit in `body`'s own Stack, positioned using the same pill
+    // geometry AppBottomNav lays itself out with (see its SafeArea
+    // margin/height below) so it visually pokes above the pill's top edge.
+    final pillBottomInset = MediaQuery.paddingOf(context).bottom + 12;
+    const pillHeight = 66.0;
+    const fabDiameter = 60.0;
+    const fabOverlapIntoPill = 18.0;
+
     return Scaffold(
       extendBody: true,
-      body: navigationShell,
+      body: Stack(
+        children: [
+          navigationShell,
+          PositionedDirectional(
+            bottom: pillBottomInset + pillHeight - fabOverlapIntoPill,
+            end: 20,
+            child: _CoachFab(
+              diameter: fabDiameter,
+              onTap: () => context.push(AppRoutes.aiCoach),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: AppBottomNav(
         currentIndex: navigationShell.currentIndex,
         onTap:
@@ -478,6 +510,77 @@ class _AppShell extends StatelessWidget {
               index,
               initialLocation: index == navigationShell.currentIndex,
             ),
+      ),
+    );
+  }
+}
+
+/// The AI coach's distinctive entry point — a raised, gradient-filled
+/// circle with its full name underneath, docked on top of the bottom nav
+/// pill (see `_AppShell`) instead of being just another equal-width tab or
+/// a small unlabeled header icon.
+class _CoachFab extends StatelessWidget {
+  const _CoachFab({required this.diameter, required this.onTap});
+
+  final double diameter;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    return PressableScale(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(diameter),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: diameter,
+              height: diameter,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [AppColors.seedLime, AppColors.electricOrange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: Border.all(color: ext.cardColor, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.electricOrange.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                color: ext.onAccent,
+                size: diameter * 0.42,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: ext.cardColor.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: ext.glassBorder),
+              ),
+              child: Text(
+                isArabic ? 'المدرب الذكي' : 'AI Coach',
+                style: TextStyle(
+                  color: ext.textPrimary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

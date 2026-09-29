@@ -60,6 +60,7 @@ abstract final class AppRoutes {
   static const favorite = '/favorite';
   static const subscriptionPaywall = '/profile/subscription';
   static const articleDetail = '/home/article';
+  static const aiCoach = '/coach';
 
   // --- Admin console ----------------------------------------------------
   //

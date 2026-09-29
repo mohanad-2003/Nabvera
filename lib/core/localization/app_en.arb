@@ -349,6 +349,7 @@
     }
   },
   "homeHeroTitle": "Upper Body Strength",
+  "homeHeroSuggestedForYou": "Suggested for your level",
   "homeHeroPersonalizedReason": "Picked for your goal, level, equipment, and {minutes}-minute schedule.",
   "@homeHeroPersonalizedReason": {
     "placeholders": {
@@ -359,6 +360,7 @@
   },
   "homeHeroFallbackReason": "A balanced session selected from the current workout library.",
   "homeHeroTooHard": "Too intense? Show an easier workout",
+  "homeHeroTooHardShort": "Easier",
   "homeReasonLastWorkoutTooHard": "We eased up the difficulty after your last session felt tough.",
   "homeReasonTwoEasyInARow": "You've been crushing it — we bumped up the difficulty.",
   "homeReasonOnTrack": "Right at your level — keep the momentum going.",
@@ -436,6 +438,17 @@
   "@homeHeroExercises": {
     "placeholders": {
       "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeHeroExerciseProgress": "{done} / {total}",
+  "@homeHeroExerciseProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
         "type": "int"
       }
     }
@@ -559,6 +572,16 @@
   "workoutSubtitle": "Pick your level and move with purpose.",
   "workoutYourRoutine": "Your Routine",
   "workoutCreateRoutine": "Create Routine",
+  "workoutContinueLabel": "Continue where you left off",
+  "workoutContinueRemaining": "{remaining} sets left",
+  "@workoutContinueRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutFeaturedTitle": "Featured for you",
   "workoutTrainingOfTheDay": "training of the day",
   "workoutStartWorkout": "Start Workout",
   "workoutNoVideoAvailable": "No video available for this exercise yet",
@@ -1145,6 +1168,7 @@
   "mealPlanReasonHigherProteinDay": "A higher-protein day",
   "mealPlanReasonLighterCalorieDay": "A lighter-calorie day",
   "mealPlanReasonFallbackRuleBasedPlan": "Built with the rule-based planner",
+  "mealPlanRecipeNoLongerAvailable": "Recipe details are no longer available",
   "healthConnectionTitle": "Connect Health Data",
   "healthConnectionIntroBody": "Optionally share steps, activity, and sleep from Health Connect or Apple Health to improve your progress stats and workout suggestions. This is never used for medical purposes, and you can disconnect at any time.",
   "healthConnectionDataStepsLabel": "Steps",

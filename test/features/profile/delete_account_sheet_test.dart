@@ -39,6 +39,17 @@ class FakeUserRepository implements UserRepository {
   @override
   Future<List<String>> toggleFavoriteRecipe(String recipeId) async => throw UnimplementedError();
   @override
+  Future<void> setActiveWorkoutSession({
+    required String workoutId,
+    required String title,
+    required String titleAr,
+    required String image,
+    required int completedSets,
+    required int totalSets,
+  }) async {}
+  @override
+  Future<void> clearActiveWorkoutSession() async {}
+  @override
   Future<void> registerFcmToken(String token) async {}
   @override
   Future<void> unregisterFcmToken(String token) async {}

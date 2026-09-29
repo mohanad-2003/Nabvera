@@ -16,6 +16,25 @@ List<HomeCategory> homeCategories(Ref ref) => [
   HomeCategory(image: AppIcons.community, name: 'Community'),
 ];
 
+/// Cold-start mitigation for the Render free-tier backend (see
+/// `ApiClient.baseUrl`'s default), which sleeps after ~15 min idle and can
+/// take 30-60s to wake on the first request — well past a normal request's
+/// timeout. Silently retries [fetch] with backoff before letting a failure
+/// through, so reopening the app after it's been closed a while gets the
+/// backend a real chance to wake up instead of immediately showing an
+/// error the user has to tap "retry" on themselves.
+Future<T> _withColdStartRetry<T>(Future<T> Function() fetch) async {
+  const retryDelays = [Duration(seconds: 4), Duration(seconds: 8)];
+  for (final delay in retryDelays) {
+    try {
+      return await fetch();
+    } catch (_) {
+      await Future.delayed(delay);
+    }
+  }
+  return fetch();
+}
+
 enum HomeLoadStatus { loading, loaded, error }
 
 /// Wraps a home-screen list section with its fetch status so the UI can
@@ -48,8 +67,11 @@ class HomeRecommendations extends _$HomeRecommendations {
     state = const HomeSectionState.loading();
     try {
       final repo = ref.read(workoutRepositoryProvider);
-      var docs = await repo.fetchWorkouts(popular: true);
-      if (docs.isEmpty) docs = await repo.fetchWorkouts();
+      final docs = await _withColdStartRetry(() async {
+        var docs = await repo.fetchWorkouts(popular: true);
+        if (docs.isEmpty) docs = await repo.fetchWorkouts();
+        return docs;
+      });
       state = HomeSectionState(
         status: HomeLoadStatus.loaded,
         items: docs.take(6).map(RecommendedWorkout.fromJson).toList(),
@@ -74,7 +96,9 @@ class HomeArticles extends _$HomeArticles {
   Future<void> _load() async {
     state = const HomeSectionState.loading();
     try {
-      final docs = await ref.read(homeRepositoryProvider).fetchArticles();
+      final docs = await _withColdStartRetry(
+        () => ref.read(homeRepositoryProvider).fetchArticles(),
+      );
       state = HomeSectionState(
         status: HomeLoadStatus.loaded,
         items: docs.map(ArticleTip.fromJson).toList(),

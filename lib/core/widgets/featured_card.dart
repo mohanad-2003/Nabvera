@@ -32,6 +32,8 @@ class FeaturedCard extends StatefulWidget {
     this.ctaLabel,
     this.height = 220,
     this.onTap,
+    this.isFavorite,
+    this.onFavoriteTap,
   });
 
   final String image;
@@ -49,6 +51,15 @@ class FeaturedCard extends StatefulWidget {
   final double height;
   final VoidCallback? onTap;
 
+  /// When [onFavoriteTap] is provided, the favorite star is controlled by
+  /// [isFavorite] and tapping it calls [onFavoriteTap] instead of toggling
+  /// local state — lets a caller wire the star to real persisted state
+  /// (e.g. `WorkoutListByLevel.toggleFavorite`). When omitted (the default,
+  /// used by every other call site), the star keeps its original
+  /// cosmetic-only local-state behavior unchanged.
+  final bool? isFavorite;
+  final VoidCallback? onFavoriteTap;
+
   @override
   State<FeaturedCard> createState() => _FeaturedCardState();
 }
@@ -59,6 +70,8 @@ class _FeaturedCardState extends State<FeaturedCard> {
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final isControlled = widget.onFavoriteTap != null;
+    final isFavorite = isControlled ? (widget.isFavorite ?? false) : _isFavorite;
 
     return PressableScale(
       enabled: widget.onTap != null,
@@ -115,7 +128,10 @@ class _FeaturedCardState extends State<FeaturedCard> {
                 top: 14,
                 end: 14,
                 child: GestureDetector(
-                  onTap: () => setState(() => _isFavorite = !_isFavorite),
+                  onTap:
+                      isControlled
+                          ? widget.onFavoriteTap
+                          : () => setState(() => _isFavorite = !_isFavorite),
                   child: Container(
                     width: 38,
                     height: 38,
@@ -127,10 +143,8 @@ class _FeaturedCardState extends State<FeaturedCard> {
                       ),
                     ),
                     child: Icon(
-                      _isFavorite
-                          ? Icons.star_rounded
-                          : Icons.star_border_rounded,
-                      color: _isFavorite ? ext.accentGlow : Colors.white,
+                      isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                      color: isFavorite ? ext.accentGlow : Colors.white,
                       size: 20,
                     ),
                   ),

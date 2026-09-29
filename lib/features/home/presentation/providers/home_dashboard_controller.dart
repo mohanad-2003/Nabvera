@@ -96,6 +96,7 @@ class HomeFeaturedWorkout {
     required this.recoveryMap,
     this.alternative,
     this.titleAr = '',
+    this.image = '',
   });
 
   final String id;
@@ -107,6 +108,13 @@ class HomeFeaturedWorkout {
   final String reasonCode;
   final List<MuscleGroupRecovery> recoveryMap;
   final AlternativeWorkoutSuggestion? alternative;
+
+  /// The workout's cover photo (`Workout.coverImageUrl`) — a bundled
+  /// fallback asset path, or a real `http(s)://` URL, same convention as
+  /// `RecommendedWorkout.image`. Empty when the backend never returned one,
+  /// in which case [SmartImage]/`smartImageProvider` fall back to the
+  /// generic placeholder asset on their own.
+  final String image;
 
   /// Arabic translation, from `Workout.titleAr` — empty when the admin
   /// hasn't translated this workout yet, in which case [localizedTitle]
@@ -144,6 +152,7 @@ class HomeFeaturedWorkoutController extends _$HomeFeaturedWorkoutController {
         id: (workout['_id'] as String?) ?? '',
         title: (workout['title'] as String?) ?? '',
         titleAr: (workout['titleAr'] as String?) ?? '',
+        image: (workout['coverImageUrl'] as String?) ?? '',
         durationMinutes: (workout['durationMinutes'] as num?)?.toInt() ?? 0,
         estimatedCalories: (workout['estimatedCalories'] as num?)?.toInt() ?? 0,
         difficulty: (workout['difficulty'] as String?) ?? 'beginner',

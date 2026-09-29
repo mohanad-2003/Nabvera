@@ -14,6 +14,8 @@ import 'package:nabvera/features/profile/presentation/providers/workout_schedule
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/difficulty_rating.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
+import 'package:nabvera/features/workout/domain/workout_progress_entry.dart';
+import 'package:nabvera/features/workout/presentation/providers/workout_active_session_provider.dart';
 import 'package:nabvera/features/workout/presentation/widgets/log_set_sheet.dart';
 import 'package:nabvera/features/workout/presentation/widgets/rest_timer_bar.dart';
 import 'package:nabvera/features/workout/presentation/widgets/round_item_tile.dart';
@@ -114,6 +116,38 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       _loggedSets[groupIndex][itemIndex][setNumber] = logged;
       _startRest(_kDefaultRestDuration);
     });
+    _syncLocalProgress();
+  }
+
+  /// Persists real completed-vs-total set counts as the "continue where you
+  /// left off" state (see `WorkoutLocalProgress`) — a curated/mock workout
+  /// (no `workoutId`) never gets an entry, matching the existing
+  /// Start/Finish gating in this file.
+  void _syncLocalProgress() {
+    final workoutId = data.workoutId;
+    if (workoutId == null) return;
+    final completed = _completedSets
+        .expand((group) => group)
+        .fold(0, (n, sets) => n + sets.length);
+    if (completed == 0) {
+      ref.read(workoutActiveSessionProvider.notifier).clear();
+      return;
+    }
+    final total = data.rounds
+        .expand((group) => group.items)
+        .fold(0, (n, item) => n + item.setsCount);
+    ref
+        .read(workoutActiveSessionProvider.notifier)
+        .recordSets(
+          WorkoutProgressEntry(
+            workoutId: workoutId,
+            title: data.heroLabel,
+            titleAr: data.heroLabelAr,
+            image: data.heroImage,
+            completedSets: completed,
+            totalSets: total,
+          ),
+        );
   }
 
   /// The most recently logged weight for this exercise this session (by
@@ -245,6 +279,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
       // A workout is now logged for today — cancel/skip today's local
       // reminder instead of nagging someone who already showed up.
       unawaited(syncWorkoutReminders(ref, hasWorkoutTodayOverride: true));
+      // Finished, not just paused — clear the "continue where you left
+      // off" entry so the Workout tab stops offering to resume it.
+      unawaited(ref.read(workoutActiveSessionProvider.notifier).clear());
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
