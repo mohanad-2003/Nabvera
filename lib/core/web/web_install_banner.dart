@@ -23,6 +23,36 @@ const _dismissedPrefsKey = 'web_install_banner_dismissed';
 /// this listener captures.
 JSObject? _deferredInstallPrompt;
 
+/// Safari (iOS/iPadOS) never fires `beforeinstallprompt` and has no API at
+/// all to trigger or even detect an install programmatically — Apple's own
+/// deliberate limitation, not something this app can work around. The only
+/// way to add this app to an iOS home screen is the manual Share ->
+/// "Add to Home Screen" path, so that's a *different* banner (instructions,
+/// no button) rather than the Chromium one-tap flow.
+bool _isIosSafariInstallCandidate() {
+  final nav = web.window.navigator;
+  final ua = nav.userAgent;
+  final isIphoneOrIpod = ua.contains('iPhone') || ua.contains('iPod');
+  // iPadOS 13+ identifies its UA as desktop Safari/"Macintosh" — touch
+  // support is what actually distinguishes it from real macOS here.
+  final isIpad = ua.contains('iPad') || (ua.contains('Macintosh') && nav.maxTouchPoints > 0);
+  if (!isIphoneOrIpod && !isIpad) return false;
+  // Every other iOS browser (Chrome, Firefox, Edge) is required by Apple to
+  // use WebKit too and so shares Safari's UA string apart from this one
+  // marker — and only Safari's own "Add to Home Screen" can install a web
+  // app on iOS, so those others get no banner at all rather than one with
+  // instructions that don't apply to them.
+  if (ua.contains('CriOS') || ua.contains('FxiOS') || ua.contains('EdgiOS')) {
+    return false;
+  }
+  // `navigator.standalone` is a Safari-only, non-standard boolean — true
+  // once the user already launched this from an added home-screen icon.
+  final standaloneJs = (nav as JSObject).getProperty('standalone'.toJS);
+  final alreadyInstalled =
+      standaloneJs.isA<JSBoolean>() && (standaloneJs as JSBoolean).toDart;
+  return !alreadyInstalled;
+}
+
 /// A bottom, dismissible "install this as an app" sheet — the same idea as
 /// most mobile-first web apps' own custom install prompt (asked for
 /// explicitly, matching another PWA's own banner) rather than relying on
@@ -38,12 +68,14 @@ class WebInstallBanner extends StatefulWidget {
 
 class _WebInstallBannerState extends State<WebInstallBanner> {
   bool _canInstall = false;
+  bool _isIosSafari = false;
   bool _dismissed = true;
 
   @override
   void initState() {
     super.initState();
     if (!kIsWeb) return;
+    _isIosSafari = _isIosSafariInstallCandidate();
     _loadDismissed();
     _listenForInstallPrompt();
   }
@@ -104,7 +136,7 @@ class _WebInstallBannerState extends State<WebInstallBanner> {
   Widget build(BuildContext context) {
     if (!kIsWeb) return const SizedBox.shrink();
 
-    final visible = _canInstall && !_dismissed;
+    final visible = (_canInstall || _isIosSafari) && !_dismissed;
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
@@ -209,51 +241,56 @@ class _WebInstallBannerState extends State<WebInstallBanner> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: ext.accentGradient,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: ext.accentGlow.withValues(alpha: 0.35),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: InkWell(
-                                onTap: _install,
+                        if (_isIosSafari)
+                          _IosInstallSteps(isArabic: isArabic, ext: ext)
+                        else
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: ext.accentGradient,
                                 borderRadius: BorderRadius.circular(15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.download_rounded,
-                                      size: 18,
-                                      color: ext.onAccent,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: ext.accentGlow.withValues(
+                                      alpha: 0.35,
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      isArabic
-                                          ? 'تثبيت التطبيق'
-                                          : 'Install app',
-                                      style: TextStyle(
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: InkWell(
+                                  onTap: _install,
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.download_rounded,
+                                        size: 18,
                                         color: ext.onAccent,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 14,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        isArabic
+                                            ? 'تثبيت التطبيق'
+                                            : 'Install app',
+                                        style: TextStyle(
+                                          color: ext.onAccent,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -263,6 +300,54 @@ class _WebInstallBannerState extends State<WebInstallBanner> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Safari has no install button to offer — this walks the user through its
+/// own manual Share -> "Add to Home Screen" flow instead, since that's the
+/// only way iOS/iPadOS ever adds a web app to the home screen.
+class _IosInstallSteps extends StatelessWidget {
+  const _IosInstallSteps({required this.isArabic, required this.ext});
+
+  final bool isArabic;
+  final AppThemeExtension ext;
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = [
+      (
+        Icons.ios_share_rounded,
+        isArabic ? 'دوس زر المشاركة بشريط Safari بالأسفل' : 'Tap the Share button in Safari\'s toolbar',
+      ),
+      (
+        Icons.add_box_outlined,
+        isArabic
+            ? 'دوّر واختر "إضافة إلى الشاشة الرئيسية"'
+            : 'Scroll down and choose "Add to Home Screen"',
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final (icon, text) in steps)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: ext.accentGlow),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(color: ext.textPrimary, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
