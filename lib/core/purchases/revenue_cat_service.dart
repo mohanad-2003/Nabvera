@@ -38,6 +38,10 @@ class RevenueCatService {
   /// first call configures the SDK, and logging in again with the same uid
   /// is a no-op inside the SDK itself.
   Future<void> initializeIfNeeded(String firebaseUid) async {
+    // No web billing key is configured yet — `Platform.isIOS` itself
+    // throws `UnsupportedError` on web (there's no such platform), so this
+    // must be checked before it, not just the key being empty.
+    if (kIsWeb) return;
     final apiKey = Platform.isIOS ? _iosApiKey : _androidApiKey;
     if (apiKey.isEmpty) {
       // No key configured for this build (e.g. local dev without

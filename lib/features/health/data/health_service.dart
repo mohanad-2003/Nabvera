@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -27,7 +28,7 @@ List<HealthDataType> typesForHealthDataKind(HealthDataKind kind) => switch (kind
   HealthDataKind.steps => [HealthDataType.STEPS],
   HealthDataKind.activity => [
     HealthDataType.ACTIVE_ENERGY_BURNED,
-    if (Platform.isIOS) HealthDataType.EXERCISE_TIME,
+    if (!kIsWeb && Platform.isIOS) HealthDataType.EXERCISE_TIME,
   ],
   HealthDataKind.sleep => [HealthDataType.SLEEP_ASLEEP],
 };
@@ -198,5 +199,28 @@ List<HealthMetricsDay> bucketHealthPointsByDay({
   );
 }
 
+/// `package:health` has no web implementation at all — every call to it
+/// (even `configure()`) throws `MissingPluginException` there, so
+/// [PluginHealthService] can't be used as-is on web. This stands in as a
+/// permanently-unavailable [HealthService] instead, matching how a real
+/// device with no Health Connect installed already behaves for callers.
+class UnsupportedHealthService implements HealthService {
+  @override
+  Future<bool> isPlatformAvailable() async => false;
+
+  @override
+  Future<void> openPlatformInstall() async {}
+
+  @override
+  Future<bool> requestPermissions(Set<HealthDataKind> kinds) async => false;
+
+  @override
+  Future<List<HealthMetricsDay>> fetchDailyMetrics({
+    required Set<HealthDataKind> kinds,
+    required int days,
+  }) async => [];
+}
+
 @Riverpod(keepAlive: true)
-HealthService healthService(Ref ref) => PluginHealthService();
+HealthService healthService(Ref ref) =>
+    kIsWeb ? UnsupportedHealthService() : PluginHealthService();

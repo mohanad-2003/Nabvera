@@ -1,6 +1,7 @@
 import 'package:nabvera/core/notifications/push_notification_service.dart';
 import 'package:nabvera/core/purchases/revenue_cat_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -61,12 +62,27 @@ class FirebaseAuthService {
     return credential;
   }
 
+  /// Native-only path: `google_sign_in`'s imperative `signIn()` is
+  /// explicitly documented as unreliable on web (it can't guarantee an
+  /// `idToken` there) — web instead renders Google's own button (see
+  /// `GoogleWebSignInButton`) and completes via [signInWithGoogleAccount]
+  /// once [onGoogleAccountChanged] reports a signed-in account.
   Future<UserCredential> signInWithGoogle() async {
     final account = await _googleSignIn.signIn();
     if (account == null) {
       // The user closed the account picker — not a real auth failure.
       throw FirebaseAuthException(code: 'sign-in-cancelled');
     }
+    return signInWithGoogleAccount(account);
+  }
+
+  /// Completes Firebase sign-in from an already-obtained
+  /// [GoogleSignInAccount] — shared by [signInWithGoogle] (native) and the
+  /// web button flow, which gets its account via [onGoogleAccountChanged]
+  /// instead of a direct `signIn()` call.
+  Future<UserCredential> signInWithGoogleAccount(
+    GoogleSignInAccount account,
+  ) async {
     final googleAuth = await account.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
@@ -74,6 +90,13 @@ class FirebaseAuthService {
     );
     return _auth.signInWithCredential(credential);
   }
+
+  /// Fires whenever the Google Identity Services button (web) completes a
+  /// sign-in — the web equivalent of [signInWithGoogle]'s return value,
+  /// since the rendered button drives the flow itself rather than
+  /// returning from an imperative call.
+  Stream<GoogleSignInAccount?> get onGoogleAccountChanged =>
+      _googleSignIn.onCurrentUserChanged;
 
   /// Sends Firebase's hosted password-reset email with a "continue URL"
   /// pointing at our own Firebase Hosting page. `handleCodeInApp` is
@@ -130,7 +153,18 @@ class FirebaseAuthService {
   }
 
   Future<void> signOut() async {
-    await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
+    // `_googleSignIn.signOut()` needs a `google-signin-client_id` meta tag
+    // in `web/index.html` to even initialize on web — not set up for this
+    // app, so it throws there regardless of whether the user actually
+    // signed in with Google. Best-effort: the real sign-out below (what
+    // every caller actually needs to complete, e.g. before navigating to
+    // the login screen) must never be blocked by that.
+    try {
+      await _googleSignIn.signOut();
+    } catch (error) {
+      debugPrint('Google sign-out failed (ignored): $error');
+    }
+    await _auth.signOut();
   }
 
   /// The Firebase ID token to send as `Authorization: Bearer <token>` on

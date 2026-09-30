@@ -29,6 +29,7 @@ dependencies:
   firebase_messaging: ^16.0.4
   firebase_crashlytics: ^5.0.4
   google_sign_in: 6.2.2
+  google_sign_in_web: ^0.12.4
   http: ^1.6.0
   http_parser: ^4.1.2
   video_player: ^2.14.0
@@ -43,6 +44,7 @@ dependencies:
   purchases_flutter: ^9.6.5
   url_launcher: ^6.3.1
   cached_network_image: ^3.4.1
+  web: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +75,15 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
+  # Flutter's `flutter create` scaffold ships the plain Flutter logo as a
+  # placeholder for web (favicon + manifest icons) — never previously
+  # covered by this config, so it went unreplaced even after the real
+  # logo was wired up for Android/iOS.
+  web:
+    generate: true
+    image_path: assets/logo/icon_flat.png
+    background_color: "#111213"
+    theme_color: "#111213"
   # Flat/legacy Android icon + iOS icon: opaque, logo padded to ~68% of the
   # canvas so it isn't clipped by iOS's own corner-rounding.
   image_path: assets/logo/icon_flat.png

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart' show GoogleSignInAccount;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../profile/presentation/providers/profile_controller.dart';
@@ -41,6 +42,20 @@ class SignupController extends _$SignupController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await ref.read(firebaseAuthServiceProvider).signInWithGoogle();
+      await _refreshProfileAfterSignIn();
+    });
+  }
+
+  /// Web path: the account here came from Google's own rendered button
+  /// (see `GoogleWebSignInButton`), not an imperative `signIn()` call —
+  /// see `FirebaseAuthService.signInWithGoogleAccount`'s doc comment for
+  /// why the two platforms need different flows.
+  Future<void> completeGoogleSignIn(GoogleSignInAccount account) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref
+          .read(firebaseAuthServiceProvider)
+          .signInWithGoogleAccount(account);
       await _refreshProfileAfterSignIn();
     });
   }

@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "fitness-app-fitbody"
-  }
+  },
+  "targets": {
+    "fitness-app-fitbody": {
+      "hosting": {
+        "app": [
+          "nabvera-web"
+        ],
+        "reset": [
+          "fitness-app-fitbody-604e8"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
