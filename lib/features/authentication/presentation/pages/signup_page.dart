@@ -178,6 +178,11 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               if (!context.mounted) return;
                               await _handleResult(context, ref, l10n);
                             },
+                            onGoogleWebAccount: (account) async {
+                              await controller.completeGoogleSignIn(account);
+                              if (!context.mounted) return;
+                              await _handleResult(context, ref, l10n);
+                            },
                           ),
                           const SizedBox(height: 24),
                           AuthSwitchLink(

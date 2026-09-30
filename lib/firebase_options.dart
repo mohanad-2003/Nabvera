@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -58,6 +55,16 @@ class DefaultFirebaseOptions {
     messagingSenderId: '292142087269',
     projectId: 'fitness-app-fitbody',
     storageBucket: 'fitness-app-fitbody.firebasestorage.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBS32FdSSWgjsRK2vh54ySwatgF2mAtD24',
+    appId: '1:292142087269:web:53704c3410df60ffc45a8c',
+    messagingSenderId: '292142087269',
+    projectId: 'fitness-app-fitbody',
+    authDomain: 'fitness-app-fitbody-604e8.firebaseapp.com',
+    storageBucket: 'fitness-app-fitbody.firebasestorage.app',
+    measurementId: 'G-6XY0RXFCPP',
   );
 
 }

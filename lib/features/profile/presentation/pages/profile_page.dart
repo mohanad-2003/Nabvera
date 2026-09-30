@@ -296,9 +296,18 @@ class ProfilePage extends ConsumerWidget {
                         isPrimary: true,
                         onTap: () async {
                           dialogContext.pop();
-                          await signOutCurrentUser(ref.read);
-                          ref.invalidate(currentUserProfileProvider);
-                          if (context.mounted) context.go(AppRoutes.login);
+                          // Whatever happens inside sign-out (a plugin
+                          // failure, a flaky network call), the user still
+                          // asked to leave — leaving them stuck on an
+                          // authenticated-looking screen with a dead
+                          // session underneath is worse than navigating
+                          // away with sign-out only partially done.
+                          try {
+                            await signOutCurrentUser(ref.read);
+                          } finally {
+                            ref.invalidate(currentUserProfileProvider);
+                            if (context.mounted) context.go(AppRoutes.login);
+                          }
                         },
                       ),
                     ),

@@ -3,9 +3,9 @@
     "short_name": "Nabvera",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#111213",
+    "theme_color": "#111213",
+    "description": "Nabvera — workouts, nutrition, and progress tracking in one premium fitness app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
