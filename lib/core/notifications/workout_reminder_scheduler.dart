@@ -108,6 +108,11 @@ class WorkoutReminderScheduler {
   /// older Android versions grant this at install time, so the Android call
   /// below is a no-op there. Safe to call more than once.
   Future<bool> requestPermission() async {
+    // Scheduled local notifications can't fire from a closed browser tab
+    // the way they do on a device — `zonedSchedule` already throws
+    // `UnsupportedError` there (caught in `_scheduleOne`), so there's
+    // nothing useful left for this to do on web.
+    if (kIsWeb) return false;
     await _ensureInitialized();
     try {
       final ios = await _plugin
@@ -144,6 +149,11 @@ class WorkoutReminderScheduler {
     required AppLocalizations l10n,
     DateTime? now,
   }) async {
+    // Every scheduled reminder throws `UnsupportedError` on web (see
+    // `requestPermission`'s doc comment) — skip the whole dance rather
+    // than doing real work (cancel, compute occurrences) toward a state
+    // that can never actually hold anything.
+    if (kIsWeb) return;
     await _ensureInitialized();
     for (final day in Weekday.values) {
       await _plugin.cancel(id: _notificationIdFor(day));
@@ -209,6 +219,7 @@ class WorkoutReminderScheduler {
   /// to schedule (same effect, but this skips the profile/plugin-state
   /// dance when the caller already knows the answer is "cancel all").
   Future<void> cancelAll() async {
+    if (kIsWeb) return;
     await _ensureInitialized();
     for (final day in Weekday.values) {
       await _plugin.cancel(id: _notificationIdFor(day));

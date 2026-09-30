@@ -241,10 +241,21 @@ class _WebInstallBannerState extends State<WebInstallBanner> {
                           ],
                         ),
                         const SizedBox(height: 16),
+                        // iOS has no install button to offer at all — Safari
+                        // never fires `beforeinstallprompt` and exposes no
+                        // API to trigger or even detect "Add to Home
+                        // Screen" — so it gets the manual steps here, above
+                        // a button that (unlike Chromium's) only dismisses
+                        // this sheet rather than actually installing
+                        // anything. Without it, tapping the icons in
+                        // [_IosInstallSteps] looked like it should do
+                        // something and silently didn't.
                         if (_isIosSafari)
-                          _IosInstallSteps(isArabic: isArabic, ext: ext)
-                        else
-                          SizedBox(
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: _IosInstallSteps(isArabic: isArabic, ext: ext),
+                          ),
+                        SizedBox(
                             width: double.infinity,
                             height: 48,
                             child: DecoratedBox(
@@ -264,21 +275,25 @@ class _WebInstallBannerState extends State<WebInstallBanner> {
                               child: Material(
                                 type: MaterialType.transparency,
                                 child: InkWell(
-                                  onTap: _install,
+                                  onTap: _isIosSafari ? _dismiss : _install,
                                   borderRadius: BorderRadius.circular(15),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.download_rounded,
+                                        _isIosSafari
+                                            ? Icons.check_rounded
+                                            : Icons.download_rounded,
                                         size: 18,
                                         color: ext.onAccent,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        isArabic
-                                            ? 'تثبيت التطبيق'
-                                            : 'Install app',
+                                        _isIosSafari
+                                            ? (isArabic ? 'فهمت' : 'Got it')
+                                            : (isArabic
+                                                ? 'تثبيت التطبيق'
+                                                : 'Install app'),
                                         style: TextStyle(
                                           color: ext.onAccent,
                                           fontWeight: FontWeight.w900,

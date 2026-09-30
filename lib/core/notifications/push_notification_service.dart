@@ -31,6 +31,16 @@ class PushNotificationService {
     if (_initialized) return;
     _initialized = true;
 
+    // Web push needs its own VAPID key + service worker wiring (neither
+    // set up yet) for `getToken()` to ever return anything real — and in
+    // the meantime, `requestPermission()` still pops the browser's native
+    // "wants to send notifications" prompt, a modal the user has to
+    // notice and dismiss before the page responds to anything else. Right
+    // after sign-in (where this is called from) that reads as the whole
+    // app having frozen. Skipping this here is what actually avoids that,
+    // not just catching the eventual failure below.
+    if (kIsWeb) return;
+
     try {
       final messaging = FirebaseMessaging.instance;
       final settings = await messaging.requestPermission();
