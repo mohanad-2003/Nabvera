@@ -14,6 +14,18 @@ class NutritionTabController extends _$NutritionTabController {
   void select(NutritionTab tab) => state = tab;
 }
 
+/// Where the shared recipe list stands, so the page can tell "still
+/// loading" and "couldn't load" apart from "there really are no recipes".
+enum NutritionLoadStatus { loading, loaded, failed }
+
+@riverpod
+class NutritionRecipesStatus extends _$NutritionRecipesStatus {
+  @override
+  NutritionLoadStatus build() => NutritionLoadStatus.loading;
+
+  void mark(NutritionLoadStatus status) => state = status;
+}
+
 /// Loads `/api/recipes` once, sorted by rating desc — the shared source
 /// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
 /// [NutritionPage]. Public (rather than a private provider) so the page's
@@ -30,24 +42,55 @@ class NutritionRecipesSource extends _$NutritionRecipesSource {
       try {
         await refresh();
       } catch (_) {
-        // Initial load failure — left at the empty default, see
-        // WorkoutListByLevel for the same pattern.
+        // Initial load failure — left at the empty default and flagged via
+        // [nutritionRecipesStatusProvider] so the page offers a retry
+        // instead of claiming there are no recipes.
       }
     });
     return const [];
   }
+
+  Future<void>? _inFlight;
 
   /// Used by [NutritionPage]'s pull-to-refresh. Awaits the real fetch so
   /// the `RefreshIndicator` spinner stays up until real data has come
   /// back, and rethrows on failure (after leaving `state` as it was) so
   /// the caller can surface a real, retriable error instead of pretending
   /// the refresh succeeded.
-  Future<void> refresh() async {
-    final recipes = await ref.read(nutritionRepositoryProvider).fetchRecipes();
-    state = recipes..sort(
-      (a, b) =>
-          ((b['rating'] as num?) ?? 0).compareTo((a['rating'] as num?) ?? 0),
-    );
+  ///
+  /// A call made while a fetch is already running joins that fetch instead
+  /// of sending a second request.
+  Future<void> refresh() => _inFlight ??= _fetch().whenComplete(() {
+    _inFlight = null;
+  });
+
+  Future<void> _fetch() async {
+    // Only show "loading" when there is nothing on screen yet — a refresh
+    // over existing recipes keeps showing them.
+    if (state.isEmpty) {
+      ref
+          .read(nutritionRecipesStatusProvider.notifier)
+          .mark(NutritionLoadStatus.loading);
+    }
+    try {
+      final recipes =
+          await ref.read(nutritionRepositoryProvider).fetchRecipes();
+      if (!ref.mounted) return;
+      state = recipes..sort(
+        (a, b) =>
+            ((b['rating'] as num?) ?? 0).compareTo((a['rating'] as num?) ?? 0),
+      );
+      ref
+          .read(nutritionRecipesStatusProvider.notifier)
+          .mark(NutritionLoadStatus.loaded);
+    } catch (_) {
+      if (ref.mounted) {
+        ref
+            .read(nutritionRecipesStatusProvider.notifier)
+            .mark(NutritionLoadStatus.failed);
+      }
+      rethrow;
+    }
   }
 }
 
@@ -93,6 +136,10 @@ class DailyNutritionSummaryController
   }
 
   Future<void> _load() async {
+    // Retrying after a failed first load: go back to the loading state.
+    if (state.loadFailed) {
+      state = state.copyWith(isLoading: true, loadFailed: false);
+    }
     try {
       final entry = await ref.read(nutritionRepositoryProvider).fetchToday();
       // This provider is autoDispose — the widget watching it (e.g. the
@@ -104,10 +151,11 @@ class DailyNutritionSummaryController
       state = DailyNutritionSummary.fromEntry(entry);
     } catch (_) {
       if (!ref.mounted) return;
-      // Stop showing the loading state even on failure — see
-      // WorkoutListByLevel for the same "left at a safe placeholder"
-      // pattern, just no longer flagged as still-loading.
-      state = state.copyWith(isLoading: false);
+      // Stop showing the loading state even on failure. If nothing real
+      // has loaded yet, flag it so the card offers a retry instead of
+      // showing the placeholder zeros as if they were today's intake; a
+      // failed refresh over real data keeps that data untouched.
+      state = state.copyWith(isLoading: false, loadFailed: state.isLoading);
     }
   }
 

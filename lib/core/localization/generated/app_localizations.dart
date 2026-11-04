@@ -4085,7 +4085,7 @@ abstract class AppLocalizations {
   /// No description provided for @nutritionDailySummary.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s Nutrition'**
+  /// **'Your nutrition today'**
   String get nutritionDailySummary;
 
   /// No description provided for @nutritionDailySummarySubtitle.
@@ -4159,6 +4159,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is an estimated target — set your own nutrition goals'**
   String get nutritionSetGoalsCta;
+
+  /// No description provided for @nutritionCardMealPlansTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal plans'**
+  String get nutritionCardMealPlansTitle;
+
+  /// No description provided for @nutritionCardMealPlansBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize your meals across the week'**
+  String get nutritionCardMealPlansBody;
+
+  /// No description provided for @nutritionCardMealIdeasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal ideas'**
+  String get nutritionCardMealIdeasTitle;
+
+  /// No description provided for @nutritionCardMealIdeasBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover recipes that fit your day'**
+  String get nutritionCardMealIdeasBody;
+
+  /// No description provided for @nutritionSectionSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested for you'**
+  String get nutritionSectionSuggested;
+
+  /// No description provided for @nutritionSectionExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore recipes'**
+  String get nutritionSectionExplore;
+
+  /// No description provided for @nutritionCaloriesRemainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Calories remaining'**
+  String get nutritionCaloriesRemainingLabel;
+
+  /// No description provided for @nutritionCaloriesOverGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Over your goal by'**
+  String get nutritionCaloriesOverGoalLabel;
+
+  /// No description provided for @nutritionCaloriesConsumedTodayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Calories consumed'**
+  String get nutritionCaloriesConsumedTodayLabel;
+
+  /// No description provided for @nutritionCaloriesUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'kcal'**
+  String get nutritionCaloriesUnit;
+
+  /// No description provided for @nutritionCaloriesConsumedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Consumed'**
+  String get nutritionCaloriesConsumedLabel;
+
+  /// No description provided for @nutritionCaloriesGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get nutritionCaloriesGoalLabel;
+
+  /// No description provided for @nutritionDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get nutritionDataUnavailable;
+
+  /// No description provided for @nutritionCalorieProgressSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} of {goal} kcal consumed'**
+  String nutritionCalorieProgressSemantics(int consumed, int goal);
+
+  /// No description provided for @nutritionGoalTagEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated'**
+  String get nutritionGoalTagEstimate;
+
+  /// No description provided for @nutritionGoalTagDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get nutritionGoalTagDefault;
+
+  /// No description provided for @nutritionSummaryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s nutrition couldn\'t be loaded'**
+  String get nutritionSummaryUnavailable;
+
+  /// No description provided for @nutritionMacroGramsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} / {goal} g'**
+  String nutritionMacroGramsProgress(String consumed, String goal);
+
+  /// No description provided for @nutritionMacroGramsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} g'**
+  String nutritionMacroGramsValue(String value);
+
+  /// No description provided for @nutritionWaterToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Water today'**
+  String get nutritionWaterToday;
+
+  /// No description provided for @nutritionAddWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Add water'**
+  String get nutritionAddWater;
+
+  /// No description provided for @nutritionWaterAmountMl.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} ml'**
+  String nutritionWaterAmountMl(String value);
+
+  /// No description provided for @nutritionWaterAmountL.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} L'**
+  String nutritionWaterAmountL(String value);
+
+  /// No description provided for @nutritionWaterProgressMl.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} / {goal} ml'**
+  String nutritionWaterProgressMl(String consumed, String goal);
+
+  /// No description provided for @nutritionWaterProgressL.
+  ///
+  /// In en, this message translates to:
+  /// **'{consumed} / {goal} L'**
+  String nutritionWaterProgressL(String consumed, String goal);
+
+  /// No description provided for @nutritionRecipeProteinValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{grams}g protein'**
+  String nutritionRecipeProteinValue(String grams);
+
+  /// No description provided for @nutritionFavoriteAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {name} to favorites'**
+  String nutritionFavoriteAdd(String name);
+
+  /// No description provided for @nutritionFavoriteRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from favorites'**
+  String nutritionFavoriteRemove(String name);
+
+  /// No description provided for @nutritionRecipesLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load recipes'**
+  String get nutritionRecipesLoadFailedTitle;
+
+  /// No description provided for @nutritionRecipesLoadFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get nutritionRecipesLoadFailedBody;
+
+  /// No description provided for @nutritionRecipesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipes yet'**
+  String get nutritionRecipesEmptyTitle;
+
+  /// No description provided for @nutritionRecipesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New recipes will show up here.'**
+  String get nutritionRecipesEmptyBody;
+
+  /// No description provided for @nutritionRecipeOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this recipe. Please try again.'**
+  String get nutritionRecipeOpenFailed;
+
+  /// No description provided for @favoriteRecipesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your favorite recipes will appear here'**
+  String get favoriteRecipesEmptyTitle;
+
+  /// No description provided for @favoriteExploreRecipes.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore recipes'**
+  String get favoriteExploreRecipes;
 
   /// No description provided for @mealMarkAsEaten.
   ///

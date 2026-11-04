@@ -2210,6 +2210,132 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nutritionSetGoalsCta => 'هذا هدف تقديري — حدد أهداف تغذيتك الخاصة';
 
   @override
+  String get nutritionCardMealPlansTitle => 'خطط الوجبات';
+
+  @override
+  String get nutritionCardMealPlansBody => 'نظّم وجباتك خلال الأسبوع';
+
+  @override
+  String get nutritionCardMealIdeasTitle => 'أفكار الوجبات';
+
+  @override
+  String get nutritionCardMealIdeasBody => 'اكتشف وصفات تناسب يومك';
+
+  @override
+  String get nutritionSectionSuggested => 'مقترح لك';
+
+  @override
+  String get nutritionSectionExplore => 'استكشف الوصفات';
+
+  @override
+  String get nutritionCaloriesRemainingLabel => 'السعرات المتبقية';
+
+  @override
+  String get nutritionCaloriesOverGoalLabel => 'تجاوزت الهدف بـ';
+
+  @override
+  String get nutritionCaloriesConsumedTodayLabel => 'السعرات المتناولة';
+
+  @override
+  String get nutritionCaloriesUnit => 'سعرة';
+
+  @override
+  String get nutritionCaloriesConsumedLabel => 'المتناول';
+
+  @override
+  String get nutritionCaloriesGoalLabel => 'الهدف';
+
+  @override
+  String get nutritionDataUnavailable => 'غير متوفر';
+
+  @override
+  String nutritionCalorieProgressSemantics(int consumed, int goal) {
+    return 'تم تناول $consumed من $goal سعرة';
+  }
+
+  @override
+  String get nutritionGoalTagEstimate => 'تقديري';
+
+  @override
+  String get nutritionGoalTagDefault => 'افتراضي';
+
+  @override
+  String get nutritionSummaryUnavailable => 'تعذر تحميل تغذية اليوم';
+
+  @override
+  String nutritionMacroGramsProgress(String consumed, String goal) {
+    return '$consumed / $goal غ';
+  }
+
+  @override
+  String nutritionMacroGramsValue(String value) {
+    return '$value غ';
+  }
+
+  @override
+  String get nutritionWaterToday => 'الماء اليوم';
+
+  @override
+  String get nutritionAddWater => 'إضافة ماء';
+
+  @override
+  String nutritionWaterAmountMl(String value) {
+    return '$value مل';
+  }
+
+  @override
+  String nutritionWaterAmountL(String value) {
+    return '$value لتر';
+  }
+
+  @override
+  String nutritionWaterProgressMl(String consumed, String goal) {
+    return '$consumed / $goal مل';
+  }
+
+  @override
+  String nutritionWaterProgressL(String consumed, String goal) {
+    return '$consumed / $goal لتر';
+  }
+
+  @override
+  String nutritionRecipeProteinValue(String grams) {
+    return '$grams غ بروتين';
+  }
+
+  @override
+  String nutritionFavoriteAdd(String name) {
+    return 'أضف $name إلى المفضلة';
+  }
+
+  @override
+  String nutritionFavoriteRemove(String name) {
+    return 'أزل $name من المفضلة';
+  }
+
+  @override
+  String get nutritionRecipesLoadFailedTitle => 'تعذر تحميل الوصفات';
+
+  @override
+  String get nutritionRecipesLoadFailedBody =>
+      'تحقق من اتصالك بالإنترنت ثم حاول مرة أخرى.';
+
+  @override
+  String get nutritionRecipesEmptyTitle => 'لا توجد وصفات بعد';
+
+  @override
+  String get nutritionRecipesEmptyBody => 'ستظهر الوصفات الجديدة هنا.';
+
+  @override
+  String get nutritionRecipeOpenFailed => 'تعذر فتح الوصفة. حاول مرة أخرى.';
+
+  @override
+  String get favoriteRecipesEmptyTitle => 'وصفاتك المفضلة ستظهر هنا';
+
+  @override
+  String get favoriteExploreRecipes => 'استكشف الوصفات';
+
+  @override
   String get mealMarkAsEaten => 'تم تناولها';
 
   @override

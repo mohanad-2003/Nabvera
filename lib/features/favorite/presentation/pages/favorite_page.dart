@@ -6,11 +6,13 @@ import 'package:nabvera/core/routing/app_routes.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/premium_scaffold.dart';
+import 'package:nabvera/core/widgets/primary_button.dart';
 import 'package:nabvera/core/widgets/smart_image.dart';
 import 'package:nabvera/features/favorite/domain/favorite_models.dart';
 import 'package:nabvera/features/favorite/presentation/providers/favorite_controller.dart';
 import 'package:nabvera/features/nutrition/data/nutrition_repository.dart';
 import 'package:nabvera/features/nutrition/domain/nutrition_models.dart';
+import 'package:nabvera/features/profile/presentation/providers/profile_controller.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/domain/exercise_detail_models.dart';
 
@@ -20,6 +22,10 @@ class FavoritePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(favoriteFilterControllerProvider);
     final items = ref.watch(filteredFavoritesProvider);
+    // Only a user who really has no saved recipes gets the recipes-specific
+    // empty state — not one whose favorites are still loading.
+    final hasNoSavedRecipes =
+        ref.watch(currentUserProfileProvider).favoriteRecipeIds.isEmpty;
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
     final l10n = AppLocalizations.of(context);
 
@@ -82,7 +88,9 @@ class FavoritePage extends ConsumerWidget {
           Expanded(
             child:
                 items.isEmpty
-                    ? _FavoriteEmptyState(filter: filter)
+                    ? (filter == FavoriteFilter.article && hasNoSavedRecipes
+                        ? const _SavedRecipesEmptyState()
+                        : _FavoriteEmptyState(filter: filter))
                     : ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: items.length,
@@ -443,6 +451,67 @@ class _MetaChip extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Empty state for the Nutrition (recipes) filter only — never used for
+/// saved workouts or for load errors.
+class _SavedRecipesEmptyState extends StatelessWidget {
+  const _SavedRecipesEmptyState();
+
+  static const _image = 'assets/nutrition_illustrations/saved_recipes_empty.png';
+
+  @override
+  Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final l10n = AppLocalizations.of(context);
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Decorative — the heading below carries the meaning.
+              ExcludeSemantics(
+                child: Image.asset(
+                  _image,
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.contain,
+                  cacheWidth: (160 * dpr).ceil(),
+                  excludeFromSemantics: true,
+                  errorBuilder: (_, _, _) => const SizedBox(height: 160),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Semantics(
+                header: true,
+                child: Text(
+                  l10n.favoriteRecipesEmptyTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ext.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              PrimaryButton(
+                label: l10n.favoriteExploreRecipes,
+                icon: Icons.restaurant_menu_rounded,
+                onPressed: () => context.push(AppRoutes.mealIdea),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

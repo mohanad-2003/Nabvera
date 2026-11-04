@@ -715,6 +715,95 @@
   "waterLogAdded": "تم تسجيل الماء",
   "waterLogFailed": "تعذر تسجيل الماء، حاول مرة أخرى",
   "nutritionSetGoalsCta": "هذا هدف تقديري — حدد أهداف تغذيتك الخاصة",
+  "nutritionCardMealPlansTitle": "خطط الوجبات",
+  "nutritionCardMealPlansBody": "نظّم وجباتك خلال الأسبوع",
+  "nutritionCardMealIdeasTitle": "أفكار الوجبات",
+  "nutritionCardMealIdeasBody": "اكتشف وصفات تناسب يومك",
+  "nutritionSectionSuggested": "مقترح لك",
+  "nutritionSectionExplore": "استكشف الوصفات",
+  "nutritionCaloriesRemainingLabel": "السعرات المتبقية",
+  "nutritionCaloriesOverGoalLabel": "تجاوزت الهدف بـ",
+  "nutritionCaloriesConsumedTodayLabel": "السعرات المتناولة",
+  "nutritionCaloriesUnit": "سعرة",
+  "nutritionCaloriesConsumedLabel": "المتناول",
+  "nutritionCaloriesGoalLabel": "الهدف",
+  "nutritionDataUnavailable": "غير متوفر",
+  "nutritionCalorieProgressSemantics": "تم تناول {consumed} من {goal} سعرة",
+  "@nutritionCalorieProgressSemantics": {
+    "placeholders": {
+      "consumed": {"type": "int"},
+      "goal": {"type": "int"}
+    }
+  },
+  "nutritionGoalTagEstimate": "تقديري",
+  "nutritionGoalTagDefault": "افتراضي",
+  "nutritionSummaryUnavailable": "تعذر تحميل تغذية اليوم",
+  "nutritionMacroGramsProgress": "{consumed} / {goal} غ",
+  "@nutritionMacroGramsProgress": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionMacroGramsValue": "{value} غ",
+  "@nutritionMacroGramsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterToday": "الماء اليوم",
+  "nutritionAddWater": "إضافة ماء",
+  "nutritionWaterAmountMl": "{value} مل",
+  "@nutritionWaterAmountMl": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterAmountL": "{value} لتر",
+  "@nutritionWaterAmountL": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterProgressMl": "{consumed} / {goal} مل",
+  "@nutritionWaterProgressMl": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionWaterProgressL": "{consumed} / {goal} لتر",
+  "@nutritionWaterProgressL": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionRecipeProteinValue": "{grams} غ بروتين",
+  "@nutritionRecipeProteinValue": {
+    "placeholders": {
+      "grams": {"type": "String"}
+    }
+  },
+  "nutritionFavoriteAdd": "أضف {name} إلى المفضلة",
+  "@nutritionFavoriteAdd": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nutritionFavoriteRemove": "أزل {name} من المفضلة",
+  "@nutritionFavoriteRemove": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nutritionRecipesLoadFailedTitle": "تعذر تحميل الوصفات",
+  "nutritionRecipesLoadFailedBody": "تحقق من اتصالك بالإنترنت ثم حاول مرة أخرى.",
+  "nutritionRecipesEmptyTitle": "لا توجد وصفات بعد",
+  "nutritionRecipesEmptyBody": "ستظهر الوصفات الجديدة هنا.",
+  "nutritionRecipeOpenFailed": "تعذر فتح الوصفة. حاول مرة أخرى.",
+  "favoriteRecipesEmptyTitle": "وصفاتك المفضلة ستظهر هنا",
+  "favoriteExploreRecipes": "استكشف الوصفات",
   "mealMarkAsEaten": "تم تناولها",
   "mealLogged": "تم تسجيلها",
   "mealLogUndo": "تراجع",

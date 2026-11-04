@@ -61,7 +61,7 @@ class MealIdeaSectionView extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
-                  height: 246,
+                  height: recipeCardRowHeight(context),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: section.recommended.length,
@@ -83,20 +83,15 @@ class MealIdeaSectionView extends StatelessWidget {
                             item.caloriesValue,
                             item.calories,
                           ),
-                          protein: item.protein,
-                          carbs: item.carbs,
-                          fat: item.fat,
-                          rating: item.rating,
-                          difficulty:
-                              item.difficulty == null
-                                  ? null
-                                  : recipeDifficultyLabel(
-                                    l10n,
-                                    item.difficulty,
-                                  ),
+                          protein: recipeProteinLabel(l10n, item.proteinGrams),
                           isFavorite: isFavorite(item.favoriteKey),
                           onFavoriteTap:
                               () => onToggleFavorite(item.favoriteKey),
+                          favoriteLabel: recipeFavoriteLabel(
+                            l10n,
+                            item.localizedName(context),
+                            isFavorite: isFavorite(item.favoriteKey),
+                          ),
                           onTap:
                               () =>
                                   onOpenDetail(item, l10n.nutritionRecommended),
@@ -141,13 +136,14 @@ class MealIdeaSectionView extends StatelessWidget {
                         item.caloriesValue,
                         item.calories,
                       ),
-                      rating: item.rating,
-                      difficulty:
-                          item.difficulty == null
-                              ? null
-                              : recipeDifficultyLabel(l10n, item.difficulty),
+                      protein: recipeProteinLabel(l10n, item.proteinGrams),
                       isFavorite: isFavorite(item.favoriteKey),
                       onFavoriteTap: () => onToggleFavorite(item.favoriteKey),
+                      favoriteLabel: recipeFavoriteLabel(
+                        l10n,
+                        item.localizedName(context),
+                        isFavorite: isFavorite(item.favoriteKey),
+                      ),
                       onTap:
                           () => onOpenDetail(item, l10n.nutritionRecipesForYou),
                     );

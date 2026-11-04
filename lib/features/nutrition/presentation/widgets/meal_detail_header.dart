@@ -133,7 +133,7 @@ class MealDetailHeader extends StatelessWidget {
                             label: l10n.nutritionCarbsLabel,
                             grams: meal.carbs!,
                             dailyValueGrams: 275,
-                            color: const Color(0xFFFFB020),
+                            color: const Color(0xFF3D7BFF),
                           ),
                         ),
                       if (meal.fat != null)
@@ -142,7 +142,7 @@ class MealDetailHeader extends StatelessWidget {
                             label: l10n.nutritionFatLabel,
                             grams: meal.fat!,
                             dailyValueGrams: 78,
-                            color: const Color(0xFFE8951A),
+                            color: const Color(0xFFFFB84D),
                           ),
                         ),
                     ],
@@ -229,7 +229,7 @@ class MealDetailHeader extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 246,
+            height: recipeCardRowHeight(context),
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               scrollDirection: Axis.horizontal,
@@ -252,14 +252,7 @@ class MealDetailHeader extends StatelessWidget {
                       item.caloriesValue,
                       item.calories,
                     ),
-                    protein: item.protein,
-                    carbs: item.carbs,
-                    fat: item.fat,
-                    rating: item.rating,
-                    difficulty:
-                        item.difficulty == null
-                            ? null
-                            : recipeDifficultyLabel(l10n, item.difficulty),
+                    protein: recipeProteinLabel(l10n, item.proteinGrams),
                     imageHeight: 140,
                     onTap:
                         onTapSimilar == null ? null : () => onTapSimilar!(item),

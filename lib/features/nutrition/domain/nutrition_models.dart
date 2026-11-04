@@ -15,6 +15,7 @@ class MealItem {
     this.protein,
     this.carbs,
     this.fat,
+    this.proteinGrams,
     this.rating,
     this.difficulty,
     this.prepTimeMinutes,
@@ -59,6 +60,11 @@ class MealItem {
   final String? protein;
   final String? carbs;
   final String? fat;
+
+  /// Raw `Recipe.nutrition.proteinG` — lets cards format the amount for the
+  /// current locale instead of showing the English-only [protein] string.
+  /// Null when the recipe has no protein value (never shown as 0).
+  final double? proteinGrams;
   final double? rating;
 
   /// Raw backend value (`easy`/`medium`/`hard`) — the widget layer maps
@@ -90,6 +96,7 @@ class MealItem {
           nutrition['proteinG'] == null ? null : '${nutrition['proteinG']}g',
       carbs: nutrition['carbsG'] == null ? null : '${nutrition['carbsG']}g',
       fat: nutrition['fatG'] == null ? null : '${nutrition['fatG']}g',
+      proteinGrams: (nutrition['proteinG'] as num?)?.toDouble(),
       rating: (json['rating'] as num?)?.toDouble(),
       difficulty: json['difficulty'] as String?,
     );
@@ -108,6 +115,7 @@ class MealDetail {
     this.protein,
     this.carbs,
     this.fat,
+    this.proteinGrams,
     this.rating,
     this.difficulty,
     this.servings,
@@ -175,6 +183,9 @@ class MealDetail {
   final String? protein;
   final String? carbs;
   final String? fat;
+
+  /// See [MealItem.proteinGrams].
+  final double? proteinGrams;
   final double? rating;
 
   /// See the doc comment on [MealItem.difficulty] — same raw-value contract.
@@ -246,6 +257,7 @@ class MealDetail {
           nutrition['proteinG'] == null ? null : '${nutrition['proteinG']}g',
       carbs: nutrition['carbsG'] == null ? null : '${nutrition['carbsG']}g',
       fat: nutrition['fatG'] == null ? null : '${nutrition['fatG']}g',
+      proteinGrams: (nutrition['proteinG'] as num?)?.toDouble(),
       rating: (json['rating'] as num?)?.toDouble(),
       difficulty: json['difficulty'] as String?,
       tips: (json['tips'] as List? ?? const []).cast<String>(),
@@ -274,6 +286,23 @@ class MealDetail {
 
 enum MealCategory { breakfast, lunch, dinner }
 
+/// One macro's intake for the day, in grams. [consumed]/[goal] stay null when
+/// the API didn't send them — a missing value is "not available", never a
+/// real 0, so the UI can tell the two apart.
+class MacroIntake {
+  const MacroIntake({this.consumed, this.goal});
+
+  final double? consumed;
+  final double? goal;
+
+  bool get hasGoal => goal != null && goal! > 0;
+
+  /// 0..1 progress for a progress bar only — [consumed] itself is never
+  /// clamped. Null when either side is missing or the goal is 0.
+  double? get progress =>
+      hasGoal && consumed != null ? (consumed! / goal!).clamp(0.0, 1.0) : null;
+}
+
 /// At-a-glance daily nutrition snapshot shown at the top of the Nutrition
 /// home tab — a real `/api/nutrition/today` document, mapped via
 /// [fromEntry]. [goalSource] and [isLoading] exist specifically so the UI
@@ -292,15 +321,44 @@ class DailyNutritionSummary {
     this.waterCupsGoal = 0,
     this.goalSource = 'fallback',
     this.isLoading = false,
+    this.proteinConsumedG,
+    this.proteinGoalG,
+    this.carbsConsumedG,
+    this.carbsGoalG,
+    this.fatConsumedG,
+    this.fatGoalG,
+    this.waterConsumedMl,
+    this.waterGoalMl,
+    this.loadFailed = false,
   });
 
   final int consumedCalories;
+
+  /// 0 only when the API explicitly sent a 0 goal — see [hasCalorieGoal].
   final int goalCalories;
 
-  /// 0..1 progress toward the daily goal for each macro.
+  /// 0..1 progress toward the daily goal for each macro (0 when the goal is
+  /// missing). Kept for existing call sites; the Nutrition page reads the
+  /// raw grams below instead.
   final double proteinFraction;
   final double carbsFraction;
   final double fatFraction;
+
+  /// Raw grams from `/api/nutrition/today` (`proteinConsumedG`/
+  /// `proteinGoalG`, ...). Null when the API omitted them — never derived
+  /// from the clamped fractions above.
+  final double? proteinConsumedG;
+  final double? proteinGoalG;
+  final double? carbsConsumedG;
+  final double? carbsGoalG;
+  final double? fatConsumedG;
+  final double? fatGoalG;
+
+  MacroIntake get protein =>
+      MacroIntake(consumed: proteinConsumedG, goal: proteinGoalG);
+  MacroIntake get carbs =>
+      MacroIntake(consumed: carbsConsumedG, goal: carbsGoalG);
+  MacroIntake get fat => MacroIntake(consumed: fatConsumedG, goal: fatGoalG);
 
   /// English-formatted fallback (e.g. "5 / 8 cups"), used only where
   /// [waterCupsConsumed]/[waterCupsGoal] aren't available. Prefer
@@ -310,9 +368,23 @@ class DailyNutritionSummary {
   final int waterCupsConsumed;
   final int waterCupsGoal;
 
+  /// Raw millilitres from the API (`waterConsumedMl`/`waterGoalMl`). Null
+  /// when omitted; the rounded cup counts above are display-only and must
+  /// not be turned back into an "exact" amount.
+  final num? waterConsumedMl;
+  final num? waterGoalMl;
+
   /// Water progress formatted for [context]'s current locale.
   String localizedWaterIntake(BuildContext context) =>
       AppLocalizations.of(context).waterCupsProgress(waterCupsConsumed, waterCupsGoal);
+
+  /// 0..1 water progress for a progress bar, from the raw ml values only.
+  double? get waterProgress {
+    final consumed = waterConsumedMl;
+    final goal = waterGoalMl;
+    if (consumed == null || goal == null || goal <= 0) return null;
+    return (consumed / goal).clamp(0.0, 1.0).toDouble();
+  }
 
   /// 'preferences' when [goalCalories] is the user's own manually-set
   /// target, 'estimate' when it's the rule-based suggestion, 'fallback'
@@ -327,9 +399,48 @@ class DailyNutritionSummary {
   /// instead of a misleading fixed number.
   final bool isLoading;
 
+  /// True when the first load failed, so there is no real data to show —
+  /// the card shows a retry state instead of zeros that would read as
+  /// "you ate nothing today". A failed *refresh* keeps the last good data
+  /// and leaves this false.
+  final bool loadFailed;
+
   bool get hasPersonalGoal => goalSource == 'preferences';
 
-  DailyNutritionSummary copyWith({bool? isLoading}) => DailyNutritionSummary(
+  bool get hasCalorieGoal => goalCalories > 0;
+
+  bool get isOverCalorieGoal => hasCalorieGoal && consumedCalories > goalCalories;
+
+  /// Calories above the goal; 0 when at/under it or when there is no goal.
+  int get caloriesOverGoal =>
+      isOverCalorieGoal ? consumedCalories - goalCalories : 0;
+
+  /// Calories left today, floored at 0 (an overshoot is reported through
+  /// [caloriesOverGoal] instead of a negative remainder). Null without a goal.
+  int? get caloriesRemaining {
+    if (!hasCalorieGoal) return null;
+    return isOverCalorieGoal ? 0 : goalCalories - consumedCalories;
+  }
+
+  /// 0..1 calorie progress for a progress bar only; null without a goal.
+  /// [consumedCalories] itself is never clamped.
+  double? get calorieProgress =>
+      hasCalorieGoal
+          ? (consumedCalories / goalCalories).clamp(0.0, 1.0).toDouble()
+          : null;
+
+  DailyNutritionSummary copyWith({
+    bool? isLoading,
+    bool? loadFailed,
+    double? proteinConsumedG,
+    double? proteinGoalG,
+    double? carbsConsumedG,
+    double? carbsGoalG,
+    double? fatConsumedG,
+    double? fatGoalG,
+    num? waterConsumedMl,
+    num? waterGoalMl,
+  }) => DailyNutritionSummary(
     consumedCalories: consumedCalories,
     goalCalories: goalCalories,
     proteinFraction: proteinFraction,
@@ -340,6 +451,15 @@ class DailyNutritionSummary {
     waterCupsGoal: waterCupsGoal,
     goalSource: goalSource,
     isLoading: isLoading ?? this.isLoading,
+    loadFailed: loadFailed ?? this.loadFailed,
+    proteinConsumedG: proteinConsumedG ?? this.proteinConsumedG,
+    proteinGoalG: proteinGoalG ?? this.proteinGoalG,
+    carbsConsumedG: carbsConsumedG ?? this.carbsConsumedG,
+    carbsGoalG: carbsGoalG ?? this.carbsGoalG,
+    fatConsumedG: fatConsumedG ?? this.fatConsumedG,
+    fatGoalG: fatGoalG ?? this.fatGoalG,
+    waterConsumedMl: waterConsumedMl ?? this.waterConsumedMl,
+    waterGoalMl: waterGoalMl ?? this.waterGoalMl,
   );
 
   /// Builds a summary from a `/api/nutrition/today`-shaped document —
@@ -348,25 +468,38 @@ class DailyNutritionSummary {
   /// changed) from exactly the same document the backend just persisted.
   factory DailyNutritionSummary.fromEntry(Map<String, dynamic> entry) {
     final calorieGoal = (entry['calorieGoal'] as num?) ?? 2000;
-    final proteinGoal = (entry['proteinGoalG'] as num?) ?? 1;
-    final carbsGoal = (entry['carbsGoalG'] as num?) ?? 1;
-    final fatGoal = (entry['fatGoalG'] as num?) ?? 1;
-    final waterGoalMl = (entry['waterGoalMl'] as num?) ?? 2000;
-    final waterConsumedMl = (entry['waterConsumedMl'] as num?) ?? 0;
+    final proteinConsumed = (entry['proteinConsumedG'] as num?)?.toDouble();
+    final proteinGoal = (entry['proteinGoalG'] as num?)?.toDouble();
+    final carbsConsumed = (entry['carbsConsumedG'] as num?)?.toDouble();
+    final carbsGoal = (entry['carbsGoalG'] as num?)?.toDouble();
+    final fatConsumed = (entry['fatConsumedG'] as num?)?.toDouble();
+    final fatGoal = (entry['fatGoalG'] as num?)?.toDouble();
+    final waterGoalMl = entry['waterGoalMl'] as num?;
+    final waterConsumedMl = entry['waterConsumedMl'] as num?;
     // ~250ml per "cup", matching the UI's original "X / 8 cups" copy.
     const mlPerCup = 250;
-    final waterCupsConsumed = (waterConsumedMl / mlPerCup).round();
-    final waterCupsGoal = (waterGoalMl / mlPerCup).round();
+    final waterCupsConsumed = ((waterConsumedMl ?? 0) / mlPerCup).round();
+    final waterCupsGoal = ((waterGoalMl ?? 2000) / mlPerCup).round();
 
     return DailyNutritionSummary(
       consumedCalories: ((entry['caloriesConsumed'] as num?) ?? 0).round(),
       goalCalories: calorieGoal.round(),
-      proteinFraction: (((entry['proteinConsumedG'] as num?) ?? 0) / proteinGoal).clamp(0, 1).toDouble(),
-      carbsFraction: (((entry['carbsConsumedG'] as num?) ?? 0) / carbsGoal).clamp(0, 1).toDouble(),
-      fatFraction: (((entry['fatConsumedG'] as num?) ?? 0) / fatGoal).clamp(0, 1).toDouble(),
+      proteinFraction:
+          MacroIntake(consumed: proteinConsumed, goal: proteinGoal).progress ?? 0,
+      carbsFraction:
+          MacroIntake(consumed: carbsConsumed, goal: carbsGoal).progress ?? 0,
+      fatFraction: MacroIntake(consumed: fatConsumed, goal: fatGoal).progress ?? 0,
+      proteinConsumedG: proteinConsumed,
+      proteinGoalG: proteinGoal,
+      carbsConsumedG: carbsConsumed,
+      carbsGoalG: carbsGoal,
+      fatConsumedG: fatConsumed,
+      fatGoalG: fatGoal,
       waterIntake: '$waterCupsConsumed / $waterCupsGoal cups',
       waterCupsConsumed: waterCupsConsumed,
       waterCupsGoal: waterCupsGoal,
+      waterConsumedMl: waterConsumedMl,
+      waterGoalMl: waterGoalMl,
       goalSource: entry['goalSource'] as String? ?? 'fallback',
     );
   }

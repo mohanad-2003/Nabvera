@@ -62,6 +62,59 @@ abstract class _$NutritionTabController extends $Notifier<NutritionTab> {
   }
 }
 
+@ProviderFor(NutritionRecipesStatus)
+final nutritionRecipesStatusProvider = NutritionRecipesStatusProvider._();
+
+final class NutritionRecipesStatusProvider
+    extends $NotifierProvider<NutritionRecipesStatus, NutritionLoadStatus> {
+  NutritionRecipesStatusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'nutritionRecipesStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$nutritionRecipesStatusHash();
+
+  @$internal
+  @override
+  NutritionRecipesStatus create() => NutritionRecipesStatus();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(NutritionLoadStatus value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<NutritionLoadStatus>(value),
+    );
+  }
+}
+
+String _$nutritionRecipesStatusHash() =>
+    r'0eb1b90a8193db6134b00ba8cdbc0ec415967b00';
+
+abstract class _$NutritionRecipesStatus extends $Notifier<NutritionLoadStatus> {
+  NutritionLoadStatus build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<NutritionLoadStatus, NutritionLoadStatus>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<NutritionLoadStatus, NutritionLoadStatus>,
+              NutritionLoadStatus,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// Loads `/api/recipes` once, sorted by rating desc — the shared source
 /// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
 /// [NutritionPage]. Public (rather than a private provider) so the page's
@@ -121,7 +174,7 @@ final class NutritionRecipesSourceProvider
 }
 
 String _$nutritionRecipesSourceHash() =>
-    r'cb5b795fa8e648ba8fc0f3b08fabea6f5e042708';
+    r'797334a6450411e9178e580712b5af43df9de8fe';
 
 /// Loads `/api/recipes` once, sorted by rating desc — the shared source
 /// behind both "Recommended" (top 2) and "Recipes for you" (the rest) on
@@ -316,7 +369,7 @@ final class DailyNutritionSummaryControllerProvider
 }
 
 String _$dailyNutritionSummaryControllerHash() =>
-    r'34f9847e7ad4e87589599fcabbbd93f0eaa9ac19';
+    r'86972f67cdebfc3248e56b7c542342234c834276';
 
 /// Loads the real `/api/nutrition/today` document and converts it into
 /// display fractions/strings.

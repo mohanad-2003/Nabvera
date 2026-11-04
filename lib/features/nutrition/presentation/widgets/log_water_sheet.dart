@@ -1,6 +1,7 @@
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/widgets/primary_button.dart';
+import 'package:nabvera/features/nutrition/domain/nutrition_formatters.dart';
 import 'package:nabvera/features/nutrition/presentation/providers/nutrition_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +87,11 @@ class _LogWaterSheetState extends ConsumerState<_LogWaterSheet> {
               ],
             ),
             const SizedBox(height: 8),
-            Text(summary.localizedWaterIntake(context), style: TextStyle(color: ext.textMuted)),
+            Text(
+              waterIntakeText(l10n, summary.waterConsumedMl, summary.waterGoalMl) ??
+                  summary.localizedWaterIntake(context),
+              style: TextStyle(color: ext.textMuted),
+            ),
             const SizedBox(height: 20),
             Row(
               children: [

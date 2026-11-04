@@ -65,6 +65,8 @@ flutter:
   assets:
       - assets/
       - assets/onboarding/
+      - assets/workout_covers/
+      - assets/nutrition_illustrations/
       - assets/png/
       - assets/bottom/home.png
       - assets/bottom/workout.png
@@ -82,8 +84,8 @@ flutter_launcher_icons:
   web:
     generate: true
     image_path: assets/logo/icon_flat.png
-    background_color: "#111213"
-    theme_color: "#111213"
+    background_color: "#0E1117"
+    theme_color: "#0E1117"
   # Flat/legacy Android icon + iOS icon: opaque, logo padded to ~68% of the
   # canvas so it isn't clipped by iOS's own corner-rounding.
   image_path: assets/logo/icon_flat.png

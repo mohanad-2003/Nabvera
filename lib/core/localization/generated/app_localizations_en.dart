@@ -2196,7 +2196,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nutritionRecipesForYou => 'Recipes for you';
 
   @override
-  String get nutritionDailySummary => 'Today\'s Nutrition';
+  String get nutritionDailySummary => 'Your nutrition today';
 
   @override
   String get nutritionDailySummarySubtitle => 'Track your intake at a glance';
@@ -2236,6 +2236,136 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get nutritionSetGoalsCta =>
       'This is an estimated target — set your own nutrition goals';
+
+  @override
+  String get nutritionCardMealPlansTitle => 'Meal plans';
+
+  @override
+  String get nutritionCardMealPlansBody =>
+      'Organize your meals across the week';
+
+  @override
+  String get nutritionCardMealIdeasTitle => 'Meal ideas';
+
+  @override
+  String get nutritionCardMealIdeasBody => 'Discover recipes that fit your day';
+
+  @override
+  String get nutritionSectionSuggested => 'Suggested for you';
+
+  @override
+  String get nutritionSectionExplore => 'Explore recipes';
+
+  @override
+  String get nutritionCaloriesRemainingLabel => 'Calories remaining';
+
+  @override
+  String get nutritionCaloriesOverGoalLabel => 'Over your goal by';
+
+  @override
+  String get nutritionCaloriesConsumedTodayLabel => 'Calories consumed';
+
+  @override
+  String get nutritionCaloriesUnit => 'kcal';
+
+  @override
+  String get nutritionCaloriesConsumedLabel => 'Consumed';
+
+  @override
+  String get nutritionCaloriesGoalLabel => 'Goal';
+
+  @override
+  String get nutritionDataUnavailable => 'Not available';
+
+  @override
+  String nutritionCalorieProgressSemantics(int consumed, int goal) {
+    return '$consumed of $goal kcal consumed';
+  }
+
+  @override
+  String get nutritionGoalTagEstimate => 'Estimated';
+
+  @override
+  String get nutritionGoalTagDefault => 'Default';
+
+  @override
+  String get nutritionSummaryUnavailable =>
+      'Today\'s nutrition couldn\'t be loaded';
+
+  @override
+  String nutritionMacroGramsProgress(String consumed, String goal) {
+    return '$consumed / $goal g';
+  }
+
+  @override
+  String nutritionMacroGramsValue(String value) {
+    return '$value g';
+  }
+
+  @override
+  String get nutritionWaterToday => 'Water today';
+
+  @override
+  String get nutritionAddWater => 'Add water';
+
+  @override
+  String nutritionWaterAmountMl(String value) {
+    return '$value ml';
+  }
+
+  @override
+  String nutritionWaterAmountL(String value) {
+    return '$value L';
+  }
+
+  @override
+  String nutritionWaterProgressMl(String consumed, String goal) {
+    return '$consumed / $goal ml';
+  }
+
+  @override
+  String nutritionWaterProgressL(String consumed, String goal) {
+    return '$consumed / $goal L';
+  }
+
+  @override
+  String nutritionRecipeProteinValue(String grams) {
+    return '${grams}g protein';
+  }
+
+  @override
+  String nutritionFavoriteAdd(String name) {
+    return 'Add $name to favorites';
+  }
+
+  @override
+  String nutritionFavoriteRemove(String name) {
+    return 'Remove $name from favorites';
+  }
+
+  @override
+  String get nutritionRecipesLoadFailedTitle => 'Couldn\'t load recipes';
+
+  @override
+  String get nutritionRecipesLoadFailedBody =>
+      'Check your connection and try again.';
+
+  @override
+  String get nutritionRecipesEmptyTitle => 'No recipes yet';
+
+  @override
+  String get nutritionRecipesEmptyBody => 'New recipes will show up here.';
+
+  @override
+  String get nutritionRecipeOpenFailed =>
+      'Couldn\'t open this recipe. Please try again.';
+
+  @override
+  String get favoriteRecipesEmptyTitle =>
+      'Your favorite recipes will appear here';
+
+  @override
+  String get favoriteExploreRecipes => 'Explore recipes';
 
   @override
   String get mealMarkAsEaten => 'Mark as eaten';

@@ -1028,7 +1028,7 @@
   "nutritionRecipeOfTheDay": "Recipe of the day",
   "nutritionRecommended": "Recommended",
   "nutritionRecipesForYou": "Recipes for you",
-  "nutritionDailySummary": "Today's Nutrition",
+  "nutritionDailySummary": "Your nutrition today",
   "nutritionDailySummarySubtitle": "Track your intake at a glance",
   "nutritionProteinLabel": "Protein",
   "nutritionCarbsLabel": "Carbs",
@@ -1047,6 +1047,95 @@
   "waterLogAdded": "Water logged",
   "waterLogFailed": "Couldn't log water, please try again",
   "nutritionSetGoalsCta": "This is an estimated target — set your own nutrition goals",
+  "nutritionCardMealPlansTitle": "Meal plans",
+  "nutritionCardMealPlansBody": "Organize your meals across the week",
+  "nutritionCardMealIdeasTitle": "Meal ideas",
+  "nutritionCardMealIdeasBody": "Discover recipes that fit your day",
+  "nutritionSectionSuggested": "Suggested for you",
+  "nutritionSectionExplore": "Explore recipes",
+  "nutritionCaloriesRemainingLabel": "Calories remaining",
+  "nutritionCaloriesOverGoalLabel": "Over your goal by",
+  "nutritionCaloriesConsumedTodayLabel": "Calories consumed",
+  "nutritionCaloriesUnit": "kcal",
+  "nutritionCaloriesConsumedLabel": "Consumed",
+  "nutritionCaloriesGoalLabel": "Goal",
+  "nutritionDataUnavailable": "Not available",
+  "nutritionCalorieProgressSemantics": "{consumed} of {goal} kcal consumed",
+  "@nutritionCalorieProgressSemantics": {
+    "placeholders": {
+      "consumed": {"type": "int"},
+      "goal": {"type": "int"}
+    }
+  },
+  "nutritionGoalTagEstimate": "Estimated",
+  "nutritionGoalTagDefault": "Default",
+  "nutritionSummaryUnavailable": "Today's nutrition couldn't be loaded",
+  "nutritionMacroGramsProgress": "{consumed} / {goal} g",
+  "@nutritionMacroGramsProgress": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionMacroGramsValue": "{value} g",
+  "@nutritionMacroGramsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterToday": "Water today",
+  "nutritionAddWater": "Add water",
+  "nutritionWaterAmountMl": "{value} ml",
+  "@nutritionWaterAmountMl": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterAmountL": "{value} L",
+  "@nutritionWaterAmountL": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "nutritionWaterProgressMl": "{consumed} / {goal} ml",
+  "@nutritionWaterProgressMl": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionWaterProgressL": "{consumed} / {goal} L",
+  "@nutritionWaterProgressL": {
+    "placeholders": {
+      "consumed": {"type": "String"},
+      "goal": {"type": "String"}
+    }
+  },
+  "nutritionRecipeProteinValue": "{grams}g protein",
+  "@nutritionRecipeProteinValue": {
+    "placeholders": {
+      "grams": {"type": "String"}
+    }
+  },
+  "nutritionFavoriteAdd": "Add {name} to favorites",
+  "@nutritionFavoriteAdd": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nutritionFavoriteRemove": "Remove {name} from favorites",
+  "@nutritionFavoriteRemove": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "nutritionRecipesLoadFailedTitle": "Couldn't load recipes",
+  "nutritionRecipesLoadFailedBody": "Check your connection and try again.",
+  "nutritionRecipesEmptyTitle": "No recipes yet",
+  "nutritionRecipesEmptyBody": "New recipes will show up here.",
+  "nutritionRecipeOpenFailed": "Couldn't open this recipe. Please try again.",
+  "favoriteRecipesEmptyTitle": "Your favorite recipes will appear here",
+  "favoriteExploreRecipes": "Explore recipes",
   "mealMarkAsEaten": "Mark as eaten",
   "mealLogged": "Logged",
   "mealLogUndo": "Undo",
