@@ -1,3 +1,4 @@
+import 'package:nabvera/features/workout/presentation/widgets/workout_detail_labels.dart';
 import 'package:nabvera/core/network/app_icons.dart';
 import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/widgets/pressable_scale.dart';
@@ -78,7 +79,7 @@ class RoundItemTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(AppRadius.pill),
                           ),
                           child: Text(
-                            item.reps,
+                            workoutDetailLabel(context, item.reps),
                             style: TextStyle(
                               color: ext.accentGlow,
                               fontSize: 12,
@@ -100,7 +101,7 @@ class RoundItemTile extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
-                            item.time,
+                            workoutDetailLabel(context, item.time),
                             style: TextStyle(
                               color: ext.textMuted,
                               fontSize: 12,

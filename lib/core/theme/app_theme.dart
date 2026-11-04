@@ -16,7 +16,7 @@ abstract final class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.seedInk,
       brightness: brightness,
-      primary: isDark ? AppColors.seedLime : AppColors.seedInk,
+      primary: isDark ? AppColors.seedLime : AppColors.accentOnLight,
       secondary: isDark ? AppColors.electricOrange : AppColors.seedViolet,
       surface: isDark ? AppColors.darkSurface : AppColors.lightSurface,
       surfaceContainerHighest:
@@ -133,10 +133,7 @@ abstract final class AppTheme {
           color: isDark ? Colors.white.withValues(alpha: 0.72) : null,
         ),
         hintStyle: TextStyle(
-          color:
-              isDark
-                  ? Colors.white.withValues(alpha: 0.38)
-                  : colorScheme.onSurfaceVariant,
+          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
         ),
         prefixIconColor:
             isDark
@@ -169,7 +166,7 @@ abstract final class AppTheme {
                     ),
                   ],
           accentGradient: LinearGradient(
-            colors: [AppColors.seedLime, AppColors.electricOrange],
+            colors: [AppColors.actionBlue, AppColors.electricOrange],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -209,10 +206,8 @@ abstract final class AppTheme {
                   : Colors.black.withValues(alpha: 0.06),
           textPrimary: isDark ? Colors.white : AppColors.seedInk,
           textMuted:
-              isDark
-                  ? Colors.white.withValues(alpha: 0.62)
-                  : AppColors.seedInk.withValues(alpha: 0.6),
-          onAccent: AppColors.seedInk,
+              isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+          onAccent: Colors.white,
           accentGlow: isDark ? AppColors.seedLime : AppColors.accentOnLight,
           // Dark ink reads fine on bright lime (dark mode); light mode's
           // deeper olive accentGlow needs a light foreground instead.

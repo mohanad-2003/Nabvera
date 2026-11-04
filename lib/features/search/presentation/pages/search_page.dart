@@ -594,10 +594,10 @@ class _FeaturedResult extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0x00111213),
-                      Color(0x00111213),
-                      Color(0xCC111213),
-                      Color(0xF2111213),
+                      Color(0x000E1117),
+                      Color(0x000E1117),
+                      Color(0xCC0E1117),
+                      Color(0xF20E1117),
                     ],
                     stops: [0, 0.42, 0.78, 1],
                     begin: Alignment.topCenter,

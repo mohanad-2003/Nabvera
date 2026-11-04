@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:nabvera/core/localization/generated/app_localizations.dart';
-import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_radius_shadows.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:nabvera/core/theme/app_spacing.dart';
@@ -10,13 +9,13 @@ import 'package:flutter/services.dart';
 
 class AppBottomNavItem {
   const AppBottomNavItem({
-    required this.image,
-    required this.fallbackIcon,
+    required this.icon,
+    required this.selectedIcon,
     required this.label,
   });
 
-  final String image;
-  final IconData fallbackIcon;
+  final IconData icon;
+  final IconData selectedIcon;
   final String label;
 }
 
@@ -39,34 +38,29 @@ class AppBottomNav extends StatelessWidget {
   List<AppBottomNavItem> _items(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return [
-      // AppBottomNavItem(
-      //   image: 'assets/bottom/home.png',
-      //   fallbackIcon: Icons.home_rounded,
-      //   label: l10n.navHome,
-      // ),
       AppBottomNavItem(
-        image: 'assets/bottom/home.png',
-        fallbackIcon: Icons.home_rounded,
+        icon: Icons.home_outlined,
+        selectedIcon: Icons.home_rounded,
         label: l10n.navHome,
       ),
       AppBottomNavItem(
-        image: 'assets/bottom/workout.png',
-        fallbackIcon: Icons.fitness_center_rounded,
+        icon: Icons.fitness_center_outlined,
+        selectedIcon: Icons.fitness_center_rounded,
         label: l10n.navWorkout,
       ),
       AppBottomNavItem(
-        image: 'assets/bottom/nutrition.png',
-        fallbackIcon: Icons.restaurant_rounded,
+        icon: Icons.restaurant_outlined,
+        selectedIcon: Icons.restaurant_rounded,
         label: l10n.navNutrition,
       ),
       AppBottomNavItem(
-        image: 'assets/bottom/community.png',
-        fallbackIcon: Icons.groups_rounded,
+        icon: Icons.groups_outlined,
+        selectedIcon: Icons.groups_rounded,
         label: l10n.navCommunity,
       ),
       AppBottomNavItem(
-        image: 'assets/bottom/profile.png',
-        fallbackIcon: Icons.person_rounded,
+        icon: Icons.person_outline_rounded,
+        selectedIcon: Icons.person_rounded,
         label: l10n.navProfile,
       ),
     ];
@@ -138,8 +132,8 @@ class AppBottomNav extends StatelessWidget {
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  ext.accentGlow.withValues(alpha: 0.22),
-                                  AppColors.seedLime.withValues(alpha: 0),
+                                  ext.accentGlow.withValues(alpha: 0.12),
+                                  ext.accentGlow.withValues(alpha: 0),
                                 ],
                               ),
                             ),
@@ -184,59 +178,51 @@ class _NavItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ext = theme.extension<AppThemeExtension>()!;
-    final selectedColor =
-        theme.brightness == Brightness.dark ? ext.accentGlow : ext.success;
-    final color =
-        selected ? selectedColor : ext.textMuted.withValues(alpha: 0.78);
+    final ext = Theme.of(context).extension<AppThemeExtension>()!;
+    final color = selected ? ext.accentGlow : ext.textMuted;
 
     return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 180),
-              transitionBuilder:
-                  (child, animation) => ScaleTransition(
-                    scale: Tween<double>(
-                      begin: 0.84,
-                      end: 1,
-                    ).animate(animation),
-                    child: FadeTransition(opacity: animation, child: child),
-                  ),
-              child: Opacity(
-                key: ValueKey(selected),
-                opacity: selected ? 1 : 0.58,
-                child: Image.asset(
-                  item.image,
-                  width: 25,
-                  height: 25,
-                  fit: BoxFit.contain,
-                  errorBuilder:
-                      (_, _, _) =>
-                          Icon(item.fallbackIcon, color: color, size: 23),
+      child: Semantics(
+        selected: selected,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 180),
+                transitionBuilder:
+                    (child, animation) => ScaleTransition(
+                      scale: Tween<double>(
+                        begin: 0.84,
+                        end: 1,
+                      ).animate(animation),
+                      child: FadeTransition(opacity: animation, child: child),
+                    ),
+                child: Icon(
+                  selected ? item.selectedIcon : item.icon,
+                  key: ValueKey(selected),
+                  color: color,
+                  size: 25,
                 ),
               ),
-            ),
-            const SizedBox(height: 3),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 180),
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-                color: color,
+              const SizedBox(height: 3),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 180),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  color: color,
+                ),
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              child: Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

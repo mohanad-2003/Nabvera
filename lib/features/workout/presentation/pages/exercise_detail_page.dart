@@ -1,3 +1,4 @@
+import 'package:nabvera/features/workout/presentation/widgets/workout_detail_labels.dart';
 import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/features/workout/data/workout_repository.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
@@ -109,7 +110,14 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    data.localizedDescription(context),
+                    data.description == ExerciseDetailData.defaultDescription &&
+                            data.descriptionAr.isEmpty
+                        ? workoutCopy(
+                          context,
+                          'حافظ على ثبات عضلات الجذع وتحكّم بالحركة ضمن مداها الكامل. تنفّس بانتظام وتوقّف إذا شعرت بألم حاد.',
+                          ExerciseDetailData.defaultDescription,
+                        )
+                        : data.localizedDescription(context),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: ext.textMuted,
                       height: 1.5,
@@ -129,7 +137,7 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
                         child: _InfoStat(
                           icon: Icons.fitness_center_rounded,
                           label: l10n.workoutMuscleGroupLabel,
-                          value: data.muscleGroup,
+                          value: workoutDetailLabel(context, data.muscleGroup),
                           ext: ext,
                         ),
                       ),
@@ -137,7 +145,7 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
                         child: _InfoStat(
                           icon: Icons.trending_up_rounded,
                           label: l10n.workoutDifficultyLabel,
-                          value: data.level,
+                          value: workoutDetailLabel(context, data.level),
                           ext: ext,
                         ),
                       ),
@@ -151,8 +159,8 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
                       Expanded(
                         child: _InfoStat(
                           icon: Icons.timer_outlined,
-                          label: data.duration,
-                          value: data.reps,
+                          label: workoutDetailLabel(context, data.duration),
+                          value: workoutDetailLabel(context, data.reps),
                           ext: ext,
                         ),
                       ),
@@ -160,7 +168,7 @@ class _ExerciseDetailPageState extends ConsumerState<ExerciseDetailPage> {
                         child: _InfoStat(
                           icon: Icons.handyman_outlined,
                           label: l10n.workoutEquipmentLabel,
-                          value: data.equipment,
+                          value: workoutDetailLabel(context, data.equipment),
                           ext: ext,
                         ),
                       ),
@@ -367,7 +375,10 @@ class _SessionHistoryRow extends StatelessWidget {
           child: Text(
             completedAt == null
                 ? '—'
-                : intl.DateFormat('MMM d').format(completedAt),
+                : intl.DateFormat(
+                  'MMM d',
+                  Localizations.localeOf(context).toLanguageTag(),
+                ).format(completedAt),
             style: TextStyle(
               color: ext.textMuted,
               fontSize: 12,

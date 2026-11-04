@@ -1,3 +1,4 @@
+import 'package:nabvera/core/theme/app_colors.dart';
 import 'package:nabvera/core/theme/app_spacing.dart';
 import 'package:nabvera/core/theme/app_theme_extension.dart';
 import 'package:flutter/material.dart';
@@ -243,7 +244,7 @@ class _Badge extends StatelessWidget {
             ? ext.onAccent
             : (ThemeData.estimateBrightnessForColor(color!) == Brightness.dark
                 ? Colors.white
-                : const Color(0xFF111213));
+                : AppColors.seedInk);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),

@@ -1,40 +1,44 @@
 import 'package:flutter/material.dart';
 
-/// "Graphite Amber" palette — a neutral graphite base (no blue/green tint)
-/// with amber as the one primary accent, teal reserved for streaks/success
-/// states only. Replaced the earlier near-black/neon-lime identity; kept
-/// the same field names as that palette (`seedLime`, `electricOrange`,
-/// `aquaBlue`, ...) since every call site already reads them by role
-/// (primary accent / gradient partner / cool decorative accent) rather
-/// than by literal hue — only the values below define the actual look.
+/// "Electric Blue" palette — a cool, deep navy-graphite base with electric
+/// blue as the one primary accent, teal reserved for streaks/success states
+/// only. Replaced the earlier "Graphite Amber" identity; kept the same field
+/// names as that palette (`seedLime`, `electricOrange`, `aquaBlue`, ...) since
+/// every call site already reads them by role (primary accent / gradient
+/// partner / cool decorative accent) rather than by literal hue — only the
+/// values below define the actual look.
 abstract final class AppColors {
-  static const Color seedInk = Color(0xFF111213);
+  static const Color seedInk = Color(0xFF0E1117);
 
-  /// Primary accent — amber. Was neon lime.
-  static const Color seedLime = Color(0xFFFFB020);
+  /// Primary accent — electric blue. Was amber.
+  static const Color seedLime = Color(0xFF3D7BFF);
+
+  /// Filled controls use a deeper blue to keep white labels readable.
+  static const Color actionBlue = Color(0xFF2D67DB);
   static const Color seedViolet = Color(0xFF6C5CE7);
 
   /// Gradient partner for [seedLime] (buttons, hero badges) and the dark
-  /// theme's ColorScheme.secondary — a deeper burnt-amber, not orange.
-  static const Color electricOrange = Color(0xFFE8951A);
+  /// theme's ColorScheme.secondary — a deeper royal blue.
+  static const Color electricOrange = Color(0xFF2B5FE0);
 
   /// Cool decorative accent (round-item variety colors, streak highlight)
-  /// — teal. Was a brighter cyan/"aqua".
+  /// — teal.
   static const Color aquaBlue = Color(0xFF29D9C0);
-  static const Color midnight = Color(0xFF17181A);
-  static const Color graphite = Color(0xFF1A1B1B);
+  static const Color midnight = Color(0xFF0B0E14);
+  static const Color graphite = Color(0xFF161B24);
   static const Color glass = Color(0x1FFFFFFF);
 
-  // A warm neutral base — matches the graphite dark base's own neutrality
-  // instead of the old cool blue-tinted light surface.
-  static const Color lightSurface = Color(0xFFF7F6F3);
-  static const Color lightSurfaceVariant = Color(0xFFEFEDE7);
-  static const Color lightOutline = Color(0xFFD9D6CE);
+  // A cool neutral base — matches the navy-graphite dark base's own tint.
+  static const Color lightSurface = Color(0xFFF4F6FB);
+  static const Color lightSurfaceVariant = Color(0xFFE9EDF6);
+  static const Color lightOutline = Color(0xFFD3DAE8);
 
   // Dark surfaces deliberately avoid pure black per design-system requirements.
-  static const Color darkSurface = Color(0xFF111213);
-  static const Color darkSurfaceVariant = Color(0xFF1A1B1B);
-  static const Color darkOutline = Color(0xFF2B2C2C);
+  static const Color darkSurface = Color(0xFF0E1117);
+  static const Color darkSurfaceVariant = Color(0xFF161B24);
+  static const Color darkOutline = Color(0xFF262D3A);
+  static const Color textMutedDark = Color(0xFFB4BDCD);
+  static const Color textMutedLight = Color(0xFF5E697B);
 
   // Dark-mode semantic accents: bright/saturated so they read clearly
   // against the near-black surfaces.
@@ -56,8 +60,8 @@ abstract final class AppColors {
   static const Color warningOnLight = Color(0xFF9A6400);
   static const Color dangerOnLight = Color(0xFFB3261E);
 
-  /// Darker bronze counterpart to [seedLime] (amber) for icons, labels, and
+  /// Darker royal-blue counterpart to [seedLime] for icons, labels, and
   /// progress indicators on the light background — the vivid dark-mode
-  /// amber is too light/low-contrast for text on a near-white surface.
-  static const Color accentOnLight = Color(0xFF8A5A00);
+  /// blue is too light/low-contrast for text on a near-white surface.
+  static const Color accentOnLight = Color(0xFF1F55D6);
 }

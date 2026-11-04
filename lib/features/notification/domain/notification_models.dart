@@ -26,7 +26,7 @@ enum NotificationCategory {
   List<Color> get gradient => switch (this) {
     NotificationCategory.workout => const [
       AppColors.electricOrange,
-      Color(0xFFFFB020),
+      AppColors.seedLime,
     ],
     NotificationCategory.challenge => const [
       AppColors.seedViolet,

@@ -41,9 +41,9 @@ class PrimaryButton extends StatelessWidget {
                     ? const []
                     : [
                       BoxShadow(
-                        color: ext.accentGlow.withValues(alpha: 0.28),
-                        blurRadius: 24,
-                        offset: const Offset(0, 12),
+                        color: ext.accentGlow.withValues(alpha: 0.14),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
                       ),
                     ],
           ),

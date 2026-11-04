@@ -59,6 +59,7 @@ class FakeUserRepository implements UserRepository {
 
 class FakeFirebaseAuthService implements FirebaseAuthService {
   int signOutCallCount = 0;
+  
 
   @override
   Future<void> signOut() async {

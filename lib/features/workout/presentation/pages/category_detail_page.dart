@@ -1,3 +1,4 @@
+import 'package:nabvera/features/workout/presentation/widgets/workout_detail_labels.dart';
 import 'package:nabvera/features/workout/presentation/widgets/workout_surface.dart';
 import 'dart:async';
 
@@ -61,8 +62,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
   // page's own data since `data.rounds` never changes after the page is
   // pushed with a given workout.
   late final List<List<Set<int>>> _completedSets = [
-    for (final group in data.rounds)
-      [for (final _ in group.items) <int>{}],
+    for (final group in data.rounds) [for (final _ in group.items) <int>{}],
   ];
 
   // What was actually entered (weight/reps) for each checked-off set —
@@ -419,7 +419,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: WorkoutHeader(title: data.headerTitle),
+            child: WorkoutHeader(
+              title: workoutDetailLabel(context, data.headerTitle),
+            ),
           ),
           // The hero + round list share one scrollable region so the hero
           // always renders at its intended, proportioned height regardless
@@ -438,14 +440,17 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                       badge: l10n.workoutTrainingOfTheDay.toUpperCase(),
                       title: data.localizedHeroLabel(context),
                       metas: [
-                        FeaturedCardMeta(icon: AppIcons.time, label: data.time),
+                        FeaturedCardMeta(
+                          icon: AppIcons.time,
+                          label: workoutDetailLabel(context, data.time),
+                        ),
                         FeaturedCardMeta(
                           icon: AppIcons.calories,
-                          label: data.calories,
+                          label: workoutDetailLabel(context, data.calories),
                         ),
                         FeaturedCardMeta(
                           icon: AppIcons.run,
-                          label: data.levelLabel,
+                          label: workoutDetailLabel(context, data.levelLabel),
                         ),
                       ],
                       height: compact ? 200 : 240,
@@ -476,7 +481,10 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  data.rounds[groupIndex].title,
+                                  workoutDetailLabel(
+                                    context,
+                                    data.rounds[groupIndex].title,
+                                  ),
                                   style: TextStyle(
                                     color: ext.textPrimary,
                                     fontSize: 18,
@@ -504,7 +512,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                       setNumber,
                                     ),
                                 onOpenDetail:
-                                    data.rounds[groupIndex].items[itemIndex]
+                                    data
+                                                .rounds[groupIndex]
+                                                .items[itemIndex]
                                                 .exerciseDetail ==
                                             null
                                         ? null
@@ -521,7 +531,9 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               RoundItemTile(
                                 item: data.rounds[groupIndex].items[itemIndex],
                                 onTap:
-                                    data.rounds[groupIndex].items[itemIndex]
+                                    data
+                                                .rounds[groupIndex]
+                                                .items[itemIndex]
                                                 .exerciseDetail ==
                                             null
                                         ? null

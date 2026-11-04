@@ -28,6 +28,32 @@ class WorkoutListCard extends StatelessWidget {
   /// session, which hides the ring entirely (today's unchanged look).
   final double? progressFraction;
 
+  // Presentation-only covers keyed by the original backend title, so Arabic
+  // localization and navigation still use the unchanged workout data.
+  static const _programCovers = <String, String>{
+    'arm day': 'assets/workout_covers/arm_day.png',
+    'post-workout cooldown stretch':
+        'assets/workout_covers/post_workout_stretch.png',
+    'full body stretch & recover': 'assets/workout_covers/stretch_recover.png',
+    'morning yoga flow': 'assets/workout_covers/morning_yoga.png',
+    'full body starter': 'assets/workout_covers/full_body_starter.png',
+    'chest day': 'assets/workout_covers/chest_day.png',
+    'chest day (advanced)': 'assets/workout_covers/chest_day.png',
+    'upper body strength': 'assets/workout_covers/chest_day.png',
+    'back day': 'assets/workout_covers/back_day.png',
+    'back day (advanced)': 'assets/workout_covers/back_day.png',
+    'pull day': 'assets/workout_covers/back_day.png',
+    'shoulder day': 'assets/workout_covers/shoulder_day.png',
+    'shoulder day (advanced)': 'assets/workout_covers/shoulder_day.png',
+    'arm day (advanced)': 'assets/workout_covers/arm_day.png',
+    'lower body strength': 'assets/workout_covers/lower_body_strength.png',
+    'iron legs': 'assets/workout_covers/lower_body_strength.png',
+    'cardio burnout': 'assets/workout_covers/cardio_burnout.png',
+    'circuit conditioning': 'assets/workout_covers/circuit_conditioning.png',
+    'yoga for strength & balance':
+        'assets/workout_covers/yoga_strength_balance.png',
+  };
+
   @override
   Widget build(BuildContext context) {
     final ext = Theme.of(context).extension<AppThemeExtension>()!;
@@ -55,7 +81,12 @@ class WorkoutListCard extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
-                        child: SmartImage(item.image, width: 76, height: 88),
+                        child: SmartImage(
+                          _programCovers[item.name.trim().toLowerCase()] ??
+                              item.image,
+                          width: 76,
+                          height: 88,
+                        ),
                       ),
                       if (progressFraction case final fraction?)
                         PositionedDirectional(

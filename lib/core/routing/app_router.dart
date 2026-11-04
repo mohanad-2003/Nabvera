@@ -97,7 +97,9 @@ GoRouter appRouter(Ref ref) {
   final platformInitialLocation =
       WidgetsBinding.instance.platformDispatcher.defaultRouteName;
   final initialLocation =
-      platformInitialLocation == '/' ? AppRoutes.splash : platformInitialLocation;
+      platformInitialLocation == '/'
+          ? AppRoutes.splash
+          : platformInitialLocation;
 
   return GoRouter(
     initialLocation: initialLocation,
@@ -478,15 +480,12 @@ class _AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     // The AI coach lives outside the 5 equal-width bottom-nav tabs (6 was
     // one too many, and its label needs more room than a tab slot gives)
-    // as a raised, distinct floating button instead — docked on top of the
-    // pill nav bar rather than competing for a slot in it. `extendBody`
-    // lets this sit in `body`'s own Stack, positioned using the same pill
-    // geometry AppBottomNav lays itself out with (see its SafeArea
-    // margin/height below) so it visually pokes above the pill's top edge.
+    // as a distinct floating button. Leave a gap above the navigation pill
+    // so its label and hit target never overlap the tab buttons.
     final pillBottomInset = MediaQuery.paddingOf(context).bottom + 12;
     const pillHeight = 66.0;
-    const fabDiameter = 60.0;
-    const fabOverlapIntoPill = 18.0;
+    const fabDiameter = 48.0;
+    const fabGapAbovePill = 12.0;
 
     return Scaffold(
       extendBody: true,
@@ -494,7 +493,7 @@ class _AppShell extends StatelessWidget {
         children: [
           navigationShell,
           PositionedDirectional(
-            bottom: pillBottomInset + pillHeight - fabOverlapIntoPill,
+            bottom: pillBottomInset + pillHeight + fabGapAbovePill,
             end: 20,
             child: _CoachFab(
               diameter: fabDiameter,
@@ -516,7 +515,7 @@ class _AppShell extends StatelessWidget {
 }
 
 /// The AI coach's distinctive entry point — a raised, gradient-filled
-/// circle with its full name underneath, docked on top of the bottom nav
+/// circle with its full name underneath, spaced above the bottom nav
 /// pill (see `_AppShell`) instead of being just another equal-width tab or
 /// a small unlabeled header icon.
 class _CoachFab extends StatelessWidget {
@@ -542,17 +541,13 @@ class _CoachFab extends StatelessWidget {
               height: diameter,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [AppColors.seedLime, AppColors.electricOrange],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: ext.accentGradient,
                 border: Border.all(color: ext.cardColor, width: 3),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.electricOrange.withValues(alpha: 0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
+                    color: AppColors.electricOrange.withValues(alpha: 0.18),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),

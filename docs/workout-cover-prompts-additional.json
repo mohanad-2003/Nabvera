@@ -1,0 +1,34 @@
+{
+  "generator": "Built-in image_gen",
+  "usage": "Workout list covers only",
+  "covers": [
+    {
+      "name": "chest_day",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Three-quarter torso view of athlete standing holding one dumbbell vertically in both hands close in front of chest, palms supporting its upper end, elbows gently outward. Chest and shoulders prominent, calm focused face visible. A simple chest-focused strength campaign portrait."
+    },
+    {
+      "name": "back_day",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Rear three-quarter waist-up portrait of athlete holding a lat pulldown bar overhead with a comfortable wide grip, both arms clearly visible, a minimal dark gym cable descending from the top edge, back and shoulders emphasized by soft side lighting. Recognizable back-training cover, no extra equipment clutter."
+    },
+    {
+      "name": "shoulder_day",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Front three-quarter waist-up portrait of athlete holding two modest dumbbells in a shoulder-press starting position, dumbbells at shoulder height and elbows bent, head fully visible between dumbbells. Anatomically correct wrists, calm focus, both shoulders clearly framed."
+    },
+    {
+      "name": "lower_body_strength",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Three-quarter body view of athlete in a comfortable controlled goblet squat holding one compact dumbbell securely at chest height, knees tracking with feet and heels on floor. Both thighs and bent legs clearly framed, face visible, blue floor accents, no extreme depth."
+    },
+    {
+      "name": "cardio_burnout",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Athlete jogging dynamically in place in a minimal studio, running profile at a three-quarter angle, one knee lifted and opposite arm forward, full body legible, navy running shoes with small electric-blue accent. Sharp subject, very subtle motion energy, athletic but friendly."
+    },
+    {
+      "name": "circuit_conditioning",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Athlete holding a compact kettlebell by its handle in both hands at waist level, in an athletic ready stance with knees softly bent, three-quarter body view, dark kettlebell clearly visible, energetic focused expression. Functional circuit-training campaign, simple uncluttered composition."
+    },
+    {
+      "name": "yoga_strength_balance",
+      "prompt": "Use case: ads-marketing. ONE photorealistic premium workout-program cover, portrait 4:5, for Nabvera fitness app thumbnail. Match a cohesive series: adult male athlete with short dark wavy hair, navy short-sleeve athletic shirt and navy training trousers, minimal cool pale blue-gray studio, soft editorial lighting and subtle electric blue (#3D7BFF) rim accents. Natural realistic anatomy, believable fitness physique. Strong readable silhouette filling frame, center subject to survive a 76x88 thumbnail crop. No text, logos, UI, watermark, collage, or labels. Full-body athlete performing warrior two yoga pose on an electric-blue mat, front knee gently bent, back leg extended, torso upright, arms extended in opposite directions at shoulder height, looking toward front hand. Frame entire pose with margin around hands and feet, slightly oblique camera angle so wide arms fit portrait. Calm expression, soft studio daylight."
+    }
+  ]
+}

@@ -15,7 +15,8 @@ import 'core/storage/preferences_service.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
-import 'core/web/web_install_banner.dart';
+import 'core/web/web_install_banner_stub.dart'
+    if (dart.library.js_interop) 'core/web/web_install_banner.dart';
 import 'firebase_options.dart';
 
 void main() {
